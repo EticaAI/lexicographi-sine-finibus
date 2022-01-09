@@ -1,26 +1,31 @@
 
 # Everything from the workbench is ignored from the top level. We add few
 # Exceptions
-officinam/*
+/officinam/**/**.csv
+/officinam/**/**.tab
+/officinam/**/**.tsv
+/officinam/**/**.txt
+/officinam/**/**.xlsx
+/officinam/**/**.zip
+/officinam/**/**.gz
+/officinam/README.md
+/officinam/LICENSE.md
 
 #### The _de facto_ automation scripts _________________________________________
 # The script folder can be tracked freely
-!officinam/999999/**/README.md
-!officinam/999999999/
+# !/officinam/999999/**/README.md
+!officinam/999999999
 
 ### officinam/1613 (handcrafted data tables) ___________________________________
 # Anything on the 1613 is manual work. 
 !officinam/1613
 
-!officinam/999999/README.md
-!officinam/999999/README.md
-
-
-!officinam/1613/*
-
+### Other exceptions ___________________________________________________________
+!/officinam/**/.gitkeep
 
 
 # git check-ignore officinam/1613
 
 
 # officinam$ git check-ignore --verbose 1613
+# git check-ignore --verbose officinam/999999/README.md

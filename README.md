@@ -1,9 +1,9 @@
-# multilingual-lexicography-automation
-Per aspera ad astra
+# Multilingual lexicography automation
+**[working-draft]Public domain automation scripts for [practical lexicography](https://en.wikipedia.org/wiki/Lexicography) on selected topics.**
 
-
-ln -s /workspace/git/EticaAI/ndata/ officinam
-ln -s /workspace/git/EticaAI/ndata/ officinam
+More about on:
+- https://github.com/EticaAI/numerordinatio/issues/5
+- https://numerordinatio.etica.ai/
 
 
 <!--
@@ -12,17 +12,12 @@ ln -s /workspace/git/EticaAI/ndata/ officinam
 # cd /workspace/git/EticaAI
 # ln -s /workspace/git/EticaAI/multilingual-lexicography-automation/officinam /workspace/git/EticaAI/n-data 
 
-# cd /workspace/git/EticaAI/n-data
-# GIT_DIR=/workspace/git/EticaAI/multilingual-lexicography-automation/officinam/.git_nested git status
-
-
-# cd /workspace/git/EticaAI/n-data
-# GIT_WORK_TREE=/workspace/git/EticaAI/n-data git status
-# GIT_DIR="/workspace/git/EticaAI/n-data.git-metadata" GIT_WORK_TREE=/workspace/git/EticaAI/n-data git status
-# GIT_DIR="/workspace/git/EticaAI/n-data.git-metadata" GIT_WORK_TREE=/workspace/git/EticaAI/n-data gitk
-
-
-# cd /workspace/git/EticaAI/n-data-base
-# GIT_WORK_TREE=/workspace/git/EticaAI/n-data 
+cd /workspace/git/EticaAI/n-data-pseudobase
+git --git-dir /workspace/git/EticaAI/n-data.git-metadata --work-tree /workspace/git/EticaAI/multilingual-lexicography-automation/officinam status
+git --git-dir /workspace/git/EticaAI/n-data.git-metadata --work-tree /workspace/git/EticaAI/multilingual-lexicography-automation/officinam gui
 
 -->
+
+## License
+
+> TODO: explain that at least part of generated datasets are granted to have incompatible licenses with each other, even for humanitarian use / emergency response.
