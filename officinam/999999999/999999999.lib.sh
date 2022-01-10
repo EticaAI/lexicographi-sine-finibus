@@ -31,7 +31,7 @@ ROOTDIR="$(pwd)"
 
 ## Directory that stores basic TSVs to allow bare minimum conversions
 # These files are also generated as part of bootstrapping step
-# 1603.45.49.tsv, 1603.47.639.3.tsv, 1603.47.15924.tsv,
+# 1603_45_49.tsv, 1603_47_639_3.tsv, 1603_47_15924.tsv,
 NUMERORDINATIO_DATUM="${ROOTDIR}/999999/999999"
 
 #######################################
@@ -391,7 +391,7 @@ un_pcode_hxlate_csv_file() {
 }
 
 #######################################
-# Return an 1603.45.49 (UN m49 numeric code) from other common systems
+# Return an 1603_45_49 (UN m49 numeric code) from other common systems
 #
 # Example:
 #    un_pcode_hxlate_csv_file AFG_1.csv > AFG_1.hxl.csv
@@ -646,7 +646,7 @@ numerordinatio_codicem_transation_separator() {
 # numerordinatio_codicem_transation_separator "" "/" ":"
 
 #######################################
-# Return an 1603.45.49 (UN m49 numeric code) from other common systems
+# Return an 1603_45_49 (UN m49 numeric code) from other common systems
 #
 # Example:
 #    # > 76
@@ -662,7 +662,7 @@ numerordinatio_codicem_locali__1603_45_49() {
   codicem_locali=""
 
   if [ -z "$NUMERORDINATIO_DATUM__1603_45_49" ]; then
-    echo "non NUMERORDINATIO_DATUM__1603_45_49 1603.47.639.3.tsv"
+    echo "non NUMERORDINATIO_DATUM__1603_45_49 1603_47_639_3.tsv"
     return 1
   fi
 
@@ -678,7 +678,7 @@ numerordinatio_codicem_locali__1603_45_49() {
 }
 
 #######################################
-# Return an 1603.45.49 (UN m49 numeric code) from other common systems
+# Return an 1603_45_49 (UN m49 numeric code) from other common systems
 # TODO:
 #    Create numeric codes
 #
@@ -696,7 +696,7 @@ numerordinatio_codicem_locali__1603_47_639_3() {
   codicem_locali=""
 
   if [ -z "$NUMERORDINATIO_DATUM__1603_47_639_3" ]; then
-    echo "non NUMERORDINATIO_DATUM__1603_47_15924 1603.45.49.tsv"
+    echo "non NUMERORDINATIO_DATUM__1603_47_15924 1603_45_49.tsv"
     return 1
   fi
 
@@ -712,7 +712,7 @@ numerordinatio_codicem_locali__1603_47_639_3() {
 }
 
 #######################################
-# Return an 1603.45.49 (UN m49 numeric code) from other common systems
+# Return an 1603_45_49 (UN m49 numeric code) from other common systems
 # TODO:
 #    Create numeric codes
 #
@@ -730,7 +730,7 @@ numerordinatio_codicem_locali__1603_47_15924() {
   codicem_locali=""
 
   if [ -z "$NUMERORDINATIO_DATUM__1603_47_15924" ]; then
-    echo "non NUMERORDINATIO_DATUM__1603_47_15924 1603.47.15924.tsv"
+    echo "non NUMERORDINATIO_DATUM__1603_47_15924 1603_47_15924.tsv"
     return 1
   fi
 
@@ -746,9 +746,15 @@ numerordinatio_codicem_locali__1603_47_15924() {
 }
 
 # https://superuser.com/questions/279141/why-is-reading-a-file-faster-than-reading-a-variable
-NUMERORDINATIO_DATUM__1603_45_49=$(cat "${NUMERORDINATIO_DATUM}/1603.45.49.tsv")
-NUMERORDINATIO_DATUM__1603_47_639_3=$(cat "${NUMERORDINATIO_DATUM}/1603.47.639.3.tsv")
-NUMERORDINATIO_DATUM__1603_47_15924=$(cat "${NUMERORDINATIO_DATUM}/1603.47.15924.tsv")
+if [ -f "${NUMERORDINATIO_DATUM}/1603_45_49.tsv" ]; then
+  NUMERORDINATIO_DATUM__1603_45_49=$(cat "${NUMERORDINATIO_DATUM}/1603_45_49.tsv")
+fi
+if [ -f "${NUMERORDINATIO_DATUM}/1603_47_639_3.tsv" ]; then
+  NUMERORDINATIO_DATUM__1603_47_639_3=$(cat "${NUMERORDINATIO_DATUM}/1603_47_639_3.tsv")
+fi
+if [ -f "${NUMERORDINATIO_DATUM}/1603_47_639_3.tsv" ]; then
+  NUMERORDINATIO_DATUM__1603_47_15924=$(cat "${NUMERORDINATIO_DATUM}/1603_47_15924.tsv")
+fi
 
 # echo ""
 # # numerordinatio_codicem_locali__1603_45_49 "br"

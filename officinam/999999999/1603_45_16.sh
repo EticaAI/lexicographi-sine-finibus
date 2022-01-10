@@ -1,10 +1,10 @@
 #!/bin/bash
 #===============================================================================
 #
-#          FILE:  1603.45.16.sh
+#          FILE:  1603_45_16.sh
 #
-#         USAGE:  ./999999999/1603.45.16.sh
-#                 time ./999999999/1603.45.16.sh
+#         USAGE:  ./999999999/1603_45_16.sh
+#                 time ./999999999/1603_45_16.sh
 #
 #   DESCRIPTION:  ...
 #
@@ -22,7 +22,7 @@
 #       VERSION:  v1.0
 #       CREATED:  2022-01-04 22:02 UTC based on scripts from github.com/EticaAI
 #                                      /HXL-Data-Science-file-formats
-#      REVISION:  ---
+#      REVISION:  2021-01-10 05:19 UTC v1.1 1603.45.16.sh -> 1603_45_16.sh
 #===============================================================================
 # Comment next line if not want to stop on first error
 set -e
@@ -51,9 +51,9 @@ ROOTDIR="$(pwd)"
 #######################################
 bootstrap_999999_1603_45_16_fetch_data() {
   # @TODO: implement some way to force full rebuild even if the zip is saved locally
-  if [ ! -f "${ROOTDIR}/999999/1603/45/16/1603.45.16.zip" ]; then
-    wget -qO- "$DATA_UN_PCode_ZIP" >"${ROOTDIR}/999999/1603/45/16/1603.45.16.zip"
-    unzip -d "${ROOTDIR}/999999/1603/45/16/xlsx" -o "${ROOTDIR}/999999/1603/45/16/1603.45.16.zip"
+  if [ ! -f "${ROOTDIR}/999999/1603/45/16/1603_45_16.zip" ]; then
+    wget -qO- "$DATA_UN_PCode_ZIP" >"${ROOTDIR}/999999/1603/45/16/1603_45_16.zip"
+    unzip -d "${ROOTDIR}/999999/1603/45/16/xlsx" -o "${ROOTDIR}/999999/1603/45/16/1603_45_16.zip"
   fi
 
   if [ -d "${ROOTDIR}/999999/1603/45/16/xlsx/__MACOSX" ]; then
@@ -229,12 +229,12 @@ deploy_1603_45_16_prepare_directories() {
 # Arguments:
 #   None
 # Outputs:
-#   1603/45/16/1/1603.45.16.1.no1.tm.hxl.csv
+#   1603/45/16/1/1603_45_16_1.no1.tm.hxl.csv
 #######################################
 deploy_1603_45_16_global_adm0() {
-  # fontem_archivum="${ROOTDIR}/999999/1603/47/639/3/1603.47.639.3.hxl.csv"
-  # objectivum_archivum="${ROOTDIR}/999999/999999/1603.45.49.tsv"
-  # objectivum_archivum_temp="${ROOTDIR}/999999/999999/1603.45.49.TEMP.tsv"
+  # fontem_archivum="${ROOTDIR}/999999/1603/47/639/3/1603_47_639_3.hxl.csv"
+  # objectivum_archivum="${ROOTDIR}/999999/999999/1603_45_49.tsv"
+  # objectivum_archivum_temp="${ROOTDIR}/999999/999999/1603_45_49.TEMP.tsv"
 
   # if [ -z "$(changed_recently "$fontem_archivum")" ]; then return 0; fi
 
@@ -243,7 +243,7 @@ deploy_1603_45_16_global_adm0() {
   echo "TODO deploy_1603_45_16_global_adm0"
 
   echo "#item+conceptum+numerordinatio,#item+conceptum+codicem,#item+rem+i_zxx+is_zmth+ix_unm49,#item+rem+i_zxx+is_zmth+ix_admlevel" \
-    >"${ROOTDIR}/1603/45/16/1/1603.45.16.1.no1.tm.hxl.csv"
+    >"${ROOTDIR}/1603/45/16/1/1603_45_16_1.no1.tm.hxl.csv"
 }
 
 bootstrap_999999_1603_45_16_fetch_data

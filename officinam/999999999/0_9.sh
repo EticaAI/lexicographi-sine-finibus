@@ -1,10 +1,10 @@
 #!/bin/bash
 #===============================================================================
 #
-#          FILE:  0.9.sh
+#          FILE:  0_9.sh
 #
-#         USAGE:  ./999999999/0.9.sh
-#                 time ./999999999/0.9.sh
+#         USAGE:  ./999999999/0_9.sh
+#                 time ./999999999/0_9.sh
 #
 #   DESCRIPTION:  Internal script to commit to https://github.com/EticaAI/n-data
 #

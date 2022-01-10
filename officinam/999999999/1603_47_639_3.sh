@@ -1,9 +1,9 @@
 #!/bin/bash
 #===============================================================================
 #
-#          FILE:  1603.47.639.3.sh
+#          FILE:  1603_47_639_3.sh
 #
-#         USAGE:  ./999999999/1603.47.639.3.sh
+#         USAGE:  ./999999999/1603_47_639_3.sh
 #
 #   DESCRIPTION:  ...
 #
@@ -17,10 +17,10 @@
 #       COMPANY:  EticaAI
 #       LICENSE:  Public Domain dedication or Zero-Clause BSD
 #                 SPDX-License-Identifier: Unlicense OR 0BSD
-#       VERSION:  v1.0
+#       VERSION:  v1.1
 #       CREATED:  2022-01-04 03:51 UTC based on scripts from github.com/EticaAI
 #                                      /HXL-Data-Science-file-formats
-#      REVISION:  ---
+#      REVISION:  2021-01-10 05:19 UTC v1.1 1603.47.639.3.sh -> 1603.47.639.3.sh
 #===============================================================================
 # Comment next line if not want to stop on first error
 set -e
@@ -53,31 +53,31 @@ DATA_ISO_639_3_CSV="https://proxy.hxlstandard.org/data.csv?tagger-match-all=on&t
 bootstrap_999999_1603_47_639_3_fetch_data_hxlated() {
 
   # An Non HXLated version
-  if [ ! -f "${ROOTDIR}/999999/1603/47/639/3/1603.47.639.3.tab" ]; then
-    wget -qO- "$DATA_ISO_639_3_TAB" >"${ROOTDIR}/999999/1603/47/639/3/1603.47.639.3.tab"
+  if [ ! -f "${ROOTDIR}/999999/1603/47/639/3/1603_47_639_3.tab" ]; then
+    wget -qO- "$DATA_ISO_639_3_TAB" >"${ROOTDIR}/999999/1603/47/639/3/1603_47_639_3.tab"
   else
-    echo "Cached: ${ROOTDIR}/999999/1603/47/639/3/1603.47.639.3.hxl.csv"
+    echo "Cached: ${ROOTDIR}/999999/1603/47/639/3/1603_47_639_3.hxl.csv"
   fi
 
   # TODO: investigage edge case very peculiar were HXLProxy may forgot
   #       a tab exactly on jrr around 65,8 KB of data.
   #      "It looks like row 2787 should actually have 8 columns, instead of 7. in line 2786."
 
-  if [ ! -f "${ROOTDIR}/999999/1603/47/639/3/1603.47.639.3.hxl.csv" ]; then
-    wget -qO- "$DATA_ISO_639_3_CSV" >"${ROOTDIR}/999999/1603/47/639/3/1603.47.639.3.hxl.csv"
+  if [ ! -f "${ROOTDIR}/999999/1603/47/639/3/1603_47_639_3.hxl.csv" ]; then
+    wget -qO- "$DATA_ISO_639_3_CSV" >"${ROOTDIR}/999999/1603/47/639/3/1603_47_639_3.hxl.csv"
   else
-    echo "Cached: ${ROOTDIR}/999999/1603/47/639/3/1603.47.639.3.hxl.csv"
+    echo "Cached: ${ROOTDIR}/999999/1603/47/639/3/1603_47_639_3.hxl.csv"
   fi
 
-  is_valid=$(csvclean --dry-run "${ROOTDIR}/999999/1603/47/639/3/1603.47.639.3.hxl.csv")
+  is_valid=$(csvclean --dry-run "${ROOTDIR}/999999/1603/47/639/3/1603_47_639_3.hxl.csv")
   if [ "$is_valid" != "No errors." ]; then
-    csvclean "${ROOTDIR}/999999/1603/47/639/3/1603.47.639.3.hxl.csv"
-    if [ -f "${ROOTDIR}/999999/1603/47/639/3/1603.47.639.3.hxl_original.csv" ]; then
-      rm "${ROOTDIR}/999999/1603/47/639/3/1603.47.639.3.hxl_original.csv"
+    csvclean "${ROOTDIR}/999999/1603/47/639/3/1603_47_639_3.hxl.csv"
+    if [ -f "${ROOTDIR}/999999/1603/47/639/3/1603_47_639_3.hxl_original.csv" ]; then
+      rm "${ROOTDIR}/999999/1603/47/639/3/1603_47_639_3.hxl_original.csv"
     fi
-    # mv "${ROOTDIR}/999999/1603/47/639/3/1603.47.639.3.hxl.csv" "${ROOTDIR}/999999/1603/47/639/3/1603.47.639.3.hxl_original.csv"
-    rm "${ROOTDIR}/999999/1603/47/639/3/1603.47.639.3.hxl.csv"
-    mv "${ROOTDIR}/999999/1603/47/639/3/1603.47.639.3.hxl_out.csv" "${ROOTDIR}/999999/1603/47/639/3/1603.47.639.3.hxl.csv"
+    # mv "${ROOTDIR}/999999/1603/47/639/3/1603_47_639_3.hxl.csv" "${ROOTDIR}/999999/1603/47/639/3/1603_47_639_3.hxl_original.csv"
+    rm "${ROOTDIR}/999999/1603/47/639/3/1603_47_639_3.hxl.csv"
+    mv "${ROOTDIR}/999999/1603/47/639/3/1603_47_639_3.hxl_out.csv" "${ROOTDIR}/999999/1603/47/639/3/1603_47_639_3.hxl.csv"
   else
     echo "Cached already is valid. Ok."
   fi
@@ -102,15 +102,15 @@ bootstrap_999999_1603_47_639_3_fetch_data_raw() {
   # echo "${FUNCNAME[0]} sources changed_recently. Reloading..."
 
   # An Non HXLated version
-  if [ ! -f "${ROOTDIR}/999999/1603/47/639/3/1603.47.639.3.tab" ]; then
-    wget -qO- "$DATA_ISO_639_3_TAB" >"${ROOTDIR}/999999/1603/47/639/3/1603.47.639.3.tab"
+  if [ ! -f "${ROOTDIR}/999999/1603/47/639/3/1603_47_639_3.tab" ]; then
+    wget -qO- "$DATA_ISO_639_3_TAB" >"${ROOTDIR}/999999/1603/47/639/3/1603_47_639_3.tab"
   else
-    echo "Cached: ${ROOTDIR}/999999/1603/47/639/3/1603.47.639.3.hxl.csv"
+    echo "Cached: ${ROOTDIR}/999999/1603/47/639/3/1603_47_639_3.hxl.csv"
   fi
 }
 
 #######################################
-# Generate the 999999/999999/1603.47.639.3.tsv
+# Generate the 999999/999999/1603_47_639_3.tsv
 # DEPRECATED use bootstrap_999999_1603_47_639_3_hxl
 #
 # Globals:
@@ -119,13 +119,13 @@ bootstrap_999999_1603_47_639_3_fetch_data_raw() {
 # Arguments:
 #   None
 # Outputs:
-#   999999/999999/1603.47.639.3.tsv
+#   999999/999999/1603_47_639_3.tsv
 #######################################
 bootstrap_999999_1603_47_639_3_old() {
   hxladd \
     --before --spec="#x_item+lower={{#vocab+code+v_6391}}" \
     --before --spec="#x_item+upper={{#vocab+code+v_6391}}" \
-    "${ROOTDIR}/999999/1603/47/639/3/1603.47.639.3.hxl.csv" |
+    "${ROOTDIR}/999999/1603/47/639/3/1603_47_639_3.hxl.csv" |
     hxladd --before --spec="#x_item+lower={{#vocab+code+v_3692_3letter+z_terminology}}" |
     hxladd --before --spec="#x_item+upper={{#vocab+code+v_3692_3letter+z_terminology}}" |
     hxladd --before --spec="#x_item+lower={{#vocab+code+v_iso3692_3letter+z_bibliographic}}" |
@@ -139,25 +139,25 @@ bootstrap_999999_1603_47_639_3_old() {
     sed 's/NONE//' | sed 's/NONE//' | sed 's/NONE//' | sed 's/NONE//' |
     sed 's/none//' | sed 's/none//' | sed 's/none//' | sed 's/none//' |
     csvformat --out-tabs --skip-lines 2 \
-      >"${ROOTDIR}/999999/999999/1603.47.639.3.tsv"
+      >"${ROOTDIR}/999999/999999/1603_47_639_3.tsv"
 }
 
 #######################################
-# Consumes 999999/1603/47/639/3/1603.47.639.3.tab and generate
-# 999999/1603/47/639/3/1603.47.639.3.hxl.csv
+# Consumes 999999/1603/47/639/3/1603_47_639_3.tab and generate
+# 999999/1603/47/639/3/1603_47_639_3.hxl.csv
 #
 # Globals:
 #   ROOTDIR
 # Arguments:
 #   None
-#   File: 999999/1603/47/639/3/1603.47.639.3.tab
+#   File: 999999/1603/47/639/3/1603_47_639_3.tab
 # Outputs:
-#   File: 999999/1603/47/639/3/1603.47.639.3.hxl.csv
+#   File: 999999/1603/47/639/3/1603_47_639_3.hxl.csv
 #######################################
 bootstrap_999999_1603_47_639_3_hxl() {
-  fontem_archivum="${ROOTDIR}/999999/1603/47/639/3/1603.47.639.3.tab"
-  temp_archivum="${ROOTDIR}/999999/999999/1603.47.639.3.TEMP.hxl.tsv"
-  objectivum_archivum="${ROOTDIR}/999999/1603/47/639/3/1603.47.639.3.hxl.csv"
+  fontem_archivum="${ROOTDIR}/999999/1603/47/639/3/1603_47_639_3.tab"
+  temp_archivum="${ROOTDIR}/999999/999999/1603_47_639_3.TEMP.hxl.tsv"
+  objectivum_archivum="${ROOTDIR}/999999/1603/47/639/3/1603_47_639_3.hxl.csv"
 
   if [ -z "$(changed_recently "$fontem_archivum")" ]; then return 0; fi
   echo "${FUNCNAME[0]} sources changed_recently. Reloading..."
@@ -180,20 +180,20 @@ bootstrap_999999_1603_47_639_3_hxl() {
 }
 
 #######################################
-# Transform 999999/1603/47/639/3/1603.47.639.3.tab into
-# 999999/999999/1603.47.639.3.tsv
+# Transform 999999/1603/47/639/3/1603_47_639_3.tab into
+# 999999/999999/1603_47_639_3.tsv
 #
 # Globals:
 #   ROOTDIR
 # Arguments:
-#   File: 999999/1603/47/639/3/1603.47.639.3.hxl.csv
+#   File: 999999/1603/47/639/3/1603_47_639_3.hxl.csv
 # Outputs:
-#   999999/999999/1603.45.49.tsv
+#   999999/999999/1603_45_49.tsv
 #######################################
 bootstrap_999999_1603_47_639_3_tsv() {
-  fontem_archivum="${ROOTDIR}/999999/1603/47/639/3/1603.47.639.3.hxl.csv"
-  objectivum_archivum="${ROOTDIR}/999999/999999/1603.45.49.tsv"
-  objectivum_archivum_temp="${ROOTDIR}/999999/999999/1603.45.49.TEMP.tsv"
+  fontem_archivum="${ROOTDIR}/999999/1603/47/639/3/1603_47_639_3.hxl.csv"
+  objectivum_archivum="${ROOTDIR}/999999/999999/1603_45_49.tsv"
+  objectivum_archivum_temp="${ROOTDIR}/999999/999999/1603_45_49.TEMP.tsv"
 
   if [ -z "$(changed_recently "$fontem_archivum")" ]; then return 0; fi
 
@@ -241,8 +241,8 @@ bootstrap_999999_1603_47_639_3_hxl
 bootstrap_999999_1603_47_639_3_tsv
 # bootstrap_999999_1603_47_639_3
 
-# find 999999/1603/47/639/3/1603.47.639.3.tab -mtime -1 -type f -exec ls -l {} \;
-# find 999999/1603/47/639/3/1603.47.639.3.tab -name
+# find 999999/1603/47/639/3/1603_47_639_3.tab -mtime -1 -type f -exec ls -l {} \;
+# find 999999/1603/47/639/3/1603_47_639_3.tab -name
 
 # ls -l --time-style=long-iso find 999999/1603/47/639/3/
 # find 999999/1603/47/639/3/ -mmin -60
