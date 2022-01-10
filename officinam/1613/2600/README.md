@@ -1,4 +1,4 @@
-### '2600'?
+### '1613:2600'?
 - https://www.historyofinformation.com/detail.php?id=1359
 - http://uruk-warka.dk/mathematics/ER6%20tables.pdf
 - "The History of Mathematical Tables: FROM SUMER TO SPREADSHEETS"
