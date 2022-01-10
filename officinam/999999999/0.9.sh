@@ -35,48 +35,48 @@ cd /workspace/git/EticaAI/n-data-pseudobase
 # read  -r -n 1 -p "Input Selection:" mainmenuinput
 
 deploy_0_9_status() {
-    git \
-        --git-dir /workspace/git/EticaAI/n-data.git-metadata \
-        --work-tree /workspace/git/EticaAI/multilingual-lexicography-automation/officinam \
-        status
+  git \
+    --git-dir /workspace/git/EticaAI/n-data.git-metadata \
+    --work-tree /workspace/git/EticaAI/multilingual-lexicography-automation/officinam \
+    status
 
-    echo ""
-    echo "  manual inspection:"
-    echo "  git --git-dir /workspace/git/EticaAI/n-data.git-metadata --work-tree /workspace/git/EticaAI/multilingual-lexicography-automation/officinam gui"
-    echo ""
+  echo ""
+  echo "  manual inspection:"
+  echo "  git --git-dir /workspace/git/EticaAI/n-data.git-metadata --work-tree /workspace/git/EticaAI/multilingual-lexicography-automation/officinam gui"
+  echo ""
 }
 
 deploy_0_9_commit() {
-    git \
-        --git-dir /workspace/git/EticaAI/n-data.git-metadata \
-        --work-tree /workspace/git/EticaAI/multilingual-lexicography-automation/officinam \
-        add .
-    git \
-        --git-dir /workspace/git/EticaAI/n-data.git-metadata \
-        --work-tree /workspace/git/EticaAI/multilingual-lexicography-automation/officinam \
-        commit -m "$DEPLOY_0_9_COMMIT_MESSAGE"
-    git \
-        --git-dir /workspace/git/EticaAI/n-data.git-metadata \
-        --work-tree /workspace/git/EticaAI/multilingual-lexicography-automation/officinam \
-        push
-    return 0
+  git \
+    --git-dir /workspace/git/EticaAI/n-data.git-metadata \
+    --work-tree /workspace/git/EticaAI/multilingual-lexicography-automation/officinam \
+    add .
+  git \
+    --git-dir /workspace/git/EticaAI/n-data.git-metadata \
+    --work-tree /workspace/git/EticaAI/multilingual-lexicography-automation/officinam \
+    commit -m "$DEPLOY_0_9_COMMIT_MESSAGE"
+  git \
+    --git-dir /workspace/git/EticaAI/n-data.git-metadata \
+    --work-tree /workspace/git/EticaAI/multilingual-lexicography-automation/officinam \
+    push
+  return 0
 }
 
 deploy_0_9_exit() {
-    echo "deploy_0_9_exit"
-    echo "Ok. Stoping by now."
-    return 0
+  echo "deploy_0_9_exit"
+  echo "Ok. Stoping by now."
+  return 0
 }
 
 deploy_0_9_status
 
 while true; do
-    read -r -p "Good to git commit this? [$DEPLOY_0_9_COMMIT_MESSAGE]" yn
-    case $yn in
-    [Yy]*) deploy_0_9_commit ;;
-    [Nn]*) deploy_0_9_exit ;;
-    *) echo "Yes y [or] No n" ;;
-    esac
+  read -r -p "Good to git commit this? [$DEPLOY_0_9_COMMIT_MESSAGE]" yn
+  case $yn in
+  [Yy]*) deploy_0_9_commit ;;
+  [Nn]*) deploy_0_9_exit ;;
+  *) echo "Yes y [or] No n" ;;
+  esac
 done
 
 # git \

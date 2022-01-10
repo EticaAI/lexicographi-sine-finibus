@@ -22,6 +22,7 @@
 
 ### Other exceptions ___________________________________________________________
 !/officinam/**/.gitkeep
+!/officinam/.editorconfig
 
 
 # git check-ignore officinam/1613
