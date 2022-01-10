@@ -5,15 +5,6 @@ More about on:
 - https://github.com/EticaAI/numerordinatio/issues/5
 - https://numerordinatio.etica.ai/
 
-<!--
-## https://stackoverflow.com/questions/2317652/nested-git-repositories-without-submodules
-# cd /workspace/git/EticaAI
-# ln -s /workspace/git/EticaAI/multilingual-lexicography-automation/officinam /workspace/git/EticaAI/n-data 
-
-cd /workspace/git/EticaAI/n-data-pseudobase
-git --git-dir /workspace/git/EticaAI/n-data.git-metadata --work-tree /workspace/git/EticaAI/multilingual-lexicography-automation/officinam status
-git --git-dir /workspace/git/EticaAI/n-data.git-metadata --work-tree /workspace/git/EticaAI/multilingual-lexicography-automation/officinam gui
--->
 
 ## License
 
@@ -27,4 +18,7 @@ git --git-dir /workspace/git/EticaAI/n-data.git-metadata --work-tree /workspace/
     - https://github.com/LeMyst/WikibaseIntegrator
 - https://github.com/maxlath/wikibase-cli
 
+
+- TODO: maybe create some namespace
+- https://en.wikipedia.org/wiki/List_of_libraries_in_the_ancient_world
 -->
