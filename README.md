@@ -6,6 +6,10 @@ More about on:
 - https://github.com/EticaAI/numerordinatio/issues/5
 - https://numerordinatio.etica.ai/
 
+
+Namespace explanations at [officinam/](officinam/).
+
+<!--
 > **Extra general current explanation**
 >
 > - The [EticaAI/multilingual-lexicography-automation](https://github.com/EticaAI/multilingual-lexicography-automation) uses writing system neutral codes to reference selected datasets and automation scripts to bootstrap them.
@@ -18,7 +22,7 @@ More about on:
 >   - Datasets under temporary working directory `999999`, while can work as a cache to avoid overload sources and (as everyone interests) check for inconsistencies, are not aimed for final usage.
 >     - Our experiences trying to get authorized use even for humanitarian/emergency response (ironically even from humanitarian organizations, despite major use by other humanitarian actors) are underwhelming.
 > - The repository [EticaAI/n-data](https://github.com/EticaAI/n-data) contains snapshots of compiled results of these automation scripts.
-
+-->
 
 ## License
 
