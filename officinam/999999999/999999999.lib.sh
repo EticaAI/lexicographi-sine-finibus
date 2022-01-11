@@ -65,6 +65,10 @@ changed_recently() {
 #
 # Opposite: changed_recently
 #
+# About changed times with git clone, see alternatives:
+#  https://stackoverflow.com/a/21735986/894546
+#  https://stackoverflow.com/a/13284229/894546
+#
 # Globals:
 #   None
 # Arguments:
@@ -117,19 +121,19 @@ file_update_if_necessary() {
     ;;
   esac
 
-  echo "middle file_update_if_necessary ..."
+  # echo "middle file_update_if_necessary ..."
 
   if [ -f "$objectivum_archivum" ]; then
     sha256sum "$objectivum_archivum"
     sha256sum "$fontem_archivum"
-    # TODO: review this logic
-    if test "$(cmp --silent "$fontem_archivum" "$objectivum_archivum")"; then
-      echo "INFO: already equal."
+
+    if [ -s "$objectivum_archivum" ] && [ "$(cmp "$fontem_archivum" "$objectivum_archivum")" = "" ]; then
+      echo "INFO: already equal. Temporary will be discarted"
       echo "      [$fontem_archivum]"
       echo "      [$objectivum_archivum]"
       rm "$fontem_archivum"
     else
-      echo "not equal"
+      echo "Not equal. Temporary will replace target file"
       rm "$objectivum_archivum"
       mv "$fontem_archivum" "$objectivum_archivum"
     fi
