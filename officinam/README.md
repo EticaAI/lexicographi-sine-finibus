@@ -50,11 +50,11 @@ The multilingual-lexicography-automation project will use `1603` as the main nam
 ### [`1603:2600`] /Generic - Multiplication tables/
 - [1603/2600/](1603/2600/)
 
-<details>
-<summary>Click to see additional iternal data files</summary>
-
 ## [`1613`] /namespace for handcrafted data/
 - [1613/](1613/)
+
+<details>
+<summary>Click to see additional iternal data files</summary>
 
 ## [`999999`] /namespace for intermediate cached files/
 - [999999/](999999/)
@@ -63,3 +63,11 @@ The multilingual-lexicography-automation project will use `1603` as the main nam
 - [999999999/](999999999/)
 
 </details>
+
+<!--
+## License
+
+Except by _[`999999999`] /namespace for automation scripts/_ and _`1613` /namespace for handcrafted data/_
+
+This repository contains mixed license and copyright owners.
+-->

@@ -25,18 +25,20 @@ Namespace explanations at [officinam/](officinam/).
 -->
 
 ## License
+TL;DR: all content from `EticaAI/multilingual-lexicography-automation` are public domain dedication, with alternatives for jurisdictions where waiving rights is not possible.
 
+### multilingual-lexicography-automation
+#### Software files
+> TODO: add public domain dedication here
+#### Data files (automated multiplication tables and reference tables by our volunteers)
 > TODO: add public domain dedication here
 
+### Data files from external sources
 
+> TODO: explain more
 <!--
-- To watch later
-  - https://github.com/Wikidata
-  - Is possible to create bots? Nice
-    - https://github.com/LeMyst/WikibaseIntegrator
-- https://github.com/maxlath/wikibase-cli
+Content from _[`999999`] /namespace for intermediate cached files/_ (**not** distributed on `EticaAI/multilingual-lexicography-automation`, the repository you are reading now, and not part of intended final usage for users) have different licences, including incompatible between themselves. The default response on this topic is: all rights to it's authors. However, note that final compiled results (in addition to use neutral numbers, since name of standards and organizations do have rights) when reefer to facts, already are likely to be considered non-copyritable, so:
 
-
-- TODO: maybe create some namespace
-- https://en.wikipedia.org/wiki/List_of_libraries_in_the_ancient_world
+- This makes _viral_ document licenses such as [GNU Free Documentation License](https://en.wikipedia.org/wiki/GNU_Free_Documentation_License) not applicable to enforce global license.
+- On extreme cases such as [Attribution-NoDerivs 3.0 IGO (CC BY-ND 3.0 IGO)](https://creativecommons.org/licenses/by-nd/3.0/igo/deed.en) with explicitly forbidden derivated still not apply for material already in the public domain.
 -->
