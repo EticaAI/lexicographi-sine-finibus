@@ -9,36 +9,76 @@ More about on:
 
 Namespace explanations at [officinam/](officinam/).
 
-<!--
-> **Extra general current explanation**
->
-> - The [EticaAI/multilingual-lexicography-automation](https://github.com/EticaAI/multilingual-lexicography-automation) uses writing system neutral codes to reference selected datasets and automation scripts to bootstrap them.
->   - When existing data exchange codes already have published numeric equivalence, such convention will be used.
->   - For relevant data standards without numeric alternative, we're already testing algorithmic **reversible** numeric mappings to be used as key
->     - Trivia: the least significant digits provide [error detection checks](https://en.wikipedia.org/wiki/Error_detection_and_correction) and [guidance on what base system](https://cs.stackexchange.com/questions/10318/the-math-behind-converting-from-any-base-to-any-base-without-going-through-base) was used to generate such mappings.
->       - While this is not as compact and beauty was well planned numeric codes, it still allow reduce burden of lexicography to not be able to publish up to date numeric equivalences.
-> - The programs ([999999999](officinam/999999999)) and handcrafted data tables (`1613`), and overall taxonomy of organizing everything are public domain dedication. Pre-compiled multiplication tables (`2600`) are not creative work, so also public domain.
-> - Whatever possible, we already priorize interlink with existing human translations (such as Wikidata) under public domain and plan to allow data consolidation / cross validation from different sources.
->   - Datasets under temporary working directory `999999`, while can work as a cache to avoid overload sources and (as everyone interests) check for inconsistencies, are not aimed for final usage.
->     - Our experiences trying to get authorized use even for humanitarian/emergency response (ironically even from humanitarian organizations, despite major use by other humanitarian actors) are underwhelming.
-> - The repository [EticaAI/n-data](https://github.com/EticaAI/n-data) contains snapshots of compiled results of these automation scripts.
--->
+## Disclaimers
 
-## License
-TL;DR: all content from `EticaAI/multilingual-lexicography-automation` are public domain dedication, with alternatives for jurisdictions where waiving rights is not possible.
+Individuals direct and indirect contributors of this project are not affiliated with external organizations. The use of labeled numerical namespaces (need to make easier for implementer) explicitly **do not** means endorsement of the organizations or theirs internal groups deciding the coding systems.
 
-### multilingual-lexicography-automation
-#### Software files
-> TODO: add public domain dedication here
-#### Data files (automated multiplication tables and reference tables by our volunteers)
-> TODO: add public domain dedication here
+Ad-hoc collaboration (such as bug fixes or suggestions to improve interoperability) between @EticaAI / @HXL-CPLP and individuals which work on any specific namespace cannot be considered formal endorsement of their organization.
 
-### Data files from external sources
+Even reuse of work (in special pre-compiled translations, or tested workflows on how to re-generate then from external collaborators) cannot be assumed as endorsement by the work on this monorepo and final work do not need to be public domain as the translations. Such feature can also be called [data roundtripping](https://diff.wikimedia.org/2019/12/13/data-roundtripping-a-new-frontier-for-glam-wiki-collaborations/) and can be stimulated on call to actions such as [Wikiprojecs](https://m.wikidata.org/wiki/Wikidata:WikiProjects) or ad hoc initiatives such [TICO-19](https://tico-19.github.io/).
 
-> TODO: explain more
-<!--
-Content from _[`999999`] /namespace for intermediate cached files/_ (**not** distributed on `EticaAI/multilingual-lexicography-automation`, the repository you are reading now, and not part of intended final usage for users) have different licences, including incompatible between themselves. The default response on this topic is: all rights to it's authors. However, note that final compiled results (in addition to use neutral numbers, since name of standards and organizations do have rights) when reefer to facts, already are likely to be considered non-copyritable, so:
+## Licenses
 
-- This makes _viral_ document licenses such as [GNU Free Documentation License](https://en.wikipedia.org/wiki/GNU_Free_Documentation_License) not applicable to enforce global license.
-- On extreme cases such as [Attribution-NoDerivs 3.0 IGO (CC BY-ND 3.0 IGO)](https://creativecommons.org/licenses/by-nd/3.0/igo/deed.en) with explicitly forbidden derivated still not apply for material already in the public domain.
--->
+> _Public domain means each issue only needs to be resolved once_
+
+## Software license
+
+[![Public Domain](https://i.creativecommons.org/p/zero/1.0/88x31.png)](UNLICENSE)
+
+To the extent possible under law, [Etica.AI](https://github.com/EticaAI)
+and non anonymous collaborators have waived all copyright and related or
+neighboring rights to this work to [Public Domain](UNLICENSE).
+
+Optionally, the [BSD Zero Clause License](https://spdx.org/licenses/0BSD.html)
+is also one explicit alternative to the Unlicense as an older license approved
+by the Open Source Initiative:
+
+`SPDX-License-Identifier: Unlicense OR 0BSD`
+
+## Creative content license (algorithms and concepts as pivot exchange for other data standards, and user documentation)
+
+[![Public Domain](https://i.creativecommons.org/p/zero/1.0/88x31.png)](UNLICENSE)
+
+To the extent possible under law, [Etica.AI](https://github.com/EticaAI)
+and non anonymous collaborators have waived all copyright and related or
+neighboring rights to this work to public domain dedication. As 2021, the
+[CC0 1.0 Universal (CC0 1.0) Public Domain Dedication](https://creativecommons.org/publicdomain/zero/1.0/)
+with **additional right** to you granted upfront:
+
+- The collaborators explicitly waive any potential **patent rights** for
+  algorithms/ideas. We also preemptively ask that potential requests from our
+  heirs in unforeseen future in any jurisdiction be ignored by any regional or
+  international court.
+
+<details>
+<summary>More context about this</summary>
+
+This different license for creative content is mostly for lawyers who would
+complain about use of Unlicense for creative content. More context (from the
+point of open source) on waiving patent rigths explicitly (since no better license for
+creative content do exist) is here: <https://opensource.org/faq#cc-zero>.
+
+There is no interest by ourselves to do _patent troll_ (for monetary gain)
+or allow abuse copyrights (to enforce companies, organizations, o
+governments) even if:
+
+- we directly strongly disagree
+- some entity try to use us as proxy to enforce us some sort of boycott to any
+  other entity.
+
+Note that data exchange on humanitarian context, even outside global-like
+war-time, already is quite complex and the need of accurate linguistic content
+conversion still even more critical to not have know errors. While the idea of
+stories behind cases like the "_黙殺_" ("_mokusatsu_") are disputable, the
+modern tooling to deal with multilingual terminology (including used to
+create dictionaries) is prone to human error.
+
+</details>
+
+## Other notices: about license and copyright of external data files
+
+This software will use intermediate files to do data conciliation and check consistency between different providers. While this is useful as to allow feedback to fix human errors, such files have their own copyrights, sometimes incompatible between themselves. These cached files are not designed to be redistributed, but they exist for technical reasons on the pre-build. Such data is on _[`999999`] /namespace for intermediate cached files/_
+
+At least part of the final compiled result on https://github.com/EticaAI/n-data can actually be viable for re-distribution fully public domain, despite both human and automated being based in part on datasets with incompatible licenses between themselves. Quite often best candidates refer to the same concepts such as country names, or facts, such as human body parts, so their non-altered forms do have copyright, but the facts themselves do not. This is on a case by case basis, **but our intent tends to be focused on helping the existing publishers to have direct access from donated translations for languages outside the English/French**.
+
+This is why the repository https://github.com/EticaAI/multilingual-lexicography-automation have license, and https://github.com/EticaAI/n-data make no clains about copyright.
