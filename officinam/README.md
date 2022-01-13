@@ -71,3 +71,14 @@ Except by _[`999999999`] /namespace for automation scripts/_ and _`1613` /namesp
 
 This repository contains mixed license and copyright owners.
 -->
+
+
+## Disclaimers
+
+**Individuals direct and indirect contributors of this project are not affiliated with external organizations. The use of labeled numerical namespaces (need to make easier for implementer) explicitly do not means endorsement of the organizations or theirs internal groups deciding the coding systems.**
+
+Ad-hoc collaboration (such as bug fixes or suggestions to improve interoperability) between @EticaAI / @HXL-CPLP and individuals which work on any specific namespace cannot be considered formal endorsement of their organization.
+
+Even reuse of work (in special pre-compiled translations, or tested workflows on how to re-generate then from external collaborators) cannot be assumed as endorsement by the work on this monorepo and final work do not need to be public domain as the translations. Such feature can also be called [data roundtripping](https://diff.wikimedia.org/2019/12/13/data-roundtripping-a-new-frontier-for-glam-wiki-collaborations/) and can be stimulated on call to actions such as [Wikiprojecs](https://m.wikidata.org/wiki/Wikidata:WikiProjects) or ad hoc initiatives such [TICO-19](https://tico-19.github.io/).
+
+Please note that even successful projects such as GLAM (see [Wikimedia Commons Data Roundtripping Final Report](https://upload.wikimedia.org/wikipedia/commons/e/e8/Wikimedia_Commons_Data_Roundtripping_-_Final_report.pdf)) in addition to lack of more software and workflows, can have issues such as duplication of data import/export because of lack of consistent IDs. So as part of multilingual lexicography, for sake of re usability, we need to give something and already draft how others could do it. A lot of inspiration for this is [strategies used on scientific names](https://en.wikipedia.org/wiki/Scientific_name) (except that you don't need to know Latin grammar).
