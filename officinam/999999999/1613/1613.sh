@@ -29,6 +29,8 @@ DATA_1613="https://docs.google.com/spreadsheets/d/1ih3ouvx_n8W5ntNcYBqoyZ2NRMdaA
 
 ROOTDIR="$(pwd)"
 
+PREFIX_1613_3="1613:3"
+
 # shellcheck source=../999999999.lib.sh
 . "$ROOTDIR"/999999999/999999999.lib.sh
 
@@ -42,7 +44,7 @@ ROOTDIR="$(pwd)"
 
 
 #######################################
-# Download 1603_45_49 from external source files
+# Download DATA_1613 from external source files
 #
 # Globals:
 #   ROOTDIR
@@ -55,6 +57,8 @@ ROOTDIR="$(pwd)"
 1613__external_fetch() {
   objectivum_archivum="${ROOTDIR}/999999/1613/1613.tm.hxl.csv"
   objectivum_archivum_temporarium="${ROOTDIR}/999999/0/1613.tm.hxl.csv"
+
+  # echo "hxltmcli $DATA_1613"
 
   if [ -z "$(stale_archive "$objectivum_archivum")" ]; then return 0; fi
 
@@ -70,5 +74,89 @@ ROOTDIR="$(pwd)"
   file_update_if_necessary csv "$objectivum_archivum_temporarium" "$objectivum_archivum"
 }
 
+#######################################
+# Download DATA_1613 from external source files
+#
+# Globals:
+#   ROOTDIR
+#   DATA_UN_M49_CSV
+# Arguments:
+#   None
+# Outputs:
+#   Writes to 999999/1613/1613.tm.hxl.csv
+#######################################
+1613__external_fetch() {
+  objectivum_archivum="${ROOTDIR}/999999/1613/1613.tm.hxl.csv"
+  objectivum_archivum_temporarium="${ROOTDIR}/999999/0/1613.tm.hxl.csv"
+
+  # echo "hxltmcli $DATA_1613"
+
+  # if [ -z "$(stale_archive "$objectivum_archivum")" ]; then return 0; fi
+
+  echo "${FUNCNAME[0]} stale data on [$objectivum_archivum], refreshing..."
+
+  hxltmcli "$DATA_1613" > "$objectivum_archivum_temporarium"
+
+  # curl --header "Accept: text/csv" \
+  #   --compressed --silent --show-error \
+  #   --get "$DATA_1613" \
+  #   --output "$objectivum_archivum_temporarium"
+
+  file_update_if_necessary csv "$objectivum_archivum_temporarium" "$objectivum_archivum"
+}
+
+######################################
+# Download external source files.
+# Note: using raw tab file for now.
+#
+# Globals:
+#   ROOTDIR
+# Arguments:
+#   [File] 999999/1613/1613.tm.hxl.csv
+# Outputs:
+#   [File] 1613/1603_3.no1.tm.hxl.tsv
+#######################################
+1613_3_deploy() {
+  fontem_archivum="${ROOTDIR}/999999/1613/1613.tm.hxl.csv"
+  objectivum_archivum="${ROOTDIR}/1613/1603_3.no1.tm.hxl.csv"
+  objectivum_archivum_temporarium="${ROOTDIR}/999999/0/1603_3.no1.tm.hxl.csv"
+
+  # if [ -z "$(changed_recently "$fontem_archivum")" ]; then return 0; fi
+
+  echo "${FUNCNAME[0]} sources changed_recently. Reloading..."
+
+  # Note: ix_iso3166p1 would generate -x-iso3166p1, 9 characters, but BCP limit to 8
+  # Note: ix_unreliefweb would generate -x-unreliefweb, 11 characters, but BCP limit to 8
+
+  # hxlrename \
+  #   --rename="#country+name+i_en+alt+v_unterm:#item+rem+i_eng+is_latn+ix_unterm" \
+  #   --rename="#country+name+i_fr+alt+v_unterm:#item+rem+i_fra+is_latn+ix_unterm" \
+  #   --rename="#country+name+i_es+alt+v_unterm:#item+rem+i_spa+is_latn+ix_unterm" \
+  #   --rename="#country+name+i_ru+alt+v_unterm:#item+rem+i_rus+is_cyrl+ix_unterm" \
+  #   --rename="#country+name+i_zh+alt+v_unterm:#item+rem+i_zho+is_hans+ix_unterm" \
+  #   --rename="#country+name+i_ar+alt+v_unterm:#item+rem+i_ara+is_arab+ix_unterm" \
+  #   "${fontem_archivum}" |
+  #   hxlselect --query="#country+code+num+v_m49>0" |
+  #   hxladd --before --spec="#item+rem+i_zxx+is_zmth+ix_unfts={{#country+code+v_fts}}" |
+  #   hxladd --before --spec="#item+rem+i_zxx+is_zmth+ix_unreliefweb={{#country+code+v_reliefweb}}" |
+  #   hxladd --before --spec="#item+rem+i_zxx+is_zmth+ix_unhrinfo={{#country+code+v_hrinfo_country}}" |
+  #   hxladd --before --spec="#item+rem+i_zxx+is_zmth+ix_unm49={{#country+code+num+v_m49}}" |
+  #   hxladd --before --spec="#item+conceptum+codicem={{#country+code+num+v_m49}}" |
+  #   hxlsort --tags="#item+conceptum" \
+  #     >"${objectivum_archivum_temporarium}"
+  hxlcut --exclude="#meta" \
+    "$fontem_archivum" \
+    | hxladd --before --spec="#item+conceptum+numerordinatio=${PREFIX_1613_3}:{{#item+conceptum+codicem}}" \
+    > "$objectivum_archivum_temporarium"
+
+  # cp "$fontem_archivum" "$objectivum_archivum_temporarium"
+
+  # Strip empty header (already is likely to be ,,,,,,)
+  sed -i '1d' "${objectivum_archivum_temporarium}"
+
+  file_update_if_necessary csv "$objectivum_archivum_temporarium" "$objectivum_archivum"
+}
+
 
 1613__external_fetch
+1613_3_deploy
