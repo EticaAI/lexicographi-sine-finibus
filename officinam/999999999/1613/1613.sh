@@ -146,6 +146,7 @@ PREFIX_1613_3="1613:3"
   #     >"${objectivum_archivum_temporarium}"
   hxlcut --exclude="#meta" \
     "$fontem_archivum" \
+    | hxlselect --query="#item+conceptum+codicem>0" \
     | hxladd --before --spec="#item+conceptum+numerordinatio=${PREFIX_1613_3}:{{#item+conceptum+codicem}}" \
     > "$objectivum_archivum_temporarium"
 
