@@ -35,6 +35,10 @@
 #   ./999999999/0/2600.py --verbum-limiti=4 --codex-verbum-tabulae=',0,1,2,3,4,5,6,7,8,9,a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z' --actionem=fontem-verbum-tabulae
 #   ./999999999/0/2600.py --verbum-limiti=4 --codex-verbum-tabulae=',0,1,2,3,4,5,6,7,8,9,a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z' --actionem=codex
 
+# Generate numeric tables
+#   ./999999999/0/2600.py --actionem-tabulam-numerae
+#   ./999999999/0/2600.py --actionem-tabulam-numerae --tabulam-numerae-finale 10000
+
 # Generate a list of hex
 # a_list = range(60)
 # print (',' + '{}'.format(','.join(hex(x) for x in a_list)) + ',')
@@ -42,7 +46,6 @@
 #
 #    ./999999999/0/2600.py --actionem-neo-scripturam --neo-scripturam-tabulae-hxl-nomini="#item+rem+i_mul+is_zsym+ix_ndt60+ix_hex" --neo-scripturam-tabulae-symbola=',�,�,�,�,�,�,�,�,�,�,�,�,�,�,�,�,�,�,�,�,0,1,2,3,4,5,6,7,8,9,a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z,�,�,�,�,' --neo-scripturam-tabulae-hxl-selectum='ix_hex'
 #    ./999999999/0/2600.py --actionem-neo-scripturam --neo-scripturam-tabulae-hxl-nomini="#item+rem+i_mul+is_zsym+ix_ndt60+ix_hex" --neo-scripturam-tabulae-symbola=',�,�,�,�,�,�,�,�,�,�,�,�,�,�,�,�,�,�,�,�,0,1,2,3,4,5,6,7,8,9,a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z,�,�,�,�,' --neo-scripturam-tabulae-hxl-selectum='ix_hex' > 1613/1603.2.60.TEST.no1.tm.hxl.tsv
-
 
 import os
 import sys
@@ -222,14 +225,14 @@ class SystemaNumerali:
 
         # 0030..0039
         >>> digitae = SystemaNumerali('DIGIT', 0x0030, 0x0039)
-        >>> digitae.de(1)
-        '1'
+        >>> digitae.de(123)
+        '123'
         >>> digitae.tabulam()
         ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
 
         >>> arabic_indic = SystemaNumerali('ARABIC-INDIC', 0x0660, 0x0669)
-        >>> arabic_indic.de(1)
-        '1'
+        >>> arabic_indic.de(123)
+        '١٢٣'
         >>> arabic_indic.tabulam()
         ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩']
 
@@ -238,17 +241,27 @@ class SystemaNumerali:
     def __init__(
             self,
             nomen: str = '',
-            unicode_initiale: str = None,
-            unicode_finale: str = None
+            unicode_initiale: int = None,
+            unicode_finale: int = None
     ):
         # TODO: implement non-decimal systems
         self.nomen = nomen
         self.unicode_initiale = unicode_initiale
         self.unicode_finale = unicode_finale
+        self.mappam_decimale = []
+
+        self.mappam_decimale = list(
+            range(self.unicode_initiale, self.unicode_finale + 1, 1))
+
+    def _char(self, numerum_punctum: int) -> str:
+        return self.mappam_decimale[numerum_punctum]
 
     def de(self, digitum: int) -> str:
-        return str(digitum)
-        # pass
+        resutatum = ''
+        for numerum_punctum in str(digitum):
+            resutatum += chr(self._char(int(numerum_punctum)))
+
+        return resutatum
 
     def tabulam(self):
         resultatum = []
@@ -256,6 +269,9 @@ class SystemaNumerali:
             resultatum.append(chr(rem))
 
         return resultatum
+
+    def id(self) -> int:
+        return hex(self.unicode_initiale).replace('0x', 'u')
 
 
 class NDT2600:
@@ -369,6 +385,45 @@ class NDT2600:
             fontem += self.quod_punctum(rem)
 
         return fontem
+
+    def exportatum_systema_numerali(
+            self, initiale: int = 0, finale: int = 9, gradus: int = 1):
+        # finale starts from 0
+        tabula = []
+
+        numerum_decimalem_nomen = numerum_decimalem.keys()
+
+        # print('numerum_decimalem_nomen', numerum_decimalem_nomen)
+        # print('neo_scripturam_hxl_selectum', hxl_selectum)
+        tabula_caput = []
+        tabula_caput.append('id')
+        tabula_caput_hxl = []
+        tabula_caput_hxl.append('#item+conceptum+codicem')
+        tabula_computae = []
+        # tabula_non = []
+        for clavem in numerum_decimalem_nomen:
+            clavem_normae = clavem.lower().replace(' ', '_').replace('-', '_')
+
+            systema_numerali = SystemaNumerali(
+                clavem, numerum_decimalem[clavem][0], numerum_decimalem[clavem][1])
+
+            tabula_caput.append(clavem_normae)
+            tabula_caput_hxl.append(
+                '#item+mul+zmth+ix_unicode+ix_' + str(systema_numerali.id()))
+
+            tabula_computae.append(systema_numerali)
+
+        tabula.append(tabula_caput)
+        tabula.append(tabula_caput_hxl)
+
+        for ad_hoc_numerae in range(initiale, finale + 1, gradus):
+            lineam = [str(ad_hoc_numerae)]
+            for systema_numerali in tabula_computae:
+
+                lineam.append(systema_numerali.de(ad_hoc_numerae))
+            tabula.append(lineam)
+
+        return tabula
 
     def exportatum_scientia_de_scriptura(
             self, hxl_selectum: str = None):
@@ -633,6 +688,34 @@ class CLI_2600:
             nargs='?'
         )
 
+        neo_tabulam_numerae.add_argument(
+            '--tabulam-numerae-initiale',
+            help='Start number (default: 0)',
+            metavar='',
+            dest='tabulam_numerae_initiale',
+            default="0",
+            type=int,
+            nargs='?'
+        )
+        neo_tabulam_numerae.add_argument(
+            '--tabulam-numerae-finale',
+            help='Final number  (default: 9)',
+            metavar='',
+            dest='tabulam_numerae_finale',
+            default="9",
+            type=int,
+            nargs='?'
+        )
+        neo_tabulam_numerae.add_argument(
+            '--tabulam-numerae-gradus',
+            help='Step between numbers  (default: 1)',
+            metavar='',
+            dest='tabulam_numerae_gradus',
+            default="1",
+            type=int,
+            nargs='?'
+        )
+
         neo_scripturam = parser.add_argument_group(
             "neo-scripturam",
             "(internal use) Operations related to associate new symbols " +
@@ -787,9 +870,14 @@ class CLI_2600:
             return self.EXIT_OK
 
         if self.pyargs.neo_tabulam_numerae:
-            # tabulam_multiplicatio = ndt2600.quod_tabulam_multiplicatio()
-            tabulam_numerae = ['TODO']
-            return self.output(tabulam_numerae)
+            systema_numerali = ndt2600.exportatum_systema_numerali(
+                self.pyargs.tabulam_numerae_initiale,
+                self.pyargs.tabulam_numerae_finale,
+                self.pyargs.tabulam_numerae_gradus
+            )
+            # tabulam_numerae = ['TODO']
+            # return self.output(tabulam_numerae)
+            return self.output(systema_numerali)
 
         if self.pyargs.verbum_simplex:
             tabulam_multiplicatio = ndt2600.quod_tabulam_multiplicatio()

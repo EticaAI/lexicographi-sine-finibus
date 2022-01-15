@@ -189,7 +189,7 @@ UNICODE_UCD_DERIVED_NUMERIC_TYPE="https://www.unicode.org/Public/UCD/latest/ucd/
   objectivum_archivum_temporarium="${ROOTDIR}/999999/0/1603_87__tabulam-numerae-decimali.hxl.csv"
   objectivum_archivum_temporarium_2="${ROOTDIR}/999999/0/1603_87__DerivedNumericType_reduced.txt"
 
-  # if [ -z "$(changed_recently "$fontem_archivum")" ]; then return 0; fi
+  if [ -z "$(changed_recently "$fontem_archivum")" ]; then return 0; fi
 
   echo "${FUNCNAME[0]} sources changed_recently. Reloading..."
 
@@ -263,4 +263,7 @@ UNICODE_UCD_DERIVED_NUMERIC_TYPE="https://www.unicode.org/Public/UCD/latest/ucd/
 
 1603_87__external_fetch__DerivedNumericType
 1603_87__process_DerivedNumericType
+
+./999999999/0/2600.py --actionem-tabulam-numerae --tabulam-numerae-finale 10000 > "${ROOTDIR}/1603/2600/1/1603_2600_1.tm.hxl.tsv"
+
 # https://www.unicode.org/Public/UCD/latest/ucd/extracted/DerivedNumericType.txt
