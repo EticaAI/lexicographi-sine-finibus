@@ -37,8 +37,6 @@ order by ?RegionIT
 - https://www.wikidata.org/wiki/Q15285626
 - https://www.wikidata.org/wiki/Q15285626
 - https://www.wikidata.org/wiki/Q854218
-
-
 - https://w.wiki/4gxT
 
 ```
@@ -57,12 +55,24 @@ SELECT DISTINCT ?iso3166p1n ?label (lang(?label) as ?label_lang)
   rdfs:label ?label
   OPTIONAL { ?adm0 wdt:P2082|wdt:P299 ?iso3166p1n. }
   
+  #FILTER(?iso3166p1n > xsd:integer(0))
 }
 # order by ?adm0
 order by ASC(?iso3166p1n)
 LIMIT 1000
 ```
 
+```txt
+wdtaxonomy Q15285626
+organization established by the United Nations (Q15285626) •1 ×64 ↑
+├──principal organ of the United Nations (Q15899789) •3 ×7
+├──specialized agency of the United Nations (Q15925165) •5 ×25 ↑
+├──Human Rights Council Subsidiary Body (Q78933945) ×3
+├──charter-based human rights body (Q79148250) ×5
+└──treaty-based human rights body (Q79699511) ×9
+
+wdtaxonomy --reverse Q15285626
+```
 
 <!--
 
