@@ -32,8 +32,8 @@ DATA_1603_44_1="https://docs.google.com/spreadsheets/d/1ih3ouvx_n8W5ntNcYBqoyZ2N
 ROOTDIR="$(pwd)"
 
 PREFIX_1613_3="1613:3"
-PREFIX_1603_994_1="1613:994:1"
-PREFIX_1603_44_1="1613:44:1"
+PREFIX_1603_994_1="1603:994:1"
+PREFIX_1603_44_1="1603:44:1"
 
 # shellcheck source=../999999999.lib.sh
 . "$ROOTDIR"/999999999/999999999.lib.sh
@@ -177,7 +177,7 @@ PREFIX_1603_44_1="1613:44:1"
   hxlcut --exclude="#meta" \
     "$fontem_archivum" \
     | hxlselect --query="#item+conceptum+codicem>0" \
-    | hxladd --before --spec="#item+conceptum+numerordinatio=${PREFIX_1603_44_1}:{{#item+conceptum+codicem}}" \
+    | hxladd --before --spec="#item+conceptum+numerordinatio=${PREFIX_1603_994_1}:{{#item+conceptum+codicem}}" \
     > "$objectivum_archivum_temporarium"
 
   #| hxlreplace --tags="#item+conceptum+numerordinatio" --pattern="_" --substitution=":" \
@@ -206,14 +206,14 @@ PREFIX_1603_44_1="1613:44:1"
   objectivum_archivum="${ROOTDIR}/1603/44/1/1603_44_1.no1.tm.hxl.csv"
   objectivum_archivum_temporarium="${ROOTDIR}/999999/0/1603_44_1.no1.tm.hxl.csv"
 
-  # if [ -z "$(changed_recently "$fontem_archivum")" ]; then return 0; fi
+  if [ -z "$(changed_recently "$fontem_archivum")" ]; then return 0; fi
 
   echo "${FUNCNAME[0]} sources changed_recently. Reloading..."
 
   hxlcut --exclude="#meta" \
     "$fontem_archivum" \
     | hxlselect --query="#item+conceptum+codicem>0" \
-    | hxladd --before --spec="#item+conceptum+numerordinatio=${PREFIX_1603_994_1}:{{#item+conceptum+codicem}}" \
+    | hxladd --before --spec="#item+conceptum+numerordinatio=${PREFIX_1603_44_1}:{{#item+conceptum+codicem}}" \
     > "$objectivum_archivum_temporarium"
 
   #| hxlreplace --tags="#item+conceptum+numerordinatio" --pattern="_" --substitution=":" \
@@ -234,3 +234,7 @@ PREFIX_1603_44_1="1613:44:1"
 
 1603_44_1__external_fetch
 1603_44_1__deploy
+
+
+# TODO: to download later large files, this may help
+# https://stackoverflow.com/questions/25010369/wget-curl-large-file-from-google-drive
