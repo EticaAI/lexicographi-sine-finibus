@@ -20,6 +20,10 @@
 # Anything on the 1613 is manual work. 
 !officinam/1613
 !officinam/1613/*
+!officinam/1603/17*
+!officinam/1603/17/*
+!officinam/1603/17/*/*
+!officinam/1603/17/*/*/*
 
 ### Other exceptions ___________________________________________________________
 !/officinam/**/.gitkeep

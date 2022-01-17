@@ -146,6 +146,92 @@ file_update_if_necessary() {
 }
 
 #######################################
+# What relative path from an numerordinatio string?
+#
+# Example:
+#  quod_path_de_numerordinatio 1603:1:2:3 "_"
+#  # 1603_1_2_3
+#  quod_path_de_numerordinatio 1603:1:2:3 ":"
+#  # 1603:1:2:3
+#
+# Globals:
+#   None
+# Arguments:
+#   numerordinatio
+#   separatum
+# Outputs:
+#   relative path
+#######################################
+numerordinatio_neo_separatum() {
+  numerordinatio="$1"
+  separatum="$2"
+  _part1=${numerordinatio//_/"$separatum"}
+  _part2=${_part1//:/"$separatum"}
+
+  # TODO: make it tolerate more separators
+  # _part1=${numerordinatio//_/\/}
+  # _part2=${_part1//:/\/}
+  # echo "$numerordinatio $_part2"
+  # echo "numerordinatio_neo_separatum [$numerordinatio $separatum] [$_part2]"
+  echo "$_part2"
+}
+
+#######################################
+# Download DATA_1613_3 from external source files
+#
+# Globals:
+#   ROOTDIR
+# Arguments:
+#   iri
+#   numerordinatio
+#   archivum_typum (Exemplum: csv)
+#   archivum_extensionem  (Exemplum: hxl.csv)
+#   downloader  (Exemplum: hxltmcli, curl)
+# Outputs:
+#   Writes to 999999/1603/45/49/1603_45_49.hxl.csv
+#######################################
+file_download_if_necessary() {
+  iri="$1"
+  numerordinatio="$2"
+  archivum_typum="$3"
+  archivum_extensionem="$4"
+  downloader="${5:-"hxltmcli"}"
+  est_temporarium="${6:-"0"}"
+
+  if [ "$est_temporarium" -eq "0" ]; then
+    _basim="${ROOTDIR}/999999"
+  else
+    _basim="${ROOTDIR}"
+  fi
+  _path=$(numerordinatio_neo_separatum "$numerordinatio" "/")
+  _nomen=$(numerordinatio_neo_separatum "$numerordinatio" "_")
+
+  # objectivum_archivum="${ROOTDIR}/999999/1613/1613.tm.hxl.csv"
+  objectivum_archivum="${_basim}/$_path/$_nomen.$archivum_extensionem"
+  objectivum_archivum_temporarium="${ROOTDIR}/999999/0/$_nomen.$archivum_extensionem"
+
+  echo "oi $_basim $_path $_nomen"
+  echo "objectivum_archivum $objectivum_archivum"
+  echo "objectivum_archivum_temporarium $objectivum_archivum_temporarium"
+
+  return 0
+
+  if [ -z "$(stale_archive "$objectivum_archivum")" ]; then return 0; fi
+
+  echo "${FUNCNAME[0]} stale data on [$objectivum_archivum], refreshing..."
+
+  if [ "$downloader" == "hxltmcli" ]; then
+    hxltmcli "$iri" >"$objectivum_archivum_temporarium"
+  else
+    curl --compressed --silent --show-error \
+      -get "$iri" \
+      --output "$objectivum_archivum_temporarium"
+  fi
+
+  file_update_if_necessary "$archivum_typum" "$objectivum_archivum_temporarium" "$objectivum_archivum"
+}
+
+#######################################
 # contains(string, substring)
 #
 # Returns 0 if the specified string contains the specified substring,
