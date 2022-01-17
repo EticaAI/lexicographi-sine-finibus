@@ -6,11 +6,11 @@ Licenses:
 - Public Domain Mark: https://creativecommons.org/publicdomain/mark/1.0/
 - CC0: https://creativecommons.org/publicdomain/zero/1.0/
 
-### `1_10_3` /câmara de mina de Hoffmann/
+### `10_1` /sinal de Werkgaertner/
 
 #### Definition by Hoffmann himself
 
-![10_3~1.png](10_3~1.png)
+![10_1~1.png](10_1~1~1.png)
 
 > https://archive.org/details/atlasoflegalmedi00hofm/page/226/mode/2up?view=theater
 
@@ -25,3 +25,5 @@ Examining the individual details of this gunshot-injury more care- fully, one fi
 The zone surrounding the "burnt margin" is the result of the contusions of the skin produced by the exploding gas, being possibly also due to singeing of the tissues. **The blackening on and in this area is caused by the powder, that which could be washed away being due to the powder-dust, that which is scattered and punctiform being due to inclusion within the skin of grains of powder.**
 
 On the other hand, the external bluish area, the size of the palm of the hand and doughy to the touch, is due to the suffusion of blood which had collected in the subcutaneous and intermuscular tissue in the neighborhood of the wound.
+
+### `10_3` /câmara de mina de Hoffmann/
