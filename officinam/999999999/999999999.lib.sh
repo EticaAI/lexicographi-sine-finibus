@@ -29,6 +29,9 @@
 
 ROOTDIR="$(pwd)"
 
+# FORCE_REDOWNLOAD="1" # Use if want ignore 1day local cache
+# FORCE_CHANGED="1" # Use if want default 5 min change
+
 ## Directory that stores basic TSVs to allow bare minimum conversions
 # These files are also generated as part of bootstrapping step
 # 1603_45_49.tsv, 1603_47_639_3.tsv, 1603_47_15924.tsv,
@@ -40,7 +43,7 @@ NUMERORDINATIO_DATUM="${ROOTDIR}/999999/999999"
 # Opposite: stale_archive
 #
 # Globals:
-#   None
+#   FORCE_CHANGED
 # Arguments:
 #   path_or_file
 #   maximum_time (default: 5 minutes)
@@ -50,6 +53,12 @@ NUMERORDINATIO_DATUM="${ROOTDIR}/999999/999999"
 changed_recently() {
   path_or_file="$1"
   maximum_time="${2:-5}"
+
+  if [ -n "$FORCE_CHANGED" ]; then
+    echo "1"
+    return 0
+  fi
+
   if [ -e "$path_or_file" ]; then
     changes=$(find "$path_or_file" -mmin -"$maximum_time")
     if [ -z "$changes" ]; then
@@ -182,6 +191,7 @@ numerordinatio_neo_separatum() {
 #
 # Globals:
 #   ROOTDIR
+#   FORCE_REDOWNLOAD
 # Arguments:
 #   iri
 #   numerordinatio
@@ -221,9 +231,12 @@ file_download_if_necessary() {
 
   # return 0
 
-  if [ -z "$(stale_archive "$objectivum_archivum")" ]; then return 0; fi
-
-  echo "${FUNCNAME[0]} stale data on [$objectivum_archivum], refreshing..."
+  if [ -z "$FORCE_REDOWNLOAD" ]; then
+    if [ -z "$(stale_archive "$objectivum_archivum")" ]; then return 0; fi
+    echo "${FUNCNAME[0]} stale data on [$objectivum_archivum], refreshing..."
+  else
+    echo "${FUNCNAME[0]} forced re-download [$objectivum_archivum]"
+  fi
 
   if [ "$downloader" == "hxltmcli" ]; then
     hxltmcli "$iri" >"$objectivum_archivum_temporarium"
@@ -274,6 +287,8 @@ file_convert_numerordinatio_de_hxltm() {
   fontem_archivum="${_basim_fontem}/$_path/$_nomen.tm.hxl.csv"
   objectivum_archivum="${_basim_objectivum}/$_path/$_nomen.no1.tm.hxl.csv"
   objectivum_archivum_temporarium="${ROOTDIR}/999999/0/$_nomen.no1.tm.hxl.csv"
+
+  # echo "$fontem_archivum"
 
   if [ -z "$(changed_recently "$fontem_archivum")" ]; then return 0; fi
 

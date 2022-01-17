@@ -54,10 +54,6 @@ The multilingual-lexicography-automation project will use `1603` as the main nam
 ### [`1603:2600`] /Generic - Multiplication tables/
 - [1603/2600/](1603/2600/)
 
-## [`1613`] /namespace for handcrafted data/
-- [1613/](1613/)
-
-Note: this dedicated top level namespace `1613` will eventually be moved (with other code) inside `1603`. More data compilations are starting to get handcrafted, without possibility of automation.
 
 <details>
 <summary>Click to see additional iternal data files</summary>

@@ -4,7 +4,8 @@
 #          FILE:  1603_17.sh
 #
 #         USAGE:  ./999999999/1603_17.sh
-#
+#                 FORCE_REDOWNLOAD=1 ./999999999/1603_17.sh
+#                 FORCE_CHANGED=1 ./999999999/1603_17.sh
 #   DESCRIPTION:  ---
 #
 #       OPTIONS:  ---
@@ -33,283 +34,22 @@ DATA_1603_44_142="https://docs.google.com/spreadsheets/d/1ih3ouvx_n8W5ntNcYBqoyZ
 
 ROOTDIR="$(pwd)"
 
-PREFIX_1613_3="1613:3"
-PREFIX_1603_994_1="1603:994:1"
-PREFIX_1603_44_1="1603:44:1"
-PREFIX_1603_44_142="1603:44:142"
+# PREFIX_1613_3="1613:3"
+# PREFIX_1603_994_1="1603:994:1"
+# PREFIX_1603_44_1="1603:44:1"
+# PREFIX_1603_44_142="1603:44:142"
 
 # shellcheck source=999999999.lib.sh
 . "$ROOTDIR"/999999999/999999999.lib.sh
 
-
-# if true ; then
-#     echo ''
-#     wget -qO- "$humanitarium_responsum_rem" > "${ROOTDIR}/999999/1613/vaccinum.tm.hxl.csv"
-# fi
-# wget -qO- "$humanitarium_responsum_rem" > "${ROOTDIR}/999999/1613/vaccinum.tm.hxl.csv"
-
-
-
-#######################################
-# Download DATA_1613_3 from external source files
-#
-# Globals:
-#   ROOTDIR
-#   DATA_1613_3
-# Arguments:
-#   None
-# Outputs:
-#   Writes to 999999/1603/45/49/1603_45_49.hxl.csv
-#######################################
-1613_3__external_fetch() {
-  objectivum_archivum="${ROOTDIR}/999999/1613/1613.tm.hxl.csv"
-  objectivum_archivum_temporarium="${ROOTDIR}/999999/0/1613.tm.hxl.csv"
-
-  if [ -z "$(stale_archive "$objectivum_archivum")" ]; then return 0; fi
-
-  echo "${FUNCNAME[0]} stale data on [$objectivum_archivum], refreshing..."
-
-  hxltmcli "$DATA_1613_3" > "$objectivum_archivum_temporarium"
-
-  file_update_if_necessary csv "$objectivum_archivum_temporarium" "$objectivum_archivum"
-}
-
-#######################################
-# Download DATA_1613_3 from external source files
-#
-# Globals:
-#   ROOTDIR
-#   DATA_1603_994_1
-# Arguments:
-#   None
-# Outputs:
-#   Writes to 999999/1603/994/1/1603_994_1.tm.hxl.csv
-#######################################
-1603_994_1__external_fetch() {
-  objectivum_archivum="${ROOTDIR}/999999/1603/994/1/1603_994_1.tm.hxl.csv"
-  objectivum_archivum_temporarium="${ROOTDIR}/999999/0/1603_994_1.tm.hxl.csv"
-
-  if [ -z "$(stale_archive "$objectivum_archivum")" ]; then return 0; fi
-
-  echo "${FUNCNAME[0]} stale data on [$objectivum_archivum], refreshing..."
-
-  hxltmcli "$DATA_1603_994_1" > "$objectivum_archivum_temporarium"
-
-  file_update_if_necessary csv "$objectivum_archivum_temporarium" "$objectivum_archivum"
-}
-
-#######################################
-# Download DATA_1603_44_1 from external source files
-#
-# Globals:
-#   ROOTDIR
-#   DATA_1603_44_1
-# Arguments:
-#   None
-# Outputs:
-#   Writes to 999999/1603/44/1/1603_44_1.tm.hxl.csv
-#######################################
-1603_44_1__external_fetch() {
-  objectivum_archivum="${ROOTDIR}/999999/1603/44/1/1603_44_1.tm.hxl.csv"
-  objectivum_archivum_temporarium="${ROOTDIR}/999999/0/1603_44_1.tm.hxl.csv"
-
-  if [ -z "$(stale_archive "$objectivum_archivum")" ]; then return 0; fi
-
-  echo "${FUNCNAME[0]} stale data on [$objectivum_archivum], refreshing..."
-
-  hxltmcli "$DATA_1603_44_1" > "$objectivum_archivum_temporarium"
-
-  file_update_if_necessary csv "$objectivum_archivum_temporarium" "$objectivum_archivum"
-}
-
-#######################################
-# Download DATA_1603_44_142 from external source files
-#
-# Globals:
-#   ROOTDIR
-#   DATA_1603_44_1
-# Arguments:
-#   None
-# Outputs:
-#   Writes to 999999/1603/44/142/1603_44_142.tm.hxl.csv
-#######################################
-1603_44_142__external_fetch() {
-  objectivum_archivum="${ROOTDIR}/999999/1603/44/142/1603_44_142.tm.hxl.csv"
-  objectivum_archivum_temporarium="${ROOTDIR}/999999/0/1603_44_142.tm.hxl.csv"
-
-  if [ -z "$(stale_archive "$objectivum_archivum")" ]; then return 0; fi
-
-  echo "${FUNCNAME[0]} stale data on [$objectivum_archivum], refreshing..."
-
-  hxltmcli "$DATA_1603_44_142" > "$objectivum_archivum_temporarium"
-
-  file_update_if_necessary csv "$objectivum_archivum_temporarium" "$objectivum_archivum"
-}
-
-######################################
-# Deploy 1613_3
-#
-# Globals:
-#   ROOTDIR
-#   PREFIX_1613_3
-# Arguments:
-#   [File] 999999/1613/1613.tm.hxl.csv
-# Outputs:
-#   [File] 1613/1603_3.no1.tm.hxl.tsv
-#######################################
-1613_3__deploy() {
-  fontem_archivum="${ROOTDIR}/999999/1613/1613.tm.hxl.csv"
-  objectivum_archivum="${ROOTDIR}/1613/1603_3.no1.tm.hxl.csv"
-  objectivum_archivum_temporarium="${ROOTDIR}/999999/0/1603_3.no1.tm.hxl.csv"
-
-  if [ -z "$(changed_recently "$fontem_archivum")" ]; then return 0; fi
-
-  echo "${FUNCNAME[0]} sources changed_recently. Reloading..."
-
-
-  hxlcut --exclude="#meta" \
-    "$fontem_archivum" \
-    | hxlselect --query="#item+conceptum+codicem>0" \
-    | hxladd --before --spec="#item+conceptum+numerordinatio=${PREFIX_1613_3}:{{#item+conceptum+codicem}}" \
-    > "$objectivum_archivum_temporarium"
-
-  # cp "$fontem_archivum" "$objectivum_archivum_temporarium"
-
-  # Strip empty header (already is likely to be ,,,,,,)
-  sed -i '1d' "${objectivum_archivum_temporarium}"
-
-  file_update_if_necessary csv "$objectivum_archivum_temporarium" "$objectivum_archivum"
-}
-
-######################################
-# Deploy 1603_994_1
-#
-# Globals:
-#   ROOTDIR
-#   PREFIX_1603_994_1
-# Arguments:
-#   [File] 999999/1603/994/1/1603_994_1.tm.hxl.csv
-# Outputs:
-#   [File] 1603/994/1/1603_994_1.no1.tm.hxl.csv
-#######################################
-1603_994_1__deploy() {
-  fontem_archivum="${ROOTDIR}/999999/1603/994/1/1603_994_1.tm.hxl.csv"
-  objectivum_archivum="${ROOTDIR}/1603/994/1/1603_994_1.no1.tm.hxl.csv"
-  objectivum_archivum_temporarium="${ROOTDIR}/999999/0/1603_994_1.no1.tm.hxl.csv"
-
-  if [ -z "$(changed_recently "$fontem_archivum")" ]; then return 0; fi
-
-  echo "${FUNCNAME[0]} sources changed_recently. Reloading..."
-
-  hxlcut --exclude="#meta" \
-    "$fontem_archivum" \
-    | hxlselect --query="#item+conceptum+codicem>0" \
-    | hxladd --before --spec="#item+conceptum+numerordinatio=${PREFIX_1603_994_1}:{{#item+conceptum+codicem}}" \
-    > "$objectivum_archivum_temporarium"
-
-  #| hxlreplace --tags="#item+conceptum+numerordinatio" --pattern="_" --substitution=":" \
-
-  # cp "$fontem_archivum" "$objectivum_archivum_temporarium"
-
-  # Strip empty header (already is likely to be ,,,,,,)
-  sed -i '1d' "${objectivum_archivum_temporarium}"
-
-  file_update_if_necessary csv "$objectivum_archivum_temporarium" "$objectivum_archivum"
-}
-
-######################################
-# Deploy 1603_44_1
-#
-# Globals:
-#   ROOTDIR
-#   PREFIX_1603_44_1
-# Arguments:
-#   [File] 999999/1603/44/1/1603_44_1.tm.hxl.csv
-# Outputs:
-#   [File] 1603/44/1/1603_44_1.no1.tm.hxl.csv
-#######################################
-1603_44_1__deploy() {
-  fontem_archivum="${ROOTDIR}/999999/1603/44/1/1603_44_1.tm.hxl.csv"
-  objectivum_archivum="${ROOTDIR}/1603/44/1/1603_44_1.no1.tm.hxl.csv"
-  objectivum_archivum_temporarium="${ROOTDIR}/999999/0/1603_44_1.no1.tm.hxl.csv"
-
-  if [ -z "$(changed_recently "$fontem_archivum")" ]; then return 0; fi
-
-  echo "${FUNCNAME[0]} sources changed_recently. Reloading..."
-
-  hxlcut --exclude="#meta" \
-    "$fontem_archivum" \
-    | hxlselect --query="#item+conceptum+codicem>0" \
-    | hxladd --before --spec="#item+conceptum+numerordinatio=${PREFIX_1603_44_1}:{{#item+conceptum+codicem}}" \
-    > "$objectivum_archivum_temporarium"
-
-  #| hxlreplace --tags="#item+conceptum+numerordinatio" --pattern="_" --substitution=":" \
-
-  # cp "$fontem_archivum" "$objectivum_archivum_temporarium"
-
-  # Strip empty header (already is likely to be ,,,,,,)
-  sed -i '1d' "${objectivum_archivum_temporarium}"
-
-  file_update_if_necessary csv "$objectivum_archivum_temporarium" "$objectivum_archivum"
-}
-
-######################################
-# Deploy 1603_44_142
-#
-# Globals:
-#   ROOTDIR
-#   PREFIX_1603_44_142
-# Arguments:
-#   [File] 999999/1603/44/1/1603_44_142.tm.hxl.csv
-# Outputs:
-#   [File] 1603/44/142/1603_44_142.no1.tm.hxl.csv
-#######################################
-1603_44_142__deploy() {
-  fontem_archivum="${ROOTDIR}/999999/1603/44/142/1603_44_142.tm.hxl.csv"
-  objectivum_archivum="${ROOTDIR}/1603/44/142/1603_44_142.no1.tm.hxl.csv"
-  objectivum_archivum_temporarium="${ROOTDIR}/999999/0/1603_44_142.no1.tm.hxl.csv"
-
-  if [ -z "$(changed_recently "$fontem_archivum")" ]; then return 0; fi
-
-  echo "${FUNCNAME[0]} sources changed_recently. Reloading..."
-
-  hxlcut --exclude="#meta" \
-    "$fontem_archivum" \
-    | hxlselect --query="#item+conceptum+codicem>0" \
-    | hxladd --before --spec="#item+conceptum+numerordinatio=${PREFIX_1603_44_142}:{{#item+conceptum+codicem}}" \
-    > "$objectivum_archivum_temporarium"
-
-  #| hxlreplace --tags="#item+conceptum+numerordinatio" --pattern="_" --substitution=":" \
-
-  # cp "$fontem_archivum" "$objectivum_archivum_temporarium"
-
-  # Strip empty header (already is likely to be ,,,,,,)
-  sed -i '1d' "${objectivum_archivum_temporarium}"
-
-  file_update_if_necessary csv "$objectivum_archivum_temporarium" "$objectivum_archivum"
-}
-
-1613_3__external_fetch
-1613_3__deploy
-
-1603_994_1__external_fetch
-1603_994_1__deploy
-
-1603_44_1__external_fetch
-1603_44_1__deploy
-
-1603_44_142__external_fetch
-1603_44_142__deploy
-
-# file_download_if_necessary "$DATA_1613_3" "1603:1:2:3" "csv" "tm.hxl.csv" "hxltmcli" "0"
-# file_download_if_necessary "$DATA_1613_3" "1603:1:2:3" "csv" "tm.hxl.csv" "hxltmcli" "1"
 file_download_if_necessary "$DATA_1603_17_17" "1603_17_17" "csv" "tm.hxl.csv" "hxltmcli" "1"
 file_convert_numerordinatio_de_hxltm "1603_17_17" "1" "0"
-# 1613_17_2_60 is not fetched from outside.
 
-# numerordinatio_neo_separatum "1603:1:2:3" "_"
-# numerordinatio_neo_separatum "1603:1:2:3" "/"
-# numerordinatio_neo_separatum "1603:1:2:3" ":"
+file_download_if_necessary "$DATA_1603_44_142" "1603_44_142" "csv" "tm.hxl.csv" "hxltmcli" "1"
+file_convert_numerordinatio_de_hxltm "1603_44_142" "1" "0"
 
-# TODO: to download later large files, this may help
-# https://stackoverflow.com/questions/25010369/wget-curl-large-file-from-google-drive
+file_download_if_necessary "$DATA_1603_44_1" "1603_44_1" "csv" "tm.hxl.csv" "hxltmcli" "1"
+file_convert_numerordinatio_de_hxltm "1603_44_1" "1" "0"
+
+file_download_if_necessary "$DATA_1603_994_1" "1603_994_1" "csv" "tm.hxl.csv" "hxltmcli" "1"
+file_convert_numerordinatio_de_hxltm "1603_994_1" "1" "0"
