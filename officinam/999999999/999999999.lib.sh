@@ -177,7 +177,8 @@ numerordinatio_neo_separatum() {
 }
 
 #######################################
-# Download DATA_1613_3 from external source files
+# Download remote file. Only executed if local file is old. Try validate
+# downloads before replacing objective files.
 #
 # Globals:
 #   ROOTDIR
@@ -196,9 +197,9 @@ file_download_if_necessary() {
   archivum_typum="$3"
   archivum_extensionem="$4"
   downloader="${5:-"hxltmcli"}"
-  est_temporarium="${6:-"0"}"
+  est_temporarium="${6:-"1"}"
 
-  if [ "$est_temporarium" -eq "0" ]; then
+  if [ "$est_temporarium" -eq "1" ]; then
     _basim="${ROOTDIR}/999999"
   else
     _basim="${ROOTDIR}"
@@ -210,11 +211,15 @@ file_download_if_necessary() {
   objectivum_archivum="${_basim}/$_path/$_nomen.$archivum_extensionem"
   objectivum_archivum_temporarium="${ROOTDIR}/999999/0/$_nomen.$archivum_extensionem"
 
-  echo "oi $_basim $_path $_nomen"
-  echo "objectivum_archivum $objectivum_archivum"
-  echo "objectivum_archivum_temporarium $objectivum_archivum_temporarium"
+  # if [ -d "${_basim}/$_path/" ]; then
+  #   echo "${_basim}/$_path/"
+  # fi
 
-  return 0
+  # echo "oi $_basim $_path $_nomen"
+  # echo "objectivum_archivum $objectivum_archivum"
+  # echo "objectivum_archivum_temporarium $objectivum_archivum_temporarium"
+
+  # return 0
 
   if [ -z "$(stale_archive "$objectivum_archivum")" ]; then return 0; fi
 
@@ -229,6 +234,65 @@ file_download_if_necessary() {
   fi
 
   file_update_if_necessary "$archivum_typum" "$objectivum_archivum_temporarium" "$objectivum_archivum"
+}
+
+
+#######################################
+# Convert HXLTM to numerordinatio with these defaults:
+# - '#meta' are removed
+# - Fields with empty or zeroed concept code are excluded
+#
+# Globals:
+#   ROOTDIR
+# Arguments:
+#   numerordinatio
+#   est_temporarium_fontem (default "1", from 99999/)
+#   est_temporarium_objectivumm (dfault "0", from real namespace)
+# Outputs:
+#   Convert files
+#######################################
+file_convert_numerordinatio_de_hxltm() {
+  numerordinatio="$1"
+  est_temporarium_fontem="${2:-"1"}"
+  est_temporarium_objectivum="${3:-"0"}"
+
+  _path=$(numerordinatio_neo_separatum "$numerordinatio" "/")
+  _nomen=$(numerordinatio_neo_separatum "$numerordinatio" "_")
+  _prefix=$(numerordinatio_neo_separatum "$numerordinatio" ":")
+
+  if [ "$est_temporarium_fontem" -eq "1" ]; then
+    _basim_fontem="${ROOTDIR}/999999"
+  else
+    _basim_fontem="${ROOTDIR}"
+  fi
+  if [ "$est_temporarium_objectivum" -eq "1" ]; then
+    _basim_objectivum="${ROOTDIR}/999999"
+  else
+    _basim_objectivum="${ROOTDIR}"
+  fi
+
+  fontem_archivum="${_basim_fontem}/$_path/$_nomen.tm.hxl.csv"
+  objectivum_archivum="${_basim_objectivum}/$_path/$_nomen.no1.tm.hxl.csv"
+  objectivum_archivum_temporarium="${ROOTDIR}/999999/0/$_nomen.no1.tm.hxl.csv"
+
+  if [ -z "$(changed_recently "$fontem_archivum")" ]; then return 0; fi
+
+  echo "${FUNCNAME[0]} sources changed_recently. Reloading..."
+
+  hxlcut --exclude="#meta" \
+    "$fontem_archivum" \
+    | hxlselect --query="#item+conceptum+codicem>0" \
+    | hxladd --before --spec="#item+conceptum+numerordinatio=${_prefix}:{{#item+conceptum+codicem}}" \
+    > "$objectivum_archivum_temporarium"
+
+  #| hxlreplace --tags="#item+conceptum+numerordinatio" --pattern="_" --substitution=":" \
+
+  # cp "$fontem_archivum" "$objectivum_archivum_temporarium"
+
+  # Strip empty header (already is likely to be ,,,,,,)
+  sed -i '1d' "${objectivum_archivum_temporarium}"
+
+  file_update_if_necessary csv "$objectivum_archivum_temporarium" "$objectivum_archivum"
 }
 
 #######################################
