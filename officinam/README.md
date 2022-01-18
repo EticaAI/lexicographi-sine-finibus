@@ -19,6 +19,10 @@ The multilingual-lexicography-automation project will use `1603` as the main nam
 
 <!-- > Note: if you need to reuse data and injest full namespace, but "1603" (... todo write more, maybe cite timestamp of https://github.com/HXL-CPLP/forum/blob/master/LICENSE) -->
 
+### [`1603:1`] /Metadata overview of 1603 namespaces/
+- [1603/1](1603/1)
+
+
 ### [`1603:3`] /Wikimedia Foundation, Inc/
 - [1603/3/](1603/3/)
 
