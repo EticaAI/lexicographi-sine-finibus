@@ -5,18 +5,32 @@
 ### 1603:3.1 (Wikipedia)
 > _Launched	January 15, 2001 (20 years ago) _ -- https://en.wikipedia.org/wiki/Wikipedia
 
+
+
 ### 1603:3.2 (Wikitionary)
 > _Wiktionary was brought online on December 12, **2002**,[2] following a proposal by Daniel Alston and an idea by Larry Sanger, co-founder of Wikipedia.[3] _ -- https://en.wikipedia.org/wiki/Wiktionary
 
-### 1603:3.12 (Wikidata)
+### [`1603:3.12`] /Vicidata/
 > _Wikidata is a collaboratively edited multilingual knowledge graph hosted by the Wikimedia Foundation.[2] It is a common source of open data that Wikimedia projects such as Wikipedia,[3][4] and anyone else, can use under the **CC0 public domain license**. Wikidata is a wiki powered by the software MediaWiki, and is also powered by the set of knowledge graph MediaWiki extensions known as Wikibase. (...) Launched29 October **2012**; 9 years ago[1] (...) Logo
 The bars on the logo contain the word "WIKI" encoded in Morse code.[38] It was created by Arun Ganesh and selected through community decision.[39]_ -- https://en.wikipedia.org/wiki/Wikidata
 
-### Neo latin term for citizen science
+### Latinas viva ad anglicum "Wikidata"
+<s>
+- Vicipaedia, Vicipædia, https://la.wikipedia.org/wiki/Vicipaedia
+  - vicī, https://en.wiktionary.org/wiki/vicis#Latin
+  - paedīa, f, singular, https://en.wiktionary.org/wiki/paedia
+- data, https://en.wiktionary.org/wiki/datus#Latin
+- "vicīdatum"
+</s>
+- https://la.wikipedia.org/wiki/Vicipaedia:Pagina_prima as 2022-01-27 uses "Vicidata"
+
+----
+
+<!-- ### Neo latin term for citizen science
 - https://www.wikidata.org/wiki/Q1093434
 
 - commūnitās, f, nominative, https://en.wiktionary.org/wiki/communitas#Latin
-- scientiae, f, https://en.wiktionary.org/wiki/scientia#Latin
+- scientiae, f, https://en.wiktionary.org/wiki/scientia#Latin -->
 
 <!--
 
