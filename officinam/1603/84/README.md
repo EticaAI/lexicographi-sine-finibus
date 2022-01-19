@@ -1,4 +1,4 @@
-## [`1603:84`] /Odontologia/
+## [`1603:84`] /Dentālis scientiae/
 
 [![](https://i.pinimg.com/564x/cd/ef/35/cdef357b5053fe3dd1f50467a9385982.jpg)](https://www.elitereaders.com/ancient-mayans-dentistry/)
 
@@ -14,3 +14,14 @@ No links for books on `1603:84` for these reasons:
     - 084 is UN m49 code for Belize
 
 - > _"The Mayans practiced a form of modern dentistry and were very advanced for their time. These ancient dentists filled cavities, cleaned tartar with copper instruments and removed teeth. What is even more remarkable is that **they had names for every procedure and tooth**. In the present day, when we have a dental procedure we rinse our mouths out after with a saline solution. Did you know that the Mayans thousands of year ago also used to do this? This just shows how forward-thinking and sophisticated their level of dentistry really was."_ — https://www.freshdentalcare.co.uk/post/the-mysteries-of-the-mayan-molars-dentistry-in-the-ancient-mayan-world
+
+### Neo latin term for forensic science
+- dentālis, masc/fem, nominative, https://en.wiktionary.org/wiki/dentalis#Latin
+- scientiae, f, https://en.wiktionary.org/wiki/scientia#Latin
+
+## [`1603:84:1`] /dentāle vocābulāriō/
+
+### Neo latin term for /dentāle vocābulāriō/
+- dentālis, masc/fem, nominative, https://en.wiktionary.org/wiki/dentalis#Latin
+- vocābulāria, https://en.wiktionary.org/wiki/vocabularium#Latin
+- dens, https://en.wiktionary.org/wiki/dens#Latin

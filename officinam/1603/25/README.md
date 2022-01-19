@@ -19,5 +19,39 @@
 
 ### Latin term for medical science
 - https://www.wikidata.org/wiki/Q11190
-
 - Medicina, https://la.wikipedia.org/wiki/Medicina
+
+
+### [`1603:25:1`] 
+
+
+----
+
+## Etc
+### Nomina Anatomica
+
+> <s>Note: **I'm not finding exact grammar of nomina anatomica in Latin. Where did they got the final -"a" in "anatomica"????**</s>
+> Never mind. "anatomia" -> "anatomi" + "-ica"
+
+- https://en.wikipedia.org/wiki/Nomina_Anatomica
+- https://en.wikipedia.org/wiki/List_of_human_anatomical_parts_named_after_people
+- https://la.wikipedia.org/wiki/Terminologia_Anatomica
+
+- "Nomina anatomica"
+  - **"nōmina"**, n, plural (nominative, accusative, vocative) https://en.wiktionary.org/wiki/nomen#Latin
+  - **"anatomica"** (???), https://en.wiktionary.org/wiki/anatomica#Latin
+  - anatomicus, (maybe?) https://en.wiktionary.org/wiki/anatomicus#Latin
+  - anatomia, (maybe?) https://en.wiktionary.org/wiki/anatomia#Latin
+  - "-ica", plural, (nominative, accusative, vocative), https://en.wiktionary.org/wiki/-icus#Latin
+    - suffix means:
+      - belonging to; 
+      - derived from;
+      - of or pertaining to; connected with; -ic, -ish
+ 
+Internal notes: if using this strategy, we would name all new items something like _[`1603:84:1`] /dentāle vocābulāriō/_ would become _[`1603:84:1`] /vocābulāria dentālia/_ or _[`1603:84:1`] /vocābulāria dentālibus/_.
+
+based on:
+- vocābulāria, https://en.wiktionary.org/wiki/vocabularium#Latin
+- dentālia, n, plural, https://en.wiktionary.org/wiki/dentalis#Latin
+- dens, https://en.wiktionary.org/wiki/dens#Latin
+- "-ica", plural, (nominative, accusative, vocative), https://en.wiktionary.org/wiki/-icus#Latin
