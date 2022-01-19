@@ -15,3 +15,8 @@
   - "1898 - Atlas of legal medicine (authorized translation from german)"
     - https://archive.org/details/atlasoflegalmedi00hofm
 -->
+
+
+### Neo latin term for forensic science
+- forēnsis, masc/fem, nominative, https://en.wiktionary.org/wiki/forensis#Latin
+- scientiae, f, https://en.wiktionary.org/wiki/scientia#Latin
