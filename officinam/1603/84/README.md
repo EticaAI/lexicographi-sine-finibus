@@ -19,9 +19,17 @@ No links for books on `1603:84` for these reasons:
 - dentālis, masc/fem, nominative, https://en.wiktionary.org/wiki/dentalis#Latin
 - scientiae, f, https://en.wiktionary.org/wiki/scientia#Latin
 
-## [`1603:84:1`] /dentāle vocābulāriō/
+<!-- ## [`1603:84:1`] /dentāle vocābulāriō/
 
-### Neo latin term for /dentāle vocābulāriō/
+  ### Neo latin term for /dentāle vocābulāriō/
 - dentālis, masc/fem, nominative, https://en.wiktionary.org/wiki/dentalis#Latin
 - vocābulāria, https://en.wiktionary.org/wiki/vocabularium#Latin
-- dens, https://en.wiktionary.org/wiki/dens#Latin
+- dens, https://en.wiktionary.org/wiki/dens#Latin -->
+
+## [`1603:84:1`] /dictiōnāria dentāria/
+
+### Neo latin term for /dictiōnāria dentāria/
+- dictiōnāria, n, plural, https://en.wiktionary.org/wiki/dictionarium#Latin
+- dentālia, n, plural, https://en.wiktionary.org/wiki/dentalis#Latin
+- dentāria, n, plural, https://en.wiktionary.org/wiki/dentarius#Latin
+  - http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0059:entry=dentarius

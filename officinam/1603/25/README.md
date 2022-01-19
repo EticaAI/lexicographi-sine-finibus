@@ -22,8 +22,10 @@
 - Medicina, https://la.wikipedia.org/wiki/Medicina
 
 
-### [`1603:25:1`] 
+### [`1603:25:1`] /general regions of the body/
 
+- https://en.wikipedia.org/wiki/List_of_human_anatomical_regions
+- https://en.wikipedia.org/wiki/List_of_human_anatomical_regions#/media/File:Morris_1933_1.png
 
 ----
 
