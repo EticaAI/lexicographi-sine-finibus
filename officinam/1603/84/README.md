@@ -1,0 +1,16 @@
+## [`1603:84`] /Odontologia/
+
+[![](https://i.pinimg.com/564x/cd/ef/35/cdef357b5053fe3dd1f50467a9385982.jpg)](https://www.elitereaders.com/ancient-mayans-dentistry/)
+
+No links for books on `1603:84` for these reasons:
+- > _The Maya developed their huun-paper around the 5th century,[3] which is roughly the same time that the codex became predominant over the scroll in the Roman world. Maya paper was more durable and a better writing surface than papyrus._ https://en.wikipedia.org/wiki/Maya_codices
+- > _We found a large number of books in these characters and, as they contained nothing in which were not to be seen as superstition and lies of the devil, we burned them all, which they regretted to an amazing degree, and which caused them much affliction._ — Bishop Diego de Landa in July 1562
+- > _Our knowledge of ancient Maya thought must represent only a tiny fraction of the whole picture, for of the thousands of books in which the full extent of their learning and ritual was recorded, only four have survived to modern times (as though all that posterity knew of ourselves were to be based upon three prayer books and Pilgrim's Progress)._ — Michael D. Coe https://en.wikipedia.org/wiki/Maya_codices
+
+
+## `1603:84`?
+- Maya
+  - Belize is part of Maya region
+    - 084 is UN m49 code for Belize
+
+- > _"The Mayans practiced a form of modern dentistry and were very advanced for their time. These ancient dentists filled cavities, cleaned tartar with copper instruments and removed teeth. What is even more remarkable is that **they had names for every procedure and tooth**. In the present day, when we have a dental procedure we rinse our mouths out after with a saline solution. Did you know that the Mayans thousands of year ago also used to do this? This just shows how forward-thinking and sophisticated their level of dentistry really was."_ — https://www.freshdentalcare.co.uk/post/the-mysteries-of-the-mayan-molars-dentistry-in-the-ancient-mayan-world
