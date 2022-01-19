@@ -24,6 +24,28 @@ The bars on the logo contain the word "WIKI" encoded in Morse code.[38] It was c
 </s>
 - https://la.wikipedia.org/wiki/Vicipaedia:Pagina_prima as 2022-01-27 uses "Vicidata"
 
+### [`1603:3.12:6`] /Speciālis 	collēctiōnī de Vicidata Proprietātī/
+- speciālis, f/m, singular, https://en.wiktionary.org/wiki/specialis#Latin
+- collēctiōnī, f, singular, (Nominative) https://en.wiktionary.org/wiki/collectio#Latin
+- collēctiō, f, singular, (Nominative) https://en.wiktionary.org/wiki/collectio#Latin
+- sēlēcta, n, sēlēcta
+
+### [`1603:3.12:16`] //Speciālis collēctiōnī de Vicidata Proprietātī//
+
+#### Latinas viva ad anglicum "Wikidata"
+- Vicidata, as 2022-01-27, https://la.wikipedia.org/wiki/Vicipaedia:Pagina_prima
+- proprietātī, https://en.wiktionary.org/wiki/proprietas#Latin
+- //Speciālis collēctiōnī de Vicidata Proprietātī//
+
+### [`1603:3.12:17`] /Vicidata identitātī/
+- Vicidata, as 2022-01-27, https://la.wikipedia.org/wiki/Vicipaedia:Pagina_prima
+- https://www.wikidata.org/wiki/Q43649390
+- identitātī, f, singular, (Dative), https://en.wiktionary.org/wiki/identitas#Latin
+- identitāte, f, singular, (Ablative), https://en.wiktionary.org/wiki/identitas#Latin
+- rēs, f, singular (Nominative), https://en.wiktionary.org/wiki/res#Latin
+- "Vicidata rēs identitāte"
+
+
 ----
 
 <!-- ### Neo latin term for citizen science

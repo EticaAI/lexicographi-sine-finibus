@@ -36,6 +36,14 @@
 - https://en.wikipedia.org/wiki/Common_Operational_Datasets#P-codes
 - > _Place Codes (P-Codes) are found in Administrative Boundary CODs. They are unique geographic (geo) identification codes, represented by combinations of letters and/or numbers to identify a specific location or feature on a map or within a database. For a specific place, point, or positional locations, the geo-codes have come into common usages as P-codes (abbreviated for Place-code). These terms can be essentially interchanged as long as one recognizes the focus on “position or place” for P-codes. They are also used to provide unique reference codes to refer to settlements or administrative boundaries in other datasets._
 
+### Latinas viva ad anglicum "Place code"
+- locālia, https://en.wiktionary.org/wiki/localis#Latin
+- locum, m, singular (accusative) https://en.wiktionary.org/wiki/localis#Latin
+- cōdicī, m, singular (Dative), https://en.wiktionary.org/wiki/codex#Latin
+- locus, m, singular (nominative), https://en.wiktionary.org/wiki/locus#Latin
+- "Locum cōdicī"
+- "Locus cōdicī"
+
 ### Latinas viva ad anglicum "administrative division"
 - https://en.wiktionary.org/wiki/administratus#Latin
 - https://en.wiktionary.org/wiki/divisio#Latin

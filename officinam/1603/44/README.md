@@ -20,3 +20,17 @@
 ### Neo latin term for forensic science
 - forēnsis, masc/fem, nominative, https://en.wiktionary.org/wiki/forensis#Latin
 - scientiae, f, https://en.wiktionary.org/wiki/scientia#Latin
+
+
+## [1603:44:1] //dictiōnāria de post mortis condici// (Very temporary; poor grammar)
+- https://www.wikidata.org/wiki/Q99312209
+- https://en.wikipedia.org/wiki/Stages_of_death
+- https://en.wiktionary.org/wiki/condicio#Latin
+
+- Very temporary: //dictiōnāria de post mortis condicio//
+
+## [1603:44:142] //arma ignifera// (needs review)
+- https://en.wiktionary.org/wiki/vulnus#Latin
+- arma ignifera, https://latin.stackexchange.com/questions/509/why-is-there-no-word-meaning-firearm-in-contemporary-latin
+- arma ignifera, https://la.wikipedia.org/wiki/Arma_ignifera
+- //dictiōnāria de vulnera ab arma ignifera//
