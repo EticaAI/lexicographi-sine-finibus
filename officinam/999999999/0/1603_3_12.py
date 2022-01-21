@@ -87,8 +87,16 @@ STDIN = sys.stdin.buffer
 
 # https://stackoverflow.com/questions/43258341/how-to-get-wikidata-labels-in-more-than-one-language
 class CS1603z3z12:
+    """ [summary]
+
+    - https://en.wikibooks.org/wiki/SPARQL
+
+    [extended_summary]
+    """
+
     def __init__(self):
         self.D1613_1_51 = self._init_1613_1_51_datum()
+        self.D1613_1_51_langpair = self._query_linguam()
         # self.scientia_de_scriptura = {}
         # self.scientia_de_scriptura = self.D1613_2_60
         # self.cifram_signaturae = 6  # TODO: make it flexible
@@ -105,7 +113,7 @@ class CS1603z3z12:
             'Q386120',
             'Q61923',
             'Q7164',
-            #'...'
+            # '...'
         ]
 
     def _init_1613_1_51_datum(self):
@@ -118,6 +126,7 @@ class CS1603z3z12:
             csv_file = csv.DictReader(file)
             # return list(tsv_file)
             for conceptum in csv_file:
+                # print('conceptum', conceptum)
                 int_clavem = int(conceptum['#item+conceptum+codicem'])
                 datum[int_clavem] = {}
                 for clavem, rem in conceptum.items():
@@ -125,6 +134,20 @@ class CS1603z3z12:
                         datum[int_clavem][clavem] = rem
 
         return datum
+
+    def _query_linguam(self):
+        resultatum = []
+
+        for clavem, rem in self.D1613_1_51.items():
+            # for clavem, rem in enumerate(self.D1613_1_51):
+            # print('clavem rem', clavem, rem)
+            resultatum.append([
+                rem['#item+rem+i_qcc+is_zxxx+ix_wikilngm'],
+                'item__rem' + rem['#item+rem+i_qcc+is_zxxx+ix_csvsffxm'],
+            ])
+        # print(self.D1613_1_51)
+        # print('resultatum', resultatum)
+        return resultatum
 
     def est_resultatum_separato(self, resultatum_separato: str):
         self.resultatum_separato = resultatum_separato
@@ -158,18 +181,35 @@ class CS1603z3z12:
 
     def query(self):
         qid = ['wd:' + x for x in self.qid if isinstance(x, str)]
+        # select = '?item ' + " ".join(self._query_linguam())
+
+        select = ['?item']
+        filter_otional = []
+        for pair in self.D1613_1_51_langpair:
+            select.append('?' + pair[1])
+            filter_otional.append(
+                '?item rdfs:label ?' +
+                pair[1] + ' filter (lang(?' + pair[1] +
+                ') = "' + pair[0] + '").'
+            )
+        filter_otional_done = ['    ' + x for x in filter_otional]
+        # print('select', self.D1613_1_51_langpair)
+        # print('select', select)
+        # print('filter_otional', filter_otional)
         term = """
-# Select by exact QIDs compiled earlier
-SELECT ?item ?item_rem__eng_latn ?item_rem__rus_cyrl
+SELECT {select}
 WHERE
 {{
   VALUES ?item {{ {qitems} }}
   OPTIONAL {{
-    ?item rdfs:label ?item_rem__eng_latn filter (lang(?item_rem__eng_latn) = "en").
-    ?item rdfs:label ?item_rem__rus_cyrl filter (lang(?item_rem__rus_cyrl) = "ru").
+{langfilter}
   }}
 }}
-        """.format(qitems = " ".join(qid))
+        """.format(
+            qitems=" ".join(qid),
+            select=" ".join(select),
+            langfilter="\n".join(filter_otional_done),
+        )
         # """.format(qitems = " ".join(self.qid))
         return term
 
@@ -179,6 +219,7 @@ WHERE
         # resultatum.append(str(self.D1613_1_51))
         resultatum.append(self.query())
         return resultatum
+
 
 class CLI_2600:
     def __init__(self):
