@@ -1,11 +1,10 @@
 # [`1603:3`] /Commūnitās scientiae/
 
+
 > _Wikimedia Foundation, Inc. (WMF, or simply Wikimedia) is an American foundation headquartered in San Francisco, California.[9] It owns and operates the Wikimedia projects.[10][11][12][13]. It was established in **2003** by Jimmy Wales as a way to fund Wikipedia and its sibling projects through non-profit means.[1][2] As of 2021, it employs over 550 staff and contractors, with annual revenues in excess of US$150 million._ -- https://en.wikipedia.org/wiki/Wikimedia_Foundation
 
 ### 1603:3.1 (Wikipedia)
 > _Launched	January 15, 2001 (20 years ago) _ -- https://en.wikipedia.org/wiki/Wikipedia
-
-
 
 ### 1603:3.2 (Wikitionary)
 > _Wiktionary was brought online on December 12, **2002**,[2] following a proposal by Daniel Alston and an idea by Larry Sanger, co-founder of Wikipedia.[3] _ -- https://en.wikipedia.org/wiki/Wiktionary
@@ -23,6 +22,11 @@ The bars on the logo contain the word "WIKI" encoded in Morse code.[38] It was c
 - "vicīdatum"
 </s>
 - https://la.wikipedia.org/wiki/Vicipaedia:Pagina_prima as 2022-01-27 uses "Vicidata"
+
+
+- https://www.wikidata.org/wiki/Wikidata:In_one_page
+  - https://upload.wikimedia.org/wikipedia/commons/8/8d/Wikidata-in-brief-1.0.pdf
+
 
 ### [`1603:3.12:6`] /Speciālis 	collēctiōnī de Vicidata Proprietātī/
 - speciālis, f/m, singular, https://en.wiktionary.org/wiki/specialis#Latin
@@ -44,6 +48,48 @@ The bars on the logo contain the word "WIKI" encoded in Morse code.[38] It was c
 - identitāte, f, singular, (Ablative), https://en.wiktionary.org/wiki/identitas#Latin
 - rēs, f, singular (Nominative), https://en.wiktionary.org/wiki/res#Latin
 - "Vicidata rēs identitāte"
+
+
+### [`1603:3.1603:45:1`] //
+
+
+
+- Fontem: [../45/1/1603_45_1.no1.tm.hxl.csv](../45/1/1603_45_1.no1.tm.hxl.csv)
+
+Exemplum:
+```
+Q1065	UN
+Q15925165	
+Q82151	FAO
+Q125761	ICAO
+Q689859	IFAD
+Q54129	ILO
+Q7804	IMF
+```
+- https://www.wikidata.org/wiki/Wikidata:Lexicographical_data
+
+<!--
+# Variant of
+# - https://www.wikidata.org/wiki/Wikidata:SPARQL_query_service/queries/examples#UN_member_states
+# - https://stackoverflow.com/questions/43258341/how-to-get-wikidata-labels-in-more-than-one-language
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX wikibase: <http://wikiba.se/ontology#>
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+
+#SELECT DISTINCT ?adm0 ?iso3166p1n ?label (lang(?label) as ?label_lang)
+SELECT DISTINCT ?iso3166p1n ?label (lang(?label) as ?label_lang)
+{
+  ?adm0 wdt:P31/wdt:P279* wd:Q3624078;
+  rdfs:label ?label
+  OPTIONAL { ?adm0 wdt:P2082|wdt:P299 ?iso3166p1n. }
+  
+  #FILTER(?iso3166p1n > xsd:integer(0))
+}
+# order by ?adm0
+order by ASC(?iso3166p1n)
+LIMIT 1000
+-->
 
 
 ----
