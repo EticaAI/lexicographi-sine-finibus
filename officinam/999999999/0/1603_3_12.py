@@ -72,33 +72,45 @@ STDIN = sys.stdin.buffer
 
 # a aa aaa
 # printf "30160\n1830260\n109830360\n" | ./999999999/0/2600.py --actionem-decifram
+# ./999999999/0/1603_3_12.py --actionem-sparql
 
-
-class CS1603_3_12:
+class CS1603z3z12:
     def __init__(self):
-        self.D1613_2_60 = self._init_1613_2_60_datum()
+        self.D1613_1_51 = self._init_1613_1_51_datum()
         # self.scientia_de_scriptura = {}
-        self.scientia_de_scriptura = self.D1613_2_60
-        self.cifram_signaturae = 6  # TODO: make it flexible
-        self.codex_verbum_tabulae = []
-        self.verbum_limiti = 2
+        # self.scientia_de_scriptura = self.D1613_2_60
+        # self.cifram_signaturae = 6  # TODO: make it flexible
+        # self.codex_verbum_tabulae = []
+        # self.verbum_limiti = 2
         self.resultatum_separato = "\t"
 
-    def _init_1613_2_60_datum(self):
+    def _init_1613_1_51_datum(self):
         # archivum = NUMERORDINATIO_BASIM + "/1613/1603_2_60.no1.tm.hxl.tsv"
-        archivum = NUMERORDINATIO_BASIM + "/1603/17/2/60/1613_17_2_60.no1.tm.hxl.tsv"
+        # archivum = NUMERORDINATIO_BASIM + "/1603/17/2/60/1613_17_2_60.no1.tm.hxl.tsv"
+        archivum = NUMERORDINATIO_BASIM + "/1603/1/51/1603_1_51.no1.tm.hxl.csv"
         datum = {}
         with open(archivum) as file:
-            tsv_file = csv.DictReader(file, delimiter="\t")
+            # tsv_file = csv.DictReader(file, delimiter="\t")
+            csv_file = csv.DictReader(file)
             # return list(tsv_file)
-            for conceptum in tsv_file:
-                int_clavem = int(conceptum['#item+conceptum+numerordinatio'])
+            for conceptum in csv_file:
+                int_clavem = int(conceptum['#item+conceptum+codicem'])
                 datum[int_clavem] = {}
                 for clavem, rem in conceptum.items():
-                    if not clavem.startswith('#item+conceptum+numerordinatio'):
+                    if not clavem.startswith('#item+conceptum+codicem'):
                         datum[int_clavem][clavem] = rem
 
         return datum
+
+    def est_resultatum_separato(self, resultatum_separato: str):
+        self.resultatum_separato = resultatum_separato
+        return self
+
+    def exportatum_sparql(self):
+        resultatum = []
+        resultatum.append('#TODO')
+        resultatum.append(str(self.D1613_1_51))
+        return resultatum
 
 class CLI_2600:
     def __init__(self):
@@ -146,175 +158,175 @@ class CLI_2600:
         )
 
         neo_codex = parser.add_argument_group(
-            "neo-codex-tabulae",
-            "(DEFAULT USE) Operations to pre-build codes with their meanings")
+            "sparql",
+            "(DEFAULT USE) SPARQL query")
 
         neo_codex.add_argument(
-            '--actionem-codex-tabulae-completum',
-            help='Define mode to operate with new code ' +
-            'tables with their meanings',
+            '--actionem-sparql',
+            help='Define mode to operate with generation of SPARQL ' +
+            'queries',
             metavar='',
-            dest='codex_completum',
+            dest='actionem_sparql',
             const=True,
             nargs='?'
         )
 
-        neo_codex.add_argument(
-            '--actionem-verbum-simplex',
-            help='Do not generate the codes. Just calculate the full matrix ' +
-            'of possible codes using the rules',
-            metavar='',
-            dest='verbum_simplex',
-            nargs='?'
-        )
+        # neo_codex.add_argument(
+        #     '--actionem-verbum-simplex',
+        #     help='Do not generate the codes. Just calculate the full matrix ' +
+        #     'of possible codes using the rules',
+        #     metavar='',
+        #     dest='verbum_simplex',
+        #     nargs='?'
+        # )
 
-        neo_codex.add_argument(
-            '--verbum-limiti',
-            help='Codeword limit when when creating multiplication tables' +
-            'Most western codetables are between 2 and 4. ' +
-            'Defaults to 2',
-            metavar='verbum_limiti',
-            default="2",
-            nargs='?'
-        )
+        # neo_codex.add_argument(
+        #     '--verbum-limiti',
+        #     help='Codeword limit when when creating multiplication tables' +
+        #     'Most western codetables are between 2 and 4. ' +
+        #     'Defaults to 2',
+        #     metavar='verbum_limiti',
+        #     default="2",
+        #     nargs='?'
+        # )
 
-        neo_codex.add_argument(
-            '--codex-verbum-tabulae',
-            help='Multiplication table of the code words. ' +
-            'First character determine the spliter. ' +
-            'Example 1: " 0 1 2 3 4 5 6 7 8 9 a b c d e f ". '
-            'Example 2: ",a,e,i,o,u,"',
-            nargs='?'
-        )
+        # neo_codex.add_argument(
+        #     '--codex-verbum-tabulae',
+        #     help='Multiplication table of the code words. ' +
+        #     'First character determine the spliter. ' +
+        #     'Example 1: " 0 1 2 3 4 5 6 7 8 9 a b c d e f ". '
+        #     'Example 2: ",a,e,i,o,u,"',
+        #     nargs='?'
+        # )
 
-        neo_codex.add_argument(
-            '--resultatum-limiti',
-            help='Codeword limit when when creating multiplication tables' +
-            'Most western codetables are between 2 and 4. ' +
-            'Defaults to 2',
-            metavar='verbum_limiti',
-            default="2",
-            nargs='?'
-        )
+        # neo_codex.add_argument(
+        #     '--resultatum-limiti',
+        #     help='Codeword limit when when creating multiplication tables' +
+        #     'Most western codetables are between 2 and 4. ' +
+        #     'Defaults to 2',
+        #     metavar='verbum_limiti',
+        #     default="2",
+        #     nargs='?'
+        # )
 
-        neo_tabulam_numerae = parser.add_argument_group(
-            "neo-tabulam-numerae",
-            "Automated generation of numerical tables")
+        # neo_tabulam_numerae = parser.add_argument_group(
+        #     "neo-tabulam-numerae",
+        #     "Automated generation of numerical tables")
 
-        neo_tabulam_numerae.add_argument(
-            '--actionem-tabulam-numerae',
-            help='Define mode to numetical tables',
-            metavar='',
-            dest='neo_tabulam_numerae',
-            const=True,
-            nargs='?'
-        )
+        # neo_tabulam_numerae.add_argument(
+        #     '--actionem-tabulam-numerae',
+        #     help='Define mode to numetical tables',
+        #     metavar='',
+        #     dest='neo_tabulam_numerae',
+        #     const=True,
+        #     nargs='?'
+        # )
 
-        neo_tabulam_numerae.add_argument(
-            '--tabulam-numerae-initiale',
-            help='Start number (default: 0)',
-            metavar='',
-            dest='tabulam_numerae_initiale',
-            default="0",
-            type=int,
-            nargs='?'
-        )
-        neo_tabulam_numerae.add_argument(
-            '--tabulam-numerae-finale',
-            help='Final number  (default: 9)',
-            metavar='',
-            dest='tabulam_numerae_finale',
-            default="9",
-            type=int,
-            nargs='?'
-        )
-        neo_tabulam_numerae.add_argument(
-            '--tabulam-numerae-gradus',
-            help='Step between numbers  (default: 1)',
-            metavar='',
-            dest='tabulam_numerae_gradus',
-            default="1",
-            type=int,
-            nargs='?'
-        )
+        # neo_tabulam_numerae.add_argument(
+        #     '--tabulam-numerae-initiale',
+        #     help='Start number (default: 0)',
+        #     metavar='',
+        #     dest='tabulam_numerae_initiale',
+        #     default="0",
+        #     type=int,
+        #     nargs='?'
+        # )
+        # neo_tabulam_numerae.add_argument(
+        #     '--tabulam-numerae-finale',
+        #     help='Final number  (default: 9)',
+        #     metavar='',
+        #     dest='tabulam_numerae_finale',
+        #     default="9",
+        #     type=int,
+        #     nargs='?'
+        # )
+        # neo_tabulam_numerae.add_argument(
+        #     '--tabulam-numerae-gradus',
+        #     help='Step between numbers  (default: 1)',
+        #     metavar='',
+        #     dest='tabulam_numerae_gradus',
+        #     default="1",
+        #     type=int,
+        #     nargs='?'
+        # )
 
-        neo_scripturam = parser.add_argument_group(
-            "neo-scripturam",
-            "(internal use) Operations related to associate new symbols " +
-            "to entire new writing systems without users needing to " +
-            "pre-translate to existing tables.")
+        # neo_scripturam = parser.add_argument_group(
+        #     "neo-scripturam",
+        #     "(internal use) Operations related to associate new symbols " +
+        #     "to entire new writing systems without users needing to " +
+        #     "pre-translate to existing tables.")
 
-        neo_scripturam.add_argument(
-            '--actionem-neo-scripturam',
-            help='(required) Define mode actionem-neo-scripturam',
-            metavar='',
-            dest='neo_scripturam',
-            const=True,
-            nargs='?'
-        )
+        # neo_scripturam.add_argument(
+        #     '--actionem-neo-scripturam',
+        #     help='(required) Define mode actionem-neo-scripturam',
+        #     metavar='',
+        #     dest='neo_scripturam',
+        #     const=True,
+        #     nargs='?'
+        # )
 
-        # cifram, https://translate.google.com/?sl=la&tl=en&text=cifram&op=translate
-        decifram = parser.add_argument_group(
-            "decifram",
-            "Decipher (e.g. the act of decode numeric codes)")
+        # # cifram, https://translate.google.com/?sl=la&tl=en&text=cifram&op=translate
+        # decifram = parser.add_argument_group(
+        #     "decifram",
+        #     "Decipher (e.g. the act of decode numeric codes)")
 
-        decifram.add_argument(
-            '--actionem-decifram',
-            help='(required) Define mode decifram',
-            metavar='',
-            dest='actionem_decifram',
-            const=True,
-            nargs='?'
-        )
-        decifram = parser.add_argument_group(
-            "cifram",
-            "Cifram (e.g. the act of encode first column of data on B60)")
+        # decifram.add_argument(
+        #     '--actionem-decifram',
+        #     help='(required) Define mode decifram',
+        #     metavar='',
+        #     dest='actionem_decifram',
+        #     const=True,
+        #     nargs='?'
+        # )
+        # decifram = parser.add_argument_group(
+        #     "cifram",
+        #     "Cifram (e.g. the act of encode first column of data on B60)")
 
-        decifram.add_argument(
-            '--actionem-cifram',
-            help='(required) Define mode decifram',
-            metavar='',
-            dest='actionem_cifram',
-            const=True,
-            nargs='?'
-        )
+        # decifram.add_argument(
+        #     '--actionem-cifram',
+        #     help='(required) Define mode decifram',
+        #     metavar='',
+        #     dest='actionem_cifram',
+        #     const=True,
+        #     nargs='?'
+        # )
 
-        # https://stackoverflow.com/questions/59661738/argument-dependency-in-argparse
-        # Scriptura cuneiformis
-        # https://en.wikipedia.org/wiki/Cuneiform#Decipherment
-        # https://la.wikipedia.org/wiki/Scriptura_cuneiformis
-        neo_scripturam.add_argument(
-            '--neo-scripturam-tabulae-symbola',
-            help='(internal use) Inject reference table. ' +
-            'This requires entire list of the used base system ' +
-            ' (e.g. 60 items for base64 items.' +
-            'First character determine the spliter. ' +
-            'Example 1: ",0,1,(.....),8,9,"',
-            metavar='neo_scripturam_tabulae',
-            dest='neo_scripturam_tabulae',
-            # default="2",
-            nargs='?'
-        )
+        # # https://stackoverflow.com/questions/59661738/argument-dependency-in-argparse
+        # # Scriptura cuneiformis
+        # # https://en.wikipedia.org/wiki/Cuneiform#Decipherment
+        # # https://la.wikipedia.org/wiki/Scriptura_cuneiformis
+        # neo_scripturam.add_argument(
+        #     '--neo-scripturam-tabulae-symbola',
+        #     help='(internal use) Inject reference table. ' +
+        #     'This requires entire list of the used base system ' +
+        #     ' (e.g. 60 items for base64 items.' +
+        #     'First character determine the spliter. ' +
+        #     'Example 1: ",0,1,(.....),8,9,"',
+        #     metavar='neo_scripturam_tabulae',
+        #     dest='neo_scripturam_tabulae',
+        #     # default="2",
+        #     nargs='?'
+        # )
 
-        neo_scripturam.add_argument(
-            '--neo-scripturam-tabulae-hxl-nomini',
-            help='(internal use) Inject reference table. ' +
-            'An HXL Standard tag name.' +
-            'Default: #item+rem+i_mul+is_zsym+ix_ndt60+ix_neo',
-            dest='neo_scripturam_nomini',
-            default="#item+rem+i_mul+is_zsym+ix_ndt60+ix_neo",
-            nargs='?'
-        )
+        # neo_scripturam.add_argument(
+        #     '--neo-scripturam-tabulae-hxl-nomini',
+        #     help='(internal use) Inject reference table. ' +
+        #     'An HXL Standard tag name.' +
+        #     'Default: #item+rem+i_mul+is_zsym+ix_ndt60+ix_neo',
+        #     dest='neo_scripturam_nomini',
+        #     default="#item+rem+i_mul+is_zsym+ix_ndt60+ix_neo",
+        #     nargs='?'
+        # )
 
-        neo_scripturam.add_argument(
-            '--neo-scripturam-tabulae-hxl-selectum',
-            help='(internal use) Inject reference table. ' +
-            'When exporting, define some pattern tags must have' +
-            'Example: ix_neo',
-            dest='neo_scripturam_hxl_selectum',
-            default=None,
-            nargs='?'
-        )
+        # neo_scripturam.add_argument(
+        #     '--neo-scripturam-tabulae-hxl-selectum',
+        #     help='(internal use) Inject reference table. ' +
+        #     'When exporting, define some pattern tags must have' +
+        #     'Example: ix_neo',
+        #     dest='neo_scripturam_hxl_selectum',
+        #     default=None,
+        #     nargs='?'
+        # )
 
         parser.add_argument(
             '--verbose',
@@ -340,85 +352,86 @@ class CLI_2600:
 
         self.pyargs = pyargs
 
-        CS1603_3_12 = CS1603_3_12()
+        # cs1603_3_12 = cs1603_3_12()
+        cs1603_3_12 = CS1603z3z12()
 
-        # CS1603_3_12 = CS1603_3_12()
+        # cs1603_3_12 = cs1603_3_12()
 
         # print('self.pyargs', self.pyargs)
 
-        CS1603_3_12.est_verbum_limiti(args.verbum_limiti)
-        CS1603_3_12.est_resultatum_separato(args.resultatum_separato)
+        # cs1603_3_12.est_verbum_limiti(args.verbum_limiti)
+        cs1603_3_12.est_resultatum_separato(args.resultatum_separato)
 
-        if args.codex_verbum_tabulae:
-            CS1603_3_12.est_codex_verbum_tabulae(args.codex_verbum_tabulae)
+        # if args.codex_verbum_tabulae:
+        #     cs1603_3_12.est_codex_verbum_tabulae(args.codex_verbum_tabulae)
 
-        if args.neo_scripturam_tabulae:
-            CS1603_3_12.est_neo_scripturam_tabulae(
-                args.neo_scripturam_tabulae, args.neo_scripturam_nomini)
+        # if args.neo_scripturam_tabulae:
+        #     cs1603_3_12.est_neo_scripturam_tabulae(
+        #         args.neo_scripturam_tabulae, args.neo_scripturam_nomini)
 
 # printf "abc\tABC\nefg\tEFG\n" | ./999999999/0/2600.py --actionem-cifram
 # cat 999999/1603/47/639/3/1603.47.639.3.tab | head | tail -n 4 | ./999999999/0/2600.py --actionem-cifram
-        if self.pyargs.actionem_cifram:
+        # if self.pyargs.actionem_cifram:
 
-            if stdin.isatty():
-                print("ERROR. Please pipe data in. \nExample:\n"
-                      "  cat data.tsv | {0} --actionem-cifram\n"
-                      "  printf \"abc\\nefg\\n\" | {0} --actionem-cifram"
-                      "".format(__file__))
-                return self.EXIT_ERROR
+        #     if stdin.isatty():
+        #         print("ERROR. Please pipe data in. \nExample:\n"
+        #               "  cat data.tsv | {0} --actionem-cifram\n"
+        #               "  printf \"abc\\nefg\\n\" | {0} --actionem-cifram"
+        #               "".format(__file__))
+        #         return self.EXIT_ERROR
 
-            for line in sys.stdin:
-                codicem = line.replace('\n', ' ').replace('\r', '')
-                neo_lineam = CS1603_3_12.cifram_lineam(codicem)
-                sys.stdout.writelines("{0}\n".format(neo_lineam))
-            return self.EXIT_OK
+        #     for line in sys.stdin:
+        #         codicem = line.replace('\n', ' ').replace('\r', '')
+        #         neo_lineam = cs1603_3_12.cifram_lineam(codicem)
+        #         sys.stdout.writelines("{0}\n".format(neo_lineam))
+        #     return self.EXIT_OK
 
-        if self.pyargs.actionem_decifram:
+        # if self.pyargs.actionem_decifram:
 
-            if stdin.isatty():
-                print("ERROR. Please pipe data in. \nExample:\n"
-                      "  cat data.txt | {0} --actionem-decifram\n"
-                      "  printf \"1234\\n5678\\n\" | {0} --actionem-decifram"
-                      "".format(__file__))
-                return self.EXIT_ERROR
+        #     if stdin.isatty():
+        #         print("ERROR. Please pipe data in. \nExample:\n"
+        #               "  cat data.txt | {0} --actionem-decifram\n"
+        #               "  printf \"1234\\n5678\\n\" | {0} --actionem-decifram"
+        #               "".format(__file__))
+        #         return self.EXIT_ERROR
 
-            for line in sys.stdin:
-                codicem = line.replace('\n', ' ').replace('\r', '')
-                fontem = CS1603_3_12.decifram_codicem_numerae(codicem)
-                sys.stdout.writelines(
-                    "{0}{1}{2}\n".format(
-                        codicem, args.resultatum_separato, fontem)
-                )
-            return self.EXIT_OK
+        #     for line in sys.stdin:
+        #         codicem = line.replace('\n', ' ').replace('\r', '')
+        #         fontem = cs1603_3_12.decifram_codicem_numerae(codicem)
+        #         sys.stdout.writelines(
+        #             "{0}{1}{2}\n".format(
+        #                 codicem, args.resultatum_separato, fontem)
+        #         )
+        #     return self.EXIT_OK
 
-        if self.pyargs.neo_tabulam_numerae:
-            systema_numerali = CS1603_3_12.exportatum_systema_numerali(
-                self.pyargs.tabulam_numerae_initiale,
-                self.pyargs.tabulam_numerae_finale,
-                self.pyargs.tabulam_numerae_gradus
+        if self.pyargs.actionem_sparql:
+            systema_numerali = cs1603_3_12.exportatum_sparql(
+                # self.pyargs.tabulam_numerae_initiale,
+                # self.pyargs.tabulam_numerae_finale,
+                # self.pyargs.tabulam_numerae_gradus
             )
-            # tabulam_numerae = ['TODO']
+            tabulam_numerae = ['TODO']
             # return self.output(tabulam_numerae)
             return self.output(systema_numerali)
 
-        if self.pyargs.verbum_simplex:
-            tabulam_multiplicatio = CS1603_3_12.quod_tabulam_multiplicatio()
-            return self.output(tabulam_multiplicatio)
+        # if self.pyargs.verbum_simplex:
+        #     tabulam_multiplicatio = cs1603_3_12.quod_tabulam_multiplicatio()
+        #     return self.output(tabulam_multiplicatio)
 
-        if self.pyargs.codex_completum:
-            tabulam_multiplicatio = CS1603_3_12.quod_codex()
-            return self.output(tabulam_multiplicatio)
+        # if self.pyargs.codex_completum:
+        #     tabulam_multiplicatio = cs1603_3_12.quod_codex()
+        #     return self.output(tabulam_multiplicatio)
 
-        if self.pyargs.neo_scripturam:
-            scientia = CS1603_3_12.exportatum_scientia_de_scriptura(
-                args.neo_scripturam_hxl_selectum)
-            return self.output(scientia)
+        # if self.pyargs.neo_scripturam:
+        #     scientia = cs1603_3_12.exportatum_scientia_de_scriptura(
+        #         args.neo_scripturam_hxl_selectum)
+        #     return self.output(scientia)
 
         # Let's default to full table
-        tabulam_multiplicatio = CS1603_3_12.quod_codex()
-        return self.output(tabulam_multiplicatio)
-        # print('unknow option.')
-        # return self.EXIT_ERROR
+        # tabulam_multiplicatio = cs1603_3_12.quod_codex()
+        # return self.output(tabulam_multiplicatio)
+        print('unknow option.')
+        return self.EXIT_ERROR
 
     def output(self, output_collectiom):
         for item in output_collectiom:
@@ -475,14 +488,14 @@ if __name__ == "__main__":
 
 # print(valueee)
 
-# CS1603_3_12 = CS1603_3_12()
+# cs1603_3_12 = cs1603_3_12()
 
 # # print(quod_1613_2_60_datum())
-# # print(CS1603_3_12)
+# # print(cs1603_3_12)
 
 # print('0')
-# print(CS1603_3_12.quod_numerordinatio_digitalem('0', True))
+# print(cs1603_3_12.quod_numerordinatio_digitalem('0', True))
 # print('05')
-# print(CS1603_3_12.quod_numerordinatio_digitalem('05', True))
+# print(cs1603_3_12.quod_numerordinatio_digitalem('05', True))
 # print('zz')
-# print(CS1603_3_12.quod_numerordinatio_digitalem('zz', True))
+# print(cs1603_3_12.quod_numerordinatio_digitalem('zz', True))
