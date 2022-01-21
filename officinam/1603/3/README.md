@@ -145,6 +145,27 @@ LIMIT 1000
 
 -->
 
+
+<!--
+# https://www.wikidata.org/wiki/Wikidata:SPARQL_query_service/queries/examples/en#The_number_of_existing_translations_for_diseases_in_Wikidata
+
+https://query.wikidata.org/#SELECT%20%3Fdisease%20%3Fdoid%20%3FenLabel%20%28count%28%3Flanguage%29%20as%20%3Flanguages%29%0AWHERE%0A%7B%0A%20%20%3Fdisease%20wdt%3AP699%20%3Fdoid%20%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20rdfs%3Alabel%20%3Flabel%20%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20rdfs%3Alabel%20%3FenLabel%20.%0A%20%20%20%20FILTER%20%28lang%28%3FenLabel%29%20%3D%20%22en%22%29%0A%20%20%20%0A%20%20%20%20BIND%20%28lang%28%3Flabel%29%20AS%20%3Flanguage%29%0A%7D%0Agroup%20by%20%3Fdisease%20%3Fdoid%20%3FenLabel%0Aorder%20by%20desc%28%3Flanguages%29
+
+
+SELECT ?disease ?doid ?enLabel (count(?language) as ?languages)
+WHERE
+{
+  ?disease wdt:P699 ?doid ;
+             rdfs:label ?label ;
+             rdfs:label ?enLabel .
+    FILTER (lang(?enLabel) = "en")
+   
+    BIND (lang(?label) AS ?language)
+}
+group by ?disease ?doid ?enLabel
+order by desc(?languages)
+-->
+
 ----
 
 <!-- ### Neo latin term for citizen science
@@ -160,3 +181,8 @@ Multiple languages of same item
 - https://www.wikidata.org/wiki/Wikidata:SPARQL_query_service/queries/examples#Names_of_Wikipedia_articles_in_multiple_languages
 
 -->
+
+### Self notes
+
+- Help:Wikimedia language codes/lists/all
+  - https://www.wikidata.org/wiki/Help:Wikimedia_language_codes/lists/all
