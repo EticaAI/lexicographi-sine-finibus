@@ -74,7 +74,7 @@ STDIN = sys.stdin.buffer
 # printf "30160\n1830260\n109830360\n" | ./999999999/0/2600.py --actionem-decifram
 
 
-class NDT2600:
+class CS1603_3_12:
     def __init__(self):
         self.D1613_2_60 = self._init_1613_2_60_datum()
         # self.scientia_de_scriptura = {}
@@ -340,20 +340,20 @@ class CLI_2600:
 
         self.pyargs = pyargs
 
-        ndt2600 = NDT2600()
+        CS1603_3_12 = CS1603_3_12()
 
-        # ndt2600 = NDT2600()
+        # CS1603_3_12 = CS1603_3_12()
 
         # print('self.pyargs', self.pyargs)
 
-        ndt2600.est_verbum_limiti(args.verbum_limiti)
-        ndt2600.est_resultatum_separato(args.resultatum_separato)
+        CS1603_3_12.est_verbum_limiti(args.verbum_limiti)
+        CS1603_3_12.est_resultatum_separato(args.resultatum_separato)
 
         if args.codex_verbum_tabulae:
-            ndt2600.est_codex_verbum_tabulae(args.codex_verbum_tabulae)
+            CS1603_3_12.est_codex_verbum_tabulae(args.codex_verbum_tabulae)
 
         if args.neo_scripturam_tabulae:
-            ndt2600.est_neo_scripturam_tabulae(
+            CS1603_3_12.est_neo_scripturam_tabulae(
                 args.neo_scripturam_tabulae, args.neo_scripturam_nomini)
 
 # printf "abc\tABC\nefg\tEFG\n" | ./999999999/0/2600.py --actionem-cifram
@@ -369,7 +369,7 @@ class CLI_2600:
 
             for line in sys.stdin:
                 codicem = line.replace('\n', ' ').replace('\r', '')
-                neo_lineam = ndt2600.cifram_lineam(codicem)
+                neo_lineam = CS1603_3_12.cifram_lineam(codicem)
                 sys.stdout.writelines("{0}\n".format(neo_lineam))
             return self.EXIT_OK
 
@@ -384,7 +384,7 @@ class CLI_2600:
 
             for line in sys.stdin:
                 codicem = line.replace('\n', ' ').replace('\r', '')
-                fontem = ndt2600.decifram_codicem_numerae(codicem)
+                fontem = CS1603_3_12.decifram_codicem_numerae(codicem)
                 sys.stdout.writelines(
                     "{0}{1}{2}\n".format(
                         codicem, args.resultatum_separato, fontem)
@@ -392,7 +392,7 @@ class CLI_2600:
             return self.EXIT_OK
 
         if self.pyargs.neo_tabulam_numerae:
-            systema_numerali = ndt2600.exportatum_systema_numerali(
+            systema_numerali = CS1603_3_12.exportatum_systema_numerali(
                 self.pyargs.tabulam_numerae_initiale,
                 self.pyargs.tabulam_numerae_finale,
                 self.pyargs.tabulam_numerae_gradus
@@ -402,20 +402,20 @@ class CLI_2600:
             return self.output(systema_numerali)
 
         if self.pyargs.verbum_simplex:
-            tabulam_multiplicatio = ndt2600.quod_tabulam_multiplicatio()
+            tabulam_multiplicatio = CS1603_3_12.quod_tabulam_multiplicatio()
             return self.output(tabulam_multiplicatio)
 
         if self.pyargs.codex_completum:
-            tabulam_multiplicatio = ndt2600.quod_codex()
+            tabulam_multiplicatio = CS1603_3_12.quod_codex()
             return self.output(tabulam_multiplicatio)
 
         if self.pyargs.neo_scripturam:
-            scientia = ndt2600.exportatum_scientia_de_scriptura(
+            scientia = CS1603_3_12.exportatum_scientia_de_scriptura(
                 args.neo_scripturam_hxl_selectum)
             return self.output(scientia)
 
         # Let's default to full table
-        tabulam_multiplicatio = ndt2600.quod_codex()
+        tabulam_multiplicatio = CS1603_3_12.quod_codex()
         return self.output(tabulam_multiplicatio)
         # print('unknow option.')
         # return self.EXIT_ERROR
@@ -475,14 +475,14 @@ if __name__ == "__main__":
 
 # print(valueee)
 
-# ndt2600 = NDT2600()
+# CS1603_3_12 = CS1603_3_12()
 
 # # print(quod_1613_2_60_datum())
-# # print(ndt2600)
+# # print(CS1603_3_12)
 
 # print('0')
-# print(ndt2600.quod_numerordinatio_digitalem('0', True))
+# print(CS1603_3_12.quod_numerordinatio_digitalem('0', True))
 # print('05')
-# print(ndt2600.quod_numerordinatio_digitalem('05', True))
+# print(CS1603_3_12.quod_numerordinatio_digitalem('05', True))
 # print('zz')
-# print(ndt2600.quod_numerordinatio_digitalem('zz', True))
+# print(CS1603_3_12.quod_numerordinatio_digitalem('zz', True))
