@@ -91,6 +91,21 @@ order by ASC(?iso3166p1n)
 LIMIT 1000
 -->
 
+<!--
+# https://stackoverflow.com/questions/46291486/wikidata-query-service-how-do-i-search-by-item
+# https://query.wikidata.org/#SELECT%20DISTINCT%20%3Fadm0%20%3Flabel%20%28lang%28%3Flabel%29%20as%20%3Flabel_lang%29%0A%7B%0A%20%20%3Fadm0%20wdt%3AP31%2Fwdt%3AP279%2a%20wd%3AQ3624078%3B%0A%20%20rdfs%3Alabel%20%3Flabel%0A%20%20VALUES%20%3Fadm0%20%7B%20wd%3AQ1065%20wd%3AQ986%20wd%3AQ983%20wd%3AQ974%7D%0A%20%20%23%20FILTER%20%28%3Fadm0%20IN%20%28wd%3AQ114%2C%20wd%3AQ181795%29%29%0A%7D%0Aorder%20by%20DESC%28%3Fadm0%29%20ASC%28%3Flabel_lang%29%0ALIMIT%201000
+
+SELECT DISTINCT ?adm0 ?label (lang(?label) as ?label_lang)
+{
+  ?adm0 wdt:P31/wdt:P279* wd:Q3624078;
+  rdfs:label ?label
+  VALUES ?adm0 { wd:Q1065 wd:Q986 wd:Q983 wd:Q974}
+  # FILTER (?adm0 IN (wd:Q114, wd:Q181795))
+}
+order by DESC(?adm0) ASC(?label_lang)
+LIMIT 1000
+-->
+
 
 ----
 
