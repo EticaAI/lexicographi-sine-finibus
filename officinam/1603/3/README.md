@@ -24,6 +24,7 @@ The bars on the logo contain the word "WIKI" encoded in Morse code.[38] It was c
 - https://la.wikipedia.org/wiki/Vicipaedia:Pagina_prima as 2022-01-27 uses "Vicidata"
 
 
+- https://www.mediawiki.org/wiki/Wikidata_Query_Service/User_Manual
 - https://www.wikidata.org/wiki/Wikidata:In_one_page
   - https://upload.wikimedia.org/wikipedia/commons/8/8d/Wikidata-in-brief-1.0.pdf
 
@@ -106,6 +107,43 @@ order by DESC(?adm0) ASC(?label_lang)
 LIMIT 1000
 -->
 
+
+<!--
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX wikibase: <http://wikiba.se/ontology#>
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+
+SELECT DISTINCT ?item ?label (lang(?label) as ?label_lang)
+{
+  ?item wdt:P31/wdt:P279* wd:Q15925165;
+  rdfs:label ?label
+  VALUES ?item { wd:Q356694 wd:Q161718 wd:Q82151 wd:Q7809}
+
+}
+order by DESC(?adm0) ASC(?label_lang)
+LIMIT 1000
+
+-->
+
+<!--
+## https://w.wiki/4igC
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX wikibase: <http://wikiba.se/ontology#>
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+
+SELECT DISTINCT ?item ?label (lang(?label) as ?label_lang)
+{
+  ?item wdt:P31/wdt:P279* wd:Q15925165;
+  rdfs:label ?label
+  VALUES ?item { wd:Q356694 wd:Q161718 wd:Q82151 wd:Q7809}
+
+}
+order by DESC(?adm0) ASC(?label_lang)
+LIMIT 1000
+
+-->
 
 ----
 
