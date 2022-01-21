@@ -32,6 +32,7 @@
 #    ./999999999/0/1603_3_12.py
 #    NUMERORDINATIO_BASIM="/external/ndata" ./999999999/0/1603_3_12.py
 
+# TODO: https://sinaahmadi.github.io/posts/10-essential-sparql-queries-for-lexicographical-data-on-wikidata.html
 
 import os
 import sys
@@ -74,6 +75,17 @@ STDIN = sys.stdin.buffer
 # printf "30160\n1830260\n109830360\n" | ./999999999/0/2600.py --actionem-decifram
 # ./999999999/0/1603_3_12.py --actionem-sparql
 
+
+# SELECT ?item ?itemLabel
+# WHERE {
+#   # A. Einstein or J.S. Bach
+#   VALUES ?item { wd:Q1065 wd:Q82151 wd:Q125761 wd:Q7809}
+#   # mother of
+#   OPTIONAL { ?item wdt:P25 ?pseudoquery. }
+#   SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
+# }
+
+# https://stackoverflow.com/questions/43258341/how-to-get-wikidata-labels-in-more-than-one-language
 class CS1603z3z12:
     def __init__(self):
         self.D1613_1_51 = self._init_1613_1_51_datum()
@@ -83,6 +95,18 @@ class CS1603z3z12:
         # self.codex_verbum_tabulae = []
         # self.verbum_limiti = 2
         self.resultatum_separato = "\t"
+
+        # TODO: make this accept options from command line
+        self.qid = [
+            'Q1065',
+            'Q82151',
+            'Q125761',
+            'Q7809',
+            'Q386120',
+            'Q61923',
+            'Q7164',
+            #'...'
+        ]
 
     def _init_1613_1_51_datum(self):
         # archivum = NUMERORDINATIO_BASIM + "/1613/1603_2_60.no1.tm.hxl.tsv"
@@ -106,10 +130,54 @@ class CS1603z3z12:
         self.resultatum_separato = resultatum_separato
         return self
 
+#     def query(self):
+#         term = """# https://en.wikiversity.org/wiki/Research_in_programming_Wikidata/Countries#List_of_countries
+# # https://w.wiki/4ij4
+# SELECT ?item ?item__eng_latn ?item__rus_cyrl
+# WHERE
+# {
+#   ?item wdt:P31 wd:Q6256. # instance country
+#   OPTIONAL {
+#     ?item rdfs:label ?item__eng_latn filter (lang(?item__eng_latn) = "en").
+#     ?item rdfs:label ?item__rus_cyrl filter (lang(?item__rus_cyrl) = "ru").
+#   }
+# }
+#         """
+#         return term
+
+
+# SELECT ?item ?item_rem__eng_latn ?item_rem__rus_cyrl
+# WHERE
+# {
+#   VALUES ?item { wd:Q1065 wd:Q82151 wd:Q125761 wd:Q7809 }
+#   OPTIONAL {
+#     ?item rdfs:label ?item_rem__eng_latn filter (lang(?item_rem__eng_latn) = "en").
+#     ?item rdfs:label ?item_rem__rus_cyrl filter (lang(?item_rem__rus_cyrl) = "ru").
+#   }
+# }
+
+    def query(self):
+        qid = ['wd:' + x for x in self.qid if isinstance(x, str)]
+        term = """
+# Select by exact QIDs compiled earlier
+SELECT ?item ?item_rem__eng_latn ?item_rem__rus_cyrl
+WHERE
+{{
+  VALUES ?item {{ {qitems} }}
+  OPTIONAL {{
+    ?item rdfs:label ?item_rem__eng_latn filter (lang(?item_rem__eng_latn) = "en").
+    ?item rdfs:label ?item_rem__rus_cyrl filter (lang(?item_rem__rus_cyrl) = "ru").
+  }}
+}}
+        """.format(qitems = " ".join(qid))
+        # """.format(qitems = " ".join(self.qid))
+        return term
+
     def exportatum_sparql(self):
         resultatum = []
-        resultatum.append('#TODO')
-        resultatum.append(str(self.D1613_1_51))
+        # resultatum.append('#TODO')
+        # resultatum.append(str(self.D1613_1_51))
+        resultatum.append(self.query())
         return resultatum
 
 class CLI_2600:

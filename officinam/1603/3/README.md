@@ -27,6 +27,7 @@ The bars on the logo contain the word "WIKI" encoded in Morse code.[38] It was c
 - https://www.mediawiki.org/wiki/Wikidata_Query_Service/User_Manual
 - https://www.wikidata.org/wiki/Wikidata:In_one_page
   - https://upload.wikimedia.org/wikipedia/commons/8/8d/Wikidata-in-brief-1.0.pdf
+- https://sinaahmadi.github.io/posts/10-essential-sparql-queries-for-lexicographical-data-on-wikidata.html
 
 
 ### [`1603:3.12:6`] /Speciālis 	collēctiōnī de Vicidata Proprietātī/
