@@ -1,5 +1,5 @@
 # [`1603:1`] //
-## [`1603:1:1`] //Numeroclatura Commūnibus ad MM ex Numerordĭnātĭo//@lat-Latn
+## [`1603:1:1`] //Numeroclatura Generālium ad MM ex Numerordĭnātĭo//@lat-Latn
 
 ### Latinas viva, etymologia
 - https://github.com/EticaAI/numerordinatio
@@ -21,6 +21,8 @@
 - generālium, n/m/f, plural (gengitive), https://en.wiktionary.org/wiki/generalis#Latin
 - commūnibus, n/m/f, plural, (dative), https://en.wiktionary.org/wiki/communis#Latin
 - MM, 2000, https://en.wikipedia.org/wiki/Roman_numerals
+- "Nōmenclātūrae Generālium" (literal: /Calling by numbers/ + /generic/)
+  - "Numeroclatura Generālium"
 
 ## [`1603:1:2`] //dictiōnāria de symbolī numerīs//
 
@@ -58,10 +60,23 @@
 
 ## [`1603:1:5`] //
 ## [`1603:1:20`] //
-## [`1603:1:100`] /Documentation about 1603 types of files/@eng-Latn
+## [`1603:1:51`] //Dictiōnāria Linguārum ad MMXXII ex Numerordĭnātĭo//@lat-Latn
 - dictiōnāria, n, plural, https://en.wiktionary.org/wiki/dictionarium#Latin
   - http://micmap.org/dicfro/search/gaffiot/dictionarium
   - http://nlw.renaessancestudier.org/words/start2.htm?../words/2/000422.htm
-- archīvīs, n, plural, (dative) https://en.wiktionary.org/wiki/archivum
+- linguārum, f, plural, (gengitive), https://en.wiktionary.org/wiki/lingua#Latin
+  - http://ducange.enc.sorbonne.fr/LINGUA
+  - http://micmap.org/dicfro/search/gaffiot/lingua
+  - http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0059:entry=lingua
+- ...Dictiōnāria Linguārum ad MMXXII ex Numerordĭnātĭo
 
-- Dictiōnāria de  ad MM ex Numerordĭnātĭo
+## [`1603:1:101`] //Dictiōnāria Archīōrum ad MMXXII ex Numerordĭnātĭo//@lat-Latn
+- dictiōnāria, n, plural, https://en.wiktionary.org/wiki/dictionarium#Latin
+  - http://micmap.org/dicfro/search/gaffiot/dictionarium
+  - http://nlw.renaessancestudier.org/words/start2.htm?../words/2/000422.htm
+- <s>archīvīs, n, plural, (dative) https://en.wiktionary.org/wiki/archivum</s>
+- archīōrum, n, plural, (Gengitive), https://en.wiktionary.org/wiki/archium#Latin
+  - http://ducange.enc.sorbonne.fr/ARCHIUM
+  - http://micmap.org/dicfro/search/gaffiot/archium
+  - http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0059:entry=archium
+- ...Dictiōnāria Archīōrum ad MMXXII ex Numerordĭnātĭo

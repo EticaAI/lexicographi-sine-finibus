@@ -116,6 +116,8 @@ file_update_if_necessary() {
   objectivum_archivum="$3"
 
   # echo "starting file_update_if_necessary ..."
+  # echo "fontem_archivum $fontem_archivum"
+  # echo "objectivum_archivum $objectivum_archivum"
 
   case "${formatum_archivum}" in
   csv)
@@ -267,6 +269,8 @@ file_download_if_necessary() {
 # Convert HXLTM to numerordinatio with these defaults:
 # - '#meta' are removed
 # - Fields with empty or zeroed concept code are excluded
+# - '#status+conceptum' (if defined) less than 0 are excluded
+# - '#status' are removed
 #
 # Globals:
 #   ROOTDIR
@@ -314,8 +318,12 @@ file_convert_numerordinatio_de_hxltm() {
     hxlreplace --map="${ROOTDIR}/1603/13/1603_13.r.hxl.csv" \
       >"$objectivum_archivum_temporarium"
 
-  #| hxlreplace --tags="#item+conceptum+numerordinatio" --pattern="_" --substitution=":" \
+  #     hxlcut --exclude="#status" |
+  # hxlselect --query='#status+conceptum!~(-1|-2|-3|-4|-5|-6|-7|-8|-9)' |
+  # hxlselect --query="#status+conceptum!=" --query="#status+conceptum<0" --reverse |
 
+  #| hxlreplace --tags="#item+conceptum+numerordinatio" --pattern="_" --substitution=":" \
+  # hxlselect --query="#status+conceptum!=" --query="#status+conceptum<0" --reverse |
   # hxlreplace --map="1603/13/1603_13.r.hxl.csv" 999999/999999/2020/4/1/1603_45_1.no1.tm.hxl.csv
 
   # cp "$fontem_archivum" "$objectivum_archivum_temporarium"
@@ -325,7 +333,6 @@ file_convert_numerordinatio_de_hxltm() {
 
   file_update_if_necessary csv "$objectivum_archivum_temporarium" "$objectivum_archivum"
 }
-
 
 # @TODO: create helper to remove empty translations;
 #        @see https://github.com/wireservice/csvkit/issues/962
@@ -349,7 +356,6 @@ file_translate_csv_de_numerordinatio_q() {
   numerordinatio="$1"
   est_temporarium_fontem="${2:-"1"}"
   est_temporarium_objectivum="${3:-"0"}"
-
 
   _path=$(numerordinatio_neo_separatum "$numerordinatio" "/")
   _nomen=$(numerordinatio_neo_separatum "$numerordinatio" "_")
@@ -405,7 +411,7 @@ file_translate_csv_de_numerordinatio_q() {
 
   "${ROOTDIR}/999999999/0/1603_3_12.py" --actionem-sparql --query <"$objectivum_archivum_temporarium_b_u" |
     ./999999999/0/1603_3_12.py --actionem-sparql --csv \
-    > "$objectivum_archivum_temporarium_b_u_wiki"
+      >"$objectivum_archivum_temporarium_b_u_wiki"
   # "$objectivum_archivum_temporarium_b_u"
 
   rm "$objectivum_archivum_temporarium"
