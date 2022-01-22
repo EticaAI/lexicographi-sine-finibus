@@ -31,6 +31,9 @@
 
 #    ./999999999/0/1603_3_12.py
 #    NUMERORDINATIO_BASIM="/external/ndata" ./999999999/0/1603_3_12.py
+#    printf "Q1065\nQ82151\n" | ./999999999/0/1603_3_12.py --actionem-quod-sparql
+#    printf "Q1065\nQ82151\n" | ./999999999/0/1603_3_12.py --actionem-sparql --query | ./999999999/0/1603_3_12.py --actionem-sparql --wikidata-link
+#    printf "Q1065\nQ82151\n" | ./999999999/0/1603_3_12.py --actionem-sparql --query | ./999999999/0/1603_3_12.py --actionem-sparql --tsv > 999999/0/test.tsv
 
 # TODO: https://sinaahmadi.github.io/posts/10-essential-sparql-queries-for-lexicographical-data-on-wikidata.html
 
@@ -42,6 +45,9 @@ from typing import (
     # Type,
     Union
 )
+
+import urllib.parse
+import requests
 
 # from itertools import permutations
 from itertools import product
@@ -73,7 +79,7 @@ STDIN = sys.stdin.buffer
 
 # a aa aaa
 # printf "30160\n1830260\n109830360\n" | ./999999999/0/2600.py --actionem-decifram
-# ./999999999/0/1603_3_12.py --actionem-sparql
+# ./999999999/0/1603_3_12.py --actionem-quod-sparql
 
 
 # SELECT ?item ?itemLabel
@@ -105,16 +111,18 @@ class CS1603z3z12:
         self.resultatum_separato = "\t"
 
         # TODO: make this accept options from command line
-        self.qid = [
-            'Q1065',
-            'Q82151',
-            'Q125761',
-            'Q7809',
-            'Q386120',
-            'Q61923',
-            'Q7164',
-            # '...'
-        ]
+        # self.qid = [
+        #     'Q1065',
+        #     'Q82151',
+        #     'Q125761',
+        #     'Q7809',
+        #     'Q386120',
+        #     'Q61923',
+        #     'Q7164',
+        #     # '...'
+        # ]
+
+        self.qid = []
 
     def _init_1613_1_51_datum(self):
         # archivum = NUMERORDINATIO_BASIM + "/1613/1603_2_60.no1.tm.hxl.tsv"
@@ -153,6 +161,12 @@ class CS1603z3z12:
         self.resultatum_separato = resultatum_separato
         return self
 
+    def est_wikidata_q(self, wikidata_codicem: str):
+        if wikidata_codicem not in self.qid:
+            self.qid.append(wikidata_codicem)
+
+        return self
+
 #     def query(self):
 #         term = """# https://en.wikiversity.org/wiki/Research_in_programming_Wikidata/Countries#List_of_countries
 # # https://w.wiki/4ij4
@@ -179,6 +193,7 @@ class CS1603z3z12:
 #   }
 # }
 
+
     def query(self):
         qid = ['wd:' + x for x in self.qid if isinstance(x, str)]
         # select = '?item ' + " ".join(self._query_linguam())
@@ -187,12 +202,17 @@ class CS1603z3z12:
         filter_otional = []
         for pair in self.D1613_1_51_langpair:
             select.append('?' + pair[1])
+            # filter_otional.append(
+            #     '?item rdfs:label ?' +
+            #     pair[1] + ' filter (lang(?' + pair[1] +
+            #     ') = "' + pair[0] + '").'
+            # )
             filter_otional.append(
-                '?item rdfs:label ?' +
+                'OPTIONAL { ?item rdfs:label ?' +
                 pair[1] + ' filter (lang(?' + pair[1] +
-                ') = "' + pair[0] + '").'
+                ') = "' + pair[0] + '"). }'
             )
-        filter_otional_done = ['    ' + x for x in filter_otional]
+        filter_otional_done = ['  ' + x for x in filter_otional]
         # print('select', self.D1613_1_51_langpair)
         # print('select', select)
         # print('filter_otional', filter_otional)
@@ -201,9 +221,7 @@ SELECT {select}
 WHERE
 {{
   VALUES ?item {{ {qitems} }}
-  OPTIONAL {{
 {langfilter}
-  }}
 }}
         """.format(
             qitems=" ".join(qid),
@@ -211,6 +229,8 @@ WHERE
             langfilter="\n".join(filter_otional_done),
         )
         # """.format(qitems = " ".join(self.qid))
+
+        # [TRY IT ↗]()
         return term
 
     def exportatum_sparql(self):
@@ -276,6 +296,39 @@ class CLI_2600:
             'queries',
             metavar='',
             dest='actionem_sparql',
+            const=True,
+            nargs='?'
+        )
+
+        neo_codex.add_argument(
+            '--query',
+            help='Generate SPARQL query',
+            metavar='',
+            dest='query',
+            const=True,
+            nargs='?'
+        )
+        neo_codex.add_argument(
+            '--wikidata-link',
+            help='Generate query.wikidata.org link (from piped in query)',
+            metavar='',
+            dest='wikidata_link',
+            const=True,
+            nargs='?'
+        )
+        neo_codex.add_argument(
+            '--csv',
+            help='Generate TSV output (from piped in query)',
+            metavar='',
+            dest='csv',
+            const=True,
+            nargs='?'
+        )
+        neo_codex.add_argument(
+            '--tsv',
+            help='Generate TSV output (from piped in query)',
+            metavar='',
+            dest='tsv',
             const=True,
             nargs='?'
         )
@@ -514,14 +567,77 @@ class CLI_2600:
         #     return self.EXIT_OK
 
         if self.pyargs.actionem_sparql:
-            systema_numerali = cs1603_3_12.exportatum_sparql(
-                # self.pyargs.tabulam_numerae_initiale,
-                # self.pyargs.tabulam_numerae_finale,
-                # self.pyargs.tabulam_numerae_gradus
-            )
-            tabulam_numerae = ['TODO']
-            # return self.output(tabulam_numerae)
-            return self.output(systema_numerali)
+            # print('oi')
+
+            if self.pyargs.query:
+                if stdin.isatty():
+                    print("ERROR. Please pipe data in. \nExample:\n"
+                          "  cat data.txt | {0} --actionem-quod-sparql\n"
+                          "  printf \"Q1065\\nQ82151\\n\" | {0} --actionem-quod-sparql"
+                          "".format(__file__))
+                    return self.EXIT_ERROR
+
+                for line in sys.stdin:
+                    codicem = line.replace('\n', ' ').replace('\r', '')
+                    # TODO: deal with cases were have more than Qcode
+                    cs1603_3_12.est_wikidata_q(codicem)
+
+                quod_query = cs1603_3_12.exportatum_sparql()
+                # tabulam_numerae = ['TODO']
+                # return self.output(tabulam_numerae)
+                return self.output(quod_query)
+
+            if self.pyargs.wikidata_link:
+                if stdin.isatty():
+                    print("ERROR. Please pipe data in. \nExample:\n"
+                          "  cat data.txt | {0} --actionem-sparql --query | {0} --actionem-sparql --wikidata-link\n"
+                          "  printf \"Q1065\\nQ82151\\n\" | {0} --actionem-sparql --query | {0} --actionem-sparql --wikidata-link"
+                          "".format(__file__))
+                    return self.EXIT_ERROR
+
+                full_query = []
+                for line in sys.stdin:
+                    full_query.append(line)
+
+                wikidata_backend = "https://query.wikidata.org/#"
+                quod_query = wikidata_backend + \
+                    urllib.parse.quote("".join(full_query).encode('utf8'))
+
+                print(quod_query)
+                return self.EXIT_OK
+
+            if self.pyargs.tsv or self.pyargs.csv:
+                if stdin.isatty():
+                    print("ERROR. Please pipe data in. \nExample:\n"
+                          "  cat data.txt | {0} --actionem-sparql --query | {0} --actionem-sparql --tsv\n"
+                          "  printf \"Q1065\\nQ82151\\n\" | {0} --actionem-sparql --query | {0} --actionem-sparql --tsv"
+                          "".format(__file__))
+                    return self.EXIT_ERROR
+
+                full_query = []
+                for line in sys.stdin:
+                    full_query.append(line)
+
+                sparql_backend = "https://query.wikidata.org/sparql"
+
+                # https://www.mediawiki.org/wiki/Wikidata_Query_Service/User_Manual/en#Supported_formats
+
+                if self.pyargs.tsv:
+                    headers = {'Accept': 'text/tab-separated-values'}
+                if self.pyargs.csv:
+                    headers = {'Accept': 'text/csv'}
+
+                payload_query = "".join(full_query)
+                r = requests.get(sparql_backend, headers=headers, params={
+                    'query': payload_query
+                })
+
+                # print('oi tsv', r.text)
+                # print('r.request.headers', r.request.headers)
+                # print('r.headers', r.headers)
+                print(r.text)
+                # print(r.content)
+                return self.EXIT_OK
 
         # if self.pyargs.verbum_simplex:
         #     tabulam_multiplicatio = cs1603_3_12.quod_tabulam_multiplicatio()
