@@ -344,14 +344,12 @@ file_convert_numerordinatio_de_hxltm() {
   file_update_if_necessary csv "$objectivum_archivum_temporarium" "$objectivum_archivum"
 }
 
-
 ## Tem definidos
 # cat 999999/1603/1/1/1603_1_1.tm.hxl.csv | hxlselect --query="#status+conceptum<0"
 # cat 999999/1603/1/1/1603_1_1.tm.hxl.csv | hxlselect --query='#status+conceptum+codicem~^(1|2|3|4|5|6|7|8|9)$' --reverse
 ## Nao tem definidos
 # cat 1603/45/1/1603_45_1.no1.tm.hxl.csv | hxlselect --query="#status+conceptum<0"
 # cat 1603/45/1/1603_45_1.no1.tm.hxl.csv | hxlselect --query='#status+conceptum+codicem~^(1|2|3|4|5|6|7|8|9)$' --reverse
-
 
 # @TODO: create helper to remove empty translations;
 #        @see https://github.com/wireservice/csvkit/issues/962
@@ -361,6 +359,9 @@ file_convert_numerordinatio_de_hxltm() {
 #######################################
 # Extract Wikipedia QIDs from numerordinatio no1.tm.hxl.csv and generate an
 # wikiq.tm.csv
+# Extract QCodes from:
+#  - '+ix_wikiq'
+#  - '+v_wiki_q'
 #
 # Globals:
 #   ROOTDIR
@@ -398,9 +399,13 @@ file_translate_csv_de_numerordinatio_q() {
   objectivum_archivum_temporarium_b_u="${ROOTDIR}/999999/0/$_nomen.uniq.q.txt"
   objectivum_archivum_temporarium_b_u_wiki="${ROOTDIR}/999999/0/$_nomen.wikiq.tm.csv"
 
-  if [ -z "$(changed_recently "$fontem_archivum")" ]; then return 0; fi
+  # if [ -z "$(changed_recently "$fontem_archivum")" ]; then return 0; fi
 
-  echo "${FUNCNAME[0]} sources changed_recently. Reloading..."
+  # echo "${FUNCNAME[0]} sources changed_recently. Reloading..."
+
+  if [ -z "$(stale_archive "$objectivum_archivum")" ]; then return 0; fi
+
+  echo "${FUNCNAME[0]} stale data on [$objectivum_archivum], refreshing..."
 
   # echo "$fontem_archivum"
 
@@ -409,16 +414,27 @@ file_translate_csv_de_numerordinatio_q() {
   # echo "objectivum_archivum [$objectivum_archivum]"
   # echo "objectivum_archivum_temporarium [$objectivum_archivum_temporarium]"
   # head -n 2 "$fontem_archivum"
+  # hxlcut \
+  #   --include="#item+rem+i_qcc+is_zxxx+ix_wikiq,#item+conceptum+numerordinatio" \
+  #   "$fontem_archivum" |
+  #   hxlselect --query="#item+rem+i_qcc+is_zxxx+ix_wikiq>0" \
+  #     >"$objectivum_archivum_temporarium"
+
+  # hxlcut \
+  #   --include="#item+rem+i_qcc+is_zxxx+ix_wikiq" \
+  #   "$fontem_archivum" |
+  #   hxlselect --query="#item+rem+i_qcc+is_zxxx+ix_wikiq>0" \
+  #     >"$objectivum_archivum_temporarium_b"
   hxlcut \
-    --include="#item+rem+i_qcc+is_zxxx+ix_wikiq,#item+conceptum+numerordinatio" \
+    --include='#*+ix_wikiq,#*+v_wiki_q,#item+conceptum+numerordinatio' \
     "$fontem_archivum" |
-    hxlselect --query="#item+rem+i_qcc+is_zxxx+ix_wikiq>0" \
+    hxlselect --query='#*+ix_wikiq>0'  --query='#*+v_wiki_q>0' \
       >"$objectivum_archivum_temporarium"
 
   hxlcut \
-    --include="#item+rem+i_qcc+is_zxxx+ix_wikiq" \
+    --include='#*+ix_wikiq,#*+v_wiki_q' \
     "$fontem_archivum" |
-    hxlselect --query="#item+rem+i_qcc+is_zxxx+ix_wikiq>0" \
+    hxlselect --query='#*+ix_wikiq>0' --query='#*+v_wiki_q>0' \
       >"$objectivum_archivum_temporarium_b"
 
   sed -i '1,2d' "${objectivum_archivum_temporarium_b}"
@@ -432,6 +448,9 @@ file_translate_csv_de_numerordinatio_q() {
     ./999999999/0/1603_3_12.py --actionem-sparql --csv \
       >"$objectivum_archivum_temporarium_b_u_wiki"
   # "$objectivum_archivum_temporarium_b_u"
+
+  # TODO: implement check fo see if there is more than one Q columns, then use
+  #       as baseline
 
   rm "$objectivum_archivum_temporarium"
   rm "$objectivum_archivum_temporarium_b"
