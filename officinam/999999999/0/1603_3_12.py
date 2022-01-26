@@ -224,7 +224,8 @@ class CS1603z3z12:
         qid = ['wd:' + x for x in self.qid if isinstance(x, str)]
         # select = '?item ' + " ".join(self._query_linguam())
 
-        select = ['(?item AS ?item__conceptum__codicem)']
+        # select = ['(?item AS ?item__conceptum__codicem)']
+        select = ['(STRAFTER(STR(?item), "entity/") AS ?item__conceptum__codicem)']
         filter_otional = []
         for pair in self.D1613_1_51_langpair:
             select.append('?' + pair[1])
@@ -247,8 +248,10 @@ SELECT {select}
 WHERE
 {{
   VALUES ?item {{ {qitems} }}
+  bind(xsd:integer(strafter(str(?item), 'Q')) as ?id_numeric) .
 {langfilter}
 }}
+ORDER BY ASC (?id_numeric)
         """.format(
             qitems=" ".join(qid),
             select=" ".join(select),
