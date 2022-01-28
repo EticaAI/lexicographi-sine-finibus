@@ -32,11 +32,18 @@ echo "TODO $0"
 PURGATORIA_CONCEPTUM=()
 PURGATORIA_EXTENSIONEM=( "no1.tm.hxl.csv" "tm.hxl.csv" )
 
-PURGATORIA_CONCEPTUM+=( "1603_1_1" )
-PURGATORIA_CONCEPTUM+=( "1603_1_51" )
-PURGATORIA_CONCEPTUM+=( "1603_25_1" )
+# PURGATORIA_CONCEPTUM+=( "1603_1_1" )
+# PURGATORIA_CONCEPTUM+=( "1603_1_51" )
 
-DE_FACTUM="${DE_FACTUM:-''}"
+PURGATORIA_CONCEPTUM+=( "1603_3_12_6" )
+
+# PURGATORIA_CONCEPTUM+=( "1603_25_1" )
+# PURGATORIA_CONCEPTUM+=( "1603_84_1" )
+# PURGATORIA_CONCEPTUM+=( "1603_44_1" )
+# PURGATORIA_CONCEPTUM+=( "1603_44_142" )
+# PURGATORIA_CONCEPTUM+=( "1603_45_1" )
+
+DE_FACTUM="${DE_FACTUM:-'0'}"
 # DRYRUM="0"
 
 
@@ -61,22 +68,34 @@ purgatoria() {
   # for i in "$basim/"**/*no1.tm.hxl.csv; do
   echo "PURGATORIA_CONCEPTUM (${PURGATORIA_CONCEPTUM[*]})"
 
-  for i in "$basim/"**/**."${PURGATORIA_EXTENSIONEM[@]}"; do
+  # for i in "$basim/"**/**."${PURGATORIA_EXTENSIONEM[@]}"; do
+  for i in "$basim/"**; do
     archivum=$(basename "$i")
+    archivum_extension="${archivum#*.}"
     conceptum="${archivum%%.*}"
-    echo "Candidate [$i] [$conceptum]"
+    for purgatoria_extensionem in "${PURGATORIA_EXTENSIONEM[@]}"; do
+      # echo "purgatoria_extensionem $purgatoria_extensionem"
+      # echo "archivum_extension $archivum_extension"
+      if [[ "$archivum_extension" == "$purgatoria_extensionem" ]]; then
 
-    for item in "${PURGATORIA_CONCEPTUM[@]}"; do
-      if [[ "$conceptum" == "$item" ]]; then
-        # echo "    needs purge $i"
-        # echo "    DE_FACTUM [${DE_FACTUM}]"
-        if [ -n "$DE_FACTUM" ]; then
-          echo "    $conceptum"
-          echo "        rm $i"
-        else
-          echo "    needs purge (DE_FACTUM=1) $i"
-        fi
-        # rm "$i"
+        # echo "Candidate [$i] [$conceptum]"
+
+        for item in "${PURGATORIA_CONCEPTUM[@]}"; do
+          if [[ "$conceptum" == "$item" ]]; then
+            # echo "    needs purge $i"
+            # echo "    DE_FACTUM [${DE_FACTUM}]"
+            if [ "$DE_FACTUM" = "1" ]; then
+              echo "    $conceptum"
+              echo "        > rm $i"
+              rm "$i"
+            else
+              echo "    candidate [$i]"
+              echo "    requires run with"
+              echo "        DE_FACTUM=1 $0"
+            fi
+            # rm "$i"
+          fi
+        done
       fi
     done
   done
