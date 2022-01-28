@@ -30,6 +30,7 @@
 #    python3 -m doctest ./999999999/0/1603_1.py
 
 #    ./999999999/0/1603_1.py
+#    printf "#item+rem+i_qcc+is_zxxx+ix_wikiq\n" | ./999999999/0/1603_1.py --actionem-item
 #    NUMERORDINATIO_BASIM="/external/ndata" ./999999999/0/1603_1.py
 #    printf "Q1065\nQ82151\n" | ./999999999/0/1603_1.py --actionem-sparql --query
 #    printf "Q1065\nQ82151\n" | ./999999999/0/1603_1.py --actionem-sparql --query | ./999999999/0/1603_1.py --actionem-sparql --wikidata-link
@@ -117,6 +118,92 @@ def hxltm_hastag_de_csvhxlated(csv_caput: list) -> list:
     return resultatum
 
 # https://stackoverflow.com/questions/43258341/how-to-get-wikidata-labels-in-more-than-one-language
+
+
+class A1603z1:
+    """1603_1 Main class to load boostrapping tables and explain headers
+
+    [extended_summary]
+    """
+
+    def __init__(self):
+        self.D1613_1_51 = self._init_1613_1_51_datum()
+
+        self.ix_csv = []  # Not really used
+        self.ix_hxlhstg = []
+
+        self.fontem_separato = ","
+        self.resultatum_separato = "\t"
+
+    def _init_1613_1_51_datum(self):
+        archivum = NUMERORDINATIO_BASIM + "/1603/1/51/1603_1_51.no1.tm.hxl.csv"
+        datum = {}
+        with open(archivum) as file:
+            # tsv_file = csv.DictReader(file, delimiter="\t")
+            csv_file = csv.DictReader(file)
+            # return list(tsv_file)
+            for conceptum in csv_file:
+                # print('conceptum', conceptum)
+                int_clavem = int(conceptum['#item+conceptum+codicem'])
+                datum[int_clavem] = {}
+                for clavem, rem in conceptum.items():
+                    if not clavem.startswith('#item+conceptum+codicem'):
+                        datum[int_clavem][clavem] = rem
+
+        return datum
+
+    def est_resultatum_separato(self, resultatum_separato: str):
+        self.resultatum_separato = resultatum_separato
+        return self
+
+    def est_lineam(self, lineam):
+        # @TODO: this would not work when parsing files strictly not
+        #        Numerordinatio
+        if self.is_ready():
+            return self
+
+        self.ix_hxlhstg = lineam.split(self.fontem_separato)
+        return self
+
+    # temporary name
+    def is_ready(self):
+        return len(self.ix_hxlhstg) > 0
+
+    def exportatum(self):
+        resultatum = []
+        resultatum.append([
+            '#item+conceptum+codicem',
+            '#item+rem+i_qcc+is_zxxx+ix_hxlhstg',
+            '#item+rem+i_qcc+is_zxxx+ix_hxlt',
+            '#item+rem+i_qcc+is_zxxx+ix_hxla',
+        ])
+
+        index = 0
+        for item in self.ix_hxlhstg:
+            # print('item', item)
+            index = index + 1
+            rem = NumerordinatioItem(item)
+            resultatum.append([
+                str(index),
+                rem.quod_ix_hxlhstg(),
+                rem.quod_ix_hxlt(),
+                rem.quod_ix_hxla()
+            ])
+        return resultatum
+
+# printf "#item+conceptum+codicem,#item+rem+i_qcc+is_zxxx+ix_wikiq," | ./999999999/0/1603_1.py --actionem-item
+class NumerordinatioItem:
+    def __init__(self, ix_hxlhstg: str):
+        self.ix_hxlhstg = ix_hxlhstg
+
+    def quod_ix_hxlhstg(self):
+        return self.ix_hxlhstg
+
+    def quod_ix_hxla(self):
+        return self.ix_hxlhstg.replace(self.quod_ix_hxlt(), '')
+
+    def quod_ix_hxlt(self):
+        return self.ix_hxlhstg.split('+')[0]
 
 
 class CS1603z3z12:
@@ -308,14 +395,15 @@ class CLI_2600:
         #     nargs='?'
         # )
 
-        # parser.add_argument(
-        #     '--punctum-separato-de-resultatum',
-        #     help='Character(s) used as separator for generate output.' +
-        #     'Defaults to tab "\t"',
-        #     dest='resultatum_separato',
-        #     default="\t",
-        #     nargs='?'
-        # )
+        parser.add_argument(
+            '--punctum-separato-de-resultatum',
+            help='Character(s) used as separator for generate output. ' +
+            'Used only for tabular results. ' +
+            'Defaults to tab "\t"',
+            dest='resultatum_separato',
+            default="\t",
+            nargs='?'
+        )
 
         hxlcaput = parser.add_argument_group(
             "item",
@@ -571,14 +659,15 @@ class CLI_2600:
         self.pyargs = pyargs
 
         # cs1603_1 = cs1603_1()
-        cs1603_1 = CS1603z3z12()
+        # cs1603_1 = CS1603z3z12()
+        a1603z1 = A1603z1()
 
         # cs1603_1 = cs1603_1()
 
         # print('self.pyargs', self.pyargs)
 
         # cs1603_1.est_verbum_limiti(args.verbum_limiti)
-        cs1603_1.est_resultatum_separato(args.resultatum_separato)
+        a1603z1.est_resultatum_separato(args.resultatum_separato)
 
         # if args.codex_verbum_tabulae:
         #     cs1603_1.est_codex_verbum_tabulae(args.codex_verbum_tabulae)
@@ -622,8 +711,41 @@ class CLI_2600:
         #         )
         #     return self.EXIT_OK
 
-        if self.pyargs.actionem_sparql:
+        # if self.pyargs.actionem_item:
+        #     print('oi')
+
+        # def _temp_separator(lineam):
+        #     if lineam
+
+        # printf "#item+conceptum+codicem,#item+rem+i_qcc+is_zxxx+ix_wikiq," | ./999999999/0/1603_1.py --actionem-item
+
+        # if self.pyargs.actionem_sparql:
+        if self.pyargs.actionem_item:
             # print('oi')
+
+            _todo_option = True
+            if _todo_option:
+                if stdin.isatty():
+                    print("ERROR. Please pipe data in. \nExample:\n"
+                          "  cat data.txt | {0} --actionem-quod-sparql\n"
+                          "  printf \"Q1065\\nQ82151\\n\" | {0} --actionem-quod-sparql"
+                          "".format(__file__))
+                    return self.EXIT_ERROR
+
+                for line in sys.stdin:
+                    if a1603z1.is_ready():
+                        break
+                    crudum_lineam = line.replace('\n', ' ').replace('\r', '')
+                    # TODO: deal with cases were have more than Qcode
+                    # a1603z1.est_wikidata_q(codicem)
+                    a1603z1.est_lineam(crudum_lineam)
+
+                quod_query = a1603z1.exportatum()
+                # tabulam_numerae = ['TODO']
+                # return self.output(tabulam_numerae)
+                return self.output(quod_query)
+
+            return self.EXIT_OK
 
             if self.pyargs.query:
                 if stdin.isatty():
