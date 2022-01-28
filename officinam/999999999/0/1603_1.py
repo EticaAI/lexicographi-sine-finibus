@@ -31,7 +31,7 @@
 
 #    ./999999999/0/1603_1.py
 #    NUMERORDINATIO_BASIM="/external/ndata" ./999999999/0/1603_1.py
-#    printf "Q1065\nQ82151\n" | ./999999999/0/1603_1.py --actionem-quod-sparql
+#    printf "Q1065\nQ82151\n" | ./999999999/0/1603_1.py --actionem-sparql --query
 #    printf "Q1065\nQ82151\n" | ./999999999/0/1603_1.py --actionem-sparql --query | ./999999999/0/1603_1.py --actionem-sparql --wikidata-link
 #    printf "Q1065\nQ82151\n" | ./999999999/0/1603_1.py --actionem-sparql --query | ./999999999/0/1603_1.py --actionem-sparql --tsv > 999999/0/test.tsv
 #    printf "Q1065\nQ82151\n" | ./999999999/0/1603_1.py --actionem-sparql --query | ./999999999/0/1603_1.py --actionem-sparql --csv > 999999/0/test.csv
@@ -220,12 +220,14 @@ class CS1603z3z12:
 #   }
 # }
 
+
     def query(self):
         qid = ['wd:' + x for x in self.qid if isinstance(x, str)]
         # select = '?item ' + " ".join(self._query_linguam())
 
         # select = ['(?item AS ?item__conceptum__codicem)']
-        select = ['(STRAFTER(STR(?item), "entity/") AS ?item__conceptum__codicem)']
+        select = [
+            '(STRAFTER(STR(?item), "entity/") AS ?item__conceptum__codicem)']
         filter_otional = []
         for pair in self.D1613_1_51_langpair:
             select.append('?' + pair[1])
@@ -306,73 +308,86 @@ class CLI_2600:
         #     nargs='?'
         # )
 
-        parser.add_argument(
-            '--punctum-separato-de-resultatum',
-            help='Character(s) used as separator for generate output.' +
-            'Defaults to tab "\t"',
-            dest='resultatum_separato',
-            default="\t",
-            nargs='?'
-        )
+        # parser.add_argument(
+        #     '--punctum-separato-de-resultatum',
+        #     help='Character(s) used as separator for generate output.' +
+        #     'Defaults to tab "\t"',
+        #     dest='resultatum_separato',
+        #     default="\t",
+        #     nargs='?'
+        # )
 
-        neo_codex = parser.add_argument_group(
-            "sparql",
-            "(DEFAULT USE) SPARQL query")
+        hxlcaput = parser.add_argument_group(
+            "item",
+            "(DEFAULT USE) Explain one item")
 
-        neo_codex.add_argument(
-            '--actionem-sparql',
-            help='Define mode to operate with generation of SPARQL ' +
-            'queries',
+        hxlcaput.add_argument(
+            '--actionem-item',
+            help='Define mode just explain one item',
             metavar='',
-            dest='actionem_sparql',
-            const=True,
-            nargs='?'
-        )
-
-        neo_codex.add_argument(
-            '--query',
-            help='Generate SPARQL query',
-            metavar='',
-            dest='query',
-            const=True,
-            nargs='?'
-        )
-        neo_codex.add_argument(
-            '--wikidata-link',
-            help='Generate query.wikidata.org link (from piped in query)',
-            metavar='',
-            dest='wikidata_link',
-            const=True,
-            nargs='?'
-        )
-        neo_codex.add_argument(
-            '--csv',
-            help='Generate TSV output (from piped in query)',
-            metavar='',
-            dest='csv',
+            dest='actionem_item',
             const=True,
             nargs='?'
         )
 
-        neo_codex.add_argument(
-            '--tsv',
-            help='Generate TSV output (from piped in query)',
-            metavar='',
-            dest='tsv',
-            const=True,
-            nargs='?'
-        )
+        # neo_codex = parser.add_argument_group(
+        #     "sparql",
+        #     "(DEFAULT USE) SPARQL query")
 
-        neo_codex.add_argument(
-            '--hxltm',
-            help='Generate HXL-tagged output (from piped in query). ' +
-            'Concepts use #item+conceptum+codicem instead ' +
-            'of #item+code+v_wiki_q',
-            metavar='',
-            dest='hxltm',
-            const=True,
-            nargs='?'
-        )
+        # neo_codex.add_argument(
+        #     '--actionem-sparql',
+        #     help='Define mode to operate with generation of SPARQL ' +
+        #     'queries',
+        #     metavar='',
+        #     dest='actionem_sparql',
+        #     const=True,
+        #     nargs='?'
+        # )
+
+        # neo_codex.add_argument(
+        #     '--query',
+        #     help='Generate SPARQL query',
+        #     metavar='',
+        #     dest='query',
+        #     const=True,
+        #     nargs='?'
+        # )
+        # neo_codex.add_argument(
+        #     '--wikidata-link',
+        #     help='Generate query.wikidata.org link (from piped in query)',
+        #     metavar='',
+        #     dest='wikidata_link',
+        #     const=True,
+        #     nargs='?'
+        # )
+        # neo_codex.add_argument(
+        #     '--csv',
+        #     help='Generate TSV output (from piped in query)',
+        #     metavar='',
+        #     dest='csv',
+        #     const=True,
+        #     nargs='?'
+        # )
+
+        # neo_codex.add_argument(
+        #     '--tsv',
+        #     help='Generate TSV output (from piped in query)',
+        #     metavar='',
+        #     dest='tsv',
+        #     const=True,
+        #     nargs='?'
+        # )
+
+        # neo_codex.add_argument(
+        #     '--hxltm',
+        #     help='Generate HXL-tagged output (from piped in query). ' +
+        #     'Concepts use #item+conceptum+codicem instead ' +
+        #     'of #item+code+v_wiki_q',
+        #     metavar='',
+        #     dest='hxltm',
+        #     const=True,
+        #     nargs='?'
+        # )
 
         # neo_codex.add_argument(
         #     '--actionem-verbum-simplex',
@@ -531,18 +546,18 @@ class CLI_2600:
         #     nargs='?'
         # )
 
-        parser.add_argument(
-            '--verbose',
-            help='Verbose output',
-            metavar='verbose',
-            nargs='?'
-        )
-        if hxl_output:
-            parser.add_argument(
-                'outfile',
-                help='File to write (if omitted, use standard output).',
-                nargs='?'
-            )
+        # parser.add_argument(
+        #     '--verbose',
+        #     help='Verbose output',
+        #     metavar='verbose',
+        #     nargs='?'
+        # )
+        # if hxl_output:
+        #     parser.add_argument(
+        #         'outfile',
+        #         help='File to write (if omitted, use standard output).',
+        #         nargs='?'
+        #     )
 
         # print('oioioi', parser)
         return parser.parse_args()

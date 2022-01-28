@@ -31,7 +31,7 @@
 
 #    ./999999999/0/1603_3_12.py
 #    NUMERORDINATIO_BASIM="/external/ndata" ./999999999/0/1603_3_12.py
-#    printf "Q1065\nQ82151\n" | ./999999999/0/1603_3_12.py --actionem-quod-sparql
+#    printf "Q1065\nQ82151\n" | ./999999999/0/1603_3_12.py --actionem-sparql --query
 #    printf "Q1065\nQ82151\n" | ./999999999/0/1603_3_12.py --actionem-sparql --query | ./999999999/0/1603_3_12.py --actionem-sparql --wikidata-link
 #    printf "Q1065\nQ82151\n" | ./999999999/0/1603_3_12.py --actionem-sparql --query | ./999999999/0/1603_3_12.py --actionem-sparql --tsv > 999999/0/test.tsv
 #    printf "Q1065\nQ82151\n" | ./999999999/0/1603_3_12.py --actionem-sparql --query | ./999999999/0/1603_3_12.py --actionem-sparql --csv > 999999/0/test.csv
