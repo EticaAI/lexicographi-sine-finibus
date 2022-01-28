@@ -44,7 +44,7 @@ import sys
 import argparse
 # from pathlib import Path
 from typing import (
-    # Type,
+    Type,
     Union
 )
 
@@ -94,29 +94,52 @@ STDIN = sys.stdin.buffer
 # }
 
 
-def hxltm_hastag_de_csvhxlated(csv_caput: list) -> list:
-    """hxltm_hastag_de_csvhxlated [summary]
-
-    Make this type of conversion:
-    - 'item__conceptum__codicem' => '#item+conceptum+codicem'
-    - 'item__rem__i_ara__is_arab' => '#item+rem+i_ara+is_arab'
-    - '' => ''
-
-    Args:
-        csv_caput (list): Array of input items
-
-    Returns:
-        [list]:
-    """
-    resultatum = []
-    for item in csv_caput:
-        if len(item):
-            resultatum.append('#' + item.replace('__', '+').replace('?', ''))
+class DictionariaLinguarum:
+    def __init__(self, fontem_archivum: str = None):
+        if fontem_archivum:
+            self.D1613_1_51_fontem = self._init_1613_1_51_datum(
+                fontem_archivum)
         else:
-            resultatum.append('')
-    return resultatum
+            self.D1613_1_51_fontem = NUMERORDINATIO_BASIM + \
+                "/1603/1/51/1603_1_51.no1.tm.hxl.csv"
 
-# https://stackoverflow.com/questions/43258341/how-to-get-wikidata-labels-in-more-than-one-language
+        self.dictionaria_codex = self._init_dictionaria()
+        pass
+
+    def _init_dictionaria(self):
+
+        datum = {}
+        with open(self.D1613_1_51_fontem) as file:
+            csv_file = csv.DictReader(file)
+            # return list(tsv_file)
+            for conceptum in csv_file:
+                # print('conceptum', conceptum)
+                int_clavem = int(conceptum['#item+conceptum+codicem'])
+                datum[int_clavem] = {}
+                for clavem, rem in conceptum.items():
+                    if not clavem.startswith('#item+conceptum+codicem'):
+                        datum[int_clavem][clavem] = rem
+        return datum
+
+    def quod(self, terminum: str,
+             #  factum: str = '#item+rem+i_lat+is_latn',
+             clavem: str = None):
+        clavem_defallo = [
+            '#item+rem+i_qcc+is_zxxx+ix_hxla',
+            '#item+rem+i_qcc+is_zxxx+ix_csvsffxm'
+        ]
+        _clavem = clavem_defallo if clavem is None else [clavem]
+        # _clavem = clavem_defallo
+
+        for item in _clavem:
+            # print('item', item)
+            for _k, linguam in self.dictionaria_codex.items():
+                # print('linguam', linguam)
+                if terminum.find(linguam[item]) > -1:
+                    # return linguam[factum]
+                    return linguam
+
+        return None
 
 
 class A1603z1:
@@ -126,7 +149,8 @@ class A1603z1:
     """
 
     def __init__(self):
-        self.D1613_1_51 = self._init_1613_1_51_datum()
+        # self.D1613_1_51 = self._init_1613_1_51_datum()
+        self.dictionaria_codex = DictionariaLinguarum()
 
         self.ix_csv = []  # Not really used
         self.ix_hxlhstg = []
@@ -182,18 +206,24 @@ class A1603z1:
             '#item+rem+i_qcc+is_zxxx+ix_hxlhstg',
             '#item+rem+i_qcc+is_zxxx+ix_hxlt',
             '#item+rem+i_qcc+is_zxxx+ix_hxla',
+            '#meta',
         ])
 
         index = 0
         for item in self.ix_hxlhstg:
             # print('item', item)
             index = index + 1
-            rem = NumerordinatioItem(item)
+            rem = NumerordinatioItem(
+                item, dictionaria_codex=self.dictionaria_codex)
+
+            meta = rem.quod_meta()
+            meta_nomen = '' if meta is None else meta['#item+rem+i_lat+is_latn']
             resultatum.append([
                 str(index),
                 rem.quod_ix_hxlhstg(),
                 rem.quod_ix_hxlt(),
-                rem.quod_ix_hxla()
+                rem.quod_ix_hxla(),
+                meta_nomen
             ])
         return resultatum
 
@@ -206,8 +236,9 @@ class NumerordinatioItem:
     [eng-Latn]_
     """
 
-    def __init__(self, ix_hxlhstg: str):
+    def __init__(self, ix_hxlhstg: str, dictionaria_codex: Type['DictionariaLinguarum']):
         self.ix_hxlhstg = ix_hxlhstg
+        self.dictionaria_codex = dictionaria_codex
 
     def quod_ix_hxlhstg(self):
         return self.ix_hxlhstg
@@ -217,6 +248,9 @@ class NumerordinatioItem:
 
     def quod_ix_hxlt(self):
         return self.ix_hxlhstg.split('+')[0]
+
+    def quod_meta(self):
+        return self.dictionaria_codex.quod(self.quod_ix_hxla())
 
 
 class CLI_2600:
