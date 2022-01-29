@@ -115,10 +115,53 @@ def numerordinatio_ordo(numerordinatio: str) -> int:
     return (normale.count('_') + 1)
 
 
+def numerordinatio_lineam_hxml5_details(rem: dict) -> str:
+    # codex = rem['#item+conceptum+codicem']
+
+    resultatum = '<details><summary>🔎' + \
+        rem['#item+conceptum+codicem'] + '🔍</summary>'
+    resultatum += '<dl>'
+    for clavem, item in rem.items():
+        if item:
+            resultatum += '<dt>' + clavem + '</dt>'
+            resultatum += '<dd>' + item + '</dd>'
+        # print(item)
+
+    resultatum += '</dl>'
+    resultatum += '</details>'
+    return resultatum
+
+
+def numerordinatio_nomen(
+        rem: dict, objectivum_linguam: str = None,
+        auxilium_linguam: list = None) -> str:
+
+    # TODO: this obviously is hardcoded; Implement full inferences
+    if '#item+rem+i_lat+is_latn' in rem and rem['#item+rem+i_lat+is_latn']:
+        return rem['#item+rem+i_lat+is_latn']
+    if '#item+rem+i_mul+is_zyyy' in rem and rem['#item+rem+i_mul+is_zyyy']:
+        return rem['#item+rem+i_mul+is_zyyy']
+
+    return ''
+
+
 class Codex:
-    def __init__(self, de_codex: str):
+    def __init__(
+        self,
+        de_codex: str,
+        objectivum_linguam: str = None,
+        auxilium_linguam: list = None,
+        formatum: str = 'markdown',
+
+    ):
 
         self.de_codex = de_codex
+        self.formatum = formatum
+        if objectivum_linguam:
+            self.objectivum_linguam = objectivum_linguam
+        if auxilium_linguam:
+            self.auxilium_linguam = auxilium_linguam
+
         self.dictionaria_linguarum = DictionariaLinguarum()
         self.m1603_1_1__de_codex = self._init_1603_1_1()
         self.codex = self._init_codex()
@@ -176,12 +219,18 @@ class Codex:
         resultatum = []
         for item in self.codex:
             codicem_loci = item['#item+conceptum+codicem']
+            nomen = numerordinatio_nomen(item)
+            codicem_normale = numerordinatio_neo_separatum(codicem_loci, '_')
             codicem_ordo = numerordinatio_ordo(codicem_loci)
             resultatum.append(
-                ('#' * codicem_ordo) + " " + codicem_loci + "\n"
+                ('#' * (codicem_ordo + 1)) + ' [`' + codicem_loci + '`] ' + nomen + "\n"
             )
+            resultatum.append("<a id='{0}' href='#{0}'>§ {0}</a>".format(codicem_normale))
+            resultatum.append("\n")
 
-            resultatum.append("<!-- " + str(item) + " -->")
+            resultatum.append(numerordinatio_lineam_hxml5_details(item))
+
+            # resultatum.append("<!-- " + str(item) + " -->")
             resultatum.append("\n")
 
         return resultatum
@@ -807,6 +856,78 @@ class CLI_2600:
             nargs='?'
         )
 
+        codex.add_argument(
+            '--objectivum-linguam',
+            help='Target natural language (use if not auto-detected). '
+            'Must be like {ISO 639-3}-{ISO 15924}. Example: arb-Arab. '
+            'Default: mul-Zyyy ',
+            # metavar='',
+            dest='objectivum_linguam',
+            default='mul-Zyyy',
+            nargs='?'
+        )
+
+        codex.add_argument(
+            '--auxilium-linguam',
+            help='Define auxiliary languages '
+            'Must be like {ISO 639-3}-{ISO 15924}. '
+            'Example: "ina-Latn,ile-Latn" '
+            'Accepts multiple values. ',
+            # metavar='',
+            dest='auxilium_linguam',
+            # default='mul-Zyyy',
+            # nargs='?'
+            type=lambda x: x.split(',')
+        )
+
+        # # --agendum-linguam is a draft. Not 100% implemented
+        # parser.add_argument(
+        #     '--agendum-linguam', '-AL',
+        #     help='(Planned, but not fully implemented yet) ' +
+        #     'Restrict working languages to a list. Useful for ' +
+        #     'HXLTM to HXLTM or multilingual formats like TBX and TMX. ' +
+        #     'Requires: multilingual operation. ' +
+        #     'Accepts multiple values.',
+        #     metavar='agendum_linguam',
+        #     type=lambda x: x.split(',')
+        #     # action='append',
+        #     # nargs='?'
+        # )
+
+        # # --non-agendum-linguam is a draft. Not 100% implemented
+        # parser.add_argument(
+        #     '--non-agendum-linguam', '-non-AL',
+        #     help='(Planned, but not implemented yet) ' +
+        #     'Inverse of --agendum-linguam. Document one or more ' +
+        #     'languages that should be ignored if they exist. ' +
+        #     'Requires: multilingual operation. ' +
+        #     'Accept multiple values.',
+        #     metavar='non_agendum_linguam',
+        #     # action='append',
+        #     type=lambda x: x.split(',')
+        #     # nargs='?'
+        # )
+
+        dictionaria.add_argument(
+            '--objectivum-formatum-markdown',
+            help='(default) Output Markdown format',
+            # metavar='',
+            dest='ad_markdown',
+            # const=True,
+            action='store_true',
+            # nargs='?'
+        )
+
+        dictionaria.add_argument(
+            '--objectivum-formatum-asciidoctor',
+            help='(Not fully implemented) Output Asciidoctor format',
+            # metavar='',
+            dest='ad_asciidoctor',
+            # const=True,
+            action='store_true',
+            # nargs='?'
+        )
+
         return parser.parse_args()
 
     # def execute_cli(self, args, stdin=STDIN, stdout=sys.stdout,
@@ -829,7 +950,18 @@ class CLI_2600:
 
         # if self.pyargs.actionem_sparql:
         if self.pyargs.codex_de:
-            codex = Codex(self.pyargs.codex_de)
+            formatum = 'markdown'
+            if self.pyargs.ad_asciidoctor:
+                formatum = 'asciidoctor'
+            if self.pyargs.ad_markdown:
+                formatum = 'markdown'
+
+            codex = Codex(
+                self.pyargs.codex_de,
+                objectivum_linguam=self.pyargs.objectivum_linguam,
+                auxilium_linguam=self.pyargs.auxilium_linguam,
+                formatum=formatum
+            )
             # data = ['TODO']
             return self.output(codex.exportatum())
 
