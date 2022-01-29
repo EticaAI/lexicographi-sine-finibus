@@ -160,7 +160,7 @@ hxlexpand --query="#status+ix_wikiq>0" --tags="#meta+value+ix_wikiq" 999999/1603
 
 # ./999999999/0/1603_1.py ./999999999/0/1603_1.py --dictionaria-numerordinatio
 ./999999999/0/1603_1.py ./999999999/0/1603_1.py --dictionaria-numerordinatio --punctum-separato-de-resultatum=',' > 999999/1603/13/1603~dictionaria.hxl.csv
-
+./999999999/0/1603_1.py ./999999999/0/1603_1.py --codex-de 1603_25_1 > 999999/1603/25/1/1603_25_1.codex.md
 # echo "TODO: compile non-empty '#item+rem+i_qcc+is_zxxx+ix_hxlix'"
 # echo "TODO: compile non-empty '#item+rem+i_qcc+is_zxx+ix_hxlvoc'"
 

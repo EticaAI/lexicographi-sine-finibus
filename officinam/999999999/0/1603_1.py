@@ -44,6 +44,7 @@ Exemplōrum gratiā:
 """.format(__file__)
 
 
+from multiprocessing.sharedctypes import Value
 import os
 import sys
 import argparse
@@ -98,11 +99,101 @@ STDIN = sys.stdin.buffer
 #   SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
 # }
 
+def numerordinatio_neo_separatum(
+        numerordinatio: str, separatum: str = "_") -> str:
+    resultatum = ''
+    resultatum = numerordinatio.replace('_', separatum)
+    resultatum = resultatum.replace('/', separatum)
+    resultatum = resultatum.replace(':', separatum)
+    # TODO: add more as need
+    return resultatum
+
+
+def numerordinatio_ordo(numerordinatio: str) -> int:
+    normale = numerordinatio_neo_separatum(numerordinatio, '_')
+
+    return (normale.count('_') + 1)
+
+
 class Codex:
     def __init__(self, de_codex: str):
 
         self.de_codex = de_codex
         self.dictionaria_linguarum = DictionariaLinguarum()
+        self.m1603_1_1__de_codex = self._init_1603_1_1()
+        self.codex = self._init_codex()
+
+    def _init_1603_1_1(self):
+        numerordinatio_neo_codex = numerordinatio_neo_separatum(
+            self.de_codex, ':')
+        numerordinatio_1603_1_1 = '1603:1:1'
+        fullpath = numerordinatio_neo_separatum(numerordinatio_1603_1_1, '/')
+        fullpath = fullpath + '/' + \
+            numerordinatio_neo_separatum(numerordinatio_1603_1_1, '_')
+        fullpath = fullpath + '.no1.tm.hxl.csv'
+        test = numerordinatio_neo_separatum(numerordinatio_1603_1_1, '/')
+        # print('test', test, self.de_codex)
+        # print('fullpath', fullpath)
+        with open(fullpath) as csvfile:
+            reader = csv.DictReader(csvfile)
+            for lineam in reader:
+                if lineam['#item+rem+i_qcc+is_zxxx+ix_n1603'] == numerordinatio_neo_codex:
+                    return lineam
+
+        raise ValueError("{0} not defined on 1603_1_1 [{1}]".format(
+            self.de_codex, fullpath))
+
+    def _init_codex(self):
+        numerordinatio = numerordinatio_neo_separatum(self.de_codex, ':')
+        fullpath = numerordinatio_neo_separatum(self.de_codex, '/')
+        fullpath = fullpath + '/' + \
+            numerordinatio_neo_separatum(self.de_codex, '_')
+        fullpath = fullpath + '.no1.tm.hxl.csv'
+        test = numerordinatio_neo_separatum(self.de_codex, '/')
+        # print('test', test, self.de_codex)
+        # print('fullpath', fullpath)
+        codex_lineam = []
+        with open(fullpath) as csvfile:
+            reader = csv.DictReader(csvfile)
+            for lineam in reader:
+                codex_lineam.append(lineam)
+
+        return codex_lineam
+
+    def _caput(self):
+        resultatum = []
+        # resultatum.append(self._caput())
+        resultatum.append(
+            '# [`' +
+            self.m1603_1_1__de_codex['#item+rem+i_qcc+is_zxxx+ix_n1603']
+            + '`] ' + self.m1603_1_1__de_codex['#item+rem+i_mul+is_zyyy'])
+        resultatum.append("\n")
+        resultatum.append('<!--' + str(self.m1603_1_1__de_codex) + '-->')
+
+        return resultatum
+
+    def _corpus(self):
+        resultatum = []
+        for item in self.codex:
+            codicem_loci = item['#item+conceptum+codicem']
+            codicem_ordo = numerordinatio_ordo(codicem_loci)
+            resultatum.append(
+                ('#' * codicem_ordo) + " " + codicem_loci + "\n"
+            )
+
+            resultatum.append("<!-- " + str(item) + " -->")
+            resultatum.append("\n")
+
+        return resultatum
+
+    def exportatum(self) -> list:
+        resultatum = []
+
+        resultatum.extend(self._caput())
+        resultatum.extend(self._corpus())
+
+        # return "\n".join(resultatum)
+        return resultatum
 
 
 class DictionariaLinguarum:
@@ -738,9 +829,9 @@ class CLI_2600:
 
         # if self.pyargs.actionem_sparql:
         if self.pyargs.codex_de:
-            dictionaria_numerordinatio = DictionariaNumerordinatio()
+            codex = Codex(self.pyargs.codex_de)
             # data = ['TODO']
-            return self.output(dictionaria_numerordinatio.exportatum())
+            return self.output(codex.exportatum())
 
         if self.pyargs.dictionaria_numerordinatio:
             dictionaria_numerordinatio = DictionariaNumerordinatio()
