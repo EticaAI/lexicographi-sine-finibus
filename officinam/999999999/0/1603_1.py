@@ -163,40 +163,7 @@ class DictionariaNumerordinatio:
             '[Rēgula expressiōnī cōnstrūctae (HXL Standard Tag)]',
         ])
         resultatum.append([
-            '',
-            '{{1603_13_1_2}}',
-            '#item',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '[Factum ad Rēgula expressiōnī cōnstrūctae (HXL Standard Tag)]',
-        ])
-        resultatum.append([
-            '',
-            '{{1603_13_1_2}}',
-            '#status',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '[Status ad Rēgula expressiōnī cōnstrūctae (HXL Standard Tag)]',
-        ])
-        resultatum.append([
-            '',
-            '{{1603_13_1_2}}',
-            '#meta',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '[Meta ad Rēgula expressiōnī cōnstrūctae (HXL Standard Tag)]',
-        ])
-        resultatum.append([
-            '{{1603_13_1_3}}',  # hxlhashtag
+            '{{1603_13_1_3}}',  # HXL Standard attributes
             '',
             '',
             '',
@@ -207,7 +174,7 @@ class DictionariaNumerordinatio:
             '[Rēgula expressiōnī cōnstrūctae (HXL Standard attributes)]',
         ])
         resultatum.append([
-            '{{1603_13_1_23}}',  # hxlhashtag + attribute
+            '{{1603_13_1_23}}',  # Trivia: ('2' + '3')
             '',
             '',
             '',
@@ -217,6 +184,108 @@ class DictionariaNumerordinatio:
             '',
             '[Rēgula expressiōnī cōnstrūctae (HXL Standard composed prefix, Hashtag + attributes)]',
         ])
+        resultatum.append([
+            '{{1603_13_1_3_9}}',  # i_ attribute; Trivia: [9] I = 9
+            '{{1603_13_1_3}}',  # HXL Standard attributes
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '[Rēgula expressiōnī cōnstrūctae (HXL Standard attributes, language +i_)]',
+        ])
+        resultatum.append([
+            '{{1603_13_1_3_19}}',  # is_ attribute; Trivia: [19] S = 19
+            '{{1603_13_1_3}}',  # HXL Standard attributes
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '[Rēgula expressiōnī cōnstrūctae (HXL Standard attributes, writting system +is_)]',
+        ])
+        resultatum.append([
+            '{{1603_13_1_3_24}}',  # ix_ attribute; Trivia: [24] X = 24
+            '{{1603_13_1_3}}',  # HXL Standard attributes
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '[Rēgula expressiōnī cōnstrūctae (HXL Standard attributes, +ix_)]',
+        ])
+        resultatum.append([
+            # i_zzz + ix_zzzz attribute; [919] I(9) + S(19)
+            '{{1603_13_1_3_919}}',
+            '{{1603_13_1_3}}',  # HXL Standard attributes
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '[Rēgula expressiōnī cōnstrūctae (HXL Standard attributes, +i_zzz+is_zzzz)]',
+        ])
+        resultatum.append([
+            # i_zzz + ix_zzzz attribute; [91924] I(9) + S(19) + X (24)
+            '{{1603_13_1_23_91924}}',
+            '{{1603_13_1_23}}',
+            '', #'1',
+            '', #'1',
+            '',
+            '',
+            '',
+            '',
+            '[Rēgula expressiōnī cōnstrūctae (HXL Standard composed prefix #hashtag+rem+i_zzz+is_zzzz+ix_zzzzzzz)]',
+        ])
+        resultatum.append([
+            '',
+            '{{1603_13_1_2}}',
+            '',
+            '',
+            '',
+            '#item',
+            '',
+            '',
+            '[Factum ad Rēgula expressiōnī cōnstrūctae (HXL Standard Tag)]',
+        ])
+        resultatum.append([
+            '',
+            '{{1603_13_1_2}}',
+            '',
+            '',
+            '',
+            '#status',
+            '',
+            '',
+            '[Status ad Rēgula expressiōnī cōnstrūctae (HXL Standard Tag)]',
+        ])
+        resultatum.append([
+            '',
+            '{{1603_13_1_2}}',
+            '',
+            '',
+            '',
+            '#meta',
+            '',
+            '',
+            '[Meta ad Rēgula expressiōnī cōnstrūctae (HXL Standard Tag)]',
+        ])
+
+        # resultatum.append([
+        #     '{{1603_13_1_23}}',  # hxlhashtag + attribute, specific with ix_*
+        #     '',
+        #     '',
+        #     '',
+        #     '',
+        #     '',
+        #     '',
+        #     '',
+        #     '[Rēgula expressiōnī cōnstrūctae (HXL Standard composed prefix, Hashtag + attributes)]',
+        # ])
         resultatum.append([
             '{{1603_13_1_23_3}}',  # [3] C (concept)
             '{{1603_13_1_23}}',
@@ -229,7 +298,7 @@ class DictionariaNumerordinatio:
             '/Concept level information/',
         ])
         resultatum.append([
-            '{{1603_13_1_23_3_10}}',  # 10 identifier (1), no variant (0)
+            '{{1603_13_1_23_3_10}}',  # 10 local identifier (1), no variant (0)
             '{{1603_13_1_23_3}}',
             '1',
             '',
@@ -240,7 +309,7 @@ class DictionariaNumerordinatio:
             '/Concept level information, local identifier/',
         ])
         resultatum.append([
-            '{{1603_13_1_23_3_11}}',  # [11] identifier (1), status (1)
+            '{{1603_13_1_23_3_11}}',  # [11] local identifier (1), status (1)
             '{{1603_13_1_23_3}}',
             '1',
             '',
@@ -248,10 +317,10 @@ class DictionariaNumerordinatio:
             '#status',
             'conceptum+codicem',
             '#status+conceptum+codicem',
-            '/Educated guees on stability (1-100) of local identifier/',
+            '/Educated guess on stability (1-100) of local identifier/',
         ])
         resultatum.append([
-            '{{1603_13_1_23_3_19}}',  # [11] identifier (1), metadata (9)
+            '{{1603_13_1_23_3_18}}',  # [11] local identifier (1), metadata (8)
             '{{1603_13_1_23_3}}',
             '1',
             '',
@@ -271,6 +340,72 @@ class DictionariaNumerordinatio:
             'conceptum+definitionem',
             '#status+conceptum+definitionem',
             '/Educated guess on comprehensibility (1-100) of concept/',
+        ])
+        resultatum.append([
+            '{{1603_13_1_23_3_50}}',
+            '{{1603_13_1_23_91924}}',
+            '1',
+            '',
+            '',
+            '#item',
+            'rem+i_qcc+is_zxxx+{{1603_13_1_3_24}}',
+            '#item+rem+i_qcc+is_zxxx+{{1603_13_1_3_24}}',
+            '/Concept level information, external identifier/',
+        ])
+        resultatum.append([
+            '{{1603_13_1_23_3_50}}', # TODO: this is a temporary ID, find a better one
+            '{{1603_13_1_23_91924}}',
+            '1',
+            '',
+            '',
+            '#item',
+            'rem+i_qcc+is_zxxx+{{1603_13_1_3_24}}',
+            '#item+rem+i_qcc+is_zxxx+{{1603_13_1_3_24}}',
+            '/Concept level information, external identifier/',
+        ])
+        resultatum.append([
+            '{{1603_13_1_23_919}}',
+            '{{1603_13_1_23}}',
+            '0',
+            '1',
+            '1',
+            '',
+            'rem+{{1603_13_1_3_919}}',
+            '',
+            '/Language and term level information, any type/',
+        ])
+        resultatum.append([
+            '{{1603_13_1_23_919_1}}',
+            '{{1603_13_1_23_919}}',
+            '0',
+            '0',
+            '1',
+            '#item',
+            'rem+{{1603_13_1_3_919}}',
+            '#item+rem+{{1603_13_1_3_919}}',
+            '/Language level information, local human label/',
+        ])
+        resultatum.append([
+            '{{1603_13_1_23_919_13}}',  # [13] M
+            '{{1603_13_1_23_919}}',
+            '0',
+            '0',
+            '1',
+            '#meta',
+            'rem+{{1603_13_1_3_919}}',
+            '#meta+rem+{{1603_13_1_3_919}}',
+            '/Metadata about the local human label/',
+        ])
+        resultatum.append([
+            '{{1603_13_1_23_919_19}}',  # Trivia: [19] S, status
+            '{{1603_13_1_23_919}}',
+            '0',
+            '0',
+            '1',
+            '#status',
+            'rem+{{1603_13_1_3_919}}',
+            '#status+rem+{{1603_13_1_3_919}}',
+            '/Educated guess on reliability (1-100) of the local human label/',
         ])
         return resultatum
 
