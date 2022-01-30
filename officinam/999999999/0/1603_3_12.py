@@ -226,6 +226,10 @@ class CS1603z3z12:
 
         # select = ['(?item AS ?item__conceptum__codicem)']
         select = ['(STRAFTER(STR(?item), "entity/") AS ?item__conceptum__codicem)']
+        # select = [
+        #     '(STRAFTER(STR(?item), "entity/") AS ?item__conceptum__codicem)',
+        #     '(STRAFTER(STR(?item), "entity/") AS ?item__rem__i_qcc__is_zxxx__ix_wikiq)'
+        # ]
         filter_otional = []
         for pair in self.D1613_1_51_langpair:
             select.append('?' + pair[1])
