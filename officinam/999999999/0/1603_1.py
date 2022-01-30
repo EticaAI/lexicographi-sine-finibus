@@ -55,7 +55,8 @@ import argparse
 # from pathlib import Path
 from typing import (
     Type,
-    Union
+    Union,
+    List
 )
 import fnmatch
 
@@ -218,6 +219,8 @@ class Codex:
         self.codex = self._init_codex()
         self.annexa = self._init_annexa()
 
+        self.annexis = CodexAnnexis(self.de_codex)
+
     def _init_1603_1_1(self):
         numerordinatio_neo_codex = numerordinatio_neo_separatum(
             self.de_codex, ':')
@@ -305,7 +308,10 @@ class Codex:
                 self.m1603_1_1__de_codex['#item+rem+i_qcc+is_zxxx+ix_n1603']
             ))
 
-        # resultatum.append('<!-- ' + str(self.annexa) + ' -->')
+        resultatum.append('<!-- ' + str(self.annexa) + ' -->')
+        resultatum.append('')
+        resultatum.append('')
+        resultatum.append('<!-- ' + str(self.annexis.__dict__) + ' -->')
 
         if self.annexa and self.annexa['picturam']:
             for picturam in self.annexa['picturam']:
@@ -375,6 +381,21 @@ class Codex:
         return resultatum
 
 
+class CodexAnnexo:
+    """Cōdex annexō
+
+    Trivia:
+    - cōdex, m, s, (Nominative) https://en.wiktionary.org/wiki/codex#Latin
+    - annexō, m, s (Dative) https://en.wiktionary.org/wiki/annexus#Latin
+    """
+
+    def __init__(
+        self,
+        trivium: str,
+    ):
+        self.trivium = trivium
+
+
 class CodexAnnexis:
     """Cōdex annexīs
 
@@ -382,6 +403,12 @@ class CodexAnnexis:
     - cōdex, m, s, (Nominative) https://en.wiktionary.org/wiki/codex#Latin
     - annexīs, m/f/n, pl (Dative) https://en.wiktionary.org/wiki/annexus#Latin
 
+    >>> ca1603_25_1 = CodexAnnexis('1603_25_1')
+
+    # >>> ca1603_25_1.__dict__
+
+
+    >>> ca1603_25_1.quod_archivum()
     """
 
     EXTENSIONES_PICTURIS: list = [
@@ -405,17 +432,29 @@ class CodexAnnexis:
 
     ):
         self.de_codex = de_codex
+        self.initiari()
+        self.initiari_triviis()
+        # self.radix, self.sarcinae = self.initiari_triviis()
         self.picturae = self.initiari_picturae()
+
+    def initiari(self):
+        """initiarī
+
+        Trivia:
+        - initiārī, https://en.wiktionary.org/wiki/initio#Latin
+        """
+        pass
 
     def initiari_picturae(self):
         """initiarī_picturae Initalise pictures
 
         Trivia:
         - initiārī, https://en.wiktionary.org/wiki/initio#Latin
-        - pictūrae, https://en.wiktionary.org/wiki/pictura#Latin
+        - pictūrae, f, pl, (nominative) 
+          https://en.wiktionary.org/wiki/pictura#Latin
 
         Returns:
-            [type]: [description]
+            [Dict]:
         """
 
         annexa = {
@@ -441,13 +480,67 @@ class CodexAnnexis:
                     )
 
         resultatum.append(basepath)
-        # resultatum.append(files)
-        # resultatum.append(files2)
+
         resultatum.append(matches)
-        # resultatum.append(self.annexa_picturam)
+        # resultatum.append('sarcinae')
+        # resultatum.append(self.triviis['sarcinae'])
 
         annexa['__debug'] = resultatum
         return annexa
+
+    def initiari_triviis(self):
+        """initiari_triviīs initiārī triviīs
+
+        Trivia:
+        - initiārī, v, pl1, https://en.wiktionary.org/wiki/initio#Latin
+        - triviīs, n, pl (Dative) https://en.wiktionary.org/wiki/trivium#Latin
+
+        Returns:
+            [dict]:
+        """
+
+        # resultatum = {
+        #     'radix': '',
+        #     'sarcinae': ['www']
+        # }
+        radix = ''
+        sarcinae = []
+        # sarcinae = set()
+        # - sarcinae, f, pl, (nominative),
+        #   https://en.wiktionary.org/wiki/sarcina#Latin
+
+        basepath = numerordinatio_neo_separatum(self.de_codex, '/')
+        radix = basepath
+
+        # resultatum['sarcinae'] = [123]
+
+        for root, dirnames, filenames in os.walk(basepath):
+            sarcinae = dirnames
+            # raise ValueError('dirnames' + str(dirnames))
+            # pass
+            # raise ValueError('sarcinae' + str(sarcinae))
+            self.sarcinae = sarcinae
+
+        # resultatum['sarcinae'] = list(sarcinae)
+        # raise ValueError('sarcinae' + str(sarcinae))
+
+        return [radix, sarcinae]
+
+    def quod_archivum(self) -> List[Type['CodexAnnexo']]:
+        """quod_archivum
+
+        Trivia:
+        - archīvum, n, s, (nominative) https://en.wiktionary.org/wiki/archivum
+
+        Returns:
+            [List[Type['CodexAnnexo']]:
+        """
+        resultatum = []
+        return resultatum
+
+    def quod_picturae(self) -> List[Type['CodexAnnexo']]:
+        resultatum = []
+        return resultatum
 
 
 class DictionariaLinguarum:
