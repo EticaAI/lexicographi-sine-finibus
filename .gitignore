@@ -13,6 +13,9 @@
 # /officinam/README.md
 /officinam/LICENSE.md
 
+/officinam/**/**\.~[0-9]/*
+!/officinam/**/**\.~[0-9]/.gitkep
+
 #### The _de facto_ automation scripts _________________________________________
 # The script folder can be tracked freely
 # !/officinam/999999/**/README.md
