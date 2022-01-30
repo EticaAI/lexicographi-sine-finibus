@@ -31,6 +31,7 @@
 
 # ./999999999/0/1603_1.py ./999999999/0/1603_1.py --codex-de 1603_45_1 > 999999/0/test.md
 # ./999999999/0/1603_1.py ./999999999/0/1603_1.py --codex-de 1603_84_1 > 1603/84/1/1603_84_1.mul-Zyyy.codex.md
+# ./999999999/0/1603_1.py ./999999999/0/1603_1.py --codex-de 1603_25_1 > 1603/25/1/1603_25_1.mul-Zyyy.codex.md
 
 __EPILOGUM__ = """
 Exemplōrum gratiā:
@@ -245,7 +246,6 @@ class Codex:
         resultatum = []
         basepath = numerordinatio_neo_separatum(self.de_codex, '/')
 
-
         images = ['*.jpg', '*.jpeg', '*.png', '*.tif', '*.tiff', '*.svg']
         matches = []
 
@@ -373,6 +373,81 @@ class Codex:
 
         # return "\n".join(resultatum)
         return resultatum
+
+
+class CodexAnnexis:
+    """Cōdex annexīs
+
+    Trivia:
+    - cōdex, m, s, (Nominative) https://en.wiktionary.org/wiki/codex#Latin
+    - annexīs, m/f/n, pl (Dative) https://en.wiktionary.org/wiki/annexus#Latin
+
+    """
+
+    EXTENSIONES_PICTURIS: list = [
+        'gif',
+        'jpg',
+        'jpeg',
+        'png',
+        'tiff',
+        'svg',
+    ]
+    # Trivia:
+    # - extēnsiōnēs, f, pl (Nominative)
+    #   https://en.wiktionary.org/wiki/extensio#Latin
+    # - pictūrīs, f, pl (Dative)
+    #   https://en.wiktionary.org/wiki/pictura#Latin
+    #
+
+    def __init__(
+        self,
+        de_codex: str,
+
+    ):
+        self.de_codex = de_codex
+        self.picturae = self.initiari_picturae()
+
+    def initiari_picturae(self):
+        """initiarī_picturae Initalise pictures
+
+        Trivia:
+        - initiārī, https://en.wiktionary.org/wiki/initio#Latin
+        - pictūrae, https://en.wiktionary.org/wiki/pictura#Latin
+
+        Returns:
+            [type]: [description]
+        """
+
+        annexa = {
+            'picturam': [],
+            '__debug': None
+        }
+        resultatum = []
+        basepath = numerordinatio_neo_separatum(self.de_codex, '/')
+
+        images = ['*.jpg', '*.jpeg', '*.png', '*.tif', '*.tiff', '*.svg']
+        matches = []
+
+        annexa["0"] = []
+
+        for root, dirnames, filenames in os.walk(basepath):
+            for extensions in images:
+                for filename in fnmatch.filter(filenames, extensions):
+                    matches.append(os.path.join(root, filename))
+                    annexa["0"].append(os.path.join(root, filename))
+                    annexa['picturam'].append(
+                        os.path.join(root, filename).replace(
+                            basepath + '/', '')
+                    )
+
+        resultatum.append(basepath)
+        # resultatum.append(files)
+        # resultatum.append(files2)
+        resultatum.append(matches)
+        # resultatum.append(self.annexa_picturam)
+
+        annexa['__debug'] = resultatum
+        return annexa
 
 
 class DictionariaLinguarum:
