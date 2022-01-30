@@ -29,6 +29,8 @@
 # pytest
 #    python3 -m doctest ./999999999/0/1603_1.py
 
+# ./999999999/0/1603_1.py ./999999999/0/1603_1.py --codex-de 1603_45_1 > 999999/0/test.md
+
 __EPILOGUM__ = """
 Exemplōrum gratiā:
     printf "#item+conceptum+codicem,#item+rem+i_qcc+is_zxxx+ix_wikiq" | \
@@ -119,16 +121,16 @@ def numerordinatio_lineam_hxml5_details(rem: dict) -> str:
     # codex = rem['#item+conceptum+codicem']
 
     resultatum = '<details><summary>🔎' + \
-        rem['#item+conceptum+codicem'] + '🔍</summary>'
-    resultatum += '<dl>'
+        rem['#item+conceptum+codicem'] + '🔍</summary>' + "\n"
+    resultatum += '  <dl>' + "\n"
     for clavem, item in rem.items():
         if item:
-            resultatum += '<dt>' + clavem + '</dt>'
-            resultatum += '<dd>' + item + '</dd>'
+            resultatum += '    <dt>' + clavem + '</dt>' + "\n"
+            resultatum += '    <dd>' + item + '</dd>' + "\n"
         # print(item)
 
-    resultatum += '</dl>'
-    resultatum += '</details>'
+    resultatum += '  </dl>' + "\n"
+    resultatum += '</details>' + "\n"
     return resultatum
 
 
@@ -138,7 +140,9 @@ def numerordinatio_nomen(
 
     # TODO: this obviously is hardcoded; Implement full inferences
     if '#item+rem+i_lat+is_latn' in rem and rem['#item+rem+i_lat+is_latn']:
-        return rem['#item+rem+i_lat+is_latn']
+        return '/' + rem['#item+rem+i_lat+is_latn'] + '/@lat-Latn'
+    if '#item+rem+i_eng+is_latn' in rem and rem['#item+rem+i_eng+is_latn']:
+        return '/' + rem['#item+rem+i_eng+is_latn'] + '/@eng-Latn'
     if '#item+rem+i_mul+is_zyyy' in rem and rem['#item+rem+i_mul+is_zyyy']:
         return rem['#item+rem+i_mul+is_zyyy']
 
@@ -218,17 +222,54 @@ class Codex:
 
         return resultatum
 
+    def _toc(self):
+        resultatum = []
+        resultatum.append("<ul>")
+        ordo_previus = 1
+        for item in self.codex:
+            codicem_loci = item['#item+conceptum+codicem']
+
+            if codicem_loci.find('0_999') == 0:
+                continue
+
+            nomen = numerordinatio_nomen(item)
+            codicem_normale = numerordinatio_neo_separatum(codicem_loci, '_')
+            codicem_ordo = numerordinatio_ordo(codicem_loci)
+            # resultatum.append(
+            #     ('#' * (codicem_ordo + 1)) + ' [`' + codicem_loci + '`] ' + nomen + "\n"
+            # )
+            resultatum.append(
+                "<!-- {0} {1}--->".format(ordo_previus, codicem_ordo))
+
+            if codicem_ordo > ordo_previus:
+                resultatum.append("  <ul>")
+            resultatum.append("{2}<li><a href='#{0}'>[{0}] {1}</a></li>".format(
+                codicem_normale, nomen, ('  ' * (codicem_ordo))))
+
+            if codicem_ordo < ordo_previus:
+                resultatum.append("  </ul>")
+            ordo_previus = codicem_ordo
+
+        resultatum.append("</ul>\n")
+        return resultatum
+
     def _corpus(self):
         resultatum = []
         for item in self.codex:
             codicem_loci = item['#item+conceptum+codicem']
+
+            if codicem_loci.find('0_999') == 0:
+                continue
+
             nomen = numerordinatio_nomen(item)
             codicem_normale = numerordinatio_neo_separatum(codicem_loci, '_')
             codicem_ordo = numerordinatio_ordo(codicem_loci)
             resultatum.append(
-                ('#' * (codicem_ordo + 1)) + ' [`' + codicem_loci + '`] ' + nomen + "\n"
+                ('#' * (codicem_ordo + 1)) +
+                ' [`' + codicem_loci + '`] ' + nomen + "\n"
             )
-            resultatum.append("<a id='{0}' href='#{0}'>§ {0}</a>".format(codicem_normale))
+            resultatum.append(
+                "<a id='{0}' href='#{0}'>§ {0}</a>".format(codicem_normale))
             resultatum.append("\n")
 
             resultatum.append(numerordinatio_lineam_hxml5_details(item))
@@ -242,6 +283,7 @@ class Codex:
         resultatum = []
 
         resultatum.extend(self._caput())
+        resultatum.extend(self._toc())
         resultatum.extend(self._corpus())
 
         # return "\n".join(resultatum)
