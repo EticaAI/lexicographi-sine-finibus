@@ -33,20 +33,6 @@
 # ./999999999/0/1603_1.py ./999999999/0/1603_1.py --codex-de 1603_84_1 > 1603/84/1/1603_84_1.mul-Zyyy.codex.md
 # ./999999999/0/1603_1.py ./999999999/0/1603_1.py --codex-de 1603_25_1 > 1603/25/1/1603_25_1.mul-Zyyy.codex.md
 
-__EPILOGUM__ = """
-Exemplōrum gratiā:
-    printf "#item+conceptum+codicem,#item+rem+i_qcc+is_zxxx+ix_wikiq" | \
-{0} --de-archivum
-    cat 1603/1/1/1603_1_1.no1.tm.hxl.csv | \
-{0} --de-archivum
-    {0} --de-archivum 1603/1/1/1603_1_1.no1.tm.hxl.csv
-
-    {0} ./999999999/0/1603_1.py --dictionaria-numerordinatio
-
-    {0} ./999999999/0/1603_1.py --codex-de 1603_25_1
-
-""".format(__file__)
-
 
 from multiprocessing.sharedctypes import Value
 import os
@@ -64,6 +50,20 @@ import fnmatch
 # from itertools import product
 # valueee = list(itertools.permutations([1, 2, 3]))
 import csv
+
+__EPILOGUM__ = """
+Exemplōrum gratiā:
+    printf "#item+conceptum+codicem,#item+rem+i_qcc+is_zxxx+ix_wikiq" | \
+{0} --de-archivum
+    cat 1603/1/1/1603_1_1.no1.tm.hxl.csv | \
+{0} --de-archivum
+    {0} --de-archivum 1603/1/1/1603_1_1.no1.tm.hxl.csv
+
+    {0} ./999999999/0/1603_1.py --dictionaria-numerordinatio
+
+    {0} ./999999999/0/1603_1.py --codex-de 1603_25_1
+
+""".format(__file__)
 
 NUMERORDINATIO_BASIM = os.getenv('NUMERORDINATIO_BASIM', os.getcwd())
 NUMERORDINATIO_DEFALLO = int(os.getenv('NUMERORDINATIO_DEFALLO', '60'))  # �
@@ -217,7 +217,7 @@ class Codex:
         self.dictionaria_linguarum = DictionariaLinguarum()
         self.m1603_1_1__de_codex = self._init_1603_1_1()
         self.codex = self._init_codex()
-        self.annexa = self._init_annexa()
+        # self.annexa = self._init_annexa()
 
         self.annexis = CodexAnnexis(self.de_codex)
 
@@ -240,38 +240,38 @@ class Codex:
         raise ValueError("{0} not defined on 1603_1_1 [{1}]".format(
             self.de_codex, fullpath))
 
-    def _init_annexa(self):
+    # def _init_annexa(self):
 
-        annexa = {
-            'picturam': [],
-            '__debug': None
-        }
-        resultatum = []
-        basepath = numerordinatio_neo_separatum(self.de_codex, '/')
+    #     annexa = {
+    #         'picturam': [],
+    #         '__debug': None
+    #     }
+    #     resultatum = []
+    #     basepath = numerordinatio_neo_separatum(self.de_codex, '/')
 
-        images = ['*.jpg', '*.jpeg', '*.png', '*.tif', '*.tiff', '*.svg']
-        matches = []
+    #     images = ['*.jpg', '*.jpeg', '*.png', '*.tif', '*.tiff', '*.svg']
+    #     matches = []
 
-        annexa["0"] = []
+    #     annexa["0"] = []
 
-        for root, dirnames, filenames in os.walk(basepath):
-            for extensions in images:
-                for filename in fnmatch.filter(filenames, extensions):
-                    matches.append(os.path.join(root, filename))
-                    annexa["0"].append(os.path.join(root, filename))
-                    annexa['picturam'].append(
-                        os.path.join(root, filename).replace(
-                            basepath + '/', '')
-                    )
+    #     for root, dirnames, filenames in os.walk(basepath):
+    #         for extensions in images:
+    #             for filename in fnmatch.filter(filenames, extensions):
+    #                 matches.append(os.path.join(root, filename))
+    #                 annexa["0"].append(os.path.join(root, filename))
+    #                 annexa['picturam'].append(
+    #                     os.path.join(root, filename).replace(
+    #                         basepath + '/', '')
+    #                 )
 
-        resultatum.append(basepath)
-        # resultatum.append(files)
-        # resultatum.append(files2)
-        resultatum.append(matches)
-        # resultatum.append(self.annexa_picturam)
+    #     resultatum.append(basepath)
+    #     # resultatum.append(files)
+    #     # resultatum.append(files2)
+    #     resultatum.append(matches)
+    #     # resultatum.append(self.annexa_picturam)
 
-        annexa['__debug'] = resultatum
-        return annexa
+    #     annexa['__debug'] = resultatum
+    #     return annexa
 
     def _init_codex(self):
         # numerordinatio = numerordinatio_neo_separatum(self.de_codex, ':')
@@ -299,8 +299,8 @@ class Codex:
         # resultatum.append(self._caput())
         resultatum.append(
             '# [`' +
-            self.m1603_1_1__de_codex['#item+rem+i_qcc+is_zxxx+ix_n1603']
-            + '`] ' + self.m1603_1_1__de_codex['#item+rem+i_mul+is_zyyy'])
+            self.m1603_1_1__de_codex['#item+rem+i_qcc+is_zxxx+ix_n1603'] +
+            '`] ' + self.m1603_1_1__de_codex['#item+rem+i_mul+is_zyyy'])
         resultatum.append("\n")
         resultatum.append(
             numerordinatio_lineam_hxml5_details(
@@ -308,14 +308,25 @@ class Codex:
                 self.m1603_1_1__de_codex['#item+rem+i_qcc+is_zxxx+ix_n1603']
             ))
 
-        resultatum.append('<!-- ' + str(self.annexa) + ' -->')
+        # resultatum.append('<!-- ' + str(self.annexa) + ' -->')
         resultatum.append('')
         resultatum.append('')
         resultatum.append('<!-- ' + str(self.annexis.__dict__) + ' -->')
 
-        if self.annexa and self.annexa['picturam']:
-            for picturam in self.annexa['picturam']:
-                resultatum.append('![{0}]({0})\n'.format(picturam))
+
+        picturae = self.annexis.quod_picturae()
+        if picturae:
+            for item in picturae:
+                # resultatum.append('')
+                # resultatum.append('<!-- ' + str(item) + ' -->')
+                # resultatum.append('<!-- ' + item.quod_temp_rel_pic() + ' -->')
+                # resultatum.append('')
+                trivium = item.quod_temp_rel_pic()
+                resultatum.append('![{0}]({0})\n'.format(trivium))
+
+        # if self.annexa and self.annexa['picturam']:
+        #     for picturam in self.annexa['picturam']:
+        #         resultatum.append('![{0}]({0})\n'.format(picturam))
 
         return resultatum
 
@@ -391,9 +402,16 @@ class CodexAnnexo:
 
     def __init__(
         self,
+        de_codex: str,
         trivium: str,
     ):
+        self.de_codex = de_codex
         self.trivium = trivium
+
+    def quod_temp_rel_pic(self):
+        self.radix_codex = numerordinatio_neo_separatum(self.de_codex, '/')
+        neo_trivium = self.trivium.replace(self.radix_codex + '/', '')
+        return neo_trivium
 
 
 class CodexAnnexis:
@@ -408,10 +426,30 @@ class CodexAnnexis:
     # >>> ca1603_25_1.__dict__
 
 
-    >>> ca1603_25_1.quod_archivum()
+    # >>> ca1603_25_1.quod_archivum()
+    # >>> ca1603_25_1.quod_picturae()
+
+
     """
 
-    EXTENSIONES_PICTURIS: list = [
+    # Trivia:
+    # - extēnsiōnēs, f, pl (Nominative)
+    #   https://en.wiktionary.org/wiki/extensio#Latin
+    # - archīva, n, pl, (nominative)
+    #   https://en.wiktionary.org/wiki/archivum
+    # - pictūrīs, f, pl (Dative)
+    #   https://en.wiktionary.org/wiki/pictura#Latin
+    # - ignōrātīs, f, pl, (Dative)
+    #   https://en.wiktionary.org/wiki/ignoratus#Latin
+
+    ARCHIVA_IGNORATIS = [
+        '.gitkeep',
+        '.gitignore',
+        'README.md',
+        'LICENSE.md'
+    ]
+
+    EXTENSIONES_PICTURIS = [
         'gif',
         'jpg',
         'jpeg',
@@ -419,12 +457,14 @@ class CodexAnnexis:
         'tiff',
         'svg',
     ]
-    # Trivia:
-    # - extēnsiōnēs, f, pl (Nominative)
-    #   https://en.wiktionary.org/wiki/extensio#Latin
-    # - pictūrīs, f, pl (Dative)
-    #   https://en.wiktionary.org/wiki/pictura#Latin
-    #
+    EXTENSIONES_IGNORATIS = [
+
+    ]
+
+    de_codex = ''
+    # complētum	, n, s, (Nominative), https://en.wiktionary.org/wiki/completus
+    completum = []
+    picturae = None
 
     def __init__(
         self,
@@ -435,7 +475,8 @@ class CodexAnnexis:
         self.initiari()
         self.initiari_triviis()
         # self.radix, self.sarcinae = self.initiari_triviis()
-        self.picturae = self.initiari_picturae()
+        # self.picturae = self.initiari_picturae()
+        # self.et_al = []
 
     def initiari(self):
         """initiarī
@@ -443,50 +484,58 @@ class CodexAnnexis:
         Trivia:
         - initiārī, https://en.wiktionary.org/wiki/initio#Latin
         """
-        pass
-
-    def initiari_picturae(self):
-        """initiarī_picturae Initalise pictures
-
-        Trivia:
-        - initiārī, https://en.wiktionary.org/wiki/initio#Latin
-        - pictūrae, f, pl, (nominative) 
-          https://en.wiktionary.org/wiki/pictura#Latin
-
-        Returns:
-            [Dict]:
-        """
-
-        annexa = {
-            'picturam': [],
-            '__debug': None
-        }
-        resultatum = []
         basepath = numerordinatio_neo_separatum(self.de_codex, '/')
 
-        images = ['*.jpg', '*.jpeg', '*.png', '*.tif', '*.tiff', '*.svg']
-        matches = []
-
-        annexa["0"] = []
-
         for root, dirnames, filenames in os.walk(basepath):
-            for extensions in images:
-                for filename in fnmatch.filter(filenames, extensions):
-                    matches.append(os.path.join(root, filename))
-                    annexa["0"].append(os.path.join(root, filename))
-                    annexa['picturam'].append(
-                        os.path.join(root, filename).replace(
-                            basepath + '/', '')
-                    )
+            for filename in fnmatch.filter(filenames, '*'):
+                if filename in self.ARCHIVA_IGNORATIS:
+                    continue
+                self.completum.append(os.path.join(root, filename))
 
-        resultatum.append(basepath)
+        # raise ValueError(self.et_al)
 
-        resultatum.append(matches)
-        # resultatum.append('sarcinae')
-        # resultatum.append(self.triviis['sarcinae'])
+    # def initiari_picturae(self):
+    #     """initiarī_picturae Initalise pictures
 
-        annexa['__debug'] = resultatum
-        return annexa
+    #     Trivia:
+    #     - initiārī, https://en.wiktionary.org/wiki/initio#Latin
+    #     - pictūrae, f, pl, (nominative)
+    #       https://en.wiktionary.org/wiki/pictura#Latin
+
+    #     Returns:
+    #         [Dict]:
+    #     """
+
+    #     annexa = {
+    #         'picturam': [],
+    #         '__debug': None
+    #     }
+    #     resultatum = []
+    #     basepath = numerordinatio_neo_separatum(self.de_codex, '/')
+
+    #     images = ['*.jpg', '*.jpeg', '*.png', '*.tif', '*.tiff', '*.svg']
+    #     matches = []
+
+    #     annexa["0"] = []
+
+    #     for root, dirnames, filenames in os.walk(basepath):
+    #         for extensions in images:
+    #             for filename in fnmatch.filter(filenames, extensions):
+    #                 matches.append(os.path.join(root, filename))
+    #                 annexa["0"].append(os.path.join(root, filename))
+    #                 annexa['picturam'].append(
+    #                     os.path.join(root, filename).replace(
+    #                         basepath + '/', '')
+    #                 )
+
+    #     resultatum.append(basepath)
+
+    #     resultatum.append(matches)
+    #     # resultatum.append('sarcinae')
+    #     # resultatum.append(self.triviis['sarcinae'])
+
+    #     annexa['__debug'] = resultatum
+    #     return annexa
 
     def initiari_triviis(self):
         """initiari_triviīs initiārī triviīs
@@ -535,12 +584,18 @@ class CodexAnnexis:
         Returns:
             [List[Type['CodexAnnexo']]:
         """
-        resultatum = []
-        return resultatum
+        return self.completum
 
     def quod_picturae(self) -> List[Type['CodexAnnexo']]:
         resultatum = []
+        for item in self.completum:
+            if item.endswith(tuple(self.EXTENSIONES_PICTURIS)):
+                resultatum.append(CodexAnnexo(self.de_codex, item))
         return resultatum
+        # debug = []
+        # for item in resultatum:
+        #     debug.append(item.__dict__)
+        # return debug
 
 
 class DictionariaLinguarum:
@@ -1026,7 +1081,8 @@ class NumerordinatioItem:
     [eng-Latn]_
     """
 
-    def __init__(self, ix_hxlhstg: str, dictionaria_codex: Type['DictionariaLinguarum']):
+    def __init__(
+            self, ix_hxlhstg: str, dictionaria_codex: Type['DictionariaLinguarum']):
         self.ix_hxlhstg = ix_hxlhstg
         self.dictionaria_codex = dictionaria_codex
 
