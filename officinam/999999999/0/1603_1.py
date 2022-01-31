@@ -240,39 +240,6 @@ class Codex:
         raise ValueError("{0} not defined on 1603_1_1 [{1}]".format(
             self.de_codex, fullpath))
 
-    # def _init_annexa(self):
-
-    #     annexa = {
-    #         'picturam': [],
-    #         '__debug': None
-    #     }
-    #     resultatum = []
-    #     basepath = numerordinatio_neo_separatum(self.de_codex, '/')
-
-    #     images = ['*.jpg', '*.jpeg', '*.png', '*.tif', '*.tiff', '*.svg']
-    #     matches = []
-
-    #     annexa["0"] = []
-
-    #     for root, dirnames, filenames in os.walk(basepath):
-    #         for extensions in images:
-    #             for filename in fnmatch.filter(filenames, extensions):
-    #                 matches.append(os.path.join(root, filename))
-    #                 annexa["0"].append(os.path.join(root, filename))
-    #                 annexa['picturam'].append(
-    #                     os.path.join(root, filename).replace(
-    #                         basepath + '/', '')
-    #                 )
-
-    #     resultatum.append(basepath)
-    #     # resultatum.append(files)
-    #     # resultatum.append(files2)
-    #     resultatum.append(matches)
-    #     # resultatum.append(self.annexa_picturam)
-
-    #     annexa['__debug'] = resultatum
-    #     return annexa
-
     def _init_codex(self):
         # numerordinatio = numerordinatio_neo_separatum(self.de_codex, ':')
         basepath = numerordinatio_neo_separatum(self.de_codex, '/')
@@ -309,10 +276,9 @@ class Codex:
             ))
 
         # resultatum.append('<!-- ' + str(self.annexa) + ' -->')
-        resultatum.append('')
-        resultatum.append('')
-        resultatum.append('<!-- ' + str(self.annexis.__dict__) + ' -->')
-
+        # resultatum.append('')
+        # resultatum.append('')
+        # resultatum.append('<!-- ' + str(self.annexis.__dict__) + ' -->')
 
         picturae = self.annexis.quod_picturae()
         if picturae:
@@ -427,7 +393,7 @@ class CodexAnnexis:
 
 
     # >>> ca1603_25_1.quod_archivum()
-    # >>> ca1603_25_1.quod_picturae()
+    >>> ca1603_25_1.quod_picturae()
 
 
     """
@@ -492,51 +458,6 @@ class CodexAnnexis:
                     continue
                 self.completum.append(os.path.join(root, filename))
 
-        # raise ValueError(self.et_al)
-
-    # def initiari_picturae(self):
-    #     """initiarī_picturae Initalise pictures
-
-    #     Trivia:
-    #     - initiārī, https://en.wiktionary.org/wiki/initio#Latin
-    #     - pictūrae, f, pl, (nominative)
-    #       https://en.wiktionary.org/wiki/pictura#Latin
-
-    #     Returns:
-    #         [Dict]:
-    #     """
-
-    #     annexa = {
-    #         'picturam': [],
-    #         '__debug': None
-    #     }
-    #     resultatum = []
-    #     basepath = numerordinatio_neo_separatum(self.de_codex, '/')
-
-    #     images = ['*.jpg', '*.jpeg', '*.png', '*.tif', '*.tiff', '*.svg']
-    #     matches = []
-
-    #     annexa["0"] = []
-
-    #     for root, dirnames, filenames in os.walk(basepath):
-    #         for extensions in images:
-    #             for filename in fnmatch.filter(filenames, extensions):
-    #                 matches.append(os.path.join(root, filename))
-    #                 annexa["0"].append(os.path.join(root, filename))
-    #                 annexa['picturam'].append(
-    #                     os.path.join(root, filename).replace(
-    #                         basepath + '/', '')
-    #                 )
-
-    #     resultatum.append(basepath)
-
-    #     resultatum.append(matches)
-    #     # resultatum.append('sarcinae')
-    #     # resultatum.append(self.triviis['sarcinae'])
-
-    #     annexa['__debug'] = resultatum
-    #     return annexa
-
     def initiari_triviis(self):
         """initiari_triviīs initiārī triviīs
 
@@ -586,6 +507,11 @@ class CodexAnnexis:
         """
         return self.completum
 
+    def quod_sarcinae(self) -> List[Type[str]]:
+        resultatum = []
+        # TODO: do it
+        return resultatum
+
     def quod_picturae(self) -> List[Type['CodexAnnexo']]:
         resultatum = []
         for item in self.completum:
@@ -597,6 +523,20 @@ class CodexAnnexis:
         #     debug.append(item.__dict__)
         # return debug
 
+class CodexSarcinarumAnnexis:
+    """Codex sarcinārum annexis
+
+    Trivia:
+    - cōdex, m, s, (Nominative) https://en.wiktionary.org/wiki/codex#Latin
+    - annexīs, m/f/n, pl (Dative) https://en.wiktionary.org/wiki/annexus#Latin
+    - sarcinārum, f, pl, (Gengitive) https://en.wiktionary.org/wiki/sarcina#Latin
+
+    # >>> ca1603_25_1.quod_picturae()
+    """
+        # sarcinae = []
+        # # sarcinae = set()
+        # # - sarcinae, f, pl, (nominative),
+        # #   https://en.wiktionary.org/wiki/sarcina#Latin
 
 class DictionariaLinguarum:
     def __init__(self, fontem_archivum: str = None):
