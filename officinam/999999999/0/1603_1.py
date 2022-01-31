@@ -369,33 +369,51 @@ class Codex:
             self.m1603_1_1__de_codex['#item+rem+i_qcc+is_zxxx+ix_n1603'] +
             '`] ' + self.m1603_1_1__de_codex['#item+rem+i_mul+is_zyyy'])
         resultatum.append("\n")
+        # resultatum.append(
+        #     numerordinatio_lineam_hxml5_details(
+        #         self.m1603_1_1__de_codex,
+        #         self.m1603_1_1__de_codex['#item+rem+i_qcc+is_zxxx+ix_n1603']
+        #     ))
+
+        # picturae = self.annexis.quod_picturae(numerordinatio_locali='0')
+        # if picturae:
+        #     for item in picturae:
+
+        #         trivium = item.quod_temp_rel_pic()
+        #         titulum = item.quod_temp_titulum()
+        #         resultatum.append('![{0}]({1})\n'.format(titulum, trivium))
+        #         resultatum.append('{0}\n'.format(titulum))
+
+        return resultatum
+
+    def _praefatio(self):
+        resultatum = []
+        resultatum.append("# [0] /Praefātiō/@lat-Latn \n")
+        resultatum.append("<a id='0' href='#0'>§ 0</a> \n")
+
         resultatum.append(
             numerordinatio_lineam_hxml5_details(
                 self.m1603_1_1__de_codex,
                 self.m1603_1_1__de_codex['#item+rem+i_qcc+is_zxxx+ix_n1603']
             ))
 
-        # resultatum.append('<!-- ' + str(self.annexa) + ' -->')
-        # resultatum.append('')
-        # resultatum.append('')
-        # resultatum.append('<!-- ' + str(self.annexis.__dict__) + ' -->')
+        resultatum.append("----\n")
 
         picturae = self.annexis.quod_picturae(numerordinatio_locali='0')
         if picturae:
             for item in picturae:
-                # resultatum.append('')
-                # resultatum.append('<!-- ' + str(item) + ' -->')
-                # resultatum.append('<!-- ' + item.quod_temp_rel_pic() + ' -->')
-                # resultatum.append('')
+
                 trivium = item.quod_temp_rel_pic()
                 titulum = item.quod_temp_titulum()
+                link = item.quod_temp_link()
                 resultatum.append('![{0}]({1})\n'.format(titulum, trivium))
+                if link:
+                    resultatum.append(
+                        '<a href="{1}">{0}</a>\n'.format(titulum, link))
+                else:
+                    resultatum.append('{0}\n'.format(titulum))
 
-                resultatum.append('{0}\n'.format(titulum))
-
-        # if self.annexa and self.annexa['picturam']:
-        #     for picturam in self.annexa['picturam']:
-        #         resultatum.append('![{0}]({0})\n'.format(picturam))
+            resultatum.append("----\n")
 
         return resultatum
 
@@ -403,6 +421,7 @@ class Codex:
         resultatum = []
         resultatum.append('----')
         resultatum.append('')
+        resultatum.append("- <a href='#0'>[0] /Praefātiō/@lat-Latn</a>")
         for item in self.codex:
             codicem_loci = item['#item+conceptum+codicem']
 
@@ -440,8 +459,9 @@ class Codex:
 
             resultatum.append("\n")
             resultatum.append(numerordinatio_summary(item))
+            resultatum.append(self._terminum(item))
             resultatum.append("\n")
-            resultatum.append(numerordinatio_lineam_hxml5_details(item))
+            # resultatum.append(numerordinatio_lineam_hxml5_details(item))
 
             picturae = self.annexis.quod_picturae(
                 numerordinatio_locali=codicem_normale)
@@ -449,14 +469,50 @@ class Codex:
                 for item in picturae:
                     trivium = item.quod_temp_rel_pic()
                     titulum = item.quod_temp_titulum()
+                    link = item.quod_temp_link()
                     resultatum.append('![{0}]({1})\n'.format(titulum, trivium))
-
-                    resultatum.append('{0}\n'.format(titulum))
+                    if link:
+                        resultatum.append(
+                            '<a href="{1}">{0}</a>\n'.format(titulum, link))
+                    else:
+                        resultatum.append('{0}\n'.format(titulum))
 
             # resultatum.append("<!-- " + str(item) + " -->")
             resultatum.append("\n")
 
         return resultatum
+
+    def _terminum(self, rem: dict):
+
+        resultatum = []
+        resultatum_corpus = []
+
+        for clavem, item_textum in rem.items():
+            if item_textum:
+                clavem_i18n = clavem
+                item_text_i18n = item_textum
+                dlinguam = self.dictionaria_linguarum.quod(clavem)
+                if dlinguam and dlinguam['#item+rem+i_lat+is_latn']:
+                    clavem_i18n = '<span lang="la">' + \
+                        dlinguam['#item+rem+i_lat+is_latn'] + '</span>'
+
+                if dlinguam and dlinguam['#item+rem+i_qcc+is_zxxx+ix_wikilngm']:
+                    item_text_i18n = '<span lang="{1}">{0}</span>'.format(
+                        item_textum,
+                        dlinguam['#item+rem+i_qcc+is_zxxx+ix_wikilngm']
+                    )
+                resultatum_corpus.append(
+                    "| {0} | {1} |".format(clavem_i18n, item_text_i18n))
+
+        if resultatum_corpus:
+            resultatum.append("")
+            resultatum.append("")
+            resultatum.append(
+                "| /Linguam/@lat-Latn | /significātum/@lat-Latn |")
+            resultatum.append("| ------------- | ------------- |")
+            resultatum.extend(resultatum_corpus)
+
+        return "\n".join(resultatum)
 
     def _sarcinarum(self):
         resultatum = []
@@ -474,9 +530,8 @@ class Codex:
         resultatum = []
 
         resultatum.extend(self._caput())
-        # resultatum.extend(self._toc2())
         resultatum.extend(self._toc3())
-        # resultatum.append(self._toc())
+        resultatum.extend(self._praefatio())
         resultatum.extend(self._corpus())
         resultatum.extend(self._sarcinarum())
 
@@ -510,21 +565,24 @@ class CodexAnnexo:
         return neo_trivium
 
     def quod_temp_titulum(self):
-        # titulum = self.sarcina
         _sarcina = self.codex.sarcinarum.quod_sarcinarum(self.sarcina)
-        # _sarcina = self.codex
         titulum = ''
-        # titulum = str(_sarcina)
-        # titulum = str(_sarcina['titulum'])
-        if _sarcina and 'titulum' in _sarcina and _sarcina['titulum']:
-            # if _sarcina and _sarcina['titulum']:
-            # titulum = str(_sarcina)
-            titulum = _sarcina['titulum']
-        # if _sarcina and 'titulum' in _sarcina[0]:
-        #     # titulum = str(_sarcina)
-        #     titulum = _sarcina['titulum']
+
+        if _sarcina and 'titulum' in _sarcina['meta'] and _sarcina['meta']['titulum']:
+            titulum = '🖼️ ' + _sarcina['meta']['titulum']
+        else:
+            titulum = 'Sine nomine'
 
         return titulum
+
+    def quod_temp_link(self):
+        _sarcina = self.codex.sarcinarum.quod_sarcinarum(self.sarcina)
+        link = ''
+
+        if _sarcina and 'ix_wikip854' in _sarcina['meta'] and _sarcina['meta']['ix_wikip854']:
+            link = _sarcina['meta']['ix_wikip854']
+
+        return link
 
 
 class CodexAnnexis:
@@ -737,8 +795,7 @@ class CodexSarcinarumAdnexis:
 class DictionariaLinguarum:
     def __init__(self, fontem_archivum: str = None):
         if fontem_archivum:
-            self.D1613_1_51_fontem = self._init_1613_1_51_datum(
-                fontem_archivum)
+            self.D1613_1_51_fontem = fontem_archivum
         else:
             self.D1613_1_51_fontem = NUMERORDINATIO_BASIM + \
                 "/1603/1/51/1603_1_51.no1.tm.hxl.csv"
