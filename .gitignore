@@ -10,6 +10,7 @@
 /officinam/**/**.gz
 /officinam/**/**.svg
 /officinam/**/**.codex.md
+/officinam/**/**.codex.adoc
 # /officinam/README.md
 /officinam/LICENSE.md
 
