@@ -11,6 +11,8 @@
 /officinam/**/**.svg
 /officinam/**/**.codex.md
 /officinam/**/**.codex.adoc
+/officinam/**/**.codex.epub
+/officinam/**/**.codex.mobi
 # /officinam/README.md
 /officinam/LICENSE.md
 
