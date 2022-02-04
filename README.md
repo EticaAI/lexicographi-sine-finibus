@@ -20,6 +20,12 @@ Please note that even successful projects such as GLAM (see [Wikimedia Commons D
 <!--
 - https://www.wikidata.org/wiki/Wikidata:Linked_open_data_workflow
 - https://www.youtube.com/watch?v=VOO8IS73Cq0&t=19473s
+- praeparatio-ex-codex
+  - (...)
+- dictionaria-specificis
+  - dictiōnāria specificīs; /specific group of dictionaries/@eng-Latn
+- verbis aaa
+  - reconciliātiō, f, s, (Nominative) https://en.wiktionary.org/wiki/reconciliatio#Latin
 -->
 
 ## Licenses
