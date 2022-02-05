@@ -1203,6 +1203,7 @@ class DictionariaLinguarum:
         """
         resultatum = []
         resultatum_corpus = []
+        resultatum_corpus_totale = 0
         linguam_clavem = []
         if linguam:
             for item in linguam:
@@ -1248,19 +1249,20 @@ class DictionariaLinguarum:
             # resultatum_corpus.append("| {0}".format(clavem_i18n, ix_glottocode, ix_iso639p3a3, ix_wikiq, item_text_i18n))
             # resultatum_corpus.append("| {0}".format(clavem_i18n, ix_glottocode, ix_iso639p3a3, ix_wikiq, item_text_i18n))
             resultatum_corpus.append('')
+            resultatum_corpus_totale += 1
 
         if resultatum_corpus:
             resultatum.append("")
 
             resultatum.append("=== Linguae in cōdex: {0}".format(
-                len(self.dictionaria_codex.keys())))
+                resultatum_corpus_totale))
 
             # cōdex, m, s, (nominative)
             # tōtālis, m/f, s, (Nominative)
             # linguae, f, s, (Dative)
             resultatum.append(
                 "Tōtālis linguae in cōdex: {0}".format(
-                    len(self.dictionaria_codex.keys())))
+                    resultatum_corpus_totale))
             resultatum.append("")
 
             resultatum.append('[%header,cols="~,~,~,~,~"]')

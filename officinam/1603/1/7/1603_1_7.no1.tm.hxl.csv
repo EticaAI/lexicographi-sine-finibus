@@ -1,0 +1,22 @@
+#item+conceptum+numerordinatio,#item+conceptum+codicem,#status+conceptum+definitionem,#status+conceptum+codicem,#item+rem+i_mul+is_zyyy,#item+rem+i_qcc+is_zxxx+ix_wikiq,#item+rem+i_qcc+is_zxxx+ix_wikip,#item+rem+i_mul+is_zyyy+ix_trivium,#item+rem+i_qcc+is_zxxx+ix_regulam,#item+rem+i_qcc+is_zxxx+ix_hxlix,#item+rem+i_qcc+is_zxxx+ix_hxlvoc,#item+rem+definitionem+i_eng+is_latn
+1603:1:7:1,1,11,11,/Generic numeric namespace/,,,,,,,
+1603:1:7:1:91,1_91,50,19,/Wiki QID/,,,,Q[1-9]\d*,ix_wikiq,v_wiki_q,"QID (or Q number) is the unique identifier of a data item on Wikidata, comprising the letter ""Q"" followed by one or more digits. It is used to help people and machines understand the difference between items with the same or similar names e.g there are several places in the world called London and many people called James Smith. This number appears next to the name at the top of each Wikidata item."
+1603:1:7:1:92,1_92,50,19,/Wiki P/,,,,P[1-9]\d*,ix_wikip,v_wiki_p,"Property (also attribute) describes the data value of a statement and can be thought of as a category of data, for example ""color"" for the data value ""blue"". Properties, when paired with values, form a statement in Wikidata. Properties are also used in qualifiers. Properties have their own pages on Wikidata and are connected to items, resulting in a linked data structure."
+1603:1:7:1:93,1_93,50,19,/Wiki LID/,,,,,ix_wikil,v_wiki_l,"LID (or L number) The identifier for a lexeme entity in Wikidata, comprising the letter ""L"" followed by one or more digits."
+1603:1:7:1:95,1_95,11,19,/rēgulam/,Q185612,,,,ix_regulam,v_regex,
+1603:1:7:200,200,50,19,"/HXL Standard, hashtag, base tab, or attribute (but not readable header)/",,,,,ix_hxl,v_hxl,"/HXL Standard, hashtag, base tab, or attribute (but not readable header)/"
+1603:1:7:201,201,50,19,"/HXL Standard, full hashtag/",,,,,ix_hxlhstg,v_hxl_hashtag,"/HXL Standard, full hashtag/"
+1603:1:7:202,202,50,19,"/HXL Standard, human readable header (lat: caput)/",,,,,ix_hxlcpt,v_hxl_caput,"/HXL Standard, human readable header (lat: caput)/"
+1603:1:7:203,203,50,19,"/HXL Standard, base hashtag only/",,,,,ix_hxlt,v_hxl_t,"/HXL Standard, base hashtag only/"
+1603:1:7:204,204,50,19,"/HXL Standard, attributes only/",,,,,ix_hxla,v_hxl_a,"/HXL Standard, attributes only/"
+1603:1:7:205,205,50,19,"/Normalized CSV-like header; full header, only prefix or only suffix/",,,,,ix_csv,v_csv,"/Normalized CSV-like header; full header, only prefix or only suffix/"
+1603:1:7:206,206,50,19,/Normalized CSV-like identifier; prefix affinity (lat: praefīxum)/,,,,,ix_csvprfxu,v_csv_praefixum,/Normalized CSV-like identifier; prefix affinity (lat: praefīxum)/
+1603:1:7:207,207,50,19,/Normalized CSV-like identifier; suffix affinity (lat: suffīxum)/,,,,,ix_csvsffxm,v_csv_suffixum,/Normalized CSV-like identifier; suffix affinity (lat: suffīxum)/
+1603:1:7:2616,2616,11,11,/Wikidata P local numeric namespace/,,,,,,,
+1603:1:7:2616:50,2616_50,60,60,/author/,,P50,,,ix_wikip50,v_wiki_p_50,
+1603:1:7:2616:110,2616_110,60,60,/illustrator/,,P110,,,ix_wikip110,v_wiki_p_110,
+1603:1:7:2616:577,2616_577,60,60,/publication date/,,P577,,,ix_wikip577,v_wiki_p_577,
+1603:1:7:2616:854,2616_854,60,60,/reference URL/,,P854,,,ix_wikip854,v_wiki_p_854,
+1603:1:7:2616:1476,2616_1476,60,60,"/title - published name of a work, such as a newspaper article, a literary work, piece of music, a website, or a performance work/",,P1476,,,ix_wikip1476,v_wiki_p_1476,
+1603:1:7:2616:2479,2616_2479,60,60,/SPDX license ID/,,P2479,,,ix_wikip2479,v_wiki_p_2479,
+1603:1:7:2616:3916,2616_3916,60,60,/UNESCO Thesaurus ID/,,P3916,,concept[1-9]\d*,ix_unescot,v_un_unesco_t,"The UNESCO Thesaurus is a controlled and structured list of terms used in subject analysis and retrieval of documents and publications in the fields of education, culture, natural sciences, social and human sciences, communication and information. Continuously enriched and updated, its multidisciplinary terminology reflects the evolution of UNESCO's programmes and activities."
