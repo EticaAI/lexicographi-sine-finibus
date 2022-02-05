@@ -24,8 +24,14 @@ Please note that even successful projects such as GLAM (see [Wikimedia Commons D
   - (...)
 - dictionaria-specificis
   - dictiōnāria specificīs; /specific group of dictionaries/@eng-Latn
-- verbis aaa
+- reconciliātiō de verba
   - reconciliātiō, f, s, (Nominative) https://en.wiktionary.org/wiki/reconciliatio#Latin
+  - reconciliātiōnibus, f, pl, (Dative) https://en.wiktionary.org/wiki/reconciliatio#Latin
+  - verba, n, pl, (Nominative) https://en.wiktionary.org/wiki/verbum#Latin
+- reconciliātiō ergā verba
+ - ergā (+ accusative) https://en.wiktionary.org/wiki/erga#Latin
+ - verba, n, pl, (accussative)
+ - reconciliātiō, f, s, (Nominative) https://en.wiktionary.org/wiki/reconciliatio#Latin
 -->
 
 ## Licenses
