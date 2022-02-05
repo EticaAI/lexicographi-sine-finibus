@@ -292,6 +292,11 @@ def res_interlingualibus_formata(rem: dict, query) -> str:
     if query.find('+ix_wikiq') > -1:
         return "https://www.wikidata.org/wiki/{0}[{0}]".format(
             rem[query])
+
+    if query.find('+ix_wikip') > -1:
+        return "https://www.wikidata.org/wiki/Property:{0}[{0}]".format(
+            rem[query])
+
     if query.find('+ix_ta98') > -1:
         term = rem[query].replace('A', '')
         resultatum = (
