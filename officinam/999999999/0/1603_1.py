@@ -570,6 +570,22 @@ class Codex:
             resultatum.extend(self.dictionaria_linguarum.imprimere(
                 list(self.usus_linguae)))
 
+        if len(self.usus_ix_qcc):
+            # resultatum.append("### Linguae in cōdex")
+            # resultatum.append("=== Linguae in cōdex")
+            # resultatum.append(str(self.usus_linguae))
+
+            resultatum.extend(self.dictionaria_interlinguarum.imprimere(
+                list(self.usus_ix_qcc)))
+
+        # resultatum.append("oioi")
+        # resultatum.append("")
+        # # resultatum.extend(self.dictionaria_interlinguarum.imprimere(
+        # #     list(self.usus_linguae)))
+        # resultatum.extend(self.dictionaria_interlinguarum.imprimere(None))
+
+        # resultatum.append("oi2oi2")
+
         # resultatum.append("----\n")
 
             # resultatum.append("'''''\n")
@@ -843,17 +859,19 @@ class Codex:
             clavem_i18n = None
             dinterlinguam = self.dictionaria_interlinguarum.quod(clavem)
             # raise ValueError(dinterlinguam)
-            if dinterlinguam and dinterlinguam['#item+rem+i_mul+is_zyyy']:
+            if dinterlinguam and dinterlinguam['#item+rem+i_lat+is_latn']:
                 clavem_i18n = '' + \
-                    dinterlinguam['#item+rem+i_mul+is_zyyy'] + ''
+                    dinterlinguam['#item+rem+i_lat+is_latn'] + ''
 
             if item_textum:
                 clavem_i18n = clavem if clavem_i18n is None else clavem_i18n
                 # clavem_i18n = clavem
                 item_text_i18n = item_textum
                 item_text_i18n = res_interlingualibus_formata(rem, clavem)
-                if clavem.startswith('#item+rem+i_qcc'):
-                    self.usus_ix_qcc.add(clavem)
+                if clavem.startswith('#item+rem+i_qcc+is_zxxx+'):
+                    self.usus_ix_qcc.add(clavem.replace(
+                        '#item+rem+i_qcc+is_zxxx+', ''
+                    ))
 
                 # resultatum_corpus.append("| +++{0}+++".format(clavem_i18n))
                 resultatum_corpus.append("| {0}".format(clavem_i18n))
@@ -1239,37 +1257,44 @@ class DictionariaInterlinguarum:
         for clavem, lineam in self.dictionaria_codex.items():
 
             if len(linguam_clavem) > 0:
-                if lineam['#item+rem+i_qcc+is_zxxx+ix_hxla'] not in \
+                if lineam['#item+rem+i_qcc+is_zxxx+ix_hxlix'] not in \
                         linguam_clavem:
                     continue
 
-            clavem_i18n = lineam['#item+rem+i_qcc+is_zxxx+ix_uid']
+            # clavem_i18n = lineam['#item+rem+i_qcc+is_zxxx+ix_uid']
+            clavem_i18n = lineam['#item+rem+i_qcc+is_zxxx+ix_hxlix']
+            definitionem = lineam['#item+rem+definitionem+i_eng+is_latn']
             item_text_i18n = lineam['#item+rem+i_lat+is_latn']
-            ix_glottocode = lineam['#item+rem+i_qcc+is_zxxx+ix_glottocode']
-            ix_iso639p3a3 = lineam['#item+rem+i_qcc+is_zxxx+ix_iso639p3a3']
-            ix_wikiq = lineam['#item+rem+i_qcc+is_zxxx+ix_wikiq+ix_linguam']
-            if len(ix_glottocode):
-                ix_glottocode = \
-                    "https://glottolog.org/resource/languoid/id/{0}[{0}]".format(
-                        ix_glottocode)
+            ix_wikip = lineam['#item+rem+i_qcc+is_zxxx+ix_wikip']
+            # ix_glottocode = ''
+            # ix_iso639p3a3 = lineam['#item+rem+i_qcc+is_zxxx+ix_iso639p3a3']
+            ix_iso639p3a3 = ''
+            # ix_wikiq = lineam['#item+rem+i_qcc+is_zxxx+ix_wikiq+ix_linguam']
+            # ix_wikiq = ''
+            ix_wikip = ''
+            if len(ix_wikip):
+                ix_wikip = \
+                    "https://www.wikidata.org/wiki/Property:{0}[{0}]".format(
+                        ix_wikip)
 
             if len(ix_iso639p3a3):
                 ix_iso639p3a3 = \
                     "https://iso639-3.sil.org/code/{0}[{0}]".format(
                         ix_iso639p3a3)
-            if len(ix_wikiq):
-                ix_wikiq = \
-                    "https://www.wikidata.org/wiki/{0}[{0}]".format(
-                        ix_wikiq)
+            # if len(ix_wikiq):
+            #     ix_wikiq = \
+            #         "https://www.wikidata.org/wiki/{0}[{0}]".format(
+            #             ix_wikiq)
             # resultatum_corpus.append(str(lineam))
             # resultatum_corpus.append(linguam)
             # resultatum_corpus.append(
             #     "| {0} | {1} | {2} | {3} | {4} |".format(clavem_i18n, ix_glottocode, ix_iso639p3a3, ix_wikiq, item_text_i18n))
             resultatum_corpus.append("| {0}".format(clavem_i18n))
-            resultatum_corpus.append("| {0}".format(ix_glottocode))
+            resultatum_corpus.append("| {0}".format(ix_wikip))
             resultatum_corpus.append("| {0}".format(ix_iso639p3a3))
-            resultatum_corpus.append("| {0}".format(ix_wikiq))
+            # resultatum_corpus.append("| {0}".format(ix_wikiq))
             resultatum_corpus.append("| {0}".format(item_text_i18n))
+            resultatum_corpus.append("| {0}".format(definitionem))
             # resultatum_corpus.append("| {0}".format(clavem_i18n, ix_glottocode, ix_iso639p3a3, ix_wikiq, item_text_i18n))
             # resultatum_corpus.append("| {0}".format(clavem_i18n, ix_glottocode, ix_iso639p3a3, ix_wikiq, item_text_i18n))
             resultatum_corpus.append('')
@@ -1278,7 +1303,7 @@ class DictionariaInterlinguarum:
         if resultatum_corpus:
             resultatum.append("")
 
-            resultatum.append("=== Linguae in cōdex: {0}".format(
+            resultatum.append("=== Interlinguae in cōdex: {0}".format(
                 resultatum_corpus_totale))
 
             # cōdex, m, s, (nominative)
@@ -1303,11 +1328,12 @@ class DictionariaInterlinguarum:
             #     "<span lang='la'>Wiki QID<br>cōdicī</span> | "
             #     "<span lang='la'>Nōmen Latīnum</span> |")
             # resultatum.append("| --- | --- | --- | --- | --- |")
-            resultatum.append("| Cōdex linguae")
-            resultatum.append("| Glotto cōdicī")
+            resultatum.append("| Interlinguae")
+            resultatum.append("| /Wiki P/")
             resultatum.append("| ISO 639-3")
-            resultatum.append("| Wiki QID cōdicī")
+            # resultatum.append("| Wiki QID cōdicī")
             resultatum.append("| Nōmen Latīnum")
+            resultatum.append("| Definitionem")
             resultatum.append('')
             resultatum.extend(resultatum_corpus)
             resultatum.append('|===')
