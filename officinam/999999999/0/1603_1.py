@@ -55,6 +55,7 @@ from typing import (
     List
 )
 import fnmatch
+import json
 
 # from itertools import permutations
 # from itertools import product
@@ -515,9 +516,12 @@ class Codex:
         # @see https://docs.asciidoctor.org/asciidoc/latest/sections/appendix/
         # https://en.wiktionary.org/wiki/appendix#Latin
         resultatum.append(":appendix-caption: Appendix")
+        resultatum.append(":source-highlighter: rouge")
 
         resultatum.append("\n")
+        resultatum.append("\n")
         resultatum.append("toc::[]")
+        resultatum.append("\n")
 
         # TODO: potential list of images
         # @see https://github.com/asciidoctor/asciidoctor/issues/2189
@@ -575,6 +579,10 @@ class Codex:
             # resultatum.append("=== Linguae in cōdex")
             # resultatum.append(str(self.usus_linguae))
 
+            # resultatum.extend(self.dictionaria_interlinguarum.imprimereTabula(
+            #     list(self.usus_ix_qcc)))
+
+            # resultatum.append("== non tabulae (experimentum est) \n")
             resultatum.extend(self.dictionaria_interlinguarum.imprimere(
                 list(self.usus_ix_qcc)))
 
@@ -1215,7 +1223,7 @@ class DictionariaInterlinguarum:
             self.D1613_1_7_fontem = NUMERORDINATIO_BASIM + \
                 "/1603/1/7/1603_1_7.no1.tm.hxl.csv"
 
-        self.dictionaria_codex = self._init_dictionaria()
+        self.dictionaria = self._init_dictionaria()
 
     def _init_dictionaria(self):
 
@@ -1228,11 +1236,113 @@ class DictionariaInterlinguarum:
                 int_clavem = int(conceptum['#item+conceptum+codicem'])
                 datum[int_clavem] = {}
                 for clavem, rem in conceptum.items():
-                    if not clavem.startswith('#item+conceptum+codicem'):
-                        datum[int_clavem][clavem] = rem
+                    datum[int_clavem][clavem] = rem
+                    # if not clavem.startswith('#item+conceptum+codicem'):
+                    #     datum[int_clavem][clavem] = rem
         return datum
 
     def imprimere(self, linguam: list = None) -> list:
+        """imprimere /print/@eng-Latn
+
+        Trivia:
+        - cōdex, m, s, (Nominative), https://en.wiktionary.org/wiki/codex#Latin
+        - imprimere, v, s, (), https://en.wiktionary.org/wiki/imprimo#Latin
+        - pāginae, f, pl, (Nominative), https://en.wiktionary.org/wiki/pagina
+
+        Returns:
+            [list]:
+        """
+        resultatum = []
+        resultatum_corpus = []
+        resultatum_corpus_totale = 0
+        resultatum_corpus_obj = []
+        linguam_clavem = []
+        if linguam:
+            for item in linguam:
+                linguam_clavem.append(
+                    item.replace('#item+rem+i_qcc+is_zxxx+', '')
+                )
+        # resultatum_corpus.append(linguam_clavem)
+        # resultatum_corpus.append(len(linguam_clavem))
+        for clavem, lineam in self.dictionaria.items():
+
+            if len(linguam_clavem) > 0:
+                if lineam['#item+rem+i_qcc+is_zxxx+ix_hxlix'] not in \
+                        linguam_clavem:
+                    continue
+
+            neo_lineam = {}
+            for k, v in lineam.items():
+                # neo_lineam[k] = v
+                if v:
+                    neo_lineam[k] = v
+
+            resultatum_corpus_obj.append(neo_lineam)
+
+            resultatum_corpus_totale += 1
+
+        if resultatum_corpus_obj:
+
+            resultatum.append("=== Interlinguae in cōdex: {0}".format(
+                resultatum_corpus_totale))
+
+            # import pprint
+            resultatum.append("")
+            for res in resultatum_corpus_obj:
+                resultatum.append("")
+                resultatum.append('==== {0} '.format(
+                    res['#item+conceptum+numerordinatio'])
+                )
+                resultatum.append("")
+                resultatum.append("[source,json]")
+                resultatum.append("----")
+                resultatum.append(json.dumps(
+                    res, indent=4, sort_keys=True, ensure_ascii=False))
+                resultatum.append("----")
+                # resultatum.append(pprint.pprint(res))
+
+        # if resultatum_corpus:
+            # resultatum.append("")
+
+            # resultatum.append("=== Interlinguae in cōdex: {0}".format(
+            #     resultatum_corpus_totale))
+
+            # # cōdex, m, s, (nominative)
+            # # tōtālis, m/f, s, (Nominative)
+            # # linguae, f, s, (Dative)
+            # resultatum.append(
+            #     "Tōtālis linguae in cōdex: {0}".format(
+            #         resultatum_corpus_totale))
+            # resultatum.append("")
+
+            # resultatum.append('[%header,cols="~,~,~,~,~"]')
+            # resultatum.append('|===')
+            # # https://en.wiktionary.org/wiki/latinus#Latin
+            # # nōmina, n, pl, (Nominative)
+            # #     shttps://en.wiktionary.org/wiki/nomen#Latin
+            # # "nōmen Latīnum"
+            # # https://en.wiktionary.org/wiki/Latinus#Latin
+            # # resultatum.append(
+            # #     "| <span lang='la'>Cōdex<br>linguae</span> | "
+            # #     "<span lang='la'>Glotto<br>cōdicī</span> | "
+            # #     "<span lang='la'>ISO<br>639-3</span> | "
+            # #     "<span lang='la'>Wiki QID<br>cōdicī</span> | "
+            # #     "<span lang='la'>Nōmen Latīnum</span> |")
+            # # resultatum.append("| --- | --- | --- | --- | --- |")
+            # resultatum.append("| Interlinguae")
+            # resultatum.append("| /Wiki P/")
+            # resultatum.append("| ISO 639-3")
+            # # resultatum.append("| Wiki QID cōdicī")
+            # resultatum.append("| Nōmen Latīnum")
+            # resultatum.append("| Definitionem")
+            # resultatum.append('')
+            # resultatum.extend(resultatum_corpus)
+            # resultatum.append('|===')
+            # resultatum.append("")
+
+        return resultatum
+
+    def imprimereTabula(self, linguam: list = None) -> list:
         """imprimere /print/@eng-Latn
 
         Trivia:
@@ -1250,11 +1360,11 @@ class DictionariaInterlinguarum:
         if linguam:
             for item in linguam:
                 linguam_clavem.append(
-                    item.replace('#item+rem', '')
+                    item.replace('#item+rem+i_qcc+is_zxxx+', '')
                 )
         # resultatum_corpus.append(linguam_clavem)
         # resultatum_corpus.append(len(linguam_clavem))
-        for clavem, lineam in self.dictionaria_codex.items():
+        for clavem, lineam in self.dictionaria.items():
 
             if len(linguam_clavem) > 0:
                 if lineam['#item+rem+i_qcc+is_zxxx+ix_hxlix'] not in \
@@ -1361,7 +1471,7 @@ class DictionariaInterlinguarum:
 
         for item in _clavem:
             # print('item', item)
-            for _k, linguam in self.dictionaria_codex.items():
+            for _k, linguam in self.dictionaria.items():
                 # print('linguam', linguam)
                 if terminum.find(linguam[item]) > -1 and linguam[item]:
                     # return linguam[factum]
