@@ -544,61 +544,15 @@ class Codex:
         resultatum.append("[id=0_999_1603_1]")
         # resultatum.append("== [0] /Praefātiō/@lat-Latn \n")
         resultatum.append("== Praefātiō \n")
-        # resultatum.append("<a id='0' href='#0'>§ 0</a> \n")
+        resultatum.extend((["{nbsp} +"] * 20))
 
-        # https://en.wiktionary.org/wiki/translatio#Latin
-        resultatum.append("=== //Cōdex trānslātiōnēs//")
-
-        resultatum.extend(self.conceptum_ad_tabula_verbis(
-            self.m1603_1_1__de_codex))
-
-        resultatum.append("=== //Rēs interlinguālibus//")
-
-        resultatum.extend(self.conceptum_ad_tabula_codicibus(
-            self.m1603_1_1__de_codex))
-
-        # resultatum.append(
-        #     numerordinatio_lineam_hxml5_details(
-        #         self.m1603_1_1__de_codex,
-        #         self.m1603_1_1__de_codex['#item+rem+i_qcc+is_zxxx+ix_n1603']
-        #     ))
-
-        # if len(self.usus_ix_qcc):
-        #     resultatum.append("+++<!-- @TODO {0} -->+++".format(
-        #         str(self.usus_ix_qcc)))
-
-        if len(self.usus_linguae):
-            # resultatum.append("### Linguae in cōdex")
-            # resultatum.append("=== Linguae in cōdex")
-            # resultatum.append(str(self.usus_linguae))
-
-            resultatum.extend(self.dictionaria_linguarum.imprimere(
-                list(self.usus_linguae)))
-
-        if len(self.usus_ix_qcc):
-            # resultatum.append("### Linguae in cōdex")
-            # resultatum.append("=== Linguae in cōdex")
-            # resultatum.append(str(self.usus_linguae))
-
-            # resultatum.extend(self.dictionaria_interlinguarum.imprimereTabula(
-            #     list(self.usus_ix_qcc)))
-
-            # resultatum.append("== non tabulae (experimentum est) \n")
-            resultatum.extend(self.dictionaria_interlinguarum.imprimere(
-                list(self.usus_ix_qcc)))
-
-        # resultatum.append("oioi")
-        # resultatum.append("")
-        # # resultatum.extend(self.dictionaria_interlinguarum.imprimere(
-        # #     list(self.usus_linguae)))
-        # resultatum.extend(self.dictionaria_interlinguarum.imprimere(None))
-
-        # resultatum.append("oi2oi2")
-
-        # resultatum.append("----\n")
-
-            # resultatum.append("'''''\n")
-            # resultatum.append("----\n")
+        # resultatum.append("[.text-rigth]")
+        # resultatum.append("[.lead]")
+        resultatum.append("[quote]")
+        resultatum.append(
+            "/_**Public domain means that each major common issue "
+            "only needs to be resolved once**_/@eng-Latn")
+        resultatum.append("")
 
         return resultatum
 
@@ -937,17 +891,23 @@ class Codex:
         """
         paginae = []
         codex_capiti = self.codex_capiti()
+        codex_praefatio = self.codex_praefatio()
         # codex_indici = self.codex_indici()
         codex_corpori = self.codex_corpori()
         codex_appendici = self.codex_appendici()
+        # methodi_ex_codex = self.methodi_ex_codex()
 
-        # Compute codex_praefatio last (to receive statistics of others)
-        codex_praefatio = self.codex_praefatio()
+       # Compute methodi_ex_codex last (to receive statistics of others)
+        methodi_ex_codex = self.methodi_ex_codex()
 
         paginae.extend(codex_capiti)
         # paginae.extend(codex_indici)
         paginae.extend(codex_praefatio)
+        paginae.extend(['', '<<<', ''])
+        paginae.extend(methodi_ex_codex)
+        paginae.extend(['', '<<<', ''])
         paginae.extend(codex_corpori)
+        paginae.extend(['', '<<<', ''])
         paginae.extend(codex_appendici)
 
         # paginae.extend(self.codex_indici())
@@ -956,6 +916,80 @@ class Codex:
         # paginae.extend(self._sarcinarum())
 
         # return "\n".join(paginae)
+        return paginae
+
+    def methodi_ex_codex(self) -> list:
+        """methodī ex cōdex
+
+        Trivia:
+        - cōdex, m, s, (Nominative), https://en.wiktionary.org/wiki/codex#Latin
+        - methodī, f, pl, (Nominative), https://en.wiktionary.org/wiki/methodus
+
+        Returns:
+            [list]:
+        """
+
+        # methodō, f, s, (dative), https://en.wiktionary.org/wiki/methodus#Latin
+        paginae = []
+
+        paginae.append('== Methodī ex cōdex')
+
+        # resultatum.append("<a id='0' href='#0'>§ 0</a> \n")
+
+        # https://en.wiktionary.org/wiki/translatio#Latin
+        paginae.append("=== //Cōdex trānslātiōnēs//")
+
+        paginae.extend(self.conceptum_ad_tabula_verbis(
+            self.m1603_1_1__de_codex))
+
+        paginae.append("=== //Rēs interlinguālibus//")
+
+        paginae.extend(self.conceptum_ad_tabula_codicibus(
+            self.m1603_1_1__de_codex))
+
+        # paginae.append(
+        #     numerordinatio_lineam_hxml5_details(
+        #         self.m1603_1_1__de_codex,
+        #         self.m1603_1_1__de_codex['#item+rem+i_qcc+is_zxxx+ix_n1603']
+        #     ))
+
+        # if len(self.usus_ix_qcc):
+        #     paginae.append("+++<!-- @TODO {0} -->+++".format(
+        #         str(self.usus_ix_qcc)))
+
+        if len(self.usus_linguae):
+            # paginae.append("### Linguae in cōdex")
+            # paginae.append("=== Linguae in cōdex")
+            # paginae.append(str(self.usus_linguae))
+
+            paginae.extend(self.dictionaria_linguarum.imprimere(
+                list(self.usus_linguae)))
+
+        if len(self.usus_ix_qcc):
+            # paginae.append("### Linguae in cōdex")
+            # paginae.append("=== Linguae in cōdex")
+            # paginae.append(str(self.usus_linguae))
+
+            # paginae.extend(self.dictionaria_interlinguarum.imprimereTabula(
+            #     list(self.usus_ix_qcc)))
+
+            # paginae.append("== non tabulae (experimentum est) \n")
+            paginae.extend(self.dictionaria_interlinguarum.imprimere(
+                list(self.usus_ix_qcc)))
+
+        # paginae.append("oioi")
+        # paginae.append("")
+        # # paginae.extend(self.dictionaria_interlinguarum.imprimere(
+        # #     list(self.usus_linguae)))
+        # paginae.extend(self.dictionaria_interlinguarum.imprimere(None))
+
+        # paginae.append("oi2oi2")
+
+        # paginae.append("----\n")
+
+            # paginae.append("'''''\n")
+            # paginae.append("----\n")
+
         return paginae
 
 
