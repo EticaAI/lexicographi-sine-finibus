@@ -377,6 +377,7 @@ class Codex:
 
         self.annexis = CodexAnnexis(self, self.de_codex)
         self.sarcinarum = CodexSarcinarumAdnexis(self.de_codex)
+        self.extero = CodexExtero(self)
         self.usus_linguae = set()
         self.usus_ix_qcc = set()
 
@@ -1103,6 +1104,44 @@ class CodexAnnexis:
         # for item in resultatum:
         #     debug.append(item.__dict__)
         # return debug
+
+
+CODEX_EXTERO_TEMPORI = {
+    '1603_1_51__conceptum': "This Numerodinatio namespace contains dictionaries about natural languages with explicit writing systems. The main objective is to explain data already shared on other Numerodinatio dictionaries.\n\nAll work on the main concept tables is manually compiled and reviewed by EticaAI.",
+    'license': '0_999_999_10'
+}
+
+
+class CodexExtero:
+    """Cōdex exterō
+
+    _[eng-Latn]
+    Temporary class to bridge some metadata; needs refactoring later
+    [eng-Latn]_
+
+    Trivia:
+    - Cōdex, m, s, (Nominative), https://en.wiktionary.org/wiki/codex
+    - https://latin.stackexchange.com/questions/2102
+      /most-accurate-latin-word-for-book-in-this-context
+    - exterō, m, s, (Dative) https://en.wiktionary.org/wiki/exter#Latin
+    """
+
+    def __init__(
+        self,
+        codex: Type['Codex']
+
+    ):
+        pass
+
+    def cavere(self):
+        # https://en.wiktionary.org/wiki/caveo#Latin
+        # https://en.wiktionary.org/wiki/caveo#Latin
+        return "TODO CodexExtero cavere"
+
+    def methodis(self):
+        # https://en.wiktionary.org/wiki/caveo#Latin
+        # methodīs, f, pl, (Dative) https://en.wiktionary.org/wiki/methodus#Latin
+        return "TODO CodexExtero methodis"
 
 
 class CodexSarcinarumAdnexis:
