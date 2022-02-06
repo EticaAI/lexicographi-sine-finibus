@@ -521,12 +521,43 @@ class Codex:
 
         resultatum.append("\n")
         resultatum.append("\n")
+
+        dominium_publicum = self.codex_dominium_publicum()
+
+        resultatum.extend(dominium_publicum)
+        resultatum.append("<<<")
         resultatum.append("toc::[]")
         resultatum.append("\n")
 
         # TODO: potential list of images
         # @see https://github.com/asciidoctor/asciidoctor/issues/2189
         # @see https://github.com/Alwinator/asciidoctor-lists
+
+        return resultatum
+
+    def codex_dominium_publicum(self) -> list:
+        """cōdex praefātiōnī /book preface/@eng-Latn
+
+        Trivia:
+        - cōdex, m, s, (Nominative), https://en.wiktionary.org/wiki/codex#Latin
+        - praefātiōnī, f, s, (Dative), https://en.wiktionary.org/wiki/praefatio
+
+        Returns:
+            [list]:
+        """
+        resultatum = []
+        # resultatum.append("[id=0_999_1603_1]")
+        # resultatum.append("== [0] /Praefātiō/@lat-Latn \n")
+        # resultatum.append("== Praefātiō \n")
+        resultatum.extend((["{nbsp} +"] * 20))
+
+        # resultatum.append("[.text-rigth]")
+        # resultatum.append("[.lead]")
+        resultatum.append("[quote]")
+        resultatum.append(
+            "/_**Public domain means that each major common issue "
+            "only needs to be resolved once**_/@eng-Latn")
+        resultatum.append("")
 
         return resultatum
 
@@ -540,64 +571,40 @@ class Codex:
         Returns:
             [list]:
         """
-        resultatum = []
-        resultatum.append("[id=0_999_1603_1]")
+
+        paginae = []
+
+        paginae.append("[id=0_999_1603_1]")
         # resultatum.append("== [0] /Praefātiō/@lat-Latn \n")
-        resultatum.append("== Praefātiō \n")
-        resultatum.extend((["{nbsp} +"] * 20))
+        paginae.append("== Praefātiō \n")
 
-        # resultatum.append("[.text-rigth]")
-        # resultatum.append("[.lead]")
-        resultatum.append("[quote]")
-        resultatum.append(
-            "/_**Public domain means that each major common issue "
-            "only needs to be resolved once**_/@eng-Latn")
-        resultatum.append("")
+        paginae_verba = []
+        lineam = []
+        # https://en.wiktionary.org/wiki/caveo#Latin
+        # https://en.wiktionary.org/wiki/caveo#Latin
+        lineam.append(' _/Methodī ex cōdex/_@eng-Latn gives an overview of this book. This can be an alternative to consuming machine readable dictionaries directly or as an advanced resource for other lexicographers and terminology translators, including to report errors. ')  # noqa
+        # lineam.append(' The interlingual codes and natural languages also have their own books. However, for your convenience, the ones necessary to understand this book already are included here.')  # noqa
+        lineam.append(' Practical lexicography is the art or craft of compiling, writing and editing dictionaries. The basics are not far different than a milenia ago: it still a very humane, creative work. It is necessary to be humble: most of the faults of translators are, in fact, the fault of not understanding what the concept represents. ')  # noqa
 
-        return resultatum
+        paginae.append('[%header,cols="25h,~"]')
+        paginae.append('|===')
+        paginae.append(
+            "| Lingua de verba")
+        paginae.append(
+            "| Verba de conceptiō")
 
-    # def codex_indici(self) -> list:
-    #     """cōdex indicī /book index/@eng-Latn
+        paginae.append('')
 
-    #     @deprecated /use ASCIDoctor [toc]/@eng-Latn
+        paginae_verba.append("| Lingua Anglica (Abecedarium Latinum)")
+        textum = '| '
+        for item in lineam:
+            textum += item + '+' + "\n"
+        paginae_verba.append(textum)
 
-    #     Trivia:
-    #     - cōdex, m, s, (Nominative), https://en.wiktionary.org/wiki/codex#Latin
-    #     - indicī, m, s, (Dative), https://en.wiktionary.org/wiki/index#Latin
-
-    #     Returns:
-    #         [list]:
-    #     """
-
-    #     resultatum = []
-    #     # resultatum.append('----')
-    #     # resultatum.append("'''''")
-    #     resultatum.append('')
-    #     # resultatum.append("- <a href='#0'>[0] /Praefātiō/@lat-Latn</a>")
-    #     resultatum.append("* +++<a href='#0'>[0] /Praefātiō/@lat-Latn</a>+++")
-    #     for item in self.codex:
-    #         codicem_loci = item['#item+conceptum+codicem']
-
-    #         if codicem_loci.find('0_999') == 0:
-    #             continue
-
-    #         nomen = numerordinatio_nomen(item)
-    #         codicem_normale = numerordinatio_neo_separatum(codicem_loci, '_')
-    #         codicem_ordo = numerordinatio_ordo(codicem_loci)
-
-    #         # resultatum.append("{2}- <a href='#{0}'>[{0}] {1}</a>".format(
-    #         #     codicem_normale, nomen, ('  ' * (codicem_ordo - 1))))
-    #         # resultatum.append("{2}- <a href='#{0}'>[{0}] {1}</a>".format(
-    #         #     codicem_normale, nomen, ('  ' * (codicem_ordo - 1))))
-    #         # resultatum.append("{2} <a href='#{0}'>[{0}] {1}</a>".format(
-    #         #     codicem_normale, nomen, ('*' * (codicem_ordo - 1))))
-    #         resultatum.append("{2} +++<a href='#{0}'>[{0}] {1}</a>+++".format(
-    #             codicem_normale, nomen, ('*' * (codicem_ordo))))
-    #     resultatum.append('')
-    #     # resultatum.append('----')
-    #     # resultatum.append("'''''")
-    #     resultatum.append('')
-    #     return resultatum
+        paginae.extend(paginae_verba)
+        paginae.append('|===')
+        return paginae
+        # return resultatum
 
     def codex_corpori(self) -> list:
         """cōdex corporī /book body/@eng-Latn
@@ -891,6 +898,7 @@ class Codex:
         """
         paginae = []
         codex_capiti = self.codex_capiti()
+        # dominium_publicum = self.codex_dominium_publicum()
         codex_praefatio = self.codex_praefatio()
         # codex_indici = self.codex_indici()
         codex_corpori = self.codex_corpori()
@@ -901,6 +909,7 @@ class Codex:
         methodi_ex_codex = self.methodi_ex_codex()
 
         paginae.extend(codex_capiti)
+        # paginae.extend(dominium_publicum)
         # paginae.extend(codex_indici)
         paginae.extend(codex_praefatio)
         paginae.extend(['', '<<<', ''])
@@ -933,6 +942,11 @@ class Codex:
         paginae = []
 
         paginae.append('== Methodī ex cōdex')
+
+        intro = self.extero.intro()
+        if intro:
+            paginae.extend(intro)
+            paginae.append('')
 
         # resultatum.append("<a id='0' href='#0'>§ 0</a> \n")
 
@@ -1166,6 +1180,38 @@ class CodexExtero:
 
     ):
         pass
+
+    def intro(self):
+
+        # TODO: this obviously is temporary
+
+        paginae = []
+        paginae_verba = []
+        lineam = []
+        # https://en.wiktionary.org/wiki/caveo#Latin
+        # https://en.wiktionary.org/wiki/caveo#Latin
+        lineam.append(' _/Methodī ex cōdex/_@eng-Latn gives an overview of this book. This can be an alternative to consuming machine readable dictionaries directly or as an advanced resource for other lexicographers and terminology translators, including to report errors. ')  # noqa
+        # lineam.append(' The interlingual codes and natural languages also have their own books. However, for your convenience, the ones necessary to understand this book already are included here.')  # noqa
+        lineam.append(' Practical lexicography is the art or craft of compiling, writing and editing dictionaries. The basics are not far different than a milenia ago: it still a very humane, creative work. It is necessary to be humble: most of the faults of translators are, in fact, the fault of not understanding what the concept represents. ')  # noqa
+
+        paginae.append('[%header,cols="25h,~"]')
+        paginae.append('|===')
+        paginae.append(
+            "| Lingua de verba")
+        paginae.append(
+            "| Verba de conceptiō")
+
+        paginae.append('')
+
+        paginae_verba.append("| Lingua Anglica (Abecedarium Latinum)")
+        textum = '| '
+        for item in lineam:
+            textum += item + '+' + "\n"
+        paginae_verba.append(textum)
+
+        paginae.extend(paginae_verba)
+        paginae.append('|===')
+        return paginae
 
     def cavere(self):
         # https://en.wiktionary.org/wiki/caveo#Latin
