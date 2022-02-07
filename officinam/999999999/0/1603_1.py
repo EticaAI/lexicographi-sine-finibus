@@ -582,9 +582,25 @@ class Codex:
         lineam = []
         # https://en.wiktionary.org/wiki/caveo#Latin
         # https://en.wiktionary.org/wiki/caveo#Latin
-        lineam.append(' _/Methodī ex cōdex/_@eng-Latn gives an overview of this book. This can be an alternative to consuming machine readable dictionaries directly or as an advanced resource for other lexicographers and terminology translators, including to report errors. ')  # noqa
+        lineam.append(' _**"Cōdex [{0}]"**_ is the book format of the machine-readable dictionaries _**"[{0}] {1}"**_, which are distributed for implementers on external applications. This book is intended as advanced resource for other lexicographers and terminology translators, including detect and report inconsistencies. '.format(  # noqa
+            self.m1603_1_1__de_codex['#item+rem+i_qcc+is_zxxx+ix_n1603'],
+            self.m1603_1_1__de_codex['#item+rem+i_mul+is_zyyy']
+        ))
+
+        lineam.append(" +++<br>+++ ")
+
+        lineam.append(' Practical lexicography is the art or craft of compiling, writing and editing dictionaries. The basics are not far different than a millennia ago: it is still a very humane, creative work. It is necessary to be humble: most of the translator\'s mistakes are, in fact, not translator\'s fault, but methodological flaws. Making sure of a source idea of what a concept represents, even if it means rewrite and make simpler, annex pictures, show examples, do whatever to make it be understood, makes even non-professional translators that care about their own language deliver better results than any alternative. In other words: even the so-called industry best practices of paying professional translators and reviewers cannot overcome already poorly explained source terms. ')  # noqa
+
+        lineam.append(" +++<br>+++ ")
+
+        lineam.append(' The initiative behind this compilation is also doing other dictionaries and accepts new suggestions of relevant topics on data exchange for humanitarian use. All have in common the fact that both have human translations and (if any) external interlingual codes related to each concept while making the end result explicitly already ready to be usable on average softwares. Naturally, each book version gives extensive explanations for collaborators on how to correct itself which become part of the next weekly release. ')  # noqa
+
+
+        # lineam.append(" +++<br>+++ ")
+        # lineam.append(' This book reuses other dictionaries to explain it\' concepts, in special lingual ("natural languages") from [1603:1:51] and interlingual ("computer codes") from [1603:1:7]. However, _/Methodī ex cōdex/_@eng-Latn, methodology from the book, already will include what is used. +++<br>+++ ')  # noqa
+
         # lineam.append(' The interlingual codes and natural languages also have their own books. However, for your convenience, the ones necessary to understand this book already are included here.')  # noqa
-        lineam.append(' Practical lexicography is the art or craft of compiling, writing and editing dictionaries. The basics are not far different than a milenia ago: it still a very humane, creative work. It is necessary to be humble: most of the faults of translators are, in fact, the fault of not understanding what the concept represents. ')  # noqa
+        # lineam.append(' The interlingual codes and natural languages also have their own books. However, for your convenience, the ones necessary to understand this book already are included here.')  # noqa
 
         paginae.append('[%header,cols="25h,~"]')
         paginae.append('|===')
@@ -1190,9 +1206,9 @@ class CodexExtero:
         lineam = []
         # https://en.wiktionary.org/wiki/caveo#Latin
         # https://en.wiktionary.org/wiki/caveo#Latin
-        lineam.append(' _/Methodī ex cōdex/_@eng-Latn gives an overview of this book. This can be an alternative to consuming machine readable dictionaries directly or as an advanced resource for other lexicographers and terminology translators, including to report errors. ')  # noqa
-        # lineam.append(' The interlingual codes and natural languages also have their own books. However, for your convenience, the ones necessary to understand this book already are included here.')  # noqa
-        lineam.append(' Practical lexicography is the art or craft of compiling, writing and editing dictionaries. The basics are not far different than a milenia ago: it still a very humane, creative work. It is necessary to be humble: most of the faults of translators are, in fact, the fault of not understanding what the concept represents. ')  # noqa
+        # lineam.append(' _/Methodī ex cōdex/_@eng-Latn gives an overview of this book. This can be an alternative to consuming machine readable dictionaries directly or as an advanced resource for other lexicographers and terminology translators, including to report errors. ')  # noqa
+        # # lineam.append(' The interlingual codes and natural languages also have their own books. However, for your convenience, the ones necessary to understand this book already are included here.')  # noqa
+        # lineam.append(' Practical lexicography is the art or craft of compiling, writing and editing dictionaries. The basics are not far different than a milenia ago: it still a very humane, creative work. It is necessary to be humble: most of the faults of translators are, in fact, the fault of not understanding what the concept represents. ')  # noqa
 
         paginae.append('[%header,cols="25h,~"]')
         paginae.append('|===')
