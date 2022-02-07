@@ -850,6 +850,7 @@ Naturally, each book version gives extensive explanations for collaborators on h
 
         resultatum = []
         resultatum_corpus = []
+        resultatum_corpus_totale = 0
 
         for clavem, item_textum in rem.items():
 
@@ -884,11 +885,16 @@ Naturally, each book version gives extensive explanations for collaborators on h
                 resultatum_corpus.append("| {0}".format(clavem_i18n))
                 resultatum_corpus.append("| {0}".format(item_text_i18n))
                 resultatum_corpus.append("")
+                resultatum_corpus_totale += 1
 
         # - linguālia, https://en.wiktionary.org/wiki/lingualis#Latin
         # -rēs, f, s, (Nominative),
         #   https://en.wiktionary.org/wiki/lingualis#Latin
         if resultatum_corpus:
+
+            # resultatum.append("==== Rēs interlinguālibus: {0}".format(
+            #     resultatum_corpus_totale))
+
             resultatum.append("")
             # resultatum.append('[cols="1,1"]')
             # resultatum.append('[%autowidth]')
@@ -968,16 +974,26 @@ Naturally, each book version gives extensive explanations for collaborators on h
         """Methodī ex cōdice
 
         Trivia:
+        - rēs, f, pl, (Nominative), https://en.wiktionary.org/wiki/codex#Latin
         - cōdex, m, s, (Nominative), https://en.wiktionary.org/wiki/codex#Latin
         - cōdice, m, s, (Ablative), https://en.wiktionary.org/wiki/codex#Latin
         - methodī, f, pl, (Nominative), https://en.wiktionary.org/wiki/methodus
         - ex (+ ablative) https://en.wiktionary.org/wiki/ex#Latin
+        - in (+ ablative), in (+ accusative)
+           https://en.wiktionary.org/wiki/in#Latin
         - cordibus, n, pl, (Dative), https://en.wiktionary.org/wiki/cor#Latin
         - corde, n, s, (abrative), https://en.wiktionary.org/wiki/cor#Latin
         - dictiōnāria, n, pl, (Nominative, Accusative)
           https://en.wiktionary.org/wiki/dictionarium#Latin
         - dictiōnāriīs, n, pl, (Ablative)
         - dictiōnāriōrum, n, pl, (Gentitive)
+        - verbīs, n, pl, (Ablative) https://en.wiktionary.org/wiki/verbum#Latin
+        - Vicidata,
+          - Attested in https://la.wiktionary.org/wiki/Victionarium:Pagina_prima
+        - dē (+ ablative), https://en.wiktionary.org/wiki/de#Latin
+        - factō, n, s, (ablative), https://en.wiktionary.org/wiki/factum#Latin
+        - linguālibus, m/f/n, pl, (Dative)
+          https://en.wiktionary.org/wiki/lingualis#Latin
 
         Returns:
             [list]:
@@ -993,37 +1009,70 @@ Naturally, each book version gives extensive explanations for collaborators on h
             paginae.extend(intro)
             paginae.append('')
 
-
         # //dictiōnāria de hūmānitātēs interimperia//
 
         # Methodī ex dictiōnāriōrum corde =
         #   //Methods out of the heart of dictionaries//
         if 'no1' in self.archiva:
             paginae.append('=== Methodī ex dictiōnāriōrum corde')
-            # paginae.append('no1 in')
+            paginae.append(
+                'NOTE: #@TODO this is a draft. Soon will be imple#'
+            )
             paginae.append('')
 
         if 'no11' in self.archiva:
-            paginae.append('Dictionaria verbis ad Wikidata')
-            # paginae.append('no11 in')
+            paginae.append('=== Methodī ex verbīs in dictiōnāriīs')
+
+            paginae.append(
+                'NOTE: /At the moment, '
+                'there is no workflow to use https://www.wikidata.org/wiki/Wikidata:Lexicographical_data[Wikidata lexicographical data], '
+                ' which actually could be used as storage for stricter '
+                'nomenclature. The current implementations use only '
+                'Wikidata concepts, the Q-items./@eng-Latn'
+            )
+            paginae.append('')
+
+            vicidata_q_modo = """
+This book contains public domain community review translations from Wikidada.
+The methodology of how these translations are obtained is the following:
+
+- The main lexicographical table (explained on previous topic) may reference Wikidata QID.+++<br>+++
+- The community reviewed translations of each singular QID is pre-compiled on an individual file {0}.wikiq.tm.hxl.csv
+            """.format(self.de_codex)
+
+
+
+            # modō, m, s, (dative) https://en.wiktionary.org/wiki/modus#Latin
+            paginae.append('==== Methodī ex verbīs in Vicidata (Q modō)')
+
+            paginae.extend(descriptio_tabulae_de_lingua(
+                'Lingua Anglica (Abecedarium Latinum)',
+                vicidata_q_modo
+            ))
+
             paginae.append('')
 
         # resultatum.append("<a id='0' href='#0'>§ 0</a> \n")
 
-        # https://en.wiktionary.org/wiki/translatio#Latin
-        paginae.append("=== //Cōdex trānslātiōnēs//")
-
-        paginae.extend(self.conceptum_ad_tabula_verbis(
-            self.m1603_1_1__de_codex))
-
-        paginae.append("=== //Rēs interlinguālibus//")
-
-        paginae.extend(self.conceptum_ad_tabula_codicibus(
-            self.m1603_1_1__de_codex))
+        paginae.append("=== Rēs dē factō in dictiōnāriīs")
 
         if len(self.usus_linguae):
+            # paginae.append("==== Rēs linguālibus")
             paginae.extend(self.dictionaria_linguarum.imprimere(
                 list(self.usus_linguae)))
+
+        # https://en.wiktionary.org/wiki/translatio#Latin
+
+        # TODO: check where to put these global information later
+        # paginae.append("==== //Cōdex trānslātiōnēs//")
+
+        # paginae.extend(self.conceptum_ad_tabula_verbis(
+        #     self.m1603_1_1__de_codex))
+
+        # paginae.append("==== //Rēs interlinguālibus//")
+
+        # paginae.extend(self.conceptum_ad_tabula_codicibus(
+        #     self.m1603_1_1__de_codex))
 
         if len(self.usus_ix_qcc):
             paginae.extend(self.dictionaria_interlinguarum.imprimere(
@@ -1409,14 +1458,14 @@ class DictionariaInterlinguarum:
 
         if resultatum_corpus_obj:
 
-            resultatum.append("=== Interlinguae in cōdex: {0}".format(
+            resultatum.append("==== Rēs interlinguālibus: {0}".format(
                 resultatum_corpus_totale))
 
             # import pprint
             resultatum.append("")
             for res in resultatum_corpus_obj:
                 resultatum.append("")
-                resultatum.append('==== {0} '.format(
+                resultatum.append('===== {0} '.format(
                     res['#item+conceptum+numerordinatio'])
                 )
                 resultatum.append("")
@@ -1695,15 +1744,17 @@ class DictionariaLinguarum:
         if resultatum_corpus:
             resultatum.append("")
 
-            resultatum.append("=== Linguae in cōdex: {0}".format(
+            # resultatum.append("=== Linguae in cōdex: {0}".format(
+            #     resultatum_corpus_totale))
+            resultatum.append("==== Rēs linguālibus: {0}".format(
                 resultatum_corpus_totale))
 
             # cōdex, m, s, (nominative)
             # tōtālis, m/f, s, (Nominative)
             # linguae, f, s, (Dative)
-            resultatum.append(
-                "Tōtālis linguae in cōdex: {0}".format(
-                    resultatum_corpus_totale))
+            # resultatum.append(
+            #     "Tōtālis linguae in cōdex: {0}".format(
+            #         resultatum_corpus_totale))
             resultatum.append("")
 
             resultatum.append('[%header,cols="~,~,~,~,~"]')
