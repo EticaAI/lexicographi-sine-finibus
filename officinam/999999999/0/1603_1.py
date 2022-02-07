@@ -323,18 +323,21 @@ def descriptio_tabulae_de_lingua(
         rem_textum = [rem_textum]
 
     paginae = []
-    paginae.append('[%header,cols="25h,~"]')
+    paginae.append('[%header,cols="25h,~a"]')
     paginae.append('|===')
-    paginae.append(
-        "| Lingua de verba")
-    paginae.append(
-        "| Verba de conceptiō")
+    paginae.append("|")
+    paginae.append("Lingua de verba")
+    paginae.append("|")
+    paginae.append("Verba de conceptiō")
 
     for item_lingua in lingua_textum:
         item_textum = rem_textum.pop(0)
-        paginae.append('| ' + item_lingua)
-        paginae.append('| ' + item_textum.strip().replace("\n\n",
-                       " +++<br><br>+++").replace("\n", " "))
+        paginae.append('|')
+        paginae.append(item_lingua)
+        paginae.append('|')
+        paginae.append(item_textum.strip())
+        # paginae.append(item_textum.strip().replace("\n\n",
+        #                " +++<br><br>+++").replace("\n", " "))
         paginae.append('')
 
     paginae.append('|===')
@@ -399,9 +402,9 @@ class Codex:
             self.auxilium_linguam = auxilium_linguam
 
         self.archiva = []
+        self.m1603_1_1__de_codex = self._init_1603_1_1()
         self.dictionaria_linguarum = DictionariaLinguarum()
         self.dictionaria_interlinguarum = DictionariaInterlinguarum()
-        self.m1603_1_1__de_codex = self._init_1603_1_1()
         self.codex = self._init_codex()
         # self.annexa = self._init_annexa()
 
@@ -1032,23 +1035,66 @@ Naturally, each book version gives extensive explanations for collaborators on h
             )
             paginae.append('')
 
-            vicidata_q_modo = """
-This book contains public domain community review translations from Wikidada.
-The methodology of how these translations are obtained is the following:
+# From https://www.wikidata.org/wiki/Wikidata:Introduction[Wikidata:Introduction]:
+# __"Wikidata is a free, collaborative, multilingual, secondary database, collecting structured data to provide support for Wikipedia, Wikimedia Commons, the other wikis of the Wikimedia movement, and to anyone in the world."__
+            vicidata_q_modo_1 = """
+The ***[{1}] {2}*** uses Wikidata as one strategy to conciliate language terms for one or more of it's concepts.
 
-- The main lexicographical table (explained on previous topic) may reference Wikidata QID.+++<br>+++
-- The community reviewed translations of each singular QID is pre-compiled on an individual file {0}.wikiq.tm.hxl.csv
+This means that this book, and related dictionaries data files require periodic updates to, at bare minimum, synchronize and re-share up to date translations.
+            """.format(
+            self.de_codex,
+            self.m1603_1_1__de_codex['#item+rem+i_qcc+is_zxxx+ix_n1603'],
+            self.m1603_1_1__de_codex['#item+rem+i_mul+is_zyyy']
+        )
+            # raise ValueError(str(self.m1603_1_1__de_codex))
+
+            vicidata_q_modo_11 = """
+**How reliable are the community translations (Wikidata source)?**
+
+The short, default answer is: **they are reliable**, even in cases of no authoritative translations for each subject.
+
+As reference, it is likely a professional translator (without access to Wikipedia or Internal terminology bases of the control organizations) would deliver lower quality results if you do blind tests.
+This is possible because not just the average public, but even terminologists and professional translators help Wikipedia (and implicitly Wikidata).
+
+However, even when the result is correct,
+the current version needs improved differentiation, at minimum, acronym and long form.
+For major organizations, features such as __P1813 short names__ exist, but are not yet compiled with the current dataset.
             """.format(self.de_codex)
 
+            vicidata_q_modo = """
+**Major reasons for "wrong translations" are not translators fault**
 
+TIP: As a rule of thumb, for already very defined concepts where you, as human, can manually verify one or more translated terms as a decent result, the other translations are likely to be acceptable. Dictionaries with edge cases (such as disputed territory names) would have further explanation.
+
+NOTE: Both at concept level and (as general statistics) book level, is planned to have indication concept likelihood of being well understood for very stricter translations initiatives.
+
+The main reason for "wrong translations" are poorly defined concepts used to explain for community translators how to generate terminology translations. This would make existing translations from Wikidata (used not just by us) inconsistent. The second reason is if the dictionaries use translations for concepts without a strict match; in other words, if we make stricter definitions of what concept means but reuse Wikidada less exact terms. There are also issues when entire languages are encoded with wrong codes. Note that all these cases **wrong translations are strictly NOT translators fault, but lexicography fault**.
+
+It is still possible to have strict translation level errors. But even if we point users how to correct Wikidata/Wikipedia (based on better contextual explanation of a concept, such as this book), the requirements to say the previous term was objectively a wrong human translation error (if following our seriousness on dictionary-building) are very high.
+            """.format(self.de_codex)
+
+            vicidata_q_modo2 = """
+From the point of view of data conciliation, the following methodology is used to release the terminology translations with the main concept table.
+
+. The main handcrafted lexicographical table (explained on previous topic), also provided on `{0}.no1.tm.hxl.csv`, may reference Wiki QID.
+. Every unique QID of  `{0}.no1.tm.hxl.csv`, together with language codes from [`1603:1:51`] (which requires knowing human languages), is used to prepare an SPARQL query optimized to run on https://query.wikidata.org/[Wikidata Query Service]. The query is so huge that it is not viable to "Try it" links (URL overlong), such https://www.wikidata.org/wiki/Wikidata:SPARQL_query_service/queries/examples[as what you would find on Wikidata Tutorials], ***but*** it works.
+.. Note that the knowledge is free, the translations are there, but the multilingual humanitarian needs may lack people to prepare the files and shares then for general use.
+. The query result, with all QIDs and term labels, is shared as `{0}.wikiq.tm.hxl.csv`
+. The community reviewed translations of each singular QID is pre-compiled on an individual file `{0}.wikiq.tm.hxl.csv`
+. `{0}.no1.tm.hxl.csv` plus `{0}.wikiq.tm.hxl.csv` created `{0}.no11.tm.hxl.csv`
+            """.format(self.de_codex)
 
             # modō, m, s, (dative) https://en.wiktionary.org/wiki/modus#Latin
             paginae.append('==== Methodī ex verbīs in Vicidata (Q modō)')
 
             paginae.extend(descriptio_tabulae_de_lingua(
-                'Lingua Anglica (Abecedarium Latinum)',
-                vicidata_q_modo
-            ))
+                ['Lingua Anglica (Abecedarium Latinum)'] * 4,
+                [
+                    vicidata_q_modo_1,
+                    vicidata_q_modo_11,
+                    vicidata_q_modo,
+                    vicidata_q_modo2
+                ]))
 
             paginae.append('')
 
