@@ -312,6 +312,35 @@ def res_interlingualibus_formata(rem: dict, query) -> str:
 
     return rem[query]
 
+
+def descriptio_tabulae_de_lingua(
+        lingua_textum: Union[str, list], rem_textum: Union[str, list]) -> list:
+
+    if isinstance(lingua_textum, str):
+        lingua_textum = [lingua_textum]
+
+    if isinstance(rem_textum, str):
+        rem_textum = [rem_textum]
+
+    paginae = []
+    paginae.append('[%header,cols="25h,~"]')
+    paginae.append('|===')
+    paginae.append(
+        "| Lingua de verba")
+    paginae.append(
+        "| Verba de conceptiō")
+
+    for item_lingua in lingua_textum:
+        item_textum = rem_textum.pop(0)
+        paginae.append('| ' + item_lingua)
+        paginae.append('| ' + item_textum.strip().replace("\n\n",
+                       " +++<br><br>+++").replace("\n", " "))
+        paginae.append('')
+
+    paginae.append('|===')
+
+    return paginae
+
 # /Educated guess on stability (1-100) of local identifier
 # if dictionary still in use in a century/
 # #status+conceptum+codicem
@@ -369,6 +398,7 @@ class Codex:
         if auxilium_linguam:
             self.auxilium_linguam = auxilium_linguam
 
+        self.archiva = []
         self.dictionaria_linguarum = DictionariaLinguarum()
         self.dictionaria_interlinguarum = DictionariaInterlinguarum()
         self.m1603_1_1__de_codex = self._init_1603_1_1()
@@ -410,8 +440,10 @@ class Codex:
         fullpath_no11 = basepath + '.no11.tm.hxl.csv'
 
         if os.path.exists(fullpath_no11):
+            self.archiva.extend(['no1', 'no11'])
             fullpath = fullpath_no11
         else:
+            self.archiva.append('no1')
             fullpath = fullpath_no1
 
         codex_lineam = []
@@ -578,47 +610,36 @@ class Codex:
         # resultatum.append("== [0] /Praefātiō/@lat-Latn \n")
         paginae.append("== Praefātiō \n")
 
-        paginae_verba = []
-        lineam = []
-        # https://en.wiktionary.org/wiki/caveo#Latin
-        # https://en.wiktionary.org/wiki/caveo#Latin
-        lineam.append(' _**"Cōdex [{0}]"**_ is the book format of the machine-readable dictionaries _**"[{0}] {1}"**_, which are distributed for implementers on external applications. This book is intended as advanced resource for other lexicographers and terminology translators, including detect and report inconsistencies. '.format(  # noqa
+        codex_praefatio_textum = """
+_**"Cōdex [{0}]"**_ is the book format of the machine-readable dictionaries _**"[{0}] {1}"**_,
+which are distributed for implementers on external applications.
+This book is intended as advanced resource for other lexicographers and terminology translators, including detect and report inconsistencies.
+
+Practical lexicography is the art or craft of compiling, writing and editing dictionaries.
+The basics are not far different than a millennia ago:
+it is still a very humane, creative work.
+It is necessary to be humble:
+most of the translator's mistakes are, in fact, not translator's fault, but methodological flaws.
+Making sure of a source idea of what a concept represents,
+even if it means rewrite and make simpler, annex pictures,
+show examples, do whatever to make it be understood,
+makes even non-professional translators that care about their own language deliver better results than any alternative.
+In other words: even the so-called industry best practices of paying professional translators and reviewers cannot overcome already poorly explained source terms.
+
+The initiative behind this compilation is also doing other dictionaries and accepts new suggestions of relevant topics on data exchange for humanitarian use.
+All have in common the fact that both have human translations and (if any) external interlingual codes related to each concept while making the end result explicitly already ready to be usable on average softwares.
+Naturally, each book version gives extensive explanations for collaborators on how to correct itself which become part of the next weekly release. 
+        """.format(  # noqa
             self.m1603_1_1__de_codex['#item+rem+i_qcc+is_zxxx+ix_n1603'],
             self.m1603_1_1__de_codex['#item+rem+i_mul+is_zyyy']
+        )
+
+        paginae.extend(descriptio_tabulae_de_lingua(
+            'Lingua Anglica (Abecedarium Latinum)',
+            codex_praefatio_textum
+            # ("".join(lineam) + '+' + "\n")
         ))
 
-        lineam.append(" +++<br>+++ ")
-
-        lineam.append(' Practical lexicography is the art or craft of compiling, writing and editing dictionaries. The basics are not far different than a millennia ago: it is still a very humane, creative work. It is necessary to be humble: most of the translator\'s mistakes are, in fact, not translator\'s fault, but methodological flaws. Making sure of a source idea of what a concept represents, even if it means rewrite and make simpler, annex pictures, show examples, do whatever to make it be understood, makes even non-professional translators that care about their own language deliver better results than any alternative. In other words: even the so-called industry best practices of paying professional translators and reviewers cannot overcome already poorly explained source terms. ')  # noqa
-
-        lineam.append(" +++<br>+++ ")
-
-        lineam.append(' The initiative behind this compilation is also doing other dictionaries and accepts new suggestions of relevant topics on data exchange for humanitarian use. All have in common the fact that both have human translations and (if any) external interlingual codes related to each concept while making the end result explicitly already ready to be usable on average softwares. Naturally, each book version gives extensive explanations for collaborators on how to correct itself which become part of the next weekly release. ')  # noqa
-
-
-        # lineam.append(" +++<br>+++ ")
-        # lineam.append(' This book reuses other dictionaries to explain it\' concepts, in special lingual ("natural languages") from [1603:1:51] and interlingual ("computer codes") from [1603:1:7]. However, _/Methodī ex cōdex/_@eng-Latn, methodology from the book, already will include what is used. +++<br>+++ ')  # noqa
-
-        # lineam.append(' The interlingual codes and natural languages also have their own books. However, for your convenience, the ones necessary to understand this book already are included here.')  # noqa
-        # lineam.append(' The interlingual codes and natural languages also have their own books. However, for your convenience, the ones necessary to understand this book already are included here.')  # noqa
-
-        paginae.append('[%header,cols="25h,~"]')
-        paginae.append('|===')
-        paginae.append(
-            "| Lingua de verba")
-        paginae.append(
-            "| Verba de conceptiō")
-
-        paginae.append('')
-
-        paginae_verba.append("| Lingua Anglica (Abecedarium Latinum)")
-        textum = '| '
-        for item in lineam:
-            textum += item + '+' + "\n"
-        paginae_verba.append(textum)
-
-        paginae.extend(paginae_verba)
-        paginae.append('|===')
         return paginae
         # return resultatum
 
@@ -919,17 +940,17 @@ class Codex:
         # codex_indici = self.codex_indici()
         codex_corpori = self.codex_corpori()
         codex_appendici = self.codex_appendici()
-        # methodi_ex_codex = self.methodi_ex_codex()
+        # methodi_ex_codice = self.methodi_ex_codice()
 
-       # Compute methodi_ex_codex last (to receive statistics of others)
-        methodi_ex_codex = self.methodi_ex_codex()
+       # Compute methodi_ex_codice last (to receive statistics of others)
+        methodi_ex_codice = self.methodi_ex_codice()
 
         paginae.extend(codex_capiti)
         # paginae.extend(dominium_publicum)
         # paginae.extend(codex_indici)
         paginae.extend(codex_praefatio)
         paginae.extend(['', '<<<', ''])
-        paginae.extend(methodi_ex_codex)
+        paginae.extend(methodi_ex_codice)
         paginae.extend(['', '<<<', ''])
         paginae.extend(codex_corpori)
         paginae.extend(['', '<<<', ''])
@@ -943,12 +964,20 @@ class Codex:
         # return "\n".join(paginae)
         return paginae
 
-    def methodi_ex_codex(self) -> list:
-        """methodī ex cōdex
+    def methodi_ex_codice(self) -> list:
+        """Methodī ex cōdice
 
         Trivia:
         - cōdex, m, s, (Nominative), https://en.wiktionary.org/wiki/codex#Latin
+        - cōdice, m, s, (Ablative), https://en.wiktionary.org/wiki/codex#Latin
         - methodī, f, pl, (Nominative), https://en.wiktionary.org/wiki/methodus
+        - ex (+ ablative) https://en.wiktionary.org/wiki/ex#Latin
+        - cordibus, n, pl, (Dative), https://en.wiktionary.org/wiki/cor#Latin
+        - corde, n, s, (abrative), https://en.wiktionary.org/wiki/cor#Latin
+        - dictiōnāria, n, pl, (Nominative, Accusative)
+          https://en.wiktionary.org/wiki/dictionarium#Latin
+        - dictiōnāriīs, n, pl, (Ablative)
+        - dictiōnāriōrum, n, pl, (Gentitive)
 
         Returns:
             [list]:
@@ -957,11 +986,26 @@ class Codex:
         # methodō, f, s, (dative), https://en.wiktionary.org/wiki/methodus#Latin
         paginae = []
 
-        paginae.append('== Methodī ex cōdex')
+        paginae.append('== Methodī ex cōdice')
 
         intro = self.extero.intro()
         if intro:
             paginae.extend(intro)
+            paginae.append('')
+
+
+        # //dictiōnāria de hūmānitātēs interimperia//
+
+        # Methodī ex dictiōnāriōrum corde =
+        #   //Methods out of the heart of dictionaries//
+        if 'no1' in self.archiva:
+            paginae.append('=== Methodī ex dictiōnāriōrum corde')
+            # paginae.append('no1 in')
+            paginae.append('')
+
+        if 'no11' in self.archiva:
+            paginae.append('Dictionaria verbis ad Wikidata')
+            # paginae.append('no11 in')
             paginae.append('')
 
         # resultatum.append("<a id='0' href='#0'>§ 0</a> \n")
@@ -977,48 +1021,13 @@ class Codex:
         paginae.extend(self.conceptum_ad_tabula_codicibus(
             self.m1603_1_1__de_codex))
 
-        # paginae.append(
-        #     numerordinatio_lineam_hxml5_details(
-        #         self.m1603_1_1__de_codex,
-        #         self.m1603_1_1__de_codex['#item+rem+i_qcc+is_zxxx+ix_n1603']
-        #     ))
-
-        # if len(self.usus_ix_qcc):
-        #     paginae.append("+++<!-- @TODO {0} -->+++".format(
-        #         str(self.usus_ix_qcc)))
-
         if len(self.usus_linguae):
-            # paginae.append("### Linguae in cōdex")
-            # paginae.append("=== Linguae in cōdex")
-            # paginae.append(str(self.usus_linguae))
-
             paginae.extend(self.dictionaria_linguarum.imprimere(
                 list(self.usus_linguae)))
 
         if len(self.usus_ix_qcc):
-            # paginae.append("### Linguae in cōdex")
-            # paginae.append("=== Linguae in cōdex")
-            # paginae.append(str(self.usus_linguae))
-
-            # paginae.extend(self.dictionaria_interlinguarum.imprimereTabula(
-            #     list(self.usus_ix_qcc)))
-
-            # paginae.append("== non tabulae (experimentum est) \n")
             paginae.extend(self.dictionaria_interlinguarum.imprimere(
                 list(self.usus_ix_qcc)))
-
-        # paginae.append("oioi")
-        # paginae.append("")
-        # # paginae.extend(self.dictionaria_interlinguarum.imprimere(
-        # #     list(self.usus_linguae)))
-        # paginae.extend(self.dictionaria_interlinguarum.imprimere(None))
-
-        # paginae.append("oi2oi2")
-
-        # paginae.append("----\n")
-
-            # paginae.append("'''''\n")
-            # paginae.append("----\n")
 
         return paginae
 
@@ -1202,31 +1211,13 @@ class CodexExtero:
         # TODO: this obviously is temporary
 
         paginae = []
-        paginae_verba = []
-        lineam = []
-        # https://en.wiktionary.org/wiki/caveo#Latin
-        # https://en.wiktionary.org/wiki/caveo#Latin
-        # lineam.append(' _/Methodī ex cōdex/_@eng-Latn gives an overview of this book. This can be an alternative to consuming machine readable dictionaries directly or as an advanced resource for other lexicographers and terminology translators, including to report errors. ')  # noqa
-        # # lineam.append(' The interlingual codes and natural languages also have their own books. However, for your convenience, the ones necessary to understand this book already are included here.')  # noqa
-        # lineam.append(' Practical lexicography is the art or craft of compiling, writing and editing dictionaries. The basics are not far different than a milenia ago: it still a very humane, creative work. It is necessary to be humble: most of the faults of translators are, in fact, the fault of not understanding what the concept represents. ')  # noqa
 
-        paginae.append('[%header,cols="25h,~"]')
-        paginae.append('|===')
-        paginae.append(
-            "| Lingua de verba")
-        paginae.append(
-            "| Verba de conceptiō")
+        methodi_ex_codice_intro = """This section explains the methodology of this book and it's machine readable formats. For your convenience the information used to explain the concepts (such as natural language and interlingual codes) which appears in this book are also summarized here. This approach is done both for reviews not needing to open other books (or deal with machine readable files) and also to spot errors on other dictionaries. +++<br><br>+++ About how the book and the dictionaries are compiled, a division of "baseline concept table" and (when relevant for a codex) "translations conciliation" is given different methodologies. +++<br><br>+++ Every book contains at minimum the baseline concept table and explanation of the used fields. This approach helps to release dictionaries faster while ensuring both humans and machines can know what to expect even when they are not ready to receive translations."""
 
-        paginae.append('')
-
-        paginae_verba.append("| Lingua Anglica (Abecedarium Latinum)")
-        textum = '| '
-        for item in lineam:
-            textum += item + '+' + "\n"
-        paginae_verba.append(textum)
-
-        paginae.extend(paginae_verba)
-        paginae.append('|===')
+        paginae.extend(descriptio_tabulae_de_lingua(
+            'Lingua Anglica (Abecedarium Latinum)',
+            methodi_ex_codice_intro
+        ))
         return paginae
 
     def cavere(self):
