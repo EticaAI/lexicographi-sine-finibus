@@ -56,6 +56,7 @@ from typing import (
 )
 import fnmatch
 import json
+import datetime
 
 # from itertools import permutations
 # from itertools import product
@@ -669,17 +670,26 @@ Naturally, each book version gives extensive explanations for collaborators on h
             meta['#item+rem+i_qcc+is_zxxx+ix_wikip577'] = \
                 qhxl(publication_date, meta_langs)
 
+        meta['#item+rem+i_qcc+is_zxxx+ix_wikip393'] = \
+            datetime.datetime.now().replace(microsecond=0).isoformat()
+
         spdx_licentiam = self.quod_res('0_1603_1_7_2616_2479')
         if spdx_licentiam and qhxl(spdx_licentiam, meta_langs) is not None:
             meta['#item+rem+i_qcc+is_zxxx+ix_wikip2479'] = \
                 qhxl(spdx_licentiam, meta_langs)
 
-        paginae.append("")
-        paginae.append(str(meta))
+        reference_url = self.quod_res('0_1603_1_7_2616_854')
+        if reference_url and qhxl(reference_url, meta_langs) is not None:
+            meta['#item+rem+i_qcc+is_zxxx+ix_wikip854'] = \
+                qhxl(reference_url, meta_langs)
+
+        # paginae.append("")
+        # paginae.append(str(meta))
         paginae.append("")
         if len(meta.keys()) > 0:
             meta_tabulae = self.conceptum_ad_tabula_codicibus(meta)
             paginae.extend(meta_tabulae)
+            paginae.append("")
 
         # paginae.append("")
         # paginae.append(str(scrīptor))
@@ -930,17 +940,28 @@ Naturally, each book version gives extensive explanations for collaborators on h
             # if clavem.startswith('#item+rem+i_qcc'):
             #     continue
             clavem_i18n = None
-            dinterlinguam = self.dictionaria_interlinguarum.quod(clavem)
+            # dinterlinguam = self.dictionaria_interlinguarum.quod(clavem)
+            # # raise ValueError(dinterlinguam)
+            # if dinterlinguam and dinterlinguam['#item+rem+i_lat+is_latn']:
+            #     clavem_i18n = '' + \
+            #         dinterlinguam['#item+rem+i_lat+is_latn'] + ''
+
+            dinterlinguam = self.dictionaria_interlinguarum.formatum_nomen(
+                clavem)
+            clavem_i18n = dinterlinguam
             # raise ValueError(dinterlinguam)
-            if dinterlinguam and dinterlinguam['#item+rem+i_lat+is_latn']:
-                clavem_i18n = '' + \
-                    dinterlinguam['#item+rem+i_lat+is_latn'] + ''
+            # if dinterlinguam and dinterlinguam['#item+rem+i_lat+is_latn']:
+            #     clavem_i18n = '' + \
+            #         dinterlinguam['#item+rem+i_lat+is_latn'] + ''
 
             if item_textum:
                 clavem_i18n = clavem if clavem_i18n is None else clavem_i18n
                 # clavem_i18n = clavem
                 item_text_i18n = item_textum
-                item_text_i18n = res_interlingualibus_formata(rem, clavem)
+                # item_text_i18n = res_interlingualibus_formata(rem, clavem)
+                item_text_i18n = \
+                    self.dictionaria_interlinguarum.formatum_res_facto(
+                        rem, clavem)
                 if clavem.startswith('#item+rem+i_qcc+is_zxxx+'):
                     self.usus_ix_qcc.add(clavem.replace(
                         '#item+rem+i_qcc+is_zxxx+', ''
@@ -1080,6 +1101,26 @@ Naturally, each book version gives extensive explanations for collaborators on h
 
         # Methodī ex dictiōnāriōrum corde =
         #   //Methods out of the heart of dictionaries//
+        # meta = {}
+        # meta_langs = [
+        #     '#item+rem+i_mul+is_zyyy',
+        #     '#item+rem+i_lat+is_latn'
+        # ]
+        # scope_and_content = self.quod_res('0_1603_1_7_2616_7535')
+        # paginae.append(str(scope_and_content))
+        # if scope_and_content and \
+        #         qhxl(scope_and_content, meta_langs) is not None:
+        #     meta['#item+rem+i_qcc+is_zxxx+ix_wikip7535'] = \
+        #         qhxl(scope_and_content, meta_langs)
+
+        # # paginae.append("")
+        # paginae.append(str(meta))
+        # paginae.append("")
+        # if len(meta.keys()) > 0:
+        #     meta_tabulae = self.conceptum_ad_tabula_codicibus(meta)
+        #     paginae.extend(meta_tabulae)
+        #     paginae.append("")
+
         if 'no1' in self.archiva:
             paginae.append('=== Methodī ex dictiōnāriōrum corde')
             paginae.append(
@@ -1537,14 +1578,34 @@ class DictionariaInterlinguarum:
                     #     datum[int_clavem][clavem] = rem
         return datum
 
-    def formatum_nomen(self, clavem: str) -> str:
+    def formatum_nomen(
+            self, clavem: str,
+            objectivum_linguam: str = None,
+            auxilium_linguam: list = None) -> str:
         # fōrmātum, f, s, (Nominative) https://en.wiktionary.org/wiki/formatus
-        return clavem.replace('#item+rem+i_qcc+is_zxxx+', '')
 
-    def formatum_res(self, res: dict, clavem: str) -> str:
+        meta_langs = [
+            '#item+rem+i_mul+is_zyyy',
+            '#item+rem+i_lat+is_latn'
+        ]
+
+        ix_clavem = clavem.replace('#item+rem+i_qcc+is_zxxx+', '')
+        terminum = None
+        dictionaria_res = self.quod(ix_clavem)
+        if dictionaria_res:
+            terminum = qhxl(dictionaria_res, meta_langs)
+            # terminum = terminum + ' lalala'
+
+        return terminum if terminum else ix_clavem
+
+    def formatum_res_facto(
+            self, res: dict, clavem: str,
+            objectivum_linguam: str = None,
+            auxilium_linguam: list = None
+    ) -> str:
         # fōrmātum, f, s, (Nominative) https://en.wiktionary.org/wiki/formatus
 
-        return res['clavem']
+        return res[clavem]
 
     def imprimere(self, linguam: list = None) -> list:
         """imprimere /print/@eng-Latn
@@ -1758,7 +1819,7 @@ class DictionariaInterlinguarum:
 
     def quod(self, terminum: str,
              #  factum: str = '#item+rem+i_lat+is_latn',
-             clavem: str = None):
+             clavem: str = None) -> str:
         # clavem_defallo = [
         #     '#item+rem+i_qcc+is_zxxx+ix_hxla',
         #     '#item+rem+i_qcc+is_zxxx+ix_csvsffxm'
@@ -1778,7 +1839,8 @@ class DictionariaInterlinguarum:
             # print('item', item)
             for _k, linguam in self.dictionaria.items():
                 # print('linguam', linguam)
-                if terminum.find(linguam[item]) > -1 and linguam[item]:
+                if terminum == linguam[item]:
+                    # if terminum.find(linguam[item]) > -1 and linguam[item]:
                     # return linguam[factum]
                     return linguam
 
