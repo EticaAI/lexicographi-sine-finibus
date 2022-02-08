@@ -351,11 +351,14 @@ def descriptio_tabulae_de_lingua(
 # #status+conceptum+definitionem
 
 
-def qhxl(rem: dict, query: str):
+def qhxl(rem: dict, query: Union[str, list]):
+    if isinstance(query, str):
+        query = [query]
     for clavem, rem_item in rem.items():
         # print(clavem, rem_item, clavem.find(query))
-        if clavem.find(query) > -1:
-            return rem_item
+        for query_item in query:
+            if clavem.find(query_item) > -1:
+                return rem_item
     return None
 
 # About github ASCIDoctor
@@ -645,23 +648,51 @@ Naturally, each book version gives extensive explanations for collaborators on h
             # ("".join(lineam) + '+' + "\n")
         ))
 
+        meta = {}
+        meta_langs = [
+            '#item+rem+i_mul+is_zyyy',
+            '#item+rem+i_lat+is_latn'
+        ]
+
         scrīptor = self.quod_res('0_1603_1_7_2616_50')
+        if scrīptor and qhxl(scrīptor, meta_langs) is not None:
+            meta['#item+rem+i_qcc+is_zxxx+ix_wikip50'] = \
+                qhxl(scrīptor, meta_langs)
+
         publisher = self.quod_res('0_1603_1_7_2616_123')
+        if publisher and qhxl(publisher, meta_langs) is not None:
+            meta['#item+rem+i_qcc+is_zxxx+ix_wikip123'] = \
+                qhxl(publisher, meta_langs)
+
         publication_date = self.quod_res('0_1603_1_7_2616_577')
+        if publication_date and qhxl(publication_date, meta_langs) is not None:
+            meta['#item+rem+i_qcc+is_zxxx+ix_wikip577'] = \
+                qhxl(publication_date, meta_langs)
+
         spdx_licentiam = self.quod_res('0_1603_1_7_2616_2479')
+        if spdx_licentiam and qhxl(spdx_licentiam, meta_langs) is not None:
+            meta['#item+rem+i_qcc+is_zxxx+ix_wikip2479'] = \
+                qhxl(spdx_licentiam, meta_langs)
 
         paginae.append("")
-        paginae.append(str(scrīptor))
+        paginae.append(str(meta))
         paginae.append("")
-        paginae.append("")
-        paginae.append(str(publisher))
-        paginae.append("")
-        paginae.append("")
-        paginae.append(str(publication_date))
-        paginae.append("")
-        paginae.append("")
-        paginae.append(str(spdx_licentiam))
-        paginae.append("")
+        if len(meta.keys()) > 0:
+            meta_tabulae = self.conceptum_ad_tabula_codicibus(meta)
+            paginae.extend(meta_tabulae)
+
+        # paginae.append("")
+        # paginae.append(str(scrīptor))
+        # paginae.append("")
+        # paginae.append("")
+        # paginae.append(str(publisher))
+        # paginae.append("")
+        # paginae.append("")
+        # paginae.append(str(publication_date))
+        # paginae.append("")
+        # paginae.append("")
+        # paginae.append(str(spdx_licentiam))
+        # paginae.append("")
         # paginae.append("== hic sunt dracones \n")
         # paginae.append("== hic sunt dracones \n")
 
@@ -933,7 +964,7 @@ Naturally, each book version gives extensive explanations for collaborators on h
             # resultatum.append('[cols="1,1"]')
             # resultatum.append('[%autowidth]')
             # resultatum.append('[cols="25h,~"]')
-            resultatum.append('[%header,cols="~,~"]')
+            resultatum.append('[%header,cols="25h,~"]')
             resultatum.append('|===')
             # resultatum.append(
             #     "| +++<span lang='la'>Non lingua</span>+++ | "
@@ -941,8 +972,10 @@ Naturally, each book version gives extensive explanations for collaborators on h
             #     "+++<span lang='la'>//Rēs interlinguālibus//</span>+++ |")
             # resultatum.append("| +++<span lang='la'>Non lingua</span>+++")
             # resultatum.append("| +++<span lang='la'>//Rēs interlinguālibus//</span>+++")
-            resultatum.append("| Non lingua")
-            resultatum.append("| //Rēs interlinguālibus//")
+            # resultatum.append("| Non lingua")
+            resultatum.append("| Rēs interlinguālibus")
+            # resultatum.append("| //Rēs interlinguālibus//")
+            resultatum.append("| Factum")
             resultatum.append("")
 
             resultatum.extend(resultatum_corpus)
@@ -1503,6 +1536,15 @@ class DictionariaInterlinguarum:
                     # if not clavem.startswith('#item+conceptum+codicem'):
                     #     datum[int_clavem][clavem] = rem
         return datum
+
+    def formatum_nomen(self, clavem: str) -> str:
+        # fōrmātum, f, s, (Nominative) https://en.wiktionary.org/wiki/formatus
+        return clavem.replace('#item+rem+i_qcc+is_zxxx+', '')
+
+    def formatum_res(self, res: dict, clavem: str) -> str:
+        # fōrmātum, f, s, (Nominative) https://en.wiktionary.org/wiki/formatus
+
+        return res['clavem']
 
     def imprimere(self, linguam: list = None) -> list:
         """imprimere /print/@eng-Latn
