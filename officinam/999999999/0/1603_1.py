@@ -213,10 +213,10 @@ def numerordinatio_nomen(
     #     return '/' + rem['#item+rem+i_lat+is_latn'] + '/@lat-Latn'
     if '#item+rem+i_lat+is_latn' in rem and rem['#item+rem+i_lat+is_latn']:
         return rem['#item+rem+i_lat+is_latn']
-    if '#item+rem+i_eng+is_latn' in rem and rem['#item+rem+i_eng+is_latn']:
-        return '/' + rem['#item+rem+i_eng+is_latn'] + '/@eng-Latn'
     if '#item+rem+i_mul+is_zyyy' in rem and rem['#item+rem+i_mul+is_zyyy']:
         return rem['#item+rem+i_mul+is_zyyy']
+    if '#item+rem+i_eng+is_latn' in rem and rem['#item+rem+i_eng+is_latn']:
+        return '/' + rem['#item+rem+i_eng+is_latn'] + '/@eng-Latn'
 
     return ''
 
@@ -613,6 +613,8 @@ class Codex:
         # resultatum.append("== [0] /Praefātiō/@lat-Latn \n")
         paginae.append("== Praefātiō \n")
 
+# WARNING: This book, like other /**Cōdex**/@eng-Latn, is auto-generated in a standard way for every namespace of community curated dictionaries. These books intentionally do not have brands
+
         codex_praefatio_textum = """
 _**"Cōdex [{0}]"**_ is the book format of the machine-readable dictionaries _**"[{0}] {1}"**_,
 which are distributed for implementers on external applications.
@@ -642,6 +644,32 @@ Naturally, each book version gives extensive explanations for collaborators on h
             codex_praefatio_textum
             # ("".join(lineam) + '+' + "\n")
         ))
+
+        scrīptor = self.quod_res('0_1603_1_7_2616_50')
+        publisher = self.quod_res('0_1603_1_7_2616_123')
+        publication_date = self.quod_res('0_1603_1_7_2616_577')
+        spdx_licentiam = self.quod_res('0_1603_1_7_2616_2479')
+
+        paginae.append("")
+        paginae.append(str(scrīptor))
+        paginae.append("")
+        paginae.append("")
+        paginae.append(str(publisher))
+        paginae.append("")
+        paginae.append("")
+        paginae.append(str(publication_date))
+        paginae.append("")
+        paginae.append("")
+        paginae.append(str(spdx_licentiam))
+        paginae.append("")
+        # paginae.append("== hic sunt dracones \n")
+        # paginae.append("== hic sunt dracones \n")
+
+        # paginae.extend(descriptio_tabulae_de_lingua(
+        #     'Lingua Anglica (Abecedarium Latinum)',
+        #     codex_praefatio_textum
+        #     # ("".join(lineam) + '+' + "\n")
+        # ))
 
         return paginae
         # return resultatum
@@ -707,6 +735,9 @@ Naturally, each book version gives extensive explanations for collaborators on h
             codicem_loci = item['#item+conceptum+codicem']
 
             if codicem_loci.find('0_999') == 0:
+                continue
+
+            if codicem_loci.find('0_1603') == 0:
                 continue
 
             nomen = numerordinatio_nomen(item)
@@ -1042,10 +1073,10 @@ The ***[{1}] {2}*** uses Wikidata as one strategy to conciliate language terms f
 
 This means that this book, and related dictionaries data files require periodic updates to, at bare minimum, synchronize and re-share up to date translations.
             """.format(
-            self.de_codex,
-            self.m1603_1_1__de_codex['#item+rem+i_qcc+is_zxxx+ix_n1603'],
-            self.m1603_1_1__de_codex['#item+rem+i_mul+is_zyyy']
-        )
+                self.de_codex,
+                self.m1603_1_1__de_codex['#item+rem+i_qcc+is_zxxx+ix_n1603'],
+                self.m1603_1_1__de_codex['#item+rem+i_mul+is_zyyy']
+            )
             # raise ValueError(str(self.m1603_1_1__de_codex))
 
             vicidata_q_modo_11 = """
@@ -1125,6 +1156,17 @@ From the point of view of data conciliation, the following methodology is used t
                 list(self.usus_ix_qcc)))
 
         return paginae
+
+    def quod_res(self, codicem: str) -> dict:
+        codicem = numerordinatio_neo_separatum(codicem, '_')
+        for res in self.codex:
+            res_codicem = \
+                numerordinatio_neo_separatum(
+                    res['#item+conceptum+codicem'], '_')
+            if res_codicem == codicem:
+                return res
+
+        return None
 
 
 class CodexAnnexo:
