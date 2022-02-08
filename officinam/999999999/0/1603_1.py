@@ -866,9 +866,13 @@ Naturally, each book version gives extensive explanations for collaborators on h
             if item_textum and len(item_textum) > 0:
                 clavem_i18n = clavem
                 self.usus_linguae.add(clavem)
+
+                clavem_norm = clavem.replace('#item+rem', '')
+                clavem_norm = clavem_norm.replace('+ix_signum', '')
+
                 item_text_i18n = item_textum
-                dlinguam = self.dictionaria_linguarum.quod(clavem)
-                # raise ValueError(dlinguam)
+                dlinguam = self.dictionaria_linguarum.quod(clavem_norm)
+                # raise ValueError([clavem_norm, dlinguam])
                 # if dlinguam and dlinguam['#item+rem+i_lat+is_latn']:
                 #     clavem_i18n = '<span lang="la">' + \
                 #         dlinguam['#item+rem+i_lat+is_latn'] + '</span>'
@@ -1880,8 +1884,9 @@ class DictionariaLinguarum:
                 int_clavem = int(conceptum['#item+conceptum+codicem'])
                 datum[int_clavem] = {}
                 for clavem, rem in conceptum.items():
-                    if not clavem.startswith('#item+conceptum+codicem'):
-                        datum[int_clavem][clavem] = rem
+                    datum[int_clavem][clavem] = rem
+                    # if not clavem.startswith('#item+conceptum+codicem'):
+                    #     datum[int_clavem][clavem] = rem
         return datum
 
     def imprimere(self, linguam: list = None) -> list:
@@ -1998,14 +2003,14 @@ class DictionariaLinguarum:
         _clavem = clavem_defallo if clavem is None else [clavem]
         # _clavem = clavem_defallo
 
-        terminum = terminum.replace('#item+rem', '')
-
         # print(self.dictionaria_codex.items())
         # raise ValueError('b')
 
         for item in _clavem:
             # print('item', item)
             for _k, linguam in self.dictionaria_codex.items():
+                if linguam['#item+conceptum+codicem'].startswith('0_'):
+                    continue
                 # print('linguam', terminum, item, linguam[item], linguam)
                 # print('')
                 if terminum.find(linguam[item]) > -1:
