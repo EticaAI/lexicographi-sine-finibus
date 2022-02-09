@@ -1,6 +1,8 @@
 # SVG about families https://upload.wikimedia.org/wikipedia/commons/4/4f/IndoEuropeanTree.svg
 
 extends: default
+base:
+  align: left
 font:
   catalog:
     merge: true
