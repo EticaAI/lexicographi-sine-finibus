@@ -403,6 +403,30 @@ class CLI_2600:
             nargs='?'
         )
 
+        # linguae, f, pl, (Nominative) https://en.wiktionary.org/wiki/lingua
+        # pāginārum, f, pl, (Gengitive) https://en.wiktionary.org/wiki/pagina
+        # līmitibus, m, pl, (Dative) https://en.wiktionary.org/wiki/limes#Latin
+        # //linguae pāginārum līmitibus//
+        neo_codex.add_argument(
+            '--linguae-limitibus',
+            help='Number of languages of [1603:1:51] to limit on a query. ' +
+            'Default: 1000',
+            dest='linguae_limitibus',
+            metavar='',
+            default="1000",
+            nargs='?'
+        )
+
+        neo_codex.add_argument(
+            '--linguae-paginarum-limitibus',
+            help='If using --linguae-limitibus, which pagination of languages '
+            'return. Starts with 1. Default: 1',
+            dest='linguae_paginarum_limitibus',
+            metavar='',
+            default="1",
+            nargs='?'
+        )
+
         # neo_codex.add_argument(
         #     '--actionem-verbum-simplex',
         #     help='Do not generate the codes. Just calculate the full matrix ' +
