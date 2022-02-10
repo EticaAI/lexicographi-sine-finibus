@@ -63,7 +63,7 @@ from typing import (
     # Type,
     Union
 )
-
+import math
 import urllib.parse
 import requests
 
@@ -202,9 +202,9 @@ class CS1603z3z12:
         return resultatum
 
     def _query_linguam_limit(self, langpair_full: list):
-        resultatum = []
+        # resultatum = []
 
-        if len(langpair_full) <= self.linguae_limitibus:
+        if self.lingua_divisioni < 2:
             return langpair_full
 
         # @see https://stackoverflow.com/questions/312443
@@ -215,11 +215,22 @@ class CS1603z3z12:
         #         yield lst[i:i + n]
         # if langpair_full
 
-        limited = [langpair_full[i:i + self.linguae_limitibus]
-                   for i in range(
-                       0, len(langpair_full), self.linguae_limitibus)]
+        # def chunks(lst, n):
+        #     """Yield successive n-sized chunks from lst."""
+        #     for i in range(0, len(lst), n):
+        #         yield lst[i:i + n]
+        # import math
 
-        limited_group = limited[self.linguae_paginarum_limitibus - 1]
+        divisio_numero = math.ceil(len(langpair_full) / self.lingua_divisioni)
+
+        def chunks(l, n):
+            n = max(1, n)
+            return (l[i:i+n] for i in range(0, len(l), n))
+
+        # limited = list(chunks(langpair_full, self.lingua_divisioni))
+        limited = list(chunks(langpair_full, divisio_numero))
+
+        limited_group = limited[self.lingua_paginae - 1]
         # limited = chunks(langpair_full, self.linguae_limitibus)
         # raise ValueError(limited_group)
         # raise ValueError([limited_group, limited])
@@ -232,14 +243,14 @@ class CS1603z3z12:
         self.resultatum_separato = resultatum_separato
         return self
 
-    def est_linguae_paginarum_limitibus(
-            self, linguae_paginarum_limitibus: Union[str, int]):
-        self.linguae_paginarum_limitibus = int(linguae_paginarum_limitibus)
+    def est_lingua_divisioni(
+            self, lingua_divisioni: Union[str, int]):
+        self.lingua_divisioni = int(lingua_divisioni)
         return self
 
-    def est_linguae_limitibus(
-            self, linguae_limitibus: Union[str, int]):
-        self.linguae_limitibus = int(linguae_limitibus)
+    def est_lingua_paginae(
+            self, lingua_paginae: Union[str, int]):
+        self.lingua_paginae = int(lingua_paginae)
         return self
 
     def est_wikidata_q(self, wikidata_codicem: str):
@@ -438,23 +449,30 @@ class CLI_2600:
 
         # linguae, f, pl, (Nominative) https://en.wiktionary.org/wiki/lingua
         # pāginārum, f, pl, (Gengitive) https://en.wiktionary.org/wiki/pagina
+        # dīvīsiōnibus, f, pl, (Dative) https://en.wiktionary.org/wiki/divisio
         # līmitibus, m, pl, (Dative) https://en.wiktionary.org/wiki/limes#Latin
         # //linguae pāginārum līmitibus//
+
+        # lingua, f, s, (Nominative) https://en.wiktionary.org/wiki/lingua#Latin
+        # pāginae, f, s, (Dative) https://en.wiktionary.org/wiki/lingua#Latin
+        # dīvīsiōnī, f, s, (Dative) https://en.wiktionary.org/wiki/lingua#Latin
         neo_codex.add_argument(
-            '--linguae-limitibus',
-            help='Number of languages of [1603:1:51] to limit on a query. ' +
-            'Default: 1000',
-            dest='linguae_limitibus',
+            '--lingua-divisioni',
+            help='For the languages on [1603:1:51], how many divisions ' +
+            '(or number of chunks) should be done. 1 means no division.' +
+            'If using more than 1, use --lingua-paginae do paginate the ' +
+            'Options. Default: 1',
+            dest='lingua_divisioni',
             metavar='',
-            default="1000",
+            default="1",
             nargs='?'
         )
 
         neo_codex.add_argument(
-            '--linguae-paginarum-limitibus',
-            help='If using --linguae-limitibus, which pagination of languages '
-            'return. Starts with 1. Default: 1',
-            dest='linguae_paginarum_limitibus',
+            '--lingua-paginae',
+            help='If --lingua-divisioni different from 1, defines which page '
+            'of languages to return. Default 1.',
+            dest='lingua_paginae',
             metavar='',
             default="1",
             nargs='?'
@@ -493,9 +511,9 @@ class CLI_2600:
 
         # cs1603_3_12.est_verbum_limiti(args.verbum_limiti)
         cs1603_3_12.est_resultatum_separato(args.resultatum_separato)
-        cs1603_3_12.est_linguae_limitibus(args.linguae_limitibus)
-        cs1603_3_12.est_linguae_paginarum_limitibus(
-            args.linguae_paginarum_limitibus)
+        cs1603_3_12.est_lingua_divisioni(args.lingua_divisioni)
+        cs1603_3_12.est_lingua_paginae(
+            args.lingua_paginae)
 
         if self.pyargs.actionem_sparql:
             # print('oi')

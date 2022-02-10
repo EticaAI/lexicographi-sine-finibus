@@ -580,7 +580,11 @@ file_translate_csv_de_numerordinatio_q() {
   # sort --version-sort --field-separator="Q" < "$objectivum_archivum_temporarium_b" > "$objectivum_archivum_temporarium_b_u"
   sort --version-sort --field-separator="Q" <"$objectivum_archivum_temporarium_b" | uniq >"$objectivum_archivum_temporarium_b_u"
 
-  "${ROOTDIR}/999999999/0/1603_3_12.py" --actionem-sparql --query <"$objectivum_archivum_temporarium_b_u" |
+  "${ROOTDIR}/999999999/0/1603_3_12.py" \
+    --actionem-sparql \
+    --lingua-divisioni=2 \
+    --lingua-paginae=1 \
+    --query <"$objectivum_archivum_temporarium_b_u" |
     ./999999999/0/1603_3_12.py --actionem-sparql --csv --hxltm \
       >"$objectivum_archivum_temporarium_b_u_wiki"
   # "$objectivum_archivum_temporarium_b_u"
