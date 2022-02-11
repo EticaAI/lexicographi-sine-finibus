@@ -534,54 +534,88 @@ class Codex:
             self.m1603_1_1__de_codex['#item+rem+i_qcc+is_zxxx+ix_n1603']
         numerum_archiva = \
             numerordinatio_neo_separatum(numerum_textum, '_')
-        total_codex = 2
-        total_dictionaria = 2
+        total_codex = 0
+        codex_part = []
+        total_dictionaria = 0
+        dictionaria_part = []
 
         resultatum.append('== Archīa')
         resultatum.append('')
+
+        if self.annexis.est_annexum(numerum_archiva + '.no1.tm.hxl.csv'):
+            dictionaria_part.append('')
+            dictionaria_part.append('==== {0}.no1.tm.hxl.csv'.format(
+                numerum_archiva
+            ))
+            dictionaria_part.append('')
+            dictionaria_part.append(
+                '* link:{0}.no1.tm.hxl.csv[{0}.no1.tm.hxl.csv]'.format(
+                    numerum_archiva
+                ))
+            total_dictionaria += 1
+
+        if self.annexis.est_annexum(numerum_archiva + '.no11.tm.hxl.csv'):
+            dictionaria_part.append('')
+            dictionaria_part.append('==== {0}.no11.tm.hxl.csv'.format(
+                numerum_archiva
+            ))
+            dictionaria_part.append('')
+            dictionaria_part.append(
+                '* link:{0}.no11.tm.hxl.csv[{0}.no11.tm.hxl.csv]'.format(
+                    numerum_archiva
+                ))
+            total_dictionaria += 1
+
+        if self.annexis.est_annexum(numerum_archiva + '.wikiq.tm.hxl.csv'):
+            dictionaria_part.append('')
+            dictionaria_part.append('==== {0}.wikiq.tm.hxl.csv'.format(
+                numerum_archiva
+            ))
+            dictionaria_part.append('')
+            dictionaria_part.append(
+                '* link:{0}.wikiq.tm.hxl.csv[{0}.wikiq.tm.hxl.csv]'.format(
+                    numerum_archiva
+                ))
+            total_dictionaria += 1
+
+        if self.annexis.est_annexum(numerum_archiva + '.mul-Latn.codex.adoc'):
+            codex_part.append('')
+            codex_part.append('==== {0}.mul-Latn.codex.adoc'.format(
+                numerum_archiva
+            ))
+            codex_part.append('')
+            codex_part.append(
+                '* link:{0}.mul-Latn.codex.adoc[{0}.mul-Latn.codex.adoc]'.format(
+                    numerum_archiva
+                ))
+            total_codex += 1
+
+        if self.annexis.est_annexum(numerum_archiva + '.mul-Latn.codex.pdf'):
+            codex_part.append('')
+            codex_part.append('==== {0}.mul-Latn.codex.pdf'.format(
+                numerum_archiva
+            ))
+            codex_part.append('')
+            codex_part.append(
+                '* link:{0}.mul-Latn.codex.pdf[{0}.mul-Latn.codex.pdf]'.format(
+                    numerum_archiva
+                ))
+            total_codex += 1
+
+        # Compile final result
         resultatum.append('=== Archīa prō dictiōnāriīs: {0}'.format(
             total_dictionaria
         ))
-        resultatum.append('==== {0}.no1.tm.hxl.csv'.format(
-            numerum_archiva
-        ))
-        resultatum.append('')
-        resultatum.append(
-            '* link:{0}.no1.tm.hxl.csv[{0}.no1.tm.hxl.csv]'.format(
-                numerum_archiva
-            ))
-        resultatum.append('')
-        resultatum.append('==== {0}.no11.tm.hxl.csv'.format(
-            numerum_archiva
-        ))
-        resultatum.append('')
-        resultatum.append(
-            '* link:{0}.no11.tm.hxl.csv[{0}.no11.tm.hxl.csv]'.format(
-                numerum_archiva
-            ))
+        resultatum.extend(dictionaria_part)
         resultatum.append('')
 
         resultatum.append('=== Archīa prō cōdice: {0}'.format(
             total_codex
         ))
-        resultatum.append('==== {0}.mul-Latn.codex.adoc'.format(
-            numerum_archiva
-        ))
+
+        resultatum.extend(codex_part)
         resultatum.append('')
-        resultatum.append(
-            '* link:{0}.mul-Latn.codex.adoc[{0}.mul-Latn.codex.adoc]'.format(
-                numerum_archiva
-            ))
-        resultatum.append('')
-        resultatum.append('==== {0}.mul-Latn.codex.pdf'.format(
-            numerum_archiva
-        ))
-        resultatum.append('')
-        resultatum.append(
-            '* link:{0}.mul-Latn.codex.pdf[{0}.mul-Latn.codex.pdf]'.format(
-                numerum_archiva
-            ))
-        resultatum.append('')
+
         return resultatum
 
     def codex_capiti(self) -> list:
@@ -1449,6 +1483,12 @@ class CodexAnnexis:
             self.sarcinae = sarcinae
 
         return [radix, sarcinae]
+
+    def est_annexum(self, trivium: str) -> bool:
+        radix = numerordinatio_neo_separatum(self.de_codex, '/')
+        trivium_vero = radix + '/' + trivium
+        return os.path.exists(trivium_vero)
+        # return True
 
     def quod_archivum(self) -> List[Type['CodexAnnexo']]:
         """quod_archivum
