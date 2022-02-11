@@ -330,6 +330,7 @@ def descriptio_tabulae_de_lingua(
     paginae.append("Lingua de verba")
     paginae.append("|")
     paginae.append("Verba de conceptiō")
+    paginae.append('')
 
     for item_lingua in lingua_textum:
         item_textum = rem_textum.pop(0)
@@ -542,6 +543,20 @@ class Codex:
         resultatum.append('== Archīa')
         resultatum.append('')
 
+        resultatum.append('')
+        resultatum.extend(descriptio_tabulae_de_lingua(
+            ['Lingua Anglica (Abecedarium Latinum)'] * 2,
+            [
+                'This book comes with annexes. Some are textual descriptions '
+                '(book format) but others are intended for machine '
+                'processing.',
+                'WARNING: unless you are working with a natural language you '
+                'understand, it is strongly advised to use automation to '
+                'generate derived works. Copy and paste strategy can cause '
+                'additional human errors.'
+            ]))
+        resultatum.append('')
+
         if self.annexis.est_annexum(numerum_archiva + '.no1.tm.hxl.csv'):
             dictionaria_part.append('')
             dictionaria_part.append('==== {0}.no1.tm.hxl.csv'.format(
@@ -549,9 +564,23 @@ class Codex:
             ))
             dictionaria_part.append('')
             dictionaria_part.append(
-                '* link:{0}.no1.tm.hxl.csv[{0}.no1.tm.hxl.csv]'.format(
+                'NOTE: link:{0}.no1.tm.hxl.csv[{0}.no1.tm.hxl.csv]'.format(
                     numerum_archiva
                 ))
+            # dictionaria_part.append('')
+            # meta_item = {
+            #     '#item+rem+i_qcc+is_zxxx+ix_wikip854':
+            #     'https://numerordinatio.etica.ai/'
+            # }
+            # dictionaria_part.extend(
+            #     self.conceptum_ad_tabula_codicibus(meta_item))
+            # dictionaria_part.append('')
+            dictionaria_part.append('')
+            dictionaria_part.extend(descriptio_tabulae_de_lingua(
+                ['Lingua Anglica (Abecedarium Latinum)'] * 1,
+                ["/Numerordinatio on HXLTM container/"]))
+
+            dictionaria_part.append('')
             total_dictionaria += 1
 
         if self.annexis.est_annexum(numerum_archiva + '.no11.tm.hxl.csv'):
@@ -561,9 +590,22 @@ class Codex:
             ))
             dictionaria_part.append('')
             dictionaria_part.append(
-                '* link:{0}.no11.tm.hxl.csv[{0}.no11.tm.hxl.csv]'.format(
+                'NOTE: link:{0}.no11.tm.hxl.csv[{0}.no11.tm.hxl.csv]'.format(
                     numerum_archiva
                 ))
+            dictionaria_part.append('')
+            meta_item = {
+                '#item+rem+i_qcc+is_zxxx+ix_wikip854':
+                'https://hxltm.etica.ai/'
+            }
+            dictionaria_part.extend(
+                self.conceptum_ad_tabula_codicibus(meta_item))
+            dictionaria_part.append('')
+            dictionaria_part.extend(descriptio_tabulae_de_lingua(
+                ['Lingua Anglica (Abecedarium Latinum)'] * 1,
+                ["/Numerordinatio on HXLTM container (expanded with terminology translations)/"]))
+            dictionaria_part.append('')
+
             total_dictionaria += 1
 
         if self.annexis.est_annexum(numerum_archiva + '.wikiq.tm.hxl.csv'):
@@ -573,9 +615,15 @@ class Codex:
             ))
             dictionaria_part.append('')
             dictionaria_part.append(
-                '* link:{0}.wikiq.tm.hxl.csv[{0}.wikiq.tm.hxl.csv]'.format(
+                'NOTE: link:{0}.wikiq.tm.hxl.csv[{0}.wikiq.tm.hxl.csv]'.format(
                     numerum_archiva
                 ))
+            dictionaria_part.append('')
+            dictionaria_part.extend(descriptio_tabulae_de_lingua(
+                ['Lingua Anglica (Abecedarium Latinum)'] * 1,
+                ["HXLTM dialect of HXLStandard on CSV RFC 4180. wikiq means #item+conceptum+codicem are strictly Wikidata QIDs."]))
+            dictionaria_part.append('')
+
             total_dictionaria += 1
 
         if self.annexis.est_annexum(numerum_archiva + '.mul-Latn.codex.adoc'):
@@ -585,9 +633,18 @@ class Codex:
             ))
             codex_part.append('')
             codex_part.append(
-                '* link:{0}.mul-Latn.codex.adoc[{0}.mul-Latn.codex.adoc]'.format(
+                'NOTE: link:{0}.mul-Latn.codex.adoc[{0}.mul-Latn.codex.adoc]'.format(
                     numerum_archiva
                 ))
+            codex_part.append('')
+            meta_item = {
+                '#item+rem+i_qcc+is_zxxx+ix_wikip854':
+                'https://asciidoctor.org/docs/'
+            }
+            codex_part.extend(
+                self.conceptum_ad_tabula_codicibus(meta_item))
+            codex_part.append('')
+
             total_codex += 1
 
         if self.annexis.est_annexum(numerum_archiva + '.mul-Latn.codex.pdf'):
@@ -597,7 +654,7 @@ class Codex:
             ))
             codex_part.append('')
             codex_part.append(
-                '* link:{0}.mul-Latn.codex.pdf[{0}.mul-Latn.codex.pdf]'.format(
+                'NOTE: link:{0}.mul-Latn.codex.pdf[{0}.mul-Latn.codex.pdf]'.format(
                     numerum_archiva
                 ))
             total_codex += 1
@@ -606,6 +663,7 @@ class Codex:
         resultatum.append('=== Archīa prō dictiōnāriīs: {0}'.format(
             total_dictionaria
         ))
+
         resultatum.extend(dictionaria_part)
         resultatum.append('')
 
@@ -668,6 +726,10 @@ class Codex:
         # https://en.wiktionary.org/wiki/appendix#Latin
         resultatum.append(":appendix-caption: Appendix")
         resultatum.append(":source-highlighter: rouge")
+        # resultatum.append(":tip-caption: 💡")
+        # resultatum.append(":note-caption: ℹ️")
+        # resultatum.append(":warning-caption: ⚠️")
+        resultatum.append(":warning-caption: Hic sunt dracones")
 
         resultatum.append("\n")
         resultatum.append("\n")
