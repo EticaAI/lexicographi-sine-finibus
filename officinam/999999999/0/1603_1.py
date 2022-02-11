@@ -688,10 +688,18 @@ class Codex:
             ['Lingua Anglica (Abecedarium Latinum)'] * 2,
             [
                 'WARNING: Unless you are working with a natural language you '
-                'understand, it is strongly advised to use automation to '
-                'generate derived works. Copy and paste strategy can cause '
-                'additional human errors.',
-                'TIP:  The Asciidoctor (.adoc) is better at copy and pasting! '
+                'understand it\'s letters and symbols, it is strongly '
+                'advised to use automation to generate derived works. '
+                'Keep manual human steps at minimum: '
+                'if something goes wrong at least one or more languages can '
+                'be used to verify mistakes. '
+                'It\'s not at all necessary _know all languages_, '
+                'but working with writing systems you don\'t understand is '
+                'risky: '
+                'copy and paste strategy can cause '
+                '_additional_ human errors and is unlikely to get human '
+                'review as fast as you would need. ',
+                'TIP: The Asciidoctor (.adoc) is better at copy and pasting! '
                 'It can be converted to other text formats.',
             ]))
         resultatum.append('')
@@ -1877,11 +1885,22 @@ class DictionariaInterlinguarum:
             resultatum.append("==== Rēs interlinguālibus: {0}".format(
                 resultatum_corpus_totale))
 
+
+            resultatum.extend(descriptio_tabulae_de_lingua(
+                'Lingua Anglica (Abecedarium Latinum)',
+                'The result of this section is a preview. '
+                'We\'re aware it is not well formatted for a book format. '
+                'Sorry for the temporary inconvenience.'
+            ))
+
             # import pprint
             resultatum.append("")
             for res in resultatum_corpus_obj:
                 resultatum.append("")
-                resultatum.append('===== {0} '.format(
+                # resultatum.append('===== {0} '.format(
+                #     res['#item+conceptum+numerordinatio'])
+                # )
+                resultatum.append('**{0}**'.format(
                     res['#item+conceptum+numerordinatio'])
                 )
                 resultatum.append("")
