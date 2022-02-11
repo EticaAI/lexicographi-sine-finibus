@@ -515,12 +515,73 @@ class Codex:
         - archīō, n, s, (Dative), https://en.wiktionary.org/wiki/archium
         - dictiōnāria, n, pl, (Nominative),
           https://en.wiktionary.org/wiki/dictionarium#Latin
+        - archīva, n, pl, (Nominative)
+        - ex (+ ablative), https://en.wiktionary.org/wiki/ex#Latin
+        - ad (+ accusative), https://en.wiktionary.org/wiki/ad#Latin
+        - ab (+ ablative), https://en.wiktionary.org/wiki/ab#Latin
+        - prō (+ ablative, accusative) (accusative in Late Latin)
+          https://en.wiktionary.org/wiki/pro#Latin
+        - cōdice, m, s, (Ablative)
+        - cōdicem, m, s, (Accusative)
+        - dictiōnāriīs, n, pl, (ablative)
 
         Returns:
             [list]:
         """
         resultatum = []
-        resultatum.append('== Archīa ex dictiōnāria')
+
+        numerum_textum = \
+            self.m1603_1_1__de_codex['#item+rem+i_qcc+is_zxxx+ix_n1603']
+        numerum_archiva = \
+            numerordinatio_neo_separatum(numerum_textum, '_')
+        total_codex = 2
+        total_dictionaria = 2
+
+        resultatum.append('== Archīa')
+        resultatum.append('')
+        resultatum.append('=== Archīa prō dictiōnāriīs: {0}'.format(
+            total_dictionaria
+        ))
+        resultatum.append('==== {0}.no1.tm.hxl.csv'.format(
+            numerum_archiva
+        ))
+        resultatum.append('')
+        resultatum.append(
+            '* link:{0}.no1.tm.hxl.csv[{0}.no1.tm.hxl.csv]'.format(
+                numerum_archiva
+            ))
+        resultatum.append('')
+        resultatum.append('==== {0}.no11.tm.hxl.csv'.format(
+            numerum_archiva
+        ))
+        resultatum.append('')
+        resultatum.append(
+            '* link:{0}.no11.tm.hxl.csv[{0}.no11.tm.hxl.csv]'.format(
+                numerum_archiva
+            ))
+        resultatum.append('')
+
+        resultatum.append('=== Archīa prō cōdice: {0}'.format(
+            total_codex
+        ))
+        resultatum.append('==== {0}.mul-Latn.codex.adoc'.format(
+            numerum_archiva
+        ))
+        resultatum.append('')
+        resultatum.append(
+            '* link:{0}.mul-Latn.codex.adoc[{0}.mul-Latn.codex.adoc]'.format(
+                numerum_archiva
+            ))
+        resultatum.append('')
+        resultatum.append('==== {0}.mul-Latn.codex.pdf'.format(
+            numerum_archiva
+        ))
+        resultatum.append('')
+        resultatum.append(
+            '* link:{0}.mul-Latn.codex.pdf[{0}.mul-Latn.codex.pdf]'.format(
+                numerum_archiva
+            ))
+        resultatum.append('')
         return resultatum
 
     def codex_capiti(self) -> list:
