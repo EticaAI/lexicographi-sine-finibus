@@ -545,15 +545,13 @@ class Codex:
 
         resultatum.append('')
         resultatum.extend(descriptio_tabulae_de_lingua(
-            ['Lingua Anglica (Abecedarium Latinum)'] * 2,
+            ['Lingua Anglica (Abecedarium Latinum)'] * 1,
             [
-                'This book comes with annexes. Some are textual descriptions '
-                '(book format) but others are intended for machine '
-                'processing.',
-                'WARNING: unless you are working with a natural language you '
-                'understand, it is strongly advised to use automation to '
-                'generate derived works. Copy and paste strategy can cause '
-                'additional human errors.'
+                'Every book comes with several files both for book format '
+                '(with additional information) and machine-readable formats '
+                'with documentation of how to process them. If you receive '
+                'this file and cannot find the alternatives, ask the human '
+                'who provide this file.'
             ]))
         resultatum.append('')
 
@@ -593,13 +591,7 @@ class Codex:
                 'NOTE: link:{0}.no11.tm.hxl.csv[{0}.no11.tm.hxl.csv]'.format(
                     numerum_archiva
                 ))
-            dictionaria_part.append('')
-            meta_item = {
-                '#item+rem+i_qcc+is_zxxx+ix_wikip854':
-                'https://hxltm.etica.ai/'
-            }
-            dictionaria_part.extend(
-                self.conceptum_ad_tabula_codicibus(meta_item))
+
             dictionaria_part.append('')
             dictionaria_part.extend(descriptio_tabulae_de_lingua(
                 ['Lingua Anglica (Abecedarium Latinum)'] * 1,
@@ -619,9 +611,20 @@ class Codex:
                     numerum_archiva
                 ))
             dictionaria_part.append('')
+            meta_item = {
+                '#item+rem+i_qcc+is_zxxx+ix_wikip854':
+                'https://hxltm.etica.ai/'
+            }
+            dictionaria_part.extend(
+                self.conceptum_ad_tabula_codicibus(meta_item))
+            dictionaria_part.append('')
             dictionaria_part.extend(descriptio_tabulae_de_lingua(
                 ['Lingua Anglica (Abecedarium Latinum)'] * 1,
-                ["HXLTM dialect of HXLStandard on CSV RFC 4180. wikiq means #item+conceptum+codicem are strictly Wikidata QIDs."]))
+                [
+                    "HXLTM dialect of HXLStandard on CSV RFC 4180. wikiq "
+                    "means #item+conceptum+codicem are strictly "
+                    "Wikidata QIDs."]
+            ))
             dictionaria_part.append('')
 
             total_dictionaria += 1
@@ -663,6 +666,15 @@ class Codex:
         resultatum.append('=== Archīa prō dictiōnāriīs: {0}'.format(
             total_dictionaria
         ))
+        resultatum.append('')
+        resultatum.extend(descriptio_tabulae_de_lingua(
+            ['Lingua Anglica (Abecedarium Latinum)'] * 1,
+            [
+                'TIP: Is recommended to use the files on this section to '
+                ' generate derived works.',
+            ]))
+        resultatum.append('')
+
 
         resultatum.extend(dictionaria_part)
         resultatum.append('')
@@ -670,6 +682,19 @@ class Codex:
         resultatum.append('=== Archīa prō cōdice: {0}'.format(
             total_codex
         ))
+
+        resultatum.append('')
+        resultatum.extend(descriptio_tabulae_de_lingua(
+            ['Lingua Anglica (Abecedarium Latinum)'] * 2,
+            [
+                'WARNING: Unless you are working with a natural language you '
+                'understand, it is strongly advised to use automation to '
+                'generate derived works. Copy and paste strategy can cause '
+                'additional human errors.',
+                'TIP:  The Asciidoctor (.adoc) is better at copy and pasting! '
+                'It can be converted to other text formats.',
+            ]))
+        resultatum.append('')
 
         resultatum.extend(codex_part)
         resultatum.append('')
@@ -730,6 +755,10 @@ class Codex:
         # resultatum.append(":note-caption: ℹ️")
         # resultatum.append(":warning-caption: ⚠️")
         resultatum.append(":warning-caption: Hic sunt dracones")
+
+        # commendandum, verb, verbal-nouns>supine>accusative
+        # https://en.wiktionary.org/wiki/commendo#Latin
+        resultatum.append(":tip-caption: Commendātum")
 
         resultatum.append("\n")
         resultatum.append("\n")
@@ -1218,7 +1247,7 @@ Naturally, each book version gives extensive explanations for collaborators on h
         codex_praefatio = self.codex_praefatio()
         # codex_indici = self.codex_indici()
         codex_corpori = self.codex_corpori()
-        codex_appendici = self.codex_appendici()
+        # codex_appendici = self.codex_appendici()
         # methodi_ex_codice = self.methodi_ex_codice()
 
         codex_archio = self.codex_archio()
@@ -1235,8 +1264,8 @@ Naturally, each book version gives extensive explanations for collaborators on h
         paginae.extend(codex_archio)
         paginae.extend(['', '<<<', ''])
         paginae.extend(codex_corpori)
-        paginae.extend(['', '<<<', ''])
-        paginae.extend(codex_appendici)
+        # paginae.extend(['', '<<<', ''])
+        # paginae.extend(codex_appendici)
 
         # paginae.extend(self.codex_indici())
         # paginae.extend(self.codex_praefatio())

@@ -31,7 +31,9 @@ font:
       bold: NotoSansMalayalam-Bold.ttf
       normal: NotoSansMalayalam-Regular.ttf
     NotoColorEmoji: NotoColorEmoji.ttf
-  fallbacks: [NotoSansArabic, NotoSansBengali, NotoSansBrahmi, NotoSansDevanagari, NotoSansMalayalam, M+ 1p Fallback, Noto Emoji]
+    LastResort-Regular: LastResort-Regular.ttf
+  # fallbacks: [NotoSansArabic, NotoSansBengali, NotoSansBrahmi, NotoSansDevanagari, NotoSansMalayalam, M+ 1p Fallback, Noto Emoji]
+  fallbacks: [NotoSansArabic, NotoSansBengali, NotoSansBrahmi, NotoSansDevanagari, NotoSansMalayalam, Noto Emoji, LastResort-Regular]
   # fallbacks: [NotoSansArabic, NotoSansBengali, NotoSansBrahmi, NotoSansDevanagari, NotoSansMalayalam, M+ 1p Fallback, NotoColorEmoji]
   # fallbacks: [NotoSansArabic, NotoSansBengali, NotoSansBrahmi, NotoSansDevanagari, NotoSansMalayalam, M+ 1p Fallback]
   # fallbacks: [NotoSansArabic, NotoSansDevanagari, NotoSansMalayalam, M+ 1p Fallback, Noto Emoji]
