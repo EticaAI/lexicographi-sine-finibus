@@ -507,6 +507,22 @@ class Codex:
 
         return resultatum
 
+    def codex_archio(self) -> list:
+        """archīa de cōdex
+
+        Trivia:
+        - cōdex, m, s, (Nominative), https://en.wiktionary.org/wiki/codex#Latin
+        - archīō, n, s, (Dative), https://en.wiktionary.org/wiki/archium
+        - dictiōnāria, n, pl, (Nominative),
+          https://en.wiktionary.org/wiki/dictionarium#Latin
+
+        Returns:
+            [list]:
+        """
+        resultatum = []
+        resultatum.append('== Archīa ex dictiōnāria')
+        return resultatum
+
     def codex_capiti(self) -> list:
         """cōdex capitī /book header/@eng-Latn
 
@@ -1048,7 +1064,8 @@ Naturally, each book version gives extensive explanations for collaborators on h
         codex_appendici = self.codex_appendici()
         # methodi_ex_codice = self.methodi_ex_codice()
 
-       # Compute methodi_ex_codice last (to receive statistics of others)
+        codex_archio = self.codex_archio()
+        # Compute methodi_ex_codice last (to receive statistics of others)
         methodi_ex_codice = self.methodi_ex_codice()
 
         paginae.extend(codex_capiti)
@@ -1057,6 +1074,8 @@ Naturally, each book version gives extensive explanations for collaborators on h
         paginae.extend(codex_praefatio)
         paginae.extend(['', '<<<', ''])
         paginae.extend(methodi_ex_codice)
+        paginae.extend(['', '<<<', ''])
+        paginae.extend(codex_archio)
         paginae.extend(['', '<<<', ''])
         paginae.extend(codex_corpori)
         paginae.extend(['', '<<<', ''])
