@@ -84,8 +84,11 @@
 - Trivia: `1603:45:31` -> "[31] 1931年江淮水灾"
 
 ### [`1603:45:49`] //Imperia et regiōnēs territōria cōdicēs//
+(...)
+
 
 ### [`1603:45:95`] //Dictiōnāria dē abūsīs interimperiīs contrā cīvēs ex auxiliātiō//
+
 - https://www.thenewhumanitarian.org/feature/2021/2/11/25-years-of-sexual-exploitation-and-abuse
 
 - dictiōnāria, n, pl, nōminātīvus, https://en.wiktionary.org/wiki/dictionarium#Latin
@@ -111,33 +114,3 @@
 - violatio, https://en.wiktionary.org/wiki/violatio#Latin
 - civis, https://en.wiktionary.org/wiki/civis#Latin
 --->
-
-### [`1603:45:604`] //Dictiōnāria de aquīs et sānātiōnibus ex līmpidīs//
-- https://sustainabledevelopment.un.org/partnership/?p=1665
-
-- dictiōnāria, n, pl, nōminātīvus, https://en.wiktionary.org/wiki/dictionarium#Latin
-- dē (+ ablātīvus), n, pl, nōminātīvus, https://en.wiktionary.org/wiki/de#Latin
-- aquīs, f, pl, ablātīvus, https://en.wiktionary.org/wiki/aqua#Latin
-  - http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0059:entry=aqua
-- sānitātibus, f, pl, ablātīvus, https://en.wiktionary.org/wiki/sanitas#Latin
-  - http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0059:entry=sanitas
-  - http://ducange.enc.sorbonne.fr/SANITAS
-- <s>/hygiene/@eng-Latn</s>, https://en.wiktionary.org/wiki/hygiene
-  - Rocha says: **I don't like this term. Greek (and too new). Also hygiene conflict with sānitātibus in Latin**
-- ... Dictiōnāria de aquīs et sānitātibus (temporary)
-- ex (+ ablātīvus), https://en.wiktionary.org/wiki/ex#Latin
-- līmpidīs, m/f/n, pl, ablātīvus, https://en.wiktionary.org/wiki/limpidus#Latin
-- ...Dictiōnāria de aquīs et sānitātibus ex līmpidīs
-- sānātiōnibus, f, pl, ablātīvus, https://en.wiktionary.org/wiki/sanatio#Latin
-  - http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0059:entry=sanatio
-- ...Dictiōnāria de aquīs et sānātiōnibus ex līmpidīs
-  - Literal: //Dictionaries of waters and healing through cleanliness//@eng-Latn
-
-- [`1603:45:604`] trivia:
-  - https://en.wikipedia.org/wiki/History_of_water_supply_and_sanitation#Bronze_and_early_Iron_Ages
-    - https://en.wikipedia.org/wiki/Puquios
-      - https://en.wikipedia.org/wiki/Nazca
-        - https://en.wikipedia.org/wiki/Peru
-          - https://unstats.un.org/unsd/methodology/m49/
-            - Peru UN m49: 604
-Puquio (manantial)
