@@ -114,3 +114,33 @@
 - violatio, https://en.wiktionary.org/wiki/violatio#Latin
 - civis, https://en.wiktionary.org/wiki/civis#Latin
 --->
+
+### [`1603:45:991`] /Dictiōnāria dē interimperiīs datīs in praeparātiōnēs contrā calamitātēs/
+- Refs
+  - https://reliefweb.int/sites/reliefweb.int/files/resources/A126E188F0B88383C1257834004858BB-Full_Report.pdf
+  - https://emergency.unhcr.org/entry/50306/common-operational-datasets-cods-and-fundamental-operational-datasets-fods
+  - https://en.wikipedia.org/wiki/Common_Operational_Datasets
+
+- dictiōnāria, n, pl, nōminātīvus, https://en.wiktionary.org/wiki/dictionarium#Latin
+- dē (+ ablātīvus), n, pl, ---, https://en.wiktionary.org/wiki/de#Latin
+- datīs, f, pl, ablātīvus, https://en.wiktionary.org/wiki/datus#Latin
+- inter (+ accūsātīvus), preposition, https://en.wiktionary.org/wiki/inter#Latin
+- ...interimperia
+- imperiīs, n, pl, ablātīvus
+- in (+ ablātīvus), in (+ accūsātīvus)
+  - (+ accūsātīvus) about
+- clādibus, f, pl, ablātīvus, https://en.wiktionary.org/wiki/clades#Latin
+  - http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0059:entry=clades
+- clādēs, f, pl, accūsātīvus, idem URL
+- praeparātiōnēs, f, pl, accūsātīvus, https://en.wiktionary.org/wiki/praeparatio#Latin
+- contrā (+ accusative), https://en.wiktionary.org/wiki/contra#Latin
+  - http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0059:entry=contra
+  - http://ducange.enc.sorbonne.fr/CLADES
+- calamitātēs, f, pl, accusative, https://en.wiktionary.org/wiki/calamitas
+- ...Dictiōnāria dē interimperiīs datīs in praeparātiōnēs contrā calamitātēs
+  - Literal: //Dictionaries about intergovernmental data sets about preparation against calamities//@eng-Latn
+
+### [`1603:45:992`] /Dictiōnāria dē interimperiīs datīs in (...)/
+- Refs
+  - https://docs.google.com/spreadsheets/d/12nKxos71U6lkttpyYTfwI2bDq9yeN1J7jplHocN96_0/edit#gid=797752596
+  - (organization types)

@@ -33,7 +33,7 @@
 - sānātiōnibus, f, pl, ablātīvus, https://en.wiktionary.org/wiki/sanatio#Latin
   - http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0059:entry=sanatio
 - ...Dictiōnāria de aquīs et sānātiōnibus ex līmpidīs
-  - Literal: //Dictionaries of waters and healing through cleanliness//@eng-Latn
+  - Literal: //Dictionaries about waters and healing through cleanliness//@eng-Latn
 
 - Trivia [`1603:604:604`] ?
   - https://en.wikipedia.org/wiki/History_of_water_supply_and_sanitation#Bronze_and_early_Iron_Ages
