@@ -72,11 +72,7 @@
 ### [`1603:45:16:?:5`] //Infraimperium territōria ōrdō 5//
 ### [`1603:45:16:?:6`] //Infraimperium territōria ōrdō 6//
 
-
-### [`1603:45:49`] //Imperia et regiōnēs territōria cōdicēs//
-
-
-### [`1603:45:91`] Dictiōnāria de calamitātibus
+### [`1603:45:31`] Dictiōnāria de calamitātibus
 
 - dictiōnāria, n, pl, nōminātīvus, https://en.wiktionary.org/wiki/dictionarium#Latin
 - dē (+ ablātīvus), n, pl, nōminātīvus, https://en.wiktionary.org/wiki/de#Latin
@@ -84,10 +80,39 @@
   - http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0059:entry=calamitas
   - http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0060:entry=calamitas
 - calamitātibus, f, pl, ablātīvus
+- ...dictiōnāria de calamitātibus
+- Trivia: `1603:45:31` -> "[31] 1931年江淮水灾"
 
-dictiōnāria de calamitātibus
+### [`1603:45:49`] //Imperia et regiōnēs territōria cōdicēs//
 
-### [`1603:45:911`] //Dictiōnāria de aquīs et sānātiōnibus ex līmpidīs//
+### [`1603:45:95`] //Dictiōnāria dē abūsīs interimperiīs contrā cīvēs ex auxiliātiō//
+- https://www.thenewhumanitarian.org/feature/2021/2/11/25-years-of-sexual-exploitation-and-abuse
+
+- dictiōnāria, n, pl, nōminātīvus, https://en.wiktionary.org/wiki/dictionarium#Latin
+- dē (+ ablātīvus), n, pl, nōminātīvus, https://en.wiktionary.org/wiki/de#Latin
+- imperia, n, plural, (accūsātīvus) https://en.wiktionary.org/wiki/imperium#Latin
+- inter (+ accūsātīvus), preposition, https://en.wiktionary.org/wiki/inter#Latin
+- ...interimperia
+- imperiīs, n, pl, ablātīvus
+- contrā (+ accūsātīvus), https://en.wiktionary.org/wiki/contra#Latin
+- trāns (+ accūsātīvus), https://en.wiktionary.org/wiki/trans#Latin
+- ex (+ ablātīvus), https://en.wiktionary.org/wiki/ex#Latin
+- auxilia, n, pl, accūsātīvus, https://en.wiktionary.org/wiki/auxilium
+- auxiliātiō
+- abūsīs, f, pl, accūsātīvus, https://en.wiktionary.org/wiki/abusus
+- ...Dictiōnāria dē abūsīs interimperiīs contrā cīvēs ex auxiliātiō
+  - Literal: //Dictionaries of intergovernamental abuses against civilians through aid//
+
+- Trivia [`1603:45:95`]:
+  - https://en.wikipedia.org/wiki/The_New_Humanitarian
+  - _The New Humanitarian came into being as IRIN in **1995** after the Great Lakes refugee crisis resulting from the 1994 Rwandan genocide overwhelmed the existing information management systems set up by the humanitarian aid community._
+<!--
+- abusus, https://en.wiktionary.org/wiki/abusus
+- violatio, https://en.wiktionary.org/wiki/violatio#Latin
+- civis, https://en.wiktionary.org/wiki/civis#Latin
+--->
+
+### [`1603:45:604`] //Dictiōnāria de aquīs et sānātiōnibus ex līmpidīs//
 - https://sustainabledevelopment.un.org/partnership/?p=1665
 
 - dictiōnāria, n, pl, nōminātīvus, https://en.wiktionary.org/wiki/dictionarium#Latin
@@ -107,3 +132,12 @@ dictiōnāria de calamitātibus
   - http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0059:entry=sanatio
 - ...Dictiōnāria de aquīs et sānātiōnibus ex līmpidīs
   - Literal: //Dictionaries of waters and healing through cleanliness//@eng-Latn
+
+- [`1603:45:604`] trivia:
+  - https://en.wikipedia.org/wiki/History_of_water_supply_and_sanitation#Bronze_and_early_Iron_Ages
+    - https://en.wikipedia.org/wiki/Puquios
+      - https://en.wikipedia.org/wiki/Nazca
+        - https://en.wikipedia.org/wiki/Peru
+          - https://unstats.un.org/unsd/methodology/m49/
+            - Peru UN m49: 604
+Puquio (manantial)
