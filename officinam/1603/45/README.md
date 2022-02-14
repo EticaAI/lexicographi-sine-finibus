@@ -75,3 +75,35 @@
 
 ### [`1603:45:49`] //Imperia et regiōnēs territōria cōdicēs//
 
+
+### [`1603:45:91`] Dictiōnāria de calamitātibus
+
+- dictiōnāria, n, pl, nōminātīvus, https://en.wiktionary.org/wiki/dictionarium#Latin
+- dē (+ ablātīvus), n, pl, nōminātīvus, https://en.wiktionary.org/wiki/de#Latin
+- calamitātēs, f, pl, nōminātīvus, https://en.wiktionary.org/wiki/calamitas
+  - http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0059:entry=calamitas
+  - http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0060:entry=calamitas
+- calamitātibus, f, pl, ablātīvus
+
+dictiōnāria de calamitātibus
+
+### [`1603:45:911`] //Dictiōnāria de aquīs et sānātiōnibus ex līmpidīs//
+- https://sustainabledevelopment.un.org/partnership/?p=1665
+
+- dictiōnāria, n, pl, nōminātīvus, https://en.wiktionary.org/wiki/dictionarium#Latin
+- dē (+ ablātīvus), n, pl, nōminātīvus, https://en.wiktionary.org/wiki/de#Latin
+- aquīs, f, pl, ablātīvus, https://en.wiktionary.org/wiki/aqua#Latin
+  - http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0059:entry=aqua
+- sānitātibus, f, pl, ablātīvus, https://en.wiktionary.org/wiki/sanitas#Latin
+  - http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0059:entry=sanitas
+  - http://ducange.enc.sorbonne.fr/SANITAS
+- <s>/hygiene/@eng-Latn</s>, https://en.wiktionary.org/wiki/hygiene
+  - Rocha says: **I don't like this term. Greek (and too new). Also hygiene conflict with sānitātibus in Latin**
+- ... Dictiōnāria de aquīs et sānitātibus (temporary)
+- ex (+ ablātīvus), https://en.wiktionary.org/wiki/ex#Latin
+- līmpidīs, m/f/n, pl, ablātīvus, https://en.wiktionary.org/wiki/limpidus#Latin
+- ...Dictiōnāria de aquīs et sānitātibus ex līmpidīs
+- sānātiōnibus, f, pl, ablātīvus, https://en.wiktionary.org/wiki/sanatio#Latin
+  - http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0059:entry=sanatio
+- ...Dictiōnāria de aquīs et sānātiōnibus ex līmpidīs
+  - Literal: //Dictionaries of waters and healing through cleanliness//@eng-Latn
