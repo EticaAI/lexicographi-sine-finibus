@@ -58,7 +58,7 @@
 - scrīpta, n, plural, https://en.wiktionary.org/wiki/scriptum#Latin
 - scrīpta, n, plural, https://en.wiktionary.org/wiki/scriptus#Latin
 
-## [`1603:1:5`] //
+## [`1603:1:5`] /Concept of language/
 
 ## [`1603:1:6`] /Dictiōnāria de terminī typīs/
 - https://github.com/EticaAI/multilingual-lexicography/issues/16
