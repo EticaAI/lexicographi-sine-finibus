@@ -363,6 +363,7 @@ def qhxl(rem: dict, query: Union[str, list]):
                 return rem_item
     return None
 
+
 def qhxl_attr_2_bcp47(hxlatt: str):
     resultatum = ''
     tempus1 = hxlatt.replace('+i_', '')
@@ -1293,6 +1294,14 @@ Naturally, each book version gives extensive explanations for collaborators on h
         paginae.extend(codex_archio)
         paginae.extend(['', '<<<', ''])
         paginae.extend(codex_corpori)
+        paginae.extend(['', '<<<', ''])
+        exemplum = [
+            '== /Test/',
+            # '<<<',
+            '{% _🗣️ 1603_1_99_1 🗣️_ %}'
+        ]
+
+        paginae.extend(exemplum)
         # paginae.extend(['', '<<<', ''])
         # paginae.extend(codex_appendici)
 
