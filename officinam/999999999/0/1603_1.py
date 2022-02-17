@@ -559,15 +559,20 @@ class Codex:
         resultatum.append('== Archīa')
         resultatum.append('')
 
+        textum_I = self.notitiae.translatio('{% _🗣️ 1603_1_99_10_2 🗣️_ %}')
+
         resultatum.append('')
         resultatum.extend(descriptio_tabulae_de_lingua(
             ['Lingua Anglica (Abecedarium Latinum)'] * 1,
+            # [
+            #     'Every book comes with several files both for book format '
+            #     '(with additional information) and machine-readable formats '
+            #     'with documentation of how to process them. If you receive '
+            #     'this file and cannot find the alternatives, ask the human '
+            #     'who provide this file.'
+            # ]))
             [
-                'Every book comes with several files both for book format '
-                '(with additional information) and machine-readable formats '
-                'with documentation of how to process them. If you receive '
-                'this file and cannot find the alternatives, ask the human '
-                'who provide this file.'
+                textum_I
             ]))
         resultatum.append('')
 
@@ -698,24 +703,31 @@ class Codex:
             total_codex
         ))
 
+        textum_II = self.notitiae.translatio('{% _🗣️ 1603_1_99_10_3 🗣️_ %}')
+        textum_III = self.notitiae.translatio('{% _🗣️ 1603_1_99_10_4 🗣️_ %}')
+
         resultatum.append('')
         resultatum.extend(descriptio_tabulae_de_lingua(
             ['Lingua Anglica (Abecedarium Latinum)'] * 2,
+            # [
+            #     'WARNING: Unless you are working with a natural language you '
+            #     'understand it\'s letters and symbols, it is strongly '
+            #     'advised to use automation to generate derived works. '
+            #     'Keep manual human steps at minimum: '
+            #     'if something goes wrong at least one or more languages can '
+            #     'be used to verify mistakes. '
+            #     'It\'s not at all necessary _know all languages_, '
+            #     'but working with writing systems you don\'t understand is '
+            #     'risky: '
+            #     'copy and paste strategy can cause '
+            #     '_additional_ human errors and is unlikely to get human '
+            #     'review as fast as you would need. ',
+            #     'TIP: The Asciidoctor (.adoc) is better at copy and pasting! '
+            #     'It can be converted to other text formats.',
+            # ]))
             [
-                'WARNING: Unless you are working with a natural language you '
-                'understand it\'s letters and symbols, it is strongly '
-                'advised to use automation to generate derived works. '
-                'Keep manual human steps at minimum: '
-                'if something goes wrong at least one or more languages can '
-                'be used to verify mistakes. '
-                'It\'s not at all necessary _know all languages_, '
-                'but working with writing systems you don\'t understand is '
-                'risky: '
-                'copy and paste strategy can cause '
-                '_additional_ human errors and is unlikely to get human '
-                'review as fast as you would need. ',
-                'TIP: The Asciidoctor (.adoc) is better at copy and pasting! '
-                'It can be converted to other text formats.',
+                textum_II,
+                textum_III
             ]))
         resultatum.append('')
 
@@ -817,10 +829,13 @@ class Codex:
 
         # resultatum.append("[.text-rigth]")
         # resultatum.append("[.lead]")
+
+        quote_textum = self.notitiae.translatio('{% _🗣️ 1603_1_99_50_1 🗣️_ %}')
         resultatum.append("[quote]")
-        resultatum.append(
-            "/_**Public domain means that each major common issue "
-            "only needs to be resolved once**_/@eng-Latn")
+        # resultatum.append(
+        #     "/_**Public domain means that each major common issue "
+        #     "only needs to be resolved once**_/@eng-Latn")
+        resultatum.append(quote_textum)
         resultatum.append("")
 
         return resultatum
@@ -844,26 +859,32 @@ class Codex:
 
 # WARNING: This book, like other /**Cōdex**/@eng-Latn, is auto-generated in a standard way for every namespace of community curated dictionaries. These books intentionally do not have brands
 
-        codex_praefatio_textum = """
-_**"Cōdex [{0}]"**_ is the book format of the machine-readable dictionaries _**"[{0}] {1}"**_,
-which are distributed for implementers on external applications.
-This book is intended as advanced resource for other lexicographers and terminology translators, including detect and report inconsistencies.
+#         codex_praefatio_textum = """
+# _**"Cōdex [{0}]"**_ is the book format of the machine-readable dictionaries _**"[{0}] {1}"**_,
+# which are distributed for implementers on external applications.
+# This book is intended as advanced resource for other lexicographers and terminology translators, including detect and report inconsistencies.
 
-Practical lexicography is the art or craft of compiling, writing and editing dictionaries.
-The basics are not far different than a millennia ago:
-it is still a very humane, creative work.
-It is necessary to be humble:
-most of the translator's mistakes are, in fact, not translator's fault, but methodological flaws.
-Making sure of a source idea of what a concept represents,
-even if it means rewrite and make simpler, annex pictures,
-show examples, do whatever to make it be understood,
-makes even non-professional translators that care about their own language deliver better results than any alternative.
-In other words: even the so-called industry best practices of paying professional translators and reviewers cannot overcome already poorly explained source terms.
+# Practical lexicography is the art or craft of compiling, writing and editing dictionaries.
+# The basics are not far different than a millennia ago:
+# it is still a very humane, creative work.
+# It is necessary to be humble:
+# most of the translator's mistakes are, in fact, not translator's fault, but methodological flaws.
+# Making sure of a source idea of what a concept represents,
+# even if it means rewrite and make simpler, annex pictures,
+# show examples, do whatever to make it be understood,
+# makes even non-professional translators that care about their own language deliver better results than any alternative.
+# In other words: even the so-called industry best practices of paying professional translators and reviewers cannot overcome already poorly explained source terms.
 
-The initiative behind this compilation is also doing other dictionaries and accepts new suggestions of relevant topics on data exchange for humanitarian use.
-All have in common the fact that both have human translations and (if any) external interlingual codes related to each concept while making the end result explicitly already ready to be usable on average softwares.
-Naturally, each book version gives extensive explanations for collaborators on how to correct itself which become part of the next weekly release. 
-        """.format(  # noqa
+# The initiative behind this compilation is also doing other dictionaries and accepts new suggestions of relevant topics on data exchange for humanitarian use.
+# All have in common the fact that both have human translations and (if any) external interlingual codes related to each concept while making the end result explicitly already ready to be usable on average softwares.
+# Naturally, each book version gives extensive explanations for collaborators on how to correct itself which become part of the next weekly release. 
+#         """.format(  # noqa
+#             self.m1603_1_1__de_codex['#item+rem+i_qcc+is_zxxx+ix_n1603'],
+#             self.m1603_1_1__de_codex['#item+rem+i_mul+is_zyyy']
+#         )
+
+        textum_2 = self.notitiae.translatio('{% _🗣️ 1603_1_99_10_1 🗣️_ %}')
+        codex_praefatio_textum = textum_2.format(  # noqa
             self.m1603_1_1__de_codex['#item+rem+i_qcc+is_zxxx+ix_n1603'],
             self.m1603_1_1__de_codex['#item+rem+i_mul+is_zyyy']
         )
@@ -918,27 +939,6 @@ Naturally, each book version gives extensive explanations for collaborators on h
             meta_tabulae = self.conceptum_ad_tabula_codicibus(meta)
             paginae.extend(meta_tabulae)
             paginae.append("")
-
-        # paginae.append("")
-        # paginae.append(str(scrīptor))
-        # paginae.append("")
-        # paginae.append("")
-        # paginae.append(str(publisher))
-        # paginae.append("")
-        # paginae.append("")
-        # paginae.append(str(publication_date))
-        # paginae.append("")
-        # paginae.append("")
-        # paginae.append(str(spdx_licentiam))
-        # paginae.append("")
-        # paginae.append("== hic sunt dracones \n")
-        # paginae.append("== hic sunt dracones \n")
-
-        # paginae.extend(descriptio_tabulae_de_lingua(
-        #     'Lingua Anglica (Abecedarium Latinum)',
-        #     codex_praefatio_textum
-        #     # ("".join(lineam) + '+' + "\n")
-        # ))
 
         return paginae
         # return resultatum
@@ -1297,21 +1297,21 @@ Naturally, each book version gives extensive explanations for collaborators on h
         paginae.extend(['', '<<<', ''])
         paginae.extend(codex_corpori)
         paginae.extend(['', '<<<', ''])
-        exemplum = [
-            '== /Test/',
-            # '<<<',
-            'aa {% _🗣️ 1603_1_99_1 🗣️_ %} bb {% _🗣️ 1603_1_99_50_1 🗣️_ %} cc'
-            "",
-            "",
-            "....",
-            "",
-            self.notitiae.translatio(
-                'aa {% _🗣️ 1603_1_99_1 🗣️_ %} bb {% _🗣️ 1603_1_99_50_1 🗣️_ %} cc'),
-            "",
-            "....",
-        ]
+        # exemplum = [
+        #     '== /Test/',
+        #     # '<<<',
+        #     'aa {% _🗣️ 1603_1_99_1 🗣️_ %} bb {% _🗣️ 1603_1_99_50_1 🗣️_ %} cc'
+        #     "",
+        #     "",
+        #     "....",
+        #     "",
+        #     self.notitiae.translatio(
+        #         'aa {% _🗣️ 1603_1_99_1 🗣️_ %} bb {% _🗣️ 1603_1_99_50_1 🗣️_ %} cc'),
+        #     "",
+        #     "....",
+        # ]
 
-        paginae.extend(exemplum)
+        # paginae.extend(exemplum)
         # paginae.extend(['', '<<<', ''])
         # paginae.extend(codex_appendici)
 
@@ -1398,27 +1398,36 @@ Naturally, each book version gives extensive explanations for collaborators on h
         if 'no11' in self.archiva:
             paginae.append('=== Methodī ex verbīs in dictiōnāriīs')
 
-            paginae.append(
-                'NOTE: /At the moment, '
-                'there is no workflow to use https://www.wikidata.org/wiki/Wikidata:Lexicographical_data[Wikidata lexicographical data], '
-                ' which actually could be used as storage for stricter '
-                'nomenclature. The current implementations use only '
-                'Wikidata concepts, the Q-items./@eng-Latn'
-            )
+            textum_I = self.notitiae.translatio('{% _🗣️ 1603_1_99_10_5 🗣️_ %}')
+
+            # paginae.append(
+            #     'NOTE: /At the moment, '
+            #     'there is no workflow to use https://www.wikidata.org/wiki/Wikidata:Lexicographical_data[Wikidata lexicographical data], '
+            #     ' which actually could be used as storage for stricter '
+            #     'nomenclature. The current implementations use only '
+            #     'Wikidata concepts, the Q-items./@eng-Latn'
+            # )
+            paginae.append(textum_I)
             paginae.append('')
 
 # From https://www.wikidata.org/wiki/Wikidata:Introduction[Wikidata:Introduction]:
 # __"Wikidata is a free, collaborative, multilingual, secondary database, collecting structured data to provide support for Wikipedia, Wikimedia Commons, the other wikis of the Wikimedia movement, and to anyone in the world."__
-            vicidata_q_modo_1 = """
-The ***[{1}] {2}*** uses Wikidata as one strategy to conciliate language terms for one or more of it's concepts.
+#             vicidata_q_modo_1 = """
+# The ***[{1}] {2}*** uses Wikidata as one strategy to conciliate language terms for one or more of it's concepts.
 
-This means that this book, and related dictionaries data files require periodic updates to, at bare minimum, synchronize and re-share up to date translations.
-            """.format(
+# This means that this book, and related dictionaries data files require periodic updates to, at bare minimum, synchronize and re-share up to date translations.
+#             """.format(
+#                 self.de_codex,
+#                 self.m1603_1_1__de_codex['#item+rem+i_qcc+is_zxxx+ix_n1603'],
+#                 self.m1603_1_1__de_codex['#item+rem+i_mul+is_zyyy']
+#             )
+            # raise ValueError(str(self.m1603_1_1__de_codex))
+            textum_II = self.notitiae.translatio('{% _🗣️ 1603_1_99_10_6 🗣️_ %}')
+            vicidata_q_modo_1 = textum_II.format(
                 self.de_codex,
                 self.m1603_1_1__de_codex['#item+rem+i_qcc+is_zxxx+ix_n1603'],
                 self.m1603_1_1__de_codex['#item+rem+i_mul+is_zyyy']
             )
-            # raise ValueError(str(self.m1603_1_1__de_codex))
 
             vicidata_q_modo_11 = """
 **How reliable are the community translations (Wikidata source)?**
@@ -1432,6 +1441,9 @@ However, even when the result is correct,
 the current version needs improved differentiation, at minimum, acronym and long form.
 For major organizations, features such as __P1813 short names__ exist, but are not yet compiled with the current dataset.
             """.format(self.de_codex)
+
+            textum_III = self.notitiae.translatio('{% _🗣️ 1603_1_99_10_7 🗣️_ %}')
+            vicidata_q_modo_11 = textum_III.format(self.de_codex)
 
             vicidata_q_modo = """
 **Major reasons for "wrong translations" are not translators fault**
@@ -2302,10 +2314,7 @@ class DictionariaNotitiae:
         datum = {}
         with open(self.fontem) as file:
             csv_file = csv.DictReader(file)
-            # return list(tsv_file)
             for conceptum in csv_file:
-                # print('conceptum', conceptum)
-                # print(conceptum)
                 numerordinatio_crudum = \
                     conceptum['#item+conceptum+numerordinatio']
                 numerordinatio_neo = numerordinatio_neo_separatum(
@@ -2317,21 +2326,34 @@ class DictionariaNotitiae:
         return datum
 
     def translatio(self, textum: str) -> str:
+        """translatio
+
+        /translate, if necessary, a text using 1603_1_99 as reference/@eng-Latn 
+
+        Args:
+            textum (str): Textum
+
+        Returns:
+            str: Textum
+        """
         if not textum or \
                 (textum.find('{% _🗣️') == -1 or textum.find('🗣️_ %}') == -1):
             return textum
 
-        regula = r"{%\s_🗣️\s(.*)\s🗣️_\s%}"
+        regula = r"{%\s_🗣️\s(.*?)\s🗣️_\s%}"
 
         r1 = re.findall(regula, textum)
         if r1:
             for codicem in r1:
                 textum_de_codicem = self.translatio_codicem(codicem)
                 if textum_de_codicem is not None:
-                    textum = textum.replace('{% _🗣️ ' + codicem + ' 🗣️_ %}', textum_de_codicem)
+                    textum = textum.replace(
+                        '{% _🗣️ ' + codicem + ' 🗣️_ %}', textum_de_codicem)
         # print(r1)
 
-        return textum + ' [' + str(r1) + ']'
+        # return textum + ' <[' + str(r1) + ']>'
+        # return textum
+        return textum.replace("\\n", "\n")
 
     def translatio_codicem(self, codex: str) -> str:
         for clavem, conceptum in self.dictionaria.items():
