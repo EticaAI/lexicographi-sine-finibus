@@ -54,6 +54,7 @@ from typing import (
     Union,
     List
 )
+import re
 import fnmatch
 import json
 import datetime
@@ -420,6 +421,7 @@ class Codex:
 
         self.archiva = []
         self.m1603_1_1__de_codex = self._init_1603_1_1()
+        self.notitiae = DictionariaNotitiae()
         self.dictionaria_linguarum = DictionariaLinguarum()
         self.dictionaria_interlinguarum = DictionariaInterlinguarum()
         self.codex = self._init_codex()
@@ -1298,7 +1300,15 @@ Naturally, each book version gives extensive explanations for collaborators on h
         exemplum = [
             '== /Test/',
             # '<<<',
-            '{% _🗣️ 1603_1_99_1 🗣️_ %}'
+            'aa {% _🗣️ 1603_1_99_1 🗣️_ %} bb {% _🗣️ 1603_1_99_50_1 🗣️_ %} cc'
+            "",
+            "",
+            "....",
+            "",
+            self.notitiae.translatio(
+                'aa {% _🗣️ 1603_1_99_1 🗣️_ %} bb {% _🗣️ 1603_1_99_50_1 🗣️_ %} cc'),
+            "",
+            "....",
         ]
 
         paginae.extend(exemplum)
@@ -1943,45 +1953,6 @@ class DictionariaInterlinguarum:
                 resultatum.append("----")
                 # resultatum.append(pprint.pprint(res))
 
-        # if resultatum_corpus:
-            # resultatum.append("")
-
-            # resultatum.append("=== Interlinguae in cōdex: {0}".format(
-            #     resultatum_corpus_totale))
-
-            # # cōdex, m, s, (nominative)
-            # # tōtālis, m/f, s, (Nominative)
-            # # linguae, f, s, (Dative)
-            # resultatum.append(
-            #     "Tōtālis linguae in cōdex: {0}".format(
-            #         resultatum_corpus_totale))
-            # resultatum.append("")
-
-            # resultatum.append('[%header,cols="~,~,~,~,~"]')
-            # resultatum.append('|===')
-            # # https://en.wiktionary.org/wiki/latinus#Latin
-            # # nōmina, n, pl, (Nominative)
-            # #     shttps://en.wiktionary.org/wiki/nomen#Latin
-            # # "nōmen Latīnum"
-            # # https://en.wiktionary.org/wiki/Latinus#Latin
-            # # resultatum.append(
-            # #     "| <span lang='la'>Cōdex<br>linguae</span> | "
-            # #     "<span lang='la'>Glotto<br>cōdicī</span> | "
-            # #     "<span lang='la'>ISO<br>639-3</span> | "
-            # #     "<span lang='la'>Wiki QID<br>cōdicī</span> | "
-            # #     "<span lang='la'>Nōmen Latīnum</span> |")
-            # # resultatum.append("| --- | --- | --- | --- | --- |")
-            # resultatum.append("| Interlinguae")
-            # resultatum.append("| /Wiki P/")
-            # resultatum.append("| ISO 639-3")
-            # # resultatum.append("| Wiki QID cōdicī")
-            # resultatum.append("| Nōmen Latīnum")
-            # resultatum.append("| Definitionem")
-            # resultatum.append('')
-            # resultatum.extend(resultatum_corpus)
-            # resultatum.append('|===')
-            # resultatum.append("")
-
         return resultatum
 
     def imprimereTabula(self, linguam: list = None) -> list:
@@ -2313,6 +2284,61 @@ class DictionariaLinguarum:
                     # raise ValueError([terminum, linguam])
 
         return None
+
+
+class DictionariaNotitiae:
+    """Nōtitiae temporāriōrum circā librārium
+
+    """
+
+    def __init__(self):
+
+        self.fontem = NUMERORDINATIO_BASIM + \
+            "/1603/1/99/1603_1_99.no1.tm.hxl.csv"
+        self.dictionaria = self._init_dictionaria()
+
+    def _init_dictionaria(self):
+
+        datum = {}
+        with open(self.fontem) as file:
+            csv_file = csv.DictReader(file)
+            # return list(tsv_file)
+            for conceptum in csv_file:
+                # print('conceptum', conceptum)
+                # print(conceptum)
+                numerordinatio_crudum = \
+                    conceptum['#item+conceptum+numerordinatio']
+                numerordinatio_neo = numerordinatio_neo_separatum(
+                    numerordinatio_crudum, '_')
+                datum[numerordinatio_neo] = {}
+                for clavem, rem in conceptum.items():
+                    datum[numerordinatio_neo][clavem] = rem
+
+        return datum
+
+    def translatio(self, textum: str) -> str:
+        if not textum or \
+                (textum.find('{% _🗣️') == -1 or textum.find('🗣️_ %}') == -1):
+            return textum
+
+        regula = r"{%\s_🗣️\s(.*)\s🗣️_\s%}"
+
+        r1 = re.findall(regula, textum)
+        if r1:
+            for codicem in r1:
+                textum_de_codicem = self.translatio_codicem(codicem)
+                if textum_de_codicem is not None:
+                    textum = textum.replace('{% _🗣️ ' + codicem + ' 🗣️_ %}', textum_de_codicem)
+        # print(r1)
+
+        return textum + ' [' + str(r1) + ']'
+
+    def translatio_codicem(self, codex: str) -> str:
+        for clavem, conceptum in self.dictionaria.items():
+            if codex == clavem:
+                return conceptum['#item+rem+i_eng+is_latn']
+        return None
+        return '[ @TODO ' + codex + ' ]'
 
 
 class DictionariaNumerordinatio:
