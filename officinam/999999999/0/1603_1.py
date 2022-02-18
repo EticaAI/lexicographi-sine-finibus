@@ -1429,44 +1429,50 @@ class Codex:
                 self.m1603_1_1__de_codex['#item+rem+i_mul+is_zyyy']
             )
 
-            vicidata_q_modo_11 = """
-**How reliable are the community translations (Wikidata source)?**
+#             vicidata_q_modo_11 = """
+# **How reliable are the community translations (Wikidata source)?**
 
-The short, default answer is: **they are reliable**, even in cases of no authoritative translations for each subject.
+# The short, default answer is: **they are reliable**, even in cases of no authoritative translations for each subject.
 
-As reference, it is likely a professional translator (without access to Wikipedia or Internal terminology bases of the control organizations) would deliver lower quality results if you do blind tests.
-This is possible because not just the average public, but even terminologists and professional translators help Wikipedia (and implicitly Wikidata).
+# As reference, it is likely a professional translator (without access to Wikipedia or Internal terminology bases of the control organizations) would deliver lower quality results if you do blind tests.
+# This is possible because not just the average public, but even terminologists and professional translators help Wikipedia (and implicitly Wikidata).
 
-However, even when the result is correct,
-the current version needs improved differentiation, at minimum, acronym and long form.
-For major organizations, features such as __P1813 short names__ exist, but are not yet compiled with the current dataset.
-            """.format(self.de_codex)
+# However, even when the result is correct,
+# the current version needs improved differentiation, at minimum, acronym and long form.
+# For major organizations, features such as __P1813 short names__ exist, but are not yet compiled with the current dataset.
+#             """.format(self.de_codex)
 
             textum_III = self.notitiae.translatio('{% _🗣️ 1603_1_99_10_7 🗣️_ %}')
             vicidata_q_modo_11 = textum_III.format(self.de_codex)
 
-            vicidata_q_modo = """
-**Major reasons for "wrong translations" are not translators fault**
+#             vicidata_q_modo = """
+# **Major reasons for "wrong translations" are not translators fault**
 
-TIP: As a rule of thumb, for already very defined concepts where you, as human, can manually verify one or more translated terms as a decent result, the other translations are likely to be acceptable. Dictionaries with edge cases (such as disputed territory names) would have further explanation.
+# TIP: As a rule of thumb, for already very defined concepts where you, as human, can manually verify one or more translated terms as a decent result, the other translations are likely to be acceptable. Dictionaries with edge cases (such as disputed territory names) would have further explanation.
 
-NOTE: Both at concept level and (as general statistics) book level, is planned to have indication concept likelihood of being well understood for very stricter translations initiatives.
+# NOTE: Both at concept level and (as general statistics) book level, is planned to have indication concept likelihood of being well understood for very stricter translations initiatives.
 
-The main reason for "wrong translations" are poorly defined concepts used to explain for community translators how to generate terminology translations. This would make existing translations from Wikidata (used not just by us) inconsistent. The second reason is if the dictionaries use translations for concepts without a strict match; in other words, if we make stricter definitions of what concept means but reuse Wikidada less exact terms. There are also issues when entire languages are encoded with wrong codes. Note that all these cases **wrong translations are strictly NOT translators fault, but lexicography fault**.
+# The main reason for "wrong translations" are poorly defined concepts used to explain for community translators how to generate terminology translations. This would make existing translations from Wikidata (used not just by us) inconsistent. The second reason is if the dictionaries use translations for concepts without a strict match; in other words, if we make stricter definitions of what concept means but reuse Wikidada less exact terms. There are also issues when entire languages are encoded with wrong codes. Note that all these cases **wrong translations are strictly NOT translators fault, but lexicography fault**.
 
-It is still possible to have strict translation level errors. But even if we point users how to correct Wikidata/Wikipedia (based on better contextual explanation of a concept, such as this book), the requirements to say the previous term was objectively a wrong human translation error (if following our seriousness on dictionary-building) are very high.
-            """.format(self.de_codex)
+# It is still possible to have strict translation level errors. But even if we point users how to correct Wikidata/Wikipedia (based on better contextual explanation of a concept, such as this book), the requirements to say the previous term was objectively a wrong human translation error (if following our seriousness on dictionary-building) are very high.
+#             """.format(self.de_codex)
 
-            vicidata_q_modo2 = """
-From the point of view of data conciliation, the following methodology is used to release the terminology translations with the main concept table.
+            textum_IV = self.notitiae.translatio('{% _🗣️ 1603_1_99_10_8 🗣️_ %}')
+            vicidata_q_modo = textum_IV.format(self.de_codex)
 
-. The main handcrafted lexicographical table (explained on previous topic), also provided on `{0}.no1.tm.hxl.csv`, may reference Wiki QID.
-. Every unique QID of  `{0}.no1.tm.hxl.csv`, together with language codes from [`1603:1:51`] (which requires knowing human languages), is used to prepare an SPARQL query optimized to run on https://query.wikidata.org/[Wikidata Query Service]. The query is so huge that it is not viable to "Try it" links (URL overlong), such https://www.wikidata.org/wiki/Wikidata:SPARQL_query_service/queries/examples[as what you would find on Wikidata Tutorials], ***but*** it works!
-.. Note that the knowledge is free, the translations are there, but the multilingual humanitarian needs may lack people to prepare the files and shares then for general use.
-. The query result, with all QIDs and term labels, is shared as `{0}.wikiq.tm.hxl.csv`
-. The community reviewed translations of each singular QID is pre-compiled on an individual file `{0}.wikiq.tm.hxl.csv`
-. `{0}.no1.tm.hxl.csv` plus `{0}.wikiq.tm.hxl.csv` created `{0}.no11.tm.hxl.csv`
-            """.format(self.de_codex)
+#             vicidata_q_modo2 = """
+# From the point of view of data conciliation, the following methodology is used to release the terminology translations with the main concept table.
+
+# . The main handcrafted lexicographical table (explained on previous topic), also provided on `{0}.no1.tm.hxl.csv`, may reference Wiki QID.
+# . Every unique QID of  `{0}.no1.tm.hxl.csv`, together with language codes from [`1603:1:51`] (which requires knowing human languages), is used to prepare an SPARQL query optimized to run on https://query.wikidata.org/[Wikidata Query Service]. The query is so huge that it is not viable to "Try it" links (URL overlong), such https://www.wikidata.org/wiki/Wikidata:SPARQL_query_service/queries/examples[as what you would find on Wikidata Tutorials], ***but*** it works!
+# .. Note that the knowledge is free, the translations are there, but the multilingual humanitarian needs may lack people to prepare the files and shares then for general use.
+# . The query result, with all QIDs and term labels, is shared as `{0}.wikiq.tm.hxl.csv`
+# . The community reviewed translations of each singular QID is pre-compiled on an individual file `{0}.wikiq.tm.hxl.csv`
+# . `{0}.no1.tm.hxl.csv` plus `{0}.wikiq.tm.hxl.csv` created `{0}.no11.tm.hxl.csv`
+#             """.format(self.de_codex)
+
+            textum_V = self.notitiae.translatio('{% _🗣️ 1603_1_99_10_9 🗣️_ %}')
+            vicidata_q_modo2 = textum_V.format(self.de_codex)
 
             # modō, m, s, (dative) https://en.wiktionary.org/wiki/modus#Latin
             paginae.append('==== Methodī ex verbīs in Vicidata (Q modō)')
@@ -1703,6 +1709,7 @@ class CodexExtero:
         codex: Type['Codex']
 
     ):
+        self.codex = codex
         pass
 
     def intro(self):
@@ -1711,7 +1718,9 @@ class CodexExtero:
 
         paginae = []
 
-        methodi_ex_codice_intro = """This section explains the methodology of this book and it's machine readable formats. For your convenience the information used to explain the concepts (such as natural language and interlingual codes) which appears in this book are also summarized here. This approach is done both for reviews not needing to open other books (or deal with machine readable files) and also to spot errors on other dictionaries. +++<br><br>+++ About how the book and the dictionaries are compiled, a division of "baseline concept table" and (when relevant for a codex) "translations conciliation" is given different methodologies. +++<br><br>+++ Every book contains at minimum the baseline concept table and explanation of the used fields. This approach helps to release dictionaries faster while ensuring both humans and machines can know what to expect even when they are not ready to receive translations."""
+        # methodi_ex_codice_intro = """This section explains the methodology of this book and it's machine readable formats. For your convenience the information used to explain the concepts (such as natural language and interlingual codes) which appears in this book are also summarized here. This approach is done both for reviews not needing to open other books (or deal with machine readable files) and also to spot errors on other dictionaries. +++<br><br>+++ About how the book and the dictionaries are compiled, a division of "baseline concept table" and (when relevant for a codex) "translations conciliation" is given different methodologies. +++<br><br>+++ Every book contains at minimum the baseline concept table and explanation of the used fields. This approach helps to release dictionaries faster while ensuring both humans and machines can know what to expect even when they are not ready to receive translations."""
+        methodi_ex_codice_intro = \
+            self.codex.notitiae.translatio('{% _🗣️ 1603_1_99_10_10 🗣️_ %}')
 
         paginae.extend(descriptio_tabulae_de_lingua(
             'Lingua Anglica (Abecedarium Latinum)',

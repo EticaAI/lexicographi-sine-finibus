@@ -92,7 +92,7 @@ file_convert_numerordinatio_de_hxltm "1603_1_51" "1" "0"
 
 # FORCE_REDOWNLOAD_REM="1603_1_99" FORCE_CHANGED_REM="1603_1_99" ./999999999/1603_17.sh
 # FORCE_REDOWNLOAD_REM="1603_1_99" FORCE_CHANGED="1603_1_99" ./999999999/1603_17.sh
-exit 0
+# exit 0
 
 file_download_if_necessary "$DATA_1603_1_1" "1603_1_1" "csv" "tm.hxl.csv" "hxltmcli" "1"
 file_convert_numerordinatio_de_hxltm "1603_1_1" "1" "0"
