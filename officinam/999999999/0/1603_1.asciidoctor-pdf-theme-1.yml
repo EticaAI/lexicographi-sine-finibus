@@ -6,6 +6,7 @@ base:
 font:
   catalog:
     merge: true
+    # merge: false
     # M+ 1p supports Latin, Latin-1 Supplement, Latin Extended, Greek, Cyrillic, Vietnamese, Japanese & an assortment of symbols
     # It also provides arrows for ->, <-, => and <= replacements in case these glyphs are missing from font
     M+ 1p Fallback: mplus1p-regular-fallback.ttf
@@ -15,10 +16,16 @@ font:
     #   italic: roboto-italic.ttf
     #   bold: roboto-bold.ttf
     #   bold_italic: roboto-bold_italic.ttf
+    NotoSans:
+      normal: NotoSans-Regular.ttf
+      italic: NotoSans-Italic.ttf
+      bold: NotoSans-Bold.ttf
+      bold_italic: NotoSans-BoldItalic.ttf
     NotoSansArabic:
       bold: NotoSansArabic-Bold.ttf
       normal: NotoSansArabic-Regular.ttf
       italic: NotoSansArabic-Regular.ttf # No italic for arabic
+    NotoSansArmenian: NotoSansArmenian-Regular.ttf
     # https://en.wikipedia.org/wiki/Sanskrit#Scripts
     NotoSansBengali: NotoSansBengali-Regular.ttf
     # NotoSansBengali:
@@ -31,16 +38,34 @@ font:
     # NotoSansDevanagari:
     #   bold: NotoSansDevanagari-Bold.ttf
     #   normal: NotoSansDevanagari-Regular.ttf
+    NotoSansHebrew: NotoSansHebrew-Regular.ttf
+    NotoSansKannada: NotoSansKannada-Regular.ttf
     NotoSansMalayalam:
       bold: NotoSansMalayalam-Bold.ttf
       normal: NotoSansMalayalam-Regular.ttf
       italic: NotoSansMalayalam-Regular.ttf # No italic for Malayalam
+    NotoSansThai: NotoSansThai-Regular.ttf
+    NotoSansTamil: NotoSansTamil-Regular.ttf
+    # @TODO: BUG here! NotoSansTelugu
+    # NotoSansTelugu: NotoSansTelugu-Regular.ttf
+    # @TODO: needs be converted to TTF or OTF; Path /usr/share/fonts/opentype/noto
+    # @see https://github.com/asciidoctor/asciidoctor-pdf/blob/main/docs/theming-guide.adoc#modifying-the-font
+    # NotoSansCJK: NotoSansCJK-Medium.ttc
     NotoColorEmoji: NotoColorEmoji.ttf
     LastResort-Regular: LastResort-Regular.ttf
     # LastResortHE-Regular: LastResortHE-Regular.ttf
   # fallbacks: [NotoSansArabic, NotoSansBengali, NotoSansBrahmi, NotoSansDevanagari, NotoSansMalayalam, M+ 1p Fallback, Noto Emoji]
-  fallbacks: [NotoSansArabic, NotoSansBengali, NotoSansBrahmi, NotoSansDevanagari, NotoSansMalayalam, Noto Emoji, LastResort-Regular]
+  # fallbacks: [NotoSansArabic, NotoSansBengali, NotoSansBrahmi, NotoSansDevanagari, NotoSansMalayalam, Noto Emoji, LastResort-Regular]
+  # fallbacks: [NotoSansArabic, NotoSansArmenian, NotoSansBengali, NotoSansBrahmi, NotoSansDevanagari, NotoSansHebrew, NotoSansMalayalam, Noto Emoji, LastResort-Regular]
+  # fallbacks: [NotoSansArabic, NotoSansArmenian, NotoSansBengali, NotoSansBrahmi, NotoSansDevanagari, NotoSansHebrew, NotoSansMalayalam, NotoSansThai, NotoSansTamil, Noto Emoji, LastResort-Regular]
+  # fallbacks: [NotoSansArabic, NotoSansArmenian, NotoSansBengali, NotoSansBrahmi, NotoSansDevanagari, NotoSansHebrew, NotoSansMalayalam, NotoSansThai, NotoSansTamil, NotoSansTelugu, NotoSans, NotoSansCJK, Noto Emoji, LastResort-Regular]
+  # fallbacks: [NotoSansArabic, NotoSansArmenian, NotoSansBengali, NotoSansBrahmi, NotoSansDevanagari, NotoSansHebrew, NotoSansMalayalam, NotoSansThai, NotoSansTamil, NotoSans, Noto Emoji, LastResort-Regular]
+  fallbacks: [NotoSansArabic, NotoSansArmenian, NotoSansBengali, NotoSansBrahmi, NotoSansDevanagari, NotoSansHebrew, NotoSansKannada, NotoSansMalayalam, NotoSansThai, NotoSansTamil, NotoSans, Noto Emoji, LastResort-Regular]
   # fallbacks: [NotoSansArabic, NotoSansBengali, NotoSansBrahmi, NotoSansDevanagari, NotoSansMalayalam, Noto Emoji, LastResortHE-Regular]
   # fallbacks: [NotoSansArabic, NotoSansBengali, NotoSansBrahmi, NotoSansDevanagari, NotoSansMalayalam, M+ 1p Fallback, NotoColorEmoji]
   # fallbacks: [NotoSansArabic, NotoSansBengali, NotoSansBrahmi, NotoSansDevanagari, NotoSansMalayalam, M+ 1p Fallback]
   # fallbacks: [NotoSansArabic, NotoSansDevanagari, NotoSansMalayalam, M+ 1p Fallback, Noto Emoji]
+
+
+# For ALPHABETICAL LIST OF SCRIPTS NOT YET ENCODED on Unicode Standard, see
+# - https://linguistics.berkeley.edu/sei/scripts-not-encoded.html
