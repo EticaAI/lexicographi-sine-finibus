@@ -77,11 +77,13 @@ font:
     # LastResortHE-Regular: LastResortHE-Regular.ttf
 
   ### "Somewhat safe (no empty PDF lines, but several will LastResort-Regular)"
-  # fallbacks: [NotoSansArabic, NotoSansArmenian, NotoSansHebrew, NotoSansMalayalam, NotoSansThai, NotoSansTamil, NotoSans, Noto Emoji, LastResort-Regular]
+  fallbacks: [NotoSansArabic, NotoSansArmenian, NotoSansHebrew, NotoSansMalayalam, NotoSansThai, NotoSansTamil, NotoSans, Noto Emoji, LastResort-Regular]
 
-  # Inidia scripts
-  fallbacks: [NotoSansArabic, NotoSansArmenian, NotoSansHebrew, NotoSansMalayalam, NotoSansThai, NotoSansTamil, NotoSansBengali, NotoSansBrahmi, NotoSansDevanagari, NotoSansGujarati, NotoSansGrantha, NotoSansKannada, NotoSansKaithi, NotoSansTelugu, NotoSans, Noto Emoji, LastResort-Regular]
-  # fallbacks: [NotoSansArabic, NotoSansArmenian, NotoSansHebrew, NotoSansMalayalam, NotoSansThai, NotoSansTamil, NotoSansBengali, NotoSansDevanagari, NotoSansBrahmi NotoSansGujarati, NotoSansGrantha, NotoSansKannada, NotoSansKaithi, NotoSansTelugu, NotoSans, Noto Emoji, LastResort-Regular]
+  # + India scripts, partial
+  # fallbacks: [NotoSansArabic, NotoSansArmenian, NotoSansHebrew, NotoSansMalayalam, NotoSansThai, NotoSansTamil, NotoSansGujarati, NotoSansGrantha, NotoSansKannada, NotoSansKaithi, NotoSansTelugu, NotoSans, Noto Emoji, LastResort-Regular]
+  # + India scripts, full
+  # fallbacks: [NotoSansArabic, NotoSansArmenian, NotoSansHebrew, NotoSansMalayalam, NotoSansThai, NotoSansTamil, NotoSansBengali, NotoSansBrahmi, NotoSansDevanagari, NotoSansGujarati, NotoSansGrantha, NotoSansKannada, NotoSansKaithi, NotoSansTelugu, NotoSans, Noto Emoji, LastResort-Regular]
+  # fallbacks: [LastResort-Regular]
 
   ## Complete CJK
   # fallbacks: [NotoSansArabic, NotoSansArmenian, NotoSansBengali, NotoSansBrahmi, NotoSansDevanagari, NotoSansHebrew, NotoSansKannada, NotoSansMalayalam, NotoSansThai, NotoSansTamil, NotoSans, NotoSansHK, NotoSansJP, NotoSansKR, NotoSansSC, NotoSansTC, Noto Emoji, LastResort-Regular]
