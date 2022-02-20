@@ -1,16 +1,13 @@
-# [`1603:14`] //Res militaris//
+# [`1603:14`] //Librārium mīlitārī//
 > NOTE: this is a draft.
 
 - https://la.wikipedia.org/wiki/Res_militaris
 - https://en.wikipedia.org/wiki/War
 
 <!--
-librārium https://en.wiktionary.org/wiki/librarium#Latin
-hūmānitātī, f, s, dativus https://en.wiktionary.org/wiki/humanitas#Latin
-strictae, f, s, dativushttps://en.wiktionary.org/wiki/strictus#Latin
+librārium n, s, nōminātīvus, https://en.wiktionary.org/wiki/librarium#Latin
+mīlitārī, n, s, dativus https://en.wiktionary.org/wiki/militaris
 -->
-
-
 
 ![Defending the Polish banner at Chocim, by Juliusz Kossak, 1892](https://upload.wikimedia.org/wikipedia/commons/d/d4/Defending_the_Polish_banner_at_Chocim%2C_by_Juliusz_Kossak%2C_1892.jpg)
 > _Defending the Polish banner at Chocim, by Juliusz Kossak, 1892_
@@ -19,8 +16,7 @@ strictae, f, s, dativushttps://en.wiktionary.org/wiki/strictus#Latin
   - [14]
     - 1914, Primum bellum mundanum, https://la.wikipedia.org/wiki/Primum_bellum_mundanum
 
-
-### [`1603:45:997`] //Dictiōnāria dē relevāminibus per bellīs//
+### [`1603:14:997`] //Dictiōnāria dē relevāminibus per bellīs//
 
 > - https://en.m.wikipedia.org/wiki/Humanitarian_intervention
 > - https://en.m.wikipedia.org/wiki/Responsibility_to_protect
