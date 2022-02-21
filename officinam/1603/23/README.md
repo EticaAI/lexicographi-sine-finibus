@@ -16,6 +16,22 @@ strictae, f, s, dativushttps://en.wiktionary.org/wiki/strictus#Latin
     - Code of Urukagina (2380–2360 BCE)
       - 2300 -> 23
 
+<!-- ### [`1603:23:21`] //Dictiōnāria dē Human rights auxilium// -->
+### [`1603:23:21`] //Dictiōnāria dē Iurum humanorum defensor//
+
+> - https://en.m.wikipedia.org/wiki/Human_rights
+> - https://en.m.wikipedia.org/wiki/Human_rights_movement
+> - https://la.wikipedia.org/wiki/Iurum_humanorum_defensor
+
+- dictiōnāria, n, pl, nōminātīvus, https://en.wiktionary.org/wiki/dictionarium#Latin
+- dē (+ ablātīvus), n, pl, nōminātīvus, https://en.wiktionary.org/wiki/de#Latin
+- iūribus, n https://en.wiktionary.org/wiki/ius#Latin
+- https://en.wiktionary.org/wiki/humanus#Latin
+- hūmānitātibus, f, pl, dativus, https://en.wiktionary.org/wiki/humanitas#Latin
+- Iura humana / iura hominisR, https://la.wikipedia.org/wiki/Iura_humana
+
+> Trivia: Iurum humanorum defensor; I (9) + H (8) + D (4) = 21
+
 ### [`1603:23:36`] //Dictiōnāria dē intraimperiīs lēgisperītīs per lēgēs certiōrātū//
 
 > - https://en.wikipedia.org/wiki/Weiquan_lawyers
@@ -52,3 +68,10 @@ strictae, f, s, dativushttps://en.wiktionary.org/wiki/strictus#Latin
     - "W"
       - A-Z... "W" = 23, "M" = 13; 23 + 13 = 36
 
+<!--
+TODO: maybe eventually use Cyrus_Cylinder
+- Trivia:
+  -  https://en.wikipedia.org/wiki/Cyrus_Cylinder 
+    - > _The Cylinder gained new prominence in the late 1960s when the last Shah of Iran called it "the world's first charter of human rights".[104] The cylinder was a key symbol of the Shah's political ideology and is still regarded by some commentators as a charter of human rights, despite the disagreement of some historians and scholars_
+    - > _Ahmadinejad considers the Cyrus Cylinder as the incarnation of human values and a cultural heritage for all humanity, and called it the "First Charter of Human Rights". The British Museum had loaned the Cyrus Cylinder to the National Museum of Iran for four months._
+-->

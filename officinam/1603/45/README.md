@@ -123,44 +123,6 @@
 - dictiōnāria, n, pl, nōminātīvus, https://en.wiktionary.org/wiki/dictionarium#Latin
 - dē (+ ablātīvus), n, pl, nōminātīvus, https://en.wiktionary.org/wiki/de#Latin
 
-### [`1603:45:995`] //Dictiōnāria dē Human rights auxilium//
-
-> - https://en.m.wikipedia.org/wiki/Human_rights
-> - https://en.m.wikipedia.org/wiki/Human_rights_movement
-
-- dictiōnāria, n, pl, nōminātīvus, https://en.wiktionary.org/wiki/dictionarium#Latin
-- dē (+ ablātīvus), n, pl, nōminātīvus, https://en.wiktionary.org/wiki/de#Latin
-
-### [`1603:45:996`] //Dictiōnāria dē intraimperiīs lēgisperītīs per lēgēs certiōrātū//
-
-> - https://en.wikipedia.org/wiki/Weiquan_lawyers
-> - https://en.wikipedia.org/wiki/Barefoot_lawyer
-> - https://en.wikipedia.org/wiki/Rule_of_law
-> - https://en.wikipedia.org/wiki/List_of_Latin_legal_terms
-
-- dictiōnāria, n, pl, nōminātīvus, https://en.wiktionary.org/wiki/dictionarium#Latin
-- dē (+ ablātīvus), n, pl, nōminātīvus, https://en.wiktionary.org/wiki/de#Latin
-- lēgitimum, n, s, nōminātīvus, https://en.wiktionary.org/wiki/legitimus#Latin
-- lēx, f, s, nōminātīvus, https://en.wiktionary.org/wiki/lex#Latin
-- lēgisperītus, m, s, nōminātīvus, https://en.wiktionary.org/wiki/legisperitus#Latin
-- lēgisperītīs, m, pl, dativus
-- ... **Dictiōnāria dē lēgisperītīs** (maybe?)
-- intrō (+ accūsātīvus), https://en.wiktionary.org/wiki/intro#Latin
-- intra, https://en.wikipedia.org/wiki/List_of_Greek_and_Latin_roots_in_English/H%E2%80%93O
-- imperium, n, s, nōminātīvus, https://en.wiktionary.org/wiki/imperium#Latin
-- imperiīs, n, s, dativus
-- intraimperium, n, s, ---, (/neologism/@eng-Latn)
-- ...  **Dictiōnāria dē intraimperiīs lēgisperītīs**
-- suprā (+ accūsātīvus), https://en.wiktionary.org/wiki/supra#Latin
-- Certiorari, ..., https://en.wikipedia.org/wiki/Certiorari
-  - https://en.wiktionary.org/wiki/certioro#Latin
-- certiōrātū, v, /verbal-noun>supine>ablative/
-- certiōrātū, v, /verbal-noun>supine>ablative/
-- per (+ accūsātīvus), https://en.wiktionary.org/wiki/per#Latin
-- lēgēs, f, pl, accūsātīvus
-- ... **//Dictiōnāria dē intraimperiīs lēgisperītīs per lēgēs certiōrātū//**
-  - Literal: //Dictionaries about (inside a country) law-experts by means of (to make more certain) laws//@eng-Latn
-
 
 <!--
 ### [`1603:45:991`] /Dictiōnāria dē interimperiīs datīs in praeparātiōnēs contrā calamitātēs/
