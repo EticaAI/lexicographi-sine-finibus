@@ -15,6 +15,9 @@
 /officinam/**/**.codex.mobi
 /officinam/**/**.ttf
 /officinam/**/**.otf
+/officinam/**/**.xml
+/officinam/**/**.tmx
+/officinam/**/**.tbx
 # /officinam/README.md
 /officinam/LICENSE.md
 

@@ -86,6 +86,9 @@ file_download_if_necessary "$DATA_1603_23_21" "1603_23_21" "csv" "tm.hxl.csv" "h
 file_convert_numerordinatio_de_hxltm "1603_23_21" "1" "0"
 file_translate_csv_de_numerordinatio_q "1603_23_21" "0" "0"
 file_merge_numerordinatio_de_wiki_q "1603_23_21" "0" "0"
+file_convert_xml_de_numerordinatio11 "1603_23_21"
+file_convert_tmx_de_numerordinatio11 "1603_23_21"
+file_convert_tbx_de_numerordinatio11 "1603_23_21"
 neo_codex_de_numerordinatio "1603_23_21" "0" "0"
 neo_codex_de_numerordinatio_pdf "1603_23_21" "0" "0"
 
@@ -102,3 +105,10 @@ file_translate_csv_de_numerordinatio_q "1603_63_1" "0" "0"
 file_merge_numerordinatio_de_wiki_q "1603_63_1" "0" "0"
 neo_codex_de_numerordinatio "1603_63_1" "0" "0"
 neo_codex_de_numerordinatio_pdf "1603_63_1" "0" "0"
+
+
+
+# hxltmcli --objectivum-TMX 1603/1/7/1603_1_7.no1.tm.hxl.csv 1603/1/7/1603_1_7.tmx
+# hxltmcli --objectivum-TBX-Basim 1603/1/7/1603_1_7.no1.tm.hxl.csv 1603/1/7/1603_1_7.tbx
+#
+# hxltmcli --objectivum-TBX-Basim 1603/45/1/1603_45_1.no11.tm.hxl.csv 1603/45/1/1603_45_1.tbx

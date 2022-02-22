@@ -16,6 +16,9 @@ Gemfile.lock
 
 999999/0/
 !999999/0/.gitkep
+# *.xml
+# *.tmx
+# *.tbx
 *.pdf
 *.epub
 *.mobi
