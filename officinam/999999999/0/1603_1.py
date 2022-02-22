@@ -1379,8 +1379,10 @@ class Codex:
             if scope_and_content and \
                     qhxl(scope_and_content, meta_langs) is not None:
                 term = qhxl(scope_and_content, meta_langs)
-                meta['#item+rem+i_qcc+is_zxxx+ix_wikip7535'] = \
-                    term.replace("\\n", "\n")
+                term2 = self.notitiae.translatio(term)
+                meta['#item+rem+i_qcc+is_zxxx+ix_wikip7535'] = term2
+                # meta['#item+rem+i_qcc+is_zxxx+ix_wikip7535'] = \
+                #     term.replace("\\n", "\n")
 
             # paginae.append("")
             # paginae.append(str(meta))
