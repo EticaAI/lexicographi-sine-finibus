@@ -13,10 +13,10 @@
               - 604 - 540 (removing zeroes)
                 - 64
 
-### [`1603:604:604`] //Dictiōnāria de aquīs et sānātiōnibus ex līmpidīs//
+### [`1603:64:604`] //Dictiōnāria de aquīs et sānātiōnibus ex līmpidīs//
 - https://sustainabledevelopment.un.org/partnership/?p=1665
 
-### Latinas viva ad [`1603:604:604`]
+### Latinas viva ad [`1603:64:604`]
 - dictiōnāria, n, pl, nōminātīvus, https://en.wiktionary.org/wiki/dictionarium#Latin
 - dē (+ ablātīvus), n, pl, nōminātīvus, https://en.wiktionary.org/wiki/de#Latin
 - aquīs, f, pl, ablātīvus, https://en.wiktionary.org/wiki/aqua#Latin
@@ -35,7 +35,7 @@
 - ...Dictiōnāria de aquīs et sānātiōnibus ex līmpidīs
   - Literal: //Dictionaries about waters and healing through cleanliness//@eng-Latn
 
-- Trivia [`1603:604:604`] ?
+- Trivia [`1603:64:604`] "604"?
   - https://en.wikipedia.org/wiki/History_of_water_supply_and_sanitation#Bronze_and_early_Iron_Ages
     - https://en.wikipedia.org/wiki/Puquios
       - https://en.wikipedia.org/wiki/Nazca
@@ -44,4 +44,10 @@
             - Peru UN m49: 604
 
 
+### [`1603:64:???`] //Dictiōnāria de Enxame Tecnológico de Redes Vivas//
+- https://wiki.aguas.ml/index.php/BioTechnoSwarm
+
+### Latinas viva ad [`1603:64:???`]
+- dictiōnāria, n, pl, nōminātīvus, https://en.wiktionary.org/wiki/dictionarium#Latin
+- dē (+ ablātīvus), n, pl, nōminātīvus, https://en.wiktionary.org/wiki/de#Latin
 
