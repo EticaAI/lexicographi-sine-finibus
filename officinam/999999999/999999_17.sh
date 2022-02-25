@@ -45,7 +45,8 @@ DATA_1603_1_99="https://docs.google.com/spreadsheets/d/1ih3ouvx_n8W5ntNcYBqoyZ2N
 # DATA_1603_23_21="https://docs.google.com/spreadsheets/d/1ih3ouvx_n8W5ntNcYBqoyZ2NRMdaA0LRg5F9mGriZm4/edit#gid=1939636120"
 # DATA_1603_23_36="https://docs.google.com/spreadsheets/d/1ih3ouvx_n8W5ntNcYBqoyZ2NRMdaA0LRg5F9mGriZm4/edit#gid=2020660171"
 # DATA_1603_63_1="https://docs.google.com/spreadsheets/d/1ih3ouvx_n8W5ntNcYBqoyZ2NRMdaA0LRg5F9mGriZm4/edit#gid=80558354"
-DATA_1603_45_19="https://docs.google.com/spreadsheets/d/1ih3ouvx_n8W5ntNcYBqoyZ2NRMdaA0LRg5F9mGriZm4/edit#gid=1703298088"
+# DATA_1603_45_19="https://docs.google.com/spreadsheets/d/1ih3ouvx_n8W5ntNcYBqoyZ2NRMdaA0LRg5F9mGriZm4/edit#gid=1703298088"
+DATA_1603_64_41="https://docs.google.com/spreadsheets/d/1ih3ouvx_n8W5ntNcYBqoyZ2NRMdaA0LRg5F9mGriZm4/edit#gid=1949861448"
 
 ROOTDIR="$(pwd)"
 
@@ -107,12 +108,19 @@ file_convert_numerordinatio_de_hxltm "1603_1_99" "1" "0"
 # neo_codex_de_numerordinatio "1603_63_1" "0" "0"
 # neo_codex_de_numerordinatio_pdf "1603_63_1" "0" "0"
 
-file_download_if_necessary "$DATA_1603_45_19" "1603_45_19" "csv" "tm.hxl.csv" "hxltmcli" "1"
-file_convert_numerordinatio_de_hxltm "1603_45_19" "1" "0"
-file_translate_csv_de_numerordinatio_q "1603_45_19" "0" "0"
-file_merge_numerordinatio_de_wiki_q "1603_45_19" "0" "0"
-neo_codex_de_numerordinatio "1603_45_19" "0" "0"
-neo_codex_de_numerordinatio_pdf "1603_45_19" "0" "0"
+# file_download_if_necessary "$DATA_1603_45_19" "1603_45_19" "csv" "tm.hxl.csv" "hxltmcli" "1"
+# file_convert_numerordinatio_de_hxltm "1603_45_19" "1" "0"
+# file_translate_csv_de_numerordinatio_q "1603_45_19" "0" "0"
+# file_merge_numerordinatio_de_wiki_q "1603_45_19" "0" "0"
+# neo_codex_de_numerordinatio "1603_45_19" "0" "0"
+# neo_codex_de_numerordinatio_pdf "1603_45_19" "0" "0"
+
+file_download_if_necessary "$DATA_1603_64_41" "1603_64_41" "csv" "tm.hxl.csv" "hxltmcli" "1"
+file_convert_numerordinatio_de_hxltm "1603_64_41" "1" "0"
+file_translate_csv_de_numerordinatio_q "1603_64_41" "0" "0"
+file_merge_numerordinatio_de_wiki_q "1603_64_41" "0" "0"
+neo_codex_de_numerordinatio "1603_64_41" "0" "0"
+neo_codex_de_numerordinatio_pdf "1603_64_41" "0" "0"
 
 
 
