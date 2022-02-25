@@ -44,7 +44,7 @@
             - Peru UN m49: 604
 
 
-### [`1603:64:???`] //Dictiōnāria dē artibus susurrīs technologicīs vīvīs//
+### [`1603:64:41`] //Dictiōnāria basibus dē perītiae per susurrōs vītālēs//
 - https://wiki.aguas.ml/index.php/BioTechnoSwarm
 
 ### Latinas viva ad /Enxame Tecnológico de Redes Vivas/@por-Latn et /BioTechnoSwarm/@eng-Latn
@@ -77,10 +77,38 @@
 - artibus, f, pl, dativus, https://en.wiktionary.org/wiki/ars#Latin
   - http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0059:entry=ars
   - http://micmap.org/dicfro/search/gaffiot/ars
-- ...//Dictiōnāria dē artibus susurrīs technologicīs vīvīs//@lat-Latn (DOG LATIN)
+- ...**//Dictiōnāria dē artibus susurrīs technologicīs vīvīs//@lat-Latn** (DOG LATIN)
   - Trānslātiō litterālī: //Dictionaries about the arts (skill) wisper technological lives//@eng-Latn
+- ...**//Dictiōnāria dē artibus susurrīs vīvīs//@lat-Latn** (DOG LATIN)
+  - artibus + technologicīs ~ /near same meaning, them maybe/@eng-Latn
+- scientibus, m/f/n, pl, dativus, https://en.wiktionary.org/wiki/sciens#Latin
+  - http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0060:entry=sciens
+  - http://micmap.org/dicfro/search/gaffiot/sciens
+- perītiae, f, pl, dativus, https://en.wiktionary.org/wiki/peritia
+  - > experience, knowledge gained by experience, practical knowledge, skill (not in Cic. or Cæs.).
+  - http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0059:entry=peritia
+  - http://micmap.org/dicfro/search/gaffiot/peritia
+- ... **//Dictiōnāria dē perītiae vīvīs susurrīs//@lat-Latn**
+  - > Trānslātiō litterālī: //Dictionaries about skillful living whispers//@eng-Latn
+  - > Trānslātiō significātae: //Dictionaries about practical knowledges (gained by experience) living whispers//@eng-Latn
+- https://www.usu.edu/markdamen/Wordpower/handouts/lataffix.pdf
+- per (+ accūsātīvus), https://en.wiktionary.org/wiki/per#Latin
+  - > through, by means of
+- vīvōs, m, pl, accūsātīvus, ibīdem (https://en.wiktionary.org/wiki/vivus#Latin)
+- susurrōs, m, pl, accūsātīvus, ibīdem (https://en.wiktionary.org/wiki/susurrus#Latin)
+- ... **//Dictiōnāria dē perītiae per vīvōs susurrōs//@lat-Latn**
+  - > Trānslātiō litterālī: //Dictionaries about expertise by means of live whispers//@eng-Latn
+- vītālēs, m/f, pl, accūsātīvus, https://en.wiktionary.org/wiki/vitalis#Latin
+- ... **//Dictiōnāria dē perītiae per vītālēs susurrōs//@lat-Latn**
+- ... **//Dictiōnāria dē perītiae per susurrōs vītālēs//@lat-Latn**
+  - > Trānslātiō litterālī: //Dictionaries about expertise by means of vital whispers//@eng-Latn
+- basibus, f, pl, (dative) https://en.wiktionary.org/wiki/basis#Latin
+  - http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0059:entry=basis
+  - http://micmap.org/dicfro/search/gaffiot/basis
+- ... **//Dictiōnāria basibus dē perītiae per susurrōs vītālēs//@lat-Latn**
+  - > Trānslātiō litterālī: //Basic dictionaries about expertise by means of vital whispers//@eng-Latn
 
+- Trivia [`1603:64:41`] 41?
+  - BioTechnoSwarm B=2, T=20, S=19
+    - 2 + 20 + 19 = 41
 
-
-
-por exemplo se for pelo lado de "arte" e "sussuro" , "vida", "habilidade", "estudo" tem 4 significados raizes que tem que ser reconstruidos
