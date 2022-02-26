@@ -121,6 +121,7 @@ file_translate_csv_de_numerordinatio_q "1603_64_41" "0" "0"
 file_merge_numerordinatio_de_wiki_q "1603_64_41" "0" "0"
 neo_codex_de_numerordinatio "1603_64_41" "0" "0"
 neo_codex_de_numerordinatio_pdf "1603_64_41" "0" "0"
+neo_codex_de_numerordinatio_epub "1603_64_41" "0" "0"
 
 
 
