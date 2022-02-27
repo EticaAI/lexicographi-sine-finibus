@@ -1398,6 +1398,22 @@ class Codex:
                 )
             paginae.append('')
 
+            caveat_lector = self.quod_res('0_1603_1_7_2617_9289584')
+            # paginae.append(str(scope_and_content))
+            if caveat_lector and \
+                    qhxl(caveat_lector, meta_langs) is not None:
+                term = qhxl(caveat_lector, meta_langs)
+                term2 = self.notitiae.translatio(term)
+                meta2 = {}
+                meta2['#item+rem+i_qcc+is_zxxx+ix_wikiq9289584'] = term2
+
+                paginae.append('==== Caveat lector')
+                meta_tabulae = self.conceptum_ad_tabula_codicibus(meta2)
+                paginae.extend(meta_tabulae)
+                paginae.append("")
+                # meta['#item+rem+i_qcc+is_zxxx+ix_wikip7535'] = \
+                #     term.replace("\\n", "\n")
+
         if 'no11' in self.archiva:
             paginae.append('=== Methodī ex verbīs in dictiōnāriīs')
 
@@ -1909,8 +1925,10 @@ class DictionariaInterlinguarum:
             auxilium_linguam: list = None
     ) -> str:
         # fōrmātum, f, s, (Nominative) https://en.wiktionary.org/wiki/formatus
-
-        return res[clavem]
+        # TODO: this still need improvement
+        # return res[clavem]
+        return res_interlingualibus_formata(res, clavem)
+        # return res[clavem] + '[' + clavem + ']'
 
     def imprimere(self, linguam: list = None) -> list:
         """imprimere /print/@eng-Latn
