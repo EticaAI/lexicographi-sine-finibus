@@ -46,6 +46,7 @@
 
 from multiprocessing.sharedctypes import Value
 import os
+from ossaudiodev import control_names
 import sys
 import argparse
 # from pathlib import Path
@@ -1985,6 +1986,17 @@ class DictionariaInterlinguarum:
                     res['#item+rem+i_lat+is_latn']))
 
                 for clavem, rem_textum in res.items():
+                    if clavem in [
+                        '#item+conceptum+numerordinatio',
+                        '#item+conceptum+codicem',
+                        '#status+conceptum+definitionem',
+                        '#status+conceptum+codicem',
+                    ]:
+                        continue
+
+                    if len(rem_textum) < 1:
+                        continue
+
                     resultatum.append("{0}::: {1}".format(clavem, rem_textum))
                     # datum[int_clavem][clavem] = rem
 
@@ -2369,7 +2381,7 @@ class DictionariaNotitiae:
         """
         if not textum or \
                 (textum.find('{% _🗣️') == -1 or textum.find('🗣️_ %}') == -1):
-            return textum
+            return textum.replace("\\n", "\n")
 
         regula = r"{%\s_🗣️\s(.*?)\s🗣️_\s%}"
 
