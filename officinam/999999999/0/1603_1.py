@@ -966,6 +966,10 @@ class Codex:
             self.m1603_1_1__de_codex['#item+rem+i_mul+is_zyyy']
         ))
 
+        # Here the first page of the book, For now is complete empty
+
+        # 0_1603_1_7_2616_7535_1
+
         picturae = self.annexis.quod_picturae(numerordinatio_locali='0')
         if picturae:
             codicem_ordo = 2
@@ -1010,11 +1014,67 @@ class Codex:
             if codicem_loci.find('0_1603') == 0:
                 continue
 
-            self.summis_concepta += 1
-
             nomen = numerordinatio_nomen(item)
             codicem_normale = numerordinatio_neo_separatum(codicem_loci, '_')
             codicem_ordo = numerordinatio_ordo(codicem_loci)
+
+            # TODO: test here if
+            # scope_and_content = self.quod_res('0_1603_1_7_2616_7535')
+            # # paginae.append(str(scope_and_content))
+
+            # TODO: make metadata about each image individual. For now
+            #       Is just considering the last line of the PDF
+            #       but the path it got rigth
+
+            meta_langs = [
+                '#item+rem+i_qcc+is_zxxx+ix_codexfacto'
+            ]
+            speciale_note = self.quod_res(
+                '0_1603_1_7_2616_7535_' + codicem_normale)
+
+            if speciale_note and \
+                    qhxl(speciale_note, meta_langs) is not None:
+                term = qhxl(speciale_note, meta_langs)
+                term2 = self.notitiae.translatio(term)
+                meta = {}
+                meta['#item+rem+i_qcc+is_zxxx+ix_wikip7535'] = term2
+                meta_tabulae = self.conceptum_ad_tabula_codicibus(meta)
+
+                resultatum.append("<<<")
+
+                picturae = self.annexis.quod_picturae(
+                    numerordinatio_locali=codicem_normale)
+                if picturae:
+                    for item in picturae:
+                        trivium = item.quod_temp_rel_pic()
+                        titulum = item.quod_temp_titulum()
+                        link = item.quod_temp_link()
+                        resultatum.append(
+                            'image::{1}[title="{0}"]\n'.format(titulum, trivium))
+                        # resultatum.append('![{0}]({1})\n'.format(titulum, trivium))
+                        if link:
+                            resultatum.append(
+                                'link:{1}[{0}]\n'.format(titulum, link))
+                resultatum.append("")
+
+                resultatum.append("[id='{0}']".format(codicem_normale))
+                resultatum.append(
+                    ('=' * (codicem_ordo + 2)) +
+                    ' [`' + codicem_loci + '`] ' + nomen + "\n"
+                )
+                resultatum.append("")
+
+                resultatum.extend(meta_tabulae)
+                resultatum.append("")
+                resultatum.append("<<<")
+                resultatum.append("")
+                continue
+
+            # resultatum.append("<<<")
+            # resultatum.append("test")
+            # resultatum.append("<<<")
+
+            self.summis_concepta += 1
 
             if codicem_ordo == 1:
                 resultatum.append("<<<")
