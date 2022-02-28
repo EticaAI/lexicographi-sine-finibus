@@ -4,6 +4,7 @@
 #          FILE:  1603_17.sh
 #
 #         USAGE:  ./999999999/1603_17.sh
+#                 VELOX=1 ./999999999/1603_17.sh
 #                 FORCE_REDOWNLOAD=1 ./999999999/1603_17.sh
 #                 FORCE_CHANGED=1 ./999999999/1603_17.sh
 #                 FORCE_REDOWNLOAD_REM="1603_1_51" ./999999999/1603_17.sh
