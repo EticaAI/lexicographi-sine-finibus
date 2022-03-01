@@ -55,9 +55,10 @@ from typing import (
     Union,
     List
 )
+from copy import copy
 import re
 import fnmatch
-import json
+# import json
 import datetime
 
 # from itertools import permutations
@@ -484,7 +485,8 @@ class Codex:
 
         Trivia:
         - cōdex, m, s, (Nominative), https://en.wiktionary.org/wiki/codex#Latin
-        - appendicī, f, s, (Dative), https://en.wiktionary.org/wiki/appendix#Latin
+        #Latin
+        - appendicī, f, s, (Dative), https://en.wiktionary.org/wiki/appendix
 
         Returns:
             [list]:
@@ -1357,6 +1359,8 @@ class Codex:
         # paginae.extend(codex_indici)
         paginae.extend(codex_praefatio)
         paginae.extend(['', '<<<', ''])
+        paginae.extend(['', str(self.sarcinarum.sarcina), ''])
+        paginae.extend(['', '<<<', ''])
         paginae.extend(methodi_ex_codice)
         paginae.extend(['', '<<<', ''])
         paginae.extend(codex_archio)
@@ -1875,6 +1879,8 @@ class CodexSarcinarumAdnexis:
                     'sarcina': item,
                     # @TODO: make this not as hardcoded as it is now
                     'meta': self._quod_meta(
+                        root + '/' + item + '/0.nnx.tm.hxl.csv'),
+                    '_meta': self._quod_meta_rem(
                         root + '/' + item + '/0.nnx.tm.hxl.csv')
                 })
                 # self.sarcina_index.append(index)
@@ -1907,6 +1913,39 @@ class CodexSarcinarumAdnexis:
 
         meta['titulum'] = self._quod_meta_titulum(meta)
         return meta
+
+    def _quod_meta_rem(self, trivum):
+        resultatum = {}
+        meta = {
+            'ix_wikip2479': None,  # license
+            'ix_wikiq': None,
+            'ix_wikip577': None,  # /publication date/
+            'ix_wikip1476': None,  # /title of published work.../
+            'ix_wikip110': None,  # /illustrator/
+            'ix_wikip50': None,   # /author/
+            'ix_wikip854': None,  # /reference URL/
+            # '__': [],
+        }
+        # @TODO: allow have more detailed metadata per individual item
+        #        for now we're just using global values
+
+        if not os.path.exists(trivum):
+            return meta
+
+        with open(trivum) as csvfile:
+            reader = csv.DictReader(csvfile)
+            for lineam in reader:
+
+                est_meta = copy(meta)
+                for clavem in meta.keys():
+                    ix_item = qhxl(lineam, clavem)
+                    if ix_item:
+                        est_meta[clavem] = ix_item
+                est_meta['titulum'] = self._quod_meta_titulum(est_meta)
+                if '#item+conceptum+codicem' in lineam:
+                    resultatum[str(lineam['#item+conceptum+codicem'])] = est_meta
+
+        return resultatum
 
     def _quod_meta_titulum(self, meta):
         nomen = ''
