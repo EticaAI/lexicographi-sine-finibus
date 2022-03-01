@@ -996,14 +996,15 @@ class Codex:
             for item in picturae:
 
                 trivium = item.quod_temp_rel_pic()
-                titulum = item.quod_temp_titulum()
-                link = item.quod_temp_link()
+                titulum = item.quod_titulum()
+                # link = item.quod_temp_link()
+                link = item.quod_link()
                 # resultatum.append('![{0}]({1})\n'.format(titulum, trivium))
                 resultatum.append(
-                    'image::{1}[title="{0}"]\n'.format(titulum, trivium))
+                    'image::{1}[title="++{0}++"]\n'.format(titulum, trivium))
                 if link:
                     resultatum.append(
-                        'link:{1}[{0}]\n'.format(titulum, link))
+                        'link:++{1}++[++{0}++]\n'.format(titulum, link))
                 else:
                     resultatum.append('{0}\n'.format(titulum))
 
@@ -1049,14 +1050,15 @@ class Codex:
                 if picturae:
                     for item in picturae:
                         trivium = item.quod_temp_rel_pic()
-                        titulum = item.quod_temp_titulum()
-                        link = item.quod_temp_link()
+                        titulum = item.quod_titulum()
+                        # link = item.quod_temp_link()
+                        # link = item.quod_link()
                         resultatum.append(
-                            'image::{1}[title="{0}"]\n'.format(titulum, trivium))
+                            'image::{1}[title="++{0}++"]\n'.format(titulum, trivium))
                         # resultatum.append('![{0}]({1})\n'.format(titulum, trivium))
-                        if link:
-                            resultatum.append(
-                                'link:{1}[{0}]\n'.format(titulum, link))
+                        # if link:
+                        #     resultatum.append(
+                        #         'link:++{1}++[++{0}++]\n'.format(titulum, link))
                 resultatum.append("")
 
                 resultatum.append("[id='{0}']".format(codicem_normale))
@@ -1118,14 +1120,15 @@ class Codex:
                 )
                 for item in picturae:
                     trivium = item.quod_temp_rel_pic()
-                    titulum = item.quod_temp_titulum()
-                    link = item.quod_temp_link()
+                    titulum = item.quod_titulum()
+                    # link = item.quod_temp_link()
+                    link = item.quod_link()
                     resultatum.append(
-                        'image::{1}[title="{0}"]\n'.format(titulum, trivium))
+                        'image::{1}[title="++{0}++"]\n'.format(titulum, trivium))
                     # resultatum.append('![{0}]({1})\n'.format(titulum, trivium))
                     if link:
                         resultatum.append(
-                            'link:{1}[{0}]\n'.format(titulum, link))
+                            'link:++{1}++[++{0}++]\n'.format(titulum, link))
                     # else:
                     #     resultatum.append('{0}\n'.format(titulum))
 
@@ -1358,8 +1361,6 @@ class Codex:
         # paginae.extend(dominium_publicum)
         # paginae.extend(codex_indici)
         paginae.extend(codex_praefatio)
-        paginae.extend(['', '<<<', ''])
-        paginae.extend(['', str(self.sarcinarum.sarcina), ''])
         paginae.extend(['', '<<<', ''])
         paginae.extend(methodi_ex_codice)
         paginae.extend(['', '<<<', ''])
@@ -1640,6 +1641,7 @@ class CodexAnnexo:
         self.codex = codex
         # self.de_codex = codex.de_codex
         self.trivium = trivium
+        self.nomen = self.quod_temp_filename(trivium)
         self.sarcina = numerordinatio_trivium_sarcina(
             trivium, self.codex.de_codex)
 
@@ -1648,6 +1650,11 @@ class CodexAnnexo:
             self.codex.de_codex, '/')
         neo_trivium = self.trivium.replace(self.radix_codex + '/', '')
         return neo_trivium
+
+    def quod_temp_filename(self, trivum) -> str:
+        # return os.path.basename(trivum)
+        from pathlib import Path
+        return Path(trivum).stem
 
     def quod_temp_titulum(self):
         _sarcina = self.codex.sarcinarum.quod_sarcinarum(self.sarcina)
@@ -1662,6 +1669,24 @@ class CodexAnnexo:
 
         return titulum
 
+    def quod_titulum(self):
+        _sarcina = self.codex.sarcinarum.quod_sarcinarum(self.sarcina)
+        titulum = 'Sine nomine'
+
+        if not _sarcina or not self.nomen in _sarcina['_meta'] or \
+                not _sarcina['_meta'][self.nomen]['titulum']:
+            # return str(_sarcina)
+            return titulum
+
+        # if _sarcina and 'titulum' in _sarcina['meta'] and \
+        #         _sarcina['meta']['titulum']:
+        #     # titulum = '🖼️ ' + _sarcina['meta']['titulum']
+        #     titulum = _sarcina['meta']['titulum']
+        # else:
+        #     titulum = 'Sine nomine'
+
+        return _sarcina['_meta'][self.nomen]['titulum']
+
     def quod_temp_link(self):
         _sarcina = self.codex.sarcinarum.quod_sarcinarum(self.sarcina)
         link = ''
@@ -1669,6 +1694,19 @@ class CodexAnnexo:
         if _sarcina and 'ix_wikip854' in _sarcina['meta'] and \
                 _sarcina['meta']['ix_wikip854']:
             link = _sarcina['meta']['ix_wikip854']
+
+        return link
+
+    def quod_link(self):
+        _sarcina = self.codex.sarcinarum.quod_sarcinarum(self.sarcina)
+        link = ''
+
+        if not _sarcina or not self.nomen in _sarcina['_meta']:
+            # return str(_sarcina)
+            return ''
+
+        if _sarcina['_meta'][self.nomen]['ix_wikip854']:
+            link = _sarcina['_meta'][self.nomen]['ix_wikip854']
 
         return link
 
@@ -1943,7 +1981,8 @@ class CodexSarcinarumAdnexis:
                         est_meta[clavem] = ix_item
                 est_meta['titulum'] = self._quod_meta_titulum(est_meta)
                 if '#item+conceptum+codicem' in lineam:
-                    resultatum[str(lineam['#item+conceptum+codicem'])] = est_meta
+                    resultatum[str(
+                        lineam['#item+conceptum+codicem'])] = est_meta
 
         return resultatum
 
