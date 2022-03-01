@@ -658,6 +658,7 @@ neo_codex_de_numerordinatio_pdf() {
   # return 0
 
   if [ "$VELOX" = "1" ]; then
+    echo "VELOX"
     bundle exec asciidoctor-pdf \
       "$fontem_archivum" --out-file "$objectivum_archivum_temporarium"
   else

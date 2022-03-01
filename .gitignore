@@ -20,6 +20,9 @@
 /officinam/**/**.tbx
 # /officinam/README.md
 /officinam/LICENSE.md
+/officinam/package.json
+/officinam/package-lock.json
+/officinam/node_modules
 
 /officinam/**/**\.~[0-9]/*
 !/officinam/**/**\.~[0-9]/.gitkep
