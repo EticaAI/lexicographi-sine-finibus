@@ -212,17 +212,38 @@ def numerordinatio_nomen(
         rem: dict, objectivum_linguam: str = None,
         auxilium_linguam: list = None) -> str:
 
+    resultatum = ''
+
     # TODO: this obviously is hardcoded; Implement full inferences
     # if '#item+rem+i_lat+is_latn' in rem and rem['#item+rem+i_lat+is_latn']:
     #     return '/' + rem['#item+rem+i_lat+is_latn'] + '/@lat-Latn'
     if '#item+rem+i_lat+is_latn' in rem and rem['#item+rem+i_lat+is_latn']:
-        return rem['#item+rem+i_lat+is_latn']
-    if '#item+rem+i_mul+is_zyyy' in rem and rem['#item+rem+i_mul+is_zyyy']:
-        return rem['#item+rem+i_mul+is_zyyy']
-    if '#item+rem+i_eng+is_latn' in rem and rem['#item+rem+i_eng+is_latn']:
-        return '/' + rem['#item+rem+i_eng+is_latn'] + '/@eng-Latn'
+        resultatum = rem['#item+rem+i_lat+is_latn']
+    elif '#item+rem+i_mul+is_zyyy' in rem and rem['#item+rem+i_mul+is_zyyy']:
+        resultatum = rem['#item+rem+i_mul+is_zyyy']
+    elif '#item+rem+i_eng+is_latn' in rem and rem['#item+rem+i_eng+is_latn']:
+        resultatum = '/' + rem['#item+rem+i_eng+is_latn'] + '/@eng-Latn'
+
+    # TODO: temporary (2022-03-01) hacky on 1603:45:1
+    elif '#item+rem+i_eng+is_latn+ix_completum' in rem and rem['#item+rem+i_eng+is_latn+ix_completum']:
+        return '/' + rem['#item+rem+i_eng+is_latn+ix_completum'] + '/@eng-Latn'
+
+    if len(resultatum):
+        return _brevis(resultatum)
 
     return ''
+
+
+def _brevis(rem: str) -> str:
+    if rem.find('///'):
+        rem = rem.replace('///', '//')
+
+    if not rem.find('||'):
+        return rem
+
+    temp = rem.split('||')
+
+    return temp[0].strip()
 
 
 def numerordinatio_trivium_sarcina(
@@ -298,6 +319,11 @@ def res_interlingualibus_formata(rem: dict, query) -> str:
 
     if query.find('+ix_wikiq') > -1 and query.endswith('+ix_wikiq'):
         return "https://www.wikidata.org/wiki/{0}[{0}]".format(
+            rem[query])
+
+    if query.find('+ix_wikip3916') > -1 and query.endswith('+ix_wikip3916'):
+        # No https?
+        return "http://vocabularies.unesco.org/thesaurus/{0}[{0}]".format(
             rem[query])
 
     if query.find('+ix_wikip') > -1 and query.endswith('+ix_wikip'):
@@ -1192,6 +1218,7 @@ class Codex:
                     )
                 # resultatum_corpus.append(
                 #     "| {0} | {1} |".format(clavem_i18n, item_text_i18n))
+                item_text_i18n = item_text_i18n.replace('||', '\|\|')
                 resultatum_corpus.append("| {0}".format(clavem_i18n))
                 resultatum_corpus.append("| +++{0}+++".format(item_text_i18n))
                 resultatum_corpus.append("")
