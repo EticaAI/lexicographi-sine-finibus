@@ -691,13 +691,13 @@ class Codex:
             total_dictionaria
         ))
         resultatum.append('')
-        resultatum.extend(descriptio_tabulae_de_lingua(
-            ['Lingua Anglica (Abecedarium Latinum)'] * 1,
-            [
-                'TIP: Is recommended to use the files on this section to '
-                ' generate derived works.',
-            ]))
-        resultatum.append('')
+        # resultatum.extend(descriptio_tabulae_de_lingua(
+        #     ['Lingua Anglica (Abecedarium Latinum)'] * 1,
+        #     [
+        #         'TIP: Is recommended to use the files on this section to '
+        #         ' generate derived works.',
+        #     ]))
+        # resultatum.append('')
 
         resultatum.extend(dictionaria_part)
         resultatum.append('')
@@ -706,32 +706,32 @@ class Codex:
             total_codex
         ))
 
-        textum_II = self.notitiae.translatio('{% _🗣️ 1603_1_99_10_3 🗣️_ %}')
-        textum_III = self.notitiae.translatio('{% _🗣️ 1603_1_99_10_4 🗣️_ %}')
+        # textum_II = self.notitiae.translatio('{% _🗣️ 1603_1_99_10_3 🗣️_ %}')
+        # textum_III = self.notitiae.translatio('{% _🗣️ 1603_1_99_10_4 🗣️_ %}')
 
-        resultatum.append('')
-        resultatum.extend(descriptio_tabulae_de_lingua(
-            ['Lingua Anglica (Abecedarium Latinum)'] * 2,
-            # [
-            #     'WARNING: Unless you are working with a natural language you '
-            #     'understand it\'s letters and symbols, it is strongly '
-            #     'advised to use automation to generate derived works. '
-            #     'Keep manual human steps at minimum: '
-            #     'if something goes wrong at least one or more languages can '
-            #     'be used to verify mistakes. '
-            #     'It\'s not at all necessary _know all languages_, '
-            #     'but working with writing systems you don\'t understand is '
-            #     'risky: '
-            #     'copy and paste strategy can cause '
-            #     '_additional_ human errors and is unlikely to get human '
-            #     'review as fast as you would need. ',
-            #     'TIP: The Asciidoctor (.adoc) is better at copy and pasting! '
-            #     'It can be converted to other text formats.',
-            # ]))
-            [
-                textum_II,
-                textum_III
-            ]))
+        # resultatum.append('')
+        # resultatum.extend(descriptio_tabulae_de_lingua(
+        #     ['Lingua Anglica (Abecedarium Latinum)'] * 2,
+        #     # [
+        #     #     'WARNING: Unless you are working with a natural language you '
+        #     #     'understand it\'s letters and symbols, it is strongly '
+        #     #     'advised to use automation to generate derived works. '
+        #     #     'Keep manual human steps at minimum: '
+        #     #     'if something goes wrong at least one or more languages can '
+        #     #     'be used to verify mistakes. '
+        #     #     'It\'s not at all necessary _know all languages_, '
+        #     #     'but working with writing systems you don\'t understand is '
+        #     #     'risky: '
+        #     #     'copy and paste strategy can cause '
+        #     #     '_additional_ human errors and is unlikely to get human '
+        #     #     'review as fast as you would need. ',
+        #     #     'TIP: The Asciidoctor (.adoc) is better at copy and pasting! '
+        #     #     'It can be converted to other text formats.',
+        #     # ]))
+        #     [
+        #         textum_II,
+        #         textum_III
+        #     ]))
         resultatum.append('')
 
         resultatum.extend(codex_part)
@@ -2120,6 +2120,7 @@ class DictionariaInterlinguarum:
             resultatum.append("==== Rēs interlinguālibus: {0}".format(
                 resultatum_corpus_totale))
 
+            # @TODO: 1603_1_99_10_11; {0} = code complete for this book
             resultatum.extend(descriptio_tabulae_de_lingua(
                 'Lingua Anglica (Abecedarium Latinum)',
                 'The result of this section is a preview. '
