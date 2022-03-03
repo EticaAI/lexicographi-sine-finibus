@@ -226,7 +226,7 @@ def numerordinatio_nomen(
 
     # TODO: temporary (2022-03-01) hacky on 1603:45:1
     elif '#item+rem+i_eng+is_latn+ix_completum' in rem and rem['#item+rem+i_eng+is_latn+ix_completum']:
-        return '/' + rem['#item+rem+i_eng+is_latn+ix_completum'] + '/@eng-Latn'
+        resultatum = '/' + rem['#item+rem+i_eng+is_latn+ix_completum'] + '/@eng-Latn'
 
     if len(resultatum):
         return _brevis(resultatum)
@@ -237,23 +237,29 @@ def numerordinatio_nomen(
 def _brevis(rem: str) -> str:
     linguam = ''
     pseudo_ipa = ''
-    if rem.find('///'):
+    # rem = 'oi' + rem
+    if rem.find('///') > -1:
         rem = rem.replace('///', '//')
 
-    if not rem.find('||'):
+    if rem.find('||') == -1:
         return rem
 
-    if rem.find('/@'):
+    if rem.find('/@') > -1:
         linguam = rem.split('/@')[-1]
+
     if rem.startswith('//'):
         pseudo_ipa = '//'
+
     elif rem.startswith('/'):
         pseudo_ipa = '/'
 
     nomen = ''
     temp = rem.split('||')
     nomen = temp[0].strip()
-    if len(pseudo_ipa) > 0:
+
+    if len(pseudo_ipa) > -1:
+        if nomen.find('/@'):
+            nomen = nomen.split('/@')[0]
         nomen = nomen + pseudo_ipa
         if len(linguam) > 0:
             nomen = nomen + '@' + linguam
@@ -805,7 +811,6 @@ class Codex:
                         '{% _🗣️ 1603_1_99_101_11_854 🗣️_ %}'), 4)  # 8
                 ))
 
-
             total_codex += 1
 
         # Compile final result
@@ -1086,6 +1091,7 @@ class Codex:
         #     self.m1603_1_1__de_codex['#item+rem+i_qcc+is_zxxx+ix_n1603'],
         #     self.m1603_1_1__de_codex['#item+rem+i_mul+is_zyyy']
         # ))
+        # Book title (after all introduction)
         resultatum.append("== {0}".format(
             self.m1603_1_1__de_codex['#item+rem+i_mul+is_zyyy']
         ))
@@ -1105,16 +1111,16 @@ class Codex:
             #     ('#' * (codicem_ordo + 3)) + ' ' +
             #     '<span lang="la">Pictūrae</span>'
             # )
-            resultatum.append('[discrete]')
-            resultatum.append(
-                ('=' * (codicem_ordo + 2)) + ' ' +
-                'Annexa'
-            )
-            resultatum.append('[discrete]')
-            resultatum.append(
-                ('=' * (codicem_ordo + 3)) + ' ' +
-                'Pictūrae'
-            )
+            # resultatum.append('[discrete]')
+            # resultatum.append(
+            #     ('=' * (codicem_ordo + 2)) + ' ' +
+            #     'Annexa'
+            # )
+            # resultatum.append('[discrete]')
+            # resultatum.append(
+            #     ('=' * (codicem_ordo + 3)) + ' ' +
+            #     'Pictūrae'
+            # )
             for item in picturae:
 
                 trivium = item.quod_temp_rel_pic()
@@ -1176,11 +1182,9 @@ class Codex:
                         # link = item.quod_temp_link()
                         # link = item.quod_link()
                         resultatum.append(
-                            'image::{1}[title="++{0}++"]\n'.format(titulum, trivium))
-                        # resultatum.append('![{0}]({1})\n'.format(titulum, trivium))
-                        # if link:
-                        #     resultatum.append(
-                        #         'link:++{1}++[++{0}++]\n'.format(titulum, link))
+                            'image::{1}[title="++{0}++"]\n'.format(
+                                titulum, trivium))
+
                 resultatum.append("")
 
                 resultatum.append("[id='{0}']".format(codicem_normale))
@@ -1215,8 +1219,6 @@ class Codex:
                 ('=' * (codicem_ordo + 2)) +
                 ' [`' + codicem_loci + '`] ' + nomen + "\n"
             )
-            # resultatum.append(
-            #     "+++<a id='{0}' href='#{0}'>§ {0}</a>+++".format(codicem_normale))
 
             resultatum.append("\n")
             resultatum.append(numerordinatio_summary(item))
@@ -1246,8 +1248,9 @@ class Codex:
                     # link = item.quod_temp_link()
                     link = item.quod_link()
                     resultatum.append(
-                        'image::{1}[title="++{0}++"]\n'.format(titulum, trivium))
-                    # resultatum.append('![{0}]({1})\n'.format(titulum, trivium))
+                        'image::{1}[title="++{0}++"]\n'.format(
+                            titulum, trivium))
+
                     if link:
                         resultatum.append(
                             'link:++{1}++[++{0}++]\n'.format(titulum, link))
