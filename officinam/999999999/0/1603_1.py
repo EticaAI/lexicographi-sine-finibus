@@ -235,15 +235,30 @@ def numerordinatio_nomen(
 
 
 def _brevis(rem: str) -> str:
+    linguam = ''
+    pseudo_ipa = ''
     if rem.find('///'):
         rem = rem.replace('///', '//')
 
     if not rem.find('||'):
         return rem
 
-    temp = rem.split('||')
+    if rem.find('/@'):
+        linguam = rem.split('/@')[-1]
+    if rem.startswith('//'):
+        pseudo_ipa = '//'
+    elif rem.startswith('/'):
+        pseudo_ipa = '/'
 
-    return temp[0].strip()
+    nomen = ''
+    temp = rem.split('||')
+    nomen = temp[0].strip()
+    if len(pseudo_ipa) > 0:
+        nomen = nomen + pseudo_ipa
+        if len(linguam) > 0:
+            nomen = nomen + '@' + linguam
+
+    return nomen
 
 
 def numerordinatio_trivium_sarcina(
@@ -1163,6 +1178,39 @@ class Codex:
 
         return resultatum
 
+
+    def codex_nota_bene(self) -> list:
+        """cōdex notā bene
+
+        Trivia:
+        - cōdex, m, s, (Nominative), https://en.wiktionary.org/wiki/codex#Latin
+        - notā bene, ---, https://en.wiktionary.org/wiki/nota_bene#Latin
+
+        Returns:
+            [list]:
+        """
+        paginae = []
+        # resultatum.append("[id=0_999_1603_1]")
+        paginae.append("== [0] Notā bene")
+        # resultatum.append("== Praefātiō \n")
+        # resultatum.extend((["{nbsp} +"] * 20))
+
+        # resultatum.append("[.text-rigth]")
+        # resultatum.append("[.lead]")
+
+        quote_textum = self.notitiae.translatio('{% _🗣️ 1603_1_99_50_1 🗣️_ %}')
+        paginae.append("[quote]")
+
+        nb100_1 = self.notitiae.translatio('{% _🗣️ 1603_1_99_100_1 🗣️_ %}')
+        paginae.append("[quote]")
+        # resultatum.append(
+        #     "/_**Public domain means that each major common issue "
+        #     "only needs to be resolved once**_/@eng-Latn")
+        paginae.append(quote_textum)
+        paginae.append("")
+
+        return paginae
+
     def conceptum_ad_tabula_verbis(self, rem: dict) -> list:
         """conceptum ad tabula verbīs
 
@@ -1380,6 +1428,7 @@ class Codex:
         # codex_appendici = self.codex_appendici()
         # methodi_ex_codice = self.methodi_ex_codice()
 
+        codex_nota_bene = self.codex_nota_bene()
         codex_archio = self.codex_archio()
         # Compute methodi_ex_codice last (to receive statistics of others)
         methodi_ex_codice = self.methodi_ex_codice()
@@ -1396,6 +1445,8 @@ class Codex:
         paginae.extend(["[.text-center]\n", 'Dictiōnāria initiīs'])
         paginae.extend(['', '<<<', ''])
         paginae.extend(codex_corpori)
+        paginae.extend(['', '<<<', ''])
+        paginae.extend(codex_nota_bene)
         paginae.extend(['', '<<<', ''])
         # exemplum = [
         #     '== /Test/',
