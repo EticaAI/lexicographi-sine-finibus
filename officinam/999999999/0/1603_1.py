@@ -1583,6 +1583,8 @@ class Codex:
         paginae.extend(['', '<<<', ''])
         paginae.extend(codex_corpori)
         paginae.extend(['', '<<<', ''])
+        paginae.extend(["[.text-center]\n", 'Dictiōnāria fīnālī'])
+        paginae.extend(['', '<<<', ''])
         paginae.extend(codex_nota_bene)
         paginae.extend(['', '<<<', ''])
         # exemplum = [
@@ -1709,7 +1711,7 @@ class Codex:
                 referentia.extend(self._referencia(referentia_textum, index))
 
         if len(referentia) > 0:
-            paginae.append('=== Referentia')
+            paginae.append('==== Referentia')
             # paginae.append('')
             # paginae.append('----')
             # paginae.append(str(referentia))
@@ -1854,6 +1856,21 @@ class Codex:
                 return res
 
         return None
+
+    def res_explanationibus(self, res: dict) -> list:
+        """rēs explānātiōnibus
+
+        _extended_summary_
+        Trivia:
+        - rēs, f, s, nom., https://en.wiktionary.org/wiki/res#Latin
+        - explānātiōnibus, f, pl, dativus,
+          https://en.wiktionary.org/wiki/explanatio#Latin
+
+        Returns:
+            list: paginae
+        """
+        paginae = []
+        return paginae
 
 
 class CodexAnnexo:
