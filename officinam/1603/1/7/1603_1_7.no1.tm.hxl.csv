@@ -43,6 +43,6 @@
 1603:1:7:2616:4354,2616_4354,60,60,/search formatter URL/@eng-Latn,,P4354,,,,ix_wikip4354,v_wiki_p_4354,"web page search URL; URI template from which ""$1"" can be automatically replaced with the string to be searched for. $1 can be whatever you want.",
 1603:1:7:2616:4945,2616_4945,60,60,/download link/@eng-Latn,,P4945,,,,ix_wikip4945,v_wiki_p_4945,URL which can be used to download a work,
 1603:1:7:2616:7535,2616_7535,60,60,/scope and content/@eng-Latn,,P7535,,,,ix_wikip7535,v_wiki_p_7535,a summary statement providing an overview of the archival collection,
-1603:1:7:2617,2617,11,11,/Wikidata Q local numeric namespace/,,,,,,ix_wikiq9289584,v_wiki_q_9289584,,
+1603:1:7:2617,2617,11,11,/Wikidata Q local numeric namespace/@eng-Latn,,,,,,ix_wikiq9289584,v_wiki_q_9289584,,
 1603:1:7:2617:355217,2617_355217,60,60,/to-do list/@eng-Latn,Q355217,,,,,ix_wikiq355217,v_wiki_q_355217,time management - procedures to process pending tasks and appointments within the available period,
 1603:1:7:2617:9289584,2617_9289584,60,60,caveat lector,Q9289584,,,,,ix_wikiq9289584,v_wiki_q_9289584,"Caveat lector is a Latin phrase meaning ""let the reader beware""",

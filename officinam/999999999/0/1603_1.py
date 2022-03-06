@@ -972,6 +972,11 @@ class Codex:
             meta['#item+rem+i_qcc+is_zxxx+ix_wikip50'] = \
                 qhxl(scrīptor, meta_langs)
 
+        translator = self.quod_res('0_1603_1_7_2616_655')
+        if translator and qhxl(translator, meta_langs) is not None:
+            meta['#item+rem+i_qcc+is_zxxx+ix_wikip655'] = \
+                qhxl(translator, meta_langs)
+
         dictiōnārium_ēditōrī = self.quod_res('0_1603_1_7_2616_98')
         if dictiōnārium_ēditōrī and \
                 qhxl(dictiōnārium_ēditōrī, meta_langs) is not None:
@@ -1077,11 +1082,19 @@ class Codex:
             self.m1603_1_1__de_codex['#item+rem+i_mul+is_zyyy']
         )
 
-        paginae.extend(descriptio_tabulae_de_lingua(
-            'Lingua Anglica (Abecedarium Latinum)',
-            codex_praefatio_textum
-            # ("".join(lineam) + '+' + "\n")
-        ))
+        meta = {}
+        meta['#item+rem+i_eng+is_latn'] = codex_praefatio_textum
+        # meta_tabulae = self.conceptum_ad_tabula_codicibus(meta)
+
+        # resultatum.extend(meta_tabulae)
+        # resultatum.append("\nres_explanationibus\n")
+        paginae.extend(self.res_explanationibus(meta))
+
+        # paginae.extend(descriptio_tabulae_de_lingua(
+        #     'Lingua Anglica (Abecedarium Latinum)',
+        #     codex_praefatio_textum
+        #     # ("".join(lineam) + '+' + "\n")
+        # ))
 
         # meta = {}
         # # meta_langs = [
@@ -1302,12 +1315,12 @@ class Codex:
                 resultatum.append('[discrete]')
                 resultatum.append(
                     ('=' * (codicem_ordo + 3)) + ' ' +
-                    'Annexa'
+                    'Annexa' + "\n"
                 )
                 resultatum.append('[discrete]')
                 resultatum.append(
                     ('=' * (codicem_ordo + 4)) + ' ' +
-                    'Pictūrae'
+                    'Pictūrae' + "\n"
                 )
                 for item in picturae:
                     trivium = item.quod_temp_rel_pic()
@@ -1725,8 +1738,10 @@ class Codex:
             # paginae.append(str(meta))
             # paginae.append("")
             if len(meta.keys()) > 0 and meta['#item+rem+i_qcc+is_zxxx+ix_wikip7535']:
-                meta_tabulae = self.conceptum_ad_tabula_codicibus(meta)
-                paginae.extend(meta_tabulae)
+
+                paginae.extend(self.res_explanationibus(meta))
+                # meta_tabulae = self.conceptum_ad_tabula_codicibus(meta)
+                # paginae.extend(meta_tabulae)
                 paginae.append("")
             else:
                 paginae.append(
@@ -1744,8 +1759,9 @@ class Codex:
                 meta2['#item+rem+i_qcc+is_zxxx+ix_wikiq9289584'] = term2
 
                 paginae.append('==== Caveat lector')
-                meta_tabulae = self.conceptum_ad_tabula_codicibus(meta2)
-                paginae.extend(meta_tabulae)
+                # meta_tabulae = self.conceptum_ad_tabula_codicibus(meta2)
+                # paginae.extend(meta_tabulae)
+                paginae.extend(self.res_explanationibus(meta2))
                 paginae.append("")
                 # meta['#item+rem+i_qcc+is_zxxx+ix_wikip7535'] = \
                 #     term.replace("\\n", "\n")
@@ -1941,10 +1957,15 @@ class Codex:
                         dlinguam['#item+rem+i_lat+is_latn'] + ''
 
                 if dlinguam and dlinguam['#item+rem+i_qcc+is_zxxx+ix_wikilngm']:
-                    item_text_i18n = '+++<span lang="{1}">{0}</span>+++'.format(
-                        item_textum,
-                        dlinguam['#item+rem+i_qcc+is_zxxx+ix_wikilngm']
-                    )
+                    # We're assuming if content have line breaks, it is complex
+                    # and we will not give hint about language.
+                    # This can be reviewed on the future
+                    if item_text_i18n.find("\n") == -1:
+
+                        item_text_i18n = '+++<span lang="{1}">{0}</span>+++'.format(
+                            item_textum,
+                            dlinguam['#item+rem+i_qcc+is_zxxx+ix_wikilngm']
+                        )
                 # resultatum_corpus.append(
                 #     "| {0} | {1} |".format(clavem_i18n, item_text_i18n))
                 # item_text_i18n = item_text_i18n.replace('||', '\|\|')
@@ -1961,7 +1982,7 @@ class Codex:
             for lingua in linguae:
                 paginae.append("  {0}:::\n{1}".format(
                     lingua[0],
-                    _pad(lingua[1], 4)
+                    _pad(_pre_pad(lingua[1]), 4)
                 ))
 
         return paginae
