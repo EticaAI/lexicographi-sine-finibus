@@ -1240,15 +1240,16 @@ class Codex:
                 ' [`' + codicem_loci + '`] ' + nomen + "\n"
             )
 
-            resultatum.append("\n")
-            resultatum.append(numerordinatio_summary(item))
-            resultatum.extend(self.conceptum_ad_tabula_codicibus(item))
-            resultatum.append("\n")
-            resultatum.extend(self.conceptum_ad_tabula_verbis(item))
-            resultatum.append("\n")
+            # resultatum.append("\n")
+            # resultatum.append(numerordinatio_summary(item))
+            # resultatum.extend(self.conceptum_ad_tabula_codicibus(item))
+            # resultatum.append("\n")
+            # Verba already working
+            # resultatum.extend(self.conceptum_ad_tabula_verbis(item))
+            # resultatum.append("\n")
 
             # TODO res_explanationibus
-            resultatum.append("\nres_explanationibus\n")
+            # resultatum.append("\nres_explanationibus\n")
             resultatum.extend(self.res_explanationibus(item))
             resultatum.append("\n")
 
@@ -1821,7 +1822,6 @@ class Codex:
     def res_explanationibus(self, res: dict) -> list:
         """rēs explānātiōnibus
 
-        _extended_summary_
         Trivia:
         - rēs, f, s, nom., https://en.wiktionary.org/wiki/res#Latin
         - explānātiōnibus, f, pl, dativus,
@@ -1837,13 +1837,15 @@ class Codex:
         linguae_totale = 0
 
         for clavem, item_textum in res.items():
-            if not clavem.startswith('#item+rem+i_qcc'):
+            # if not clavem.startswith('#item+rem+i_qcc'):
+            if not clavem.startswith('#item+rem+i_qcc+is_zxxx'):
                 continue
 
             dinterlinguam = self.dictionaria_interlinguarum.formatum_nomen(
                 clavem)
             clavem_i18n = dinterlinguam
 
+            # if item_textum and len(item_textum) > 0:
             if item_textum:
                 clavem_i18n = clavem if clavem_i18n is None else clavem_i18n
                 item_text_i18n = item_textum
@@ -1856,9 +1858,14 @@ class Codex:
                     ))
 
                 interlinguae.append([clavem_i18n, item_text_i18n])
+                # interlinguae.append([clavem_i18n, item_textum])
                 interlinguae_totale += 1
+            # else:
+            #     interlinguae.append(['Error: ' + clavem_i18n, item_textum])
+            #     interlinguae_totale += 1
 
-        if interlinguae_totale > 1:
+        # if interlinguae_totale > 1:
+        if len(interlinguae) > 0:
 
             paginae.append("Rēs interlinguālibus::")
 
@@ -1897,20 +1904,20 @@ class Codex:
                         dlinguam['#item+rem+i_lat+is_latn'] + ''
 
                 if dlinguam and dlinguam['#item+rem+i_qcc+is_zxxx+ix_wikilngm']:
-                    item_text_i18n = '<span lang="{1}">{0}</span>'.format(
+                    item_text_i18n = '+++<span lang="{1}">{0}</span>+++'.format(
                         item_textum,
                         dlinguam['#item+rem+i_qcc+is_zxxx+ix_wikilngm']
                     )
                 # resultatum_corpus.append(
                 #     "| {0} | {1} |".format(clavem_i18n, item_text_i18n))
-                item_text_i18n = item_text_i18n.replace('||', '\|\|')
+                # item_text_i18n = item_text_i18n.replace('||', '\|\|')
                 linguae.append([clavem_i18n, item_text_i18n])
                 # linguae.append("| {0}".format(clavem_i18n))
                 # linguae.append("| +++{0}+++".format(item_text_i18n))
                 # linguae.append("")
                 linguae_totale += 1
 
-        if linguae_totale > 1:
+        if linguae_totale > 0:
 
             paginae.append("Rēs linguālibus::")
 
