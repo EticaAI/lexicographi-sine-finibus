@@ -268,6 +268,12 @@ def _brevis(rem: str) -> str:
     return nomen
 
 
+def _pre_pad(textum: str) -> str:
+    if not textum:
+        return textum
+
+    return textum.replace("\n\n", "\n+++<br><br>+++\n")
+
 def _pad(textum: str, pad: int) -> str:
     lineam = textum.splitlines()
     resultatum = ''
@@ -1189,7 +1195,7 @@ class Codex:
                 term2 = self.notitiae.translatio(term)
                 meta = {}
                 meta['#item+rem+i_qcc+is_zxxx+ix_wikip7535'] = term2
-                meta_tabulae = self.conceptum_ad_tabula_codicibus(meta)
+                # meta_tabulae = self.conceptum_ad_tabula_codicibus(meta)
 
                 resultatum.append("<<<")
 
@@ -1214,10 +1220,12 @@ class Codex:
                 )
                 resultatum.append("")
 
-                resultatum.extend(meta_tabulae)
-                resultatum.append("")
+                # resultatum.extend(meta_tabulae)
+                # resultatum.append("\nres_explanationibus\n")
+                resultatum.extend(self.res_explanationibus(meta))
+                # resultatum.append("")
                 resultatum.append("<<<")
-                resultatum.append("")
+                # resultatum.append("")
                 continue
 
             # resultatum.append("<<<")
@@ -1872,7 +1880,7 @@ class Codex:
             for interlingua in interlinguae:
                 paginae.append("  {0}:::\n{1}".format(
                     interlingua[0],
-                    _pad(interlingua[1], 4)
+                    _pad(_pre_pad(interlingua[1]), 4)
                 ))
 
         for clavem, item_textum in res.items():
