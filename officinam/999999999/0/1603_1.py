@@ -1987,6 +1987,124 @@ class Codex:
 
         return paginae
 
+    def res_explanationibus_meta(self, res: dict, nomen: str) -> list:
+        """rēs explānātiōnibus
+
+        Trivia:
+        - rēs, f, s, nom., https://en.wiktionary.org/wiki/res#Latin
+        - explānātiōnibus, f, pl, dativus,
+          https://en.wiktionary.org/wiki/explanatio#Latin
+
+        Returns:
+            list: paginae
+        """
+        paginae = []
+        interlinguae = []
+        interlinguae_totale = 0
+        linguae = []
+        linguae_totale = 0
+
+        # paginae.append("Rēs::")
+        paginae.append("  {0}:::".format(nomen))
+
+        for clavem, item_textum in res.items():
+            # if not clavem.startswith('#item+rem+i_qcc'):
+            if not clavem.startswith('#item+rem+i_qcc+is_zxxx'):
+                continue
+
+            dinterlinguam = self.dictionaria_interlinguarum.formatum_nomen(
+                clavem)
+            clavem_i18n = dinterlinguam
+
+            # if item_textum and len(item_textum) > 0:
+            if item_textum:
+                clavem_i18n = clavem if clavem_i18n is None else clavem_i18n
+                item_text_i18n = item_textum
+                item_text_i18n = \
+                    self.dictionaria_interlinguarum.formatum_res_facto(
+                        res, clavem)
+                if clavem.startswith('#item+rem+i_qcc+is_zxxx+'):
+                    self.usus_ix_qcc.add(clavem.replace(
+                        '#item+rem+i_qcc+is_zxxx+', ''
+                    ))
+
+                interlinguae.append([clavem_i18n, item_text_i18n])
+                # interlinguae.append([clavem_i18n, item_textum])
+                interlinguae_totale += 1
+            # else:
+            #     interlinguae.append(['Error: ' + clavem_i18n, item_textum])
+            #     interlinguae_totale += 1
+
+        # if interlinguae_totale > 1:
+        if len(interlinguae) > 0:
+
+            paginae.append("    Rēs interlinguālibus::::")
+
+            for interlingua in interlinguae:
+                paginae.append("      {0};;\n{1}".format(
+                    interlingua[0],
+                    _pad(_pre_pad(interlingua[1]), 8)
+                ))
+
+        for clavem, item_textum in res.items():
+            if clavem.startswith('#item+conceptum'):
+                continue
+            if clavem.startswith('#status+conceptum'):
+                continue
+            if clavem.startswith('#item+rem+i_qcc'):
+                continue
+            if item_textum and len(item_textum) > 0:
+                clavem_i18n = clavem
+                clavem_norm = clavem.replace('#item+rem', '')
+                clavem_norm_bcp47 = qhxl_attr_2_bcp47(clavem_norm)
+                clavem_norm = clavem_norm.replace('+ix_signum', '')
+                clavem_norm = clavem_norm.replace('+ix_trivium', '')
+                clavem_norm = clavem_norm.replace('+ix_iri', '')
+
+                self.usus_linguae.add(clavem)
+
+                if clavem_norm_bcp47 not in self.usus_linguae_concepta:
+                    self.usus_linguae_concepta[clavem_norm_bcp47] = 0
+                self.usus_linguae_concepta[clavem_norm_bcp47] += 1
+
+                item_text_i18n = item_textum
+                dlinguam = self.dictionaria_linguarum.quod(clavem_norm)
+
+                if dlinguam and dlinguam['#item+rem+i_lat+is_latn']:
+                    clavem_i18n = '' + \
+                        dlinguam['#item+rem+i_lat+is_latn'] + ''
+
+                if dlinguam and dlinguam['#item+rem+i_qcc+is_zxxx+ix_wikilngm']:
+                    # We're assuming if content have line breaks, it is complex
+                    # and we will not give hint about language.
+                    # This can be reviewed on the future
+                    if item_text_i18n.find("\n") == -1:
+
+                        item_text_i18n = '+++<span lang="{1}">{0}</span>+++'.format(
+                            item_textum,
+                            dlinguam['#item+rem+i_qcc+is_zxxx+ix_wikilngm']
+                        )
+                # resultatum_corpus.append(
+                #     "| {0} | {1} |".format(clavem_i18n, item_text_i18n))
+                # item_text_i18n = item_text_i18n.replace('||', '\|\|')
+                linguae.append([clavem_i18n, item_text_i18n])
+                # linguae.append("| {0}".format(clavem_i18n))
+                # linguae.append("| +++{0}+++".format(item_text_i18n))
+                # linguae.append("")
+                linguae_totale += 1
+
+        if linguae_totale > 0:
+
+            paginae.append("    Rēs linguālibus::::")
+
+            for lingua in linguae:
+                paginae.append("  {0};;\n{1}".format(
+                    lingua[0],
+                    _pad(_pre_pad(lingua[1]), 8)
+                ))
+
+        return paginae
+
 
 class CodexAnnexo:
     """Cōdex annexō
