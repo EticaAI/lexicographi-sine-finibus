@@ -74,9 +74,11 @@ Exemplōrum gratiā:
 {0} --de-archivum
     {0} --de-archivum 1603/1/1/1603_1_1.no1.tm.hxl.csv
 
-    {0} ./999999999/0/1603_1.py --dictionaria-numerordinatio
+    {0} --dictionaria-numerordinatio
 
-    {0} ./999999999/0/1603_1.py --codex-de 1603_25_1
+    {0} --codex-de 1603_25_1
+
+    {0} --codex-de 1603_25_1 --codex-copertae
 
 """.format(__file__)
 
@@ -474,11 +476,12 @@ class Codex:
         objectivum_linguam: str = None,
         auxilium_linguam: list = None,
         formatum: str = 'asciidoctor',
-
+        # codex_copertae: bool = False,
     ):
 
         self.de_codex = de_codex
         self.formatum = formatum
+        # self.codex_copertae = codex_copertae
         if objectivum_linguam:
             self.objectivum_linguam = objectivum_linguam
         if auxilium_linguam:
@@ -1700,6 +1703,37 @@ class Codex:
         # paginae.extend(self._sarcinarum())
 
         # return "\n".join(paginae)
+        return paginae
+
+    def imprimere_codex_copertae(self) -> list:
+        """imprimere /print/@eng-Latn
+
+        Trivia:
+        - cōdex, m, s, (Nominative), https://en.wiktionary.org/wiki/codex#Latin
+        - imprimere, v, s, (), https://en.wiktionary.org/wiki/imprimo#Latin
+        - pāginae, f, pl, (Nominative), https://en.wiktionary.org/wiki/pagina
+
+        Returns:
+            [list]:
+        """
+        # We simulate book press without actually storing the result
+        self.imprimere()
+        from pathlib import Path
+        template = Path(NUMERORDINATIO_BASIM +
+                        '/999999999/0/codex_copertae.svg').read_text()
+        codex_copertae = template.replace(
+            '{{codex_numero}}', numerordinatio_neo_separatum(self.de_codex, ':'))
+        codex_copertae = codex_copertae.replace(
+            '{{codex_nomini}}', self.m1603_1_1__de_codex['#item+rem+i_mul+is_zyyy'])
+        codex_copertae = codex_copertae.replace(
+            '{{concepta}}', str(self.summis_concepta))
+        codex_copertae = codex_copertae.replace(
+            '{{res_lingualibus}}', str(len(self.usus_linguae)))
+        codex_copertae = codex_copertae.replace(
+            '{{res_interlingualibus}}', str(len(self.usus_ix_qcc)))
+        paginae = []
+        paginae.append(codex_copertae)
+
         return paginae
 
     def methodi_ex_codice(self) -> list:
@@ -3713,6 +3747,17 @@ class CLI_2600:
             type=lambda x: x.split(',')
         )
 
+        archivum.add_argument(
+            '--codex-copertae',
+            help='Pre-calculate the codex, but only generate '
+            'Codex cover (SVG)',
+            # metavar='',
+            dest='codex_copertae',
+            # const=True,
+            action='store_true',
+            # nargs='?'
+        )
+
         # # --agendum-linguam is a draft. Not 100% implemented
         # parser.add_argument(
         #     '--agendum-linguam', '-AL',
@@ -3793,10 +3838,14 @@ class CLI_2600:
                 self.pyargs.codex_de,
                 objectivum_linguam=self.pyargs.objectivum_linguam,
                 auxilium_linguam=self.pyargs.auxilium_linguam,
-                formatum=formatum
+                formatum=formatum,
+                # codex_copertae=self.pyargs.codex_copertae
             )
             # data = ['TODO']
-            return self.output(codex.imprimere())
+            if not self.pyargs.codex_copertae:
+                return self.output(codex.imprimere())
+            else:
+                return self.output(codex.imprimere_codex_copertae())
 
         if self.pyargs.dictionaria_numerordinatio:
             dictionaria_numerordinatio = DictionariaNumerordinatio()

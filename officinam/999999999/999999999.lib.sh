@@ -557,20 +557,27 @@ neo_codex_copertae_de_numerordinatio() {
     rm "$objectivum_archivum"
   fi
 
-  cp "$fontem_archivum" "$objectivum_archivum_temporarium"
+  # cp "$fontem_archivum" "$objectivum_archivum_temporarium"
 
-  sed -i "s|{{codex_numero}}|${_prefix}|" "$objectivum_archivum_temporarium"
+  # sed -i "s|{{codex_numero}}|${_prefix}|" "$objectivum_archivum_temporarium"
 
-  # TODO: replace at least the name name the book
+  # # TODO: replace at least the name name the book
 
-  mv "$objectivum_archivum_temporarium" "$objectivum_archivum"
+  # mv "$objectivum_archivum_temporarium" "$objectivum_archivum"
 
   # rm "$objectivum_archivum_temporarium"
 
-  echo "${FUNCNAME[0]} [$objectivum_archivum]"
+  # "${ROOTDIR}/999999999/0/1603_1.py" --codex-de 1603_25_1 --codex-copertae
+
+  "${ROOTDIR}/999999999/0/1603_1.py" \
+    --objectivum-linguam="$est_objectivum_linguam" \
+    --auxilium-linguam="$est_auxilium_linguam" \
+    --codex-de "$_nomen" \
+    --codex-copertae \
+    >"$objectivum_archivum"
+
+  # echo "${FUNCNAME[0]} [$objectivum_archivum]"
   # echo "@TODO this is a draft"
-
-
 
   # rm "$objectivum_archivum_temporarium"
 }

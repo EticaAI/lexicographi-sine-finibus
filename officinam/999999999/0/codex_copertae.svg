@@ -86,6 +86,72 @@
          id="tspan11"
          x="98.994949"
          y="62.412724"
-         style="-inkscape-font-specification:'sans-serif, Normal';font-family:sans-serif;font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal;font-size:42.66666667px;text-anchor:start;text-align:start;writing-mode:lr;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal">[{{codex_nomini}}]</tspan></text>
+         style="-inkscape-font-specification:'Noto Serif, Normal';font-family:Noto Serif">{{codex_nomini}}</tspan></text>
+         <text
+         xml:space="preserve"
+         style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#586671;fill-opacity:1;stroke:none;"
+         x="105.05586"
+         y="864.47394"
+         id="text15"><tspan
+           sodipodi:role="line"
+           id="tspan13"
+           x="105.05586"
+           y="864.47394"
+           style="-inkscape-font-specification:'Noto Serif';font-family:'Noto Serif';font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal;fill:#586671;fill-opacity:1;">Concepta:</tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+         x="103.04768"
+         y="913.54321"
+         id="text15-3"><tspan
+           sodipodi:role="line"
+           id="tspan13-3"
+           x="103.04768"
+           y="913.54321"
+           style="-inkscape-font-specification:'Noto Serif';font-family:'Noto Serif';font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal;fill:#586671;fill-opacity:1">Rēs linguālibus:</tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+         x="102.44827"
+         y="968.44299"
+         id="text15-3-8"><tspan
+           sodipodi:role="line"
+           id="tspan13-3-6"
+           x="102.44827"
+           y="968.44299"
+           style="-inkscape-font-specification:'Noto Serif';font-family:'Noto Serif';font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal;fill:#586671;fill-opacity:1">Rēs interlinguālibus:</tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+         x="293.93408"
+         y="863.98907"
+         id="text59"><tspan
+           sodipodi:role="line"
+           x="293.93408"
+           y="863.98907"
+           id="tspan61"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Noto Serif';-inkscape-font-specification:'Noto Serif';fill:#d3220e;fill-opacity:1">{{concepta}}</tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+         x="407.65982"
+         y="911.23932"
+         id="text59-0"><tspan
+           sodipodi:role="line"
+           x="407.65982"
+           y="911.23932"
+           id="tspan61-4"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Noto Serif';-inkscape-font-specification:'Noto Serif';fill:#d3220e;fill-opacity:1">{{res_lingualibus}}</tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+         x="497.92761"
+         y="966.79773"
+         id="text59-0-8"><tspan
+           sodipodi:role="line"
+           x="497.92761"
+           y="966.79773"
+           id="tspan61-4-8"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Noto Serif';-inkscape-font-specification:'Noto Serif';fill:#d3220e;fill-opacity:1">{{res_interlingualibus}}</tspan></text>
   </g>
 </svg>
