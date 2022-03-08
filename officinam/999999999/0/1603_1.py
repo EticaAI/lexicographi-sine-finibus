@@ -968,8 +968,9 @@ class Codex:
         # basepath = basepath + '/' + \
         #     numerordinatio_neo_separatum(self.de_codex, '_')
         if os.path.exists(_basepath + '/' + _codex_cover):
-            resultatum.append(":front-cover-image: image:{0}[\"Cōdex [{0}]: {1}\",1050,1600]".format(
+            resultatum.append(":front-cover-image: image:{0}[\"Cōdex [{1}]: {2}\",1050,1600]".format(
                 _codex_cover,
+                _codex_numerum,
                 self.m1603_1_1__de_codex['#item+rem+i_mul+is_zyyy']
             ))
 

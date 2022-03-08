@@ -147,6 +147,7 @@ file_convert_numerordinatio_de_hxltm "1603_1_99" "1" "0"
 # neo_codex_de_numerordinatio_epub "1603_1_6" "0" "0"
 
 neo_codex_de_numerordinatio "1603_1_7" "0" "0"
+neo_codex_copertae_de_numerordinatio "1603_1_7" "0" "0"
 neo_codex_de_numerordinatio_pdf "1603_1_7" "0" "0"
 neo_codex_de_numerordinatio_epub "1603_1_7" "0" "0"
 
