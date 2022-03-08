@@ -1935,27 +1935,30 @@ class Codex:
         # ...interlinguae
         # picturae...
         if picturae is not None and len(picturae) > 0:
-            paginae.append("Rēs pictūrīs::")
+            # paginae.append("Rēs pictūrīs::")
+            paginae.append("")
+            paginae.append("")
+            paginae.append("* **Rēs pictūrīs**")
             for pictura in picturae:
                 trivium = pictura.quod_temp_rel_pic()
                 titulum = pictura.quod_titulum()
                 # link = item.quod_temp_link()
                 link = pictura.quod_link()
-                # paginae.append('  image')
-                # paginae.append('  +')
-                # paginae.append('  --')
-                paginae.append('  +++<img src="{1}" alt="{0}" style="max-width: 100%;">+++'.format(
-                        titulum, trivium))
 
 
-                # paginae.append('')
-                # paginae.append(
-                #     '  . image::{1}[title="++{0}++"]\n'.format(
+                # This works (for inline rendering, but not PDF)
+                # paginae.append('  +++<img src="{1}" alt="{0}" style="max-width: 100%;">+++'.format(
                 #         titulum, trivium))
+
+                # paginae.append('  Item N:::')
+                # paginae.append(
+                #     '    image::{1}[title="++{0}++"]'.format(
+                #         titulum, trivium))
+                # paginae.append('')
+
                 paginae.append(
-                    '  image::{1}[title="++{0}++"]'.format(
-                        titulum, trivium))
-                # paginae.append('  --')
+                    '** {2}\n+\nimage::{1}[title="++{0}++"]'.format(
+                        titulum, trivium, '{nbsp}'))
                 # paginae.append('')
                 # if link:
                 #     paginae.append(
@@ -1964,6 +1967,7 @@ class Codex:
                 #     lingua[0],
                 #     _pad(_pre_pad(lingua[1]), 4)
                 # ))
+            paginae.append("")
 
         # ...picturae
         # linguae...
