@@ -929,6 +929,7 @@ class Codex:
         # resultatum.append(":toc:")
         resultatum.append(":toc: macro")
         resultatum.append(":toclevels: 5")
+        # resultatum.append(":pdf-page-size: [8.25in, 11.69in]")  # A5
         # resultatum.append(":orgname: Etica.AI")
         # resultatum.append(":version: 1.2.3")
 

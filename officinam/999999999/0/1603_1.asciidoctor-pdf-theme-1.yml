@@ -1,12 +1,39 @@
 # SVG about families https://upload.wikimedia.org/wikipedia/commons/4/4f/IndoEuropeanTree.svg
-
+# @see https://github.com/asciidoctor/asciidoctor-pdf/blob/main/docs/theming-guide.adoc
 extends: default
+zz_definition_tt: 978466  # maron semi-claro
+zz_titles_medio: 412f1b         # marron escuro forte
+zz_titles_forte: b23f2e         # vermelho quase marron
+zz_green_strong: 1b4332
+zz_green_medium: 40916c
+zz_green_weak: 95d5b2
+zz_gray_medium: 677f87
+page:
+  size: A5
 base:
   align: left
 image:
   align: center
 caption:
   align: center
+# description_list:
+#   term_font_style: bold
+#   term_spacing: $vertical_rhythm / 4
+#   description_indent: $horizontal_rhythm * 1.25
+description_list:
+#   # term_font_style: bold
+#   # term_spacing: $vertical_rhythm / 4
+#   # description_indent: $horizontal_rhythm * 1.25
+  # term-font-color: $zz_definition_tt
+  # term-font-color: $zz_green_strong
+# heading:
+#   h1-font-color: $zz_titles_forte
+#   h2-font-color: $zz_titles_forte
+#   h3-font-color: $zz_titles_medio
+#   h4-font-color: $zz_titles_medio
+#   h5-font-color: $zz_titles_medio
+#   h6-font-color: $zz_titles_medio
+
 font:
   catalog:
     merge: true
@@ -25,6 +52,12 @@ font:
       italic: NotoSans-Italic.ttf
       bold: NotoSans-Bold.ttf
       bold_italic: NotoSans-BoldItalic.ttf
+    # Replaces default-theme.yml
+    Noto Serif:
+      normal: NotoSerif-Regular.ttf
+      bold: NotoSerif-Bold.ttf
+      italic: NotoSerif-Italic.ttf
+      bold_italic: NotoSerif-BoldItalic.ttf
     NotoSansArabic:
       bold: NotoSansArabic-Bold.ttf
       normal: NotoSansArabic-Regular.ttf
@@ -105,3 +138,10 @@ font:
 # https://unix.stackexchange.com/questions/358673/convert-in-command-line-an-sfd-file-fontforge-to-ttf-otf-woff-svg
 # fontforge -c 'Open($1); Generate($2)' foo.sfd foo.ttf
 # fontforge -c 'Open($1); Generate($2)' /usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc 999999/1603/1/3/NotoSansCJK-Regular.ttf
+
+# red forte #D3220Eff
+# red -1: #AD3F26
+# red -2: #C95140
+# azul forte: #D4DED3
+# gray forte: #586671
+# marron sujo forte: #3D2C12
