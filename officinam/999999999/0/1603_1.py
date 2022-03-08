@@ -1856,8 +1856,25 @@ class Codex:
         #     self.m1603_1_1__de_codex))
 
         if len(self.usus_ix_qcc):
-            paginae.extend(self.dictionaria_interlinguarum.imprimere(
-                list(self.usus_ix_qcc)))
+            # paginae.extend(self.dictionaria_interlinguarum.imprimere(
+            #     list(self.usus_ix_qcc)))
+            paginae.append("==== Rēs interlinguālibus: {0}".format(
+                len(self.usus_ix_qcc)))
+            # paginae.append("")
+            # paginae.append("testtest")
+            # paginae.append("")
+            paginae.append("Rēs::")
+            usus = list(self.usus_ix_qcc)
+            for item in usus:
+                # paginae.append("  {0}:::".format(item))
+                # paginae.append("    {0}".format(
+                #     str(self.dictionaria_interlinguarum.quod(item))
+                # ))
+                interlingua = self.dictionaria_interlinguarum.quod(item)
+                nomen = interlingua['#item+rem+i_lat+is_latn']
+                paginae.extend(
+                    self.res_explanationibus_meta(interlingua, nomen))
+                # paginae.append("")
 
         return paginae
 
@@ -2098,7 +2115,7 @@ class Codex:
             paginae.append("    Rēs linguālibus::::")
 
             for lingua in linguae:
-                paginae.append("  {0};;\n{1}".format(
+                paginae.append("      {0};;\n{1}".format(
                     lingua[0],
                     _pad(_pre_pad(lingua[1]), 8)
                 ))
