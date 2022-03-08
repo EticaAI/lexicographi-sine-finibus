@@ -18,6 +18,8 @@
 /officinam/**/**.xml
 /officinam/**/**.tmx
 /officinam/**/**.tbx
+/officinam/**/**.png
+/officinam/**/**.jpg
 # /officinam/README.md
 /officinam/LICENSE.md
 /officinam/package.json
