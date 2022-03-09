@@ -995,7 +995,7 @@ class Codex:
         dominium_publicum = self.codex_dominium_publicum()
 
         resultatum.extend(dominium_publicum)
-        resultatum.extend((["{nbsp} +"] * 5))
+        # resultatum.extend((["{nbsp} +"] * 1))
         # resultatum.append("<<<")
 
         meta = {}
@@ -1087,7 +1087,7 @@ class Codex:
         # resultatum.append("[id=0_999_1603_1]")
         # resultatum.append("== [0] /Praefātiō/@lat-Latn \n")
         # resultatum.append("== Praefātiō \n")
-        resultatum.extend((["{nbsp} +"] * 5))
+        resultatum.extend((["{nbsp} +"] * 2))
 
         # resultatum.append("[.text-rigth]")
         # resultatum.append("[.lead]")
@@ -1099,6 +1099,7 @@ class Codex:
         #     "only needs to be resolved once**_/@eng-Latn")
         resultatum.append(quote_textum)
         resultatum.append("")
+        resultatum.append("'''")
 
         return resultatum
 

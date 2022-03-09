@@ -1,5 +1,8 @@
 # SVG about families https://upload.wikimedia.org/wikipedia/commons/4/4f/IndoEuropeanTree.svg
 # @see https://github.com/asciidoctor/asciidoctor-pdf/blob/main/docs/theming-guide.adoc
+# @see https://practicaltypography.com/text-formatting.html
+
+
 extends: default
 
 #### ---------------------------------------------------------------------------
@@ -10,6 +13,26 @@ zz_green_strong: 1b4332
 zz_green_medium: 40916c
 zz_green_weak: 95d5b2
 zz_gray_medium: 677f87
+
+codex:
+  # Trivia: color https://en.wiktionary.org/wiki/color#Latin
+  color:
+    # Trivia:
+    # - /hyperlink/@eng-Latn, ---, https://en.wiktionary.org/wiki/hyper-#English
+    #   - /hyper-/@eng-Latn, ---, https://en.wiktionary.org/wiki/hyper-#English
+    #     - /super-/@lat-Latn, ---, https://en.wiktionary.org/wiki/super-#Latin
+    #   - /link/@eng-Latn, ---, https://en.wiktionary.org/wiki/link#English
+    #     - /chain/@eng-Latn, /knot/@eng-Latn
+    #       - /knot/@eng-Latn, ---, https://en.wiktionary.org/wiki/knot#English
+    #         - nōdus, m, s, Nom., https://en.wiktionary.org/wiki/nodus#Latin
+    # - ... supernōdus, m, s, (/protologism/@eng-Latn)
+    #   - Issue: /supernōdus/@lat-Latn would be the concept, not the link itself
+    # - extrā (+ accūsātīvus), ---,  https://en.wiktionary.org/wiki/extra#Latin
+    # - nōdum, m, s, accūsātīvus, https://en.wiktionary.org/wiki/nodus#Latin
+    # - ... extrānōdum, m, s, (/protologism/@eng-Latn)
+    extranodum: 428BCA # codex_color_extranodum
+  temp:
+    # text-underline-position: under  # codex_temp_text-underline-position
 #### ---------------------------------------------------------------------------
 
 page:
@@ -20,7 +43,7 @@ page:
   # margin_inner and margin_outer keys are used for recto/verso print margins when media=prepress
   margin_inner: 0.75in
   margin_outer: 0.59in
-  size: A5                                           ### DEFAULT CHANCEG: was A4
+  size: A5                                           ### DEFAULT CHANCED: was A4
 base:
   align: left
   # color as hex string (leading # is optional)
@@ -72,7 +95,8 @@ horizontal_rhythm: $base_line_height_length
 # QUESTION should vertical_spacing be block_spacing instead?
 vertical_spacing: $vertical_rhythm
 link:
-  font_color: 428BCA
+  font_color: $codex_color_extranodum
+  text_decoration: underline                ### DEFAULT CHANCED: added underline
 # literal is currently used for inline monospaced in prose and table cells
 literal:
   font_color: B12146
@@ -134,7 +158,7 @@ block:
   margin_top: 0
   margin_bottom: $vertical_rhythm
 caption:
-  align: center                                    ### DEFAULT CHANCEG: was left
+  align: center                                    ### DEFAULT CHANCED: was left
   font_size: $base_font_size * 0.95
   font_style: italic
   # FIXME perhaps set line_height instead of / in addition to margins?
@@ -211,7 +235,7 @@ example:
   # FIXME reenable padding bottom once margin collapsing is implemented
   padding: [$vertical_rhythm, $horizontal_rhythm, 0, $horizontal_rhythm]
 image:
-  align: center                                    ### DEFAULT CHANCEG: was left
+  align: center                                    ### DEFAULT CHANCED: was left
 prose:
   margin_top: $block_margin_top
   margin_bottom: $block_margin_bottom
@@ -261,6 +285,8 @@ toc:
     #content: ". "
     font_color: A9A9A9
     #levels: 2 3
+  text_decoration: underline                ### DEFAULT CHANCED: added underline   
+  font_color: $codex_color_extranodum      ### DEFAULT CHANCED: added link color  
 footnotes:
   font_size: round($base_font_size * 0.75)
   item_spacing: $outline_list_item_spacing / 2
