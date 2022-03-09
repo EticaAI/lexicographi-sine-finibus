@@ -3,7 +3,7 @@
 # @see https://github.com/mraible/infoq-mini-book/blob/main/src/main/ruby/asciidoctor-pdf-extensions.rb
 # frozen_string_literal: true
 
-# Note: this is mostly a proof of concept of how to extend the PDF formater.
+# NOTE: this is mostly a proof of concept of how to extend the PDF formater.
 #       Is not doing anything super critical for now (2022-03-09)
 
 class CustomPDFConverter < (Asciidoctor::Converter.for 'pdf')

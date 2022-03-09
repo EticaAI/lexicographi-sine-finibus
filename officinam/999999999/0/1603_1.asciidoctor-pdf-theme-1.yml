@@ -3,16 +3,17 @@
 # @see https://practicaltypography.com/text-formatting.html
 
 
-extends: default
+# extends: default
+extends: false
 
 #### ---------------------------------------------------------------------------
-zz_definition_tt: 978466  # maron semi-claro
-zz_titles_medio: 412f1b         # marron escuro forte
-zz_titles_forte: b23f2e         # vermelho quase marron
-zz_green_strong: 1b4332
-zz_green_medium: 40916c
-zz_green_weak: 95d5b2
-zz_gray_medium: 677f87
+# zz_definition_tt: 978466  # maron semi-claro
+# zz_titles_medio: 412f1b         # marron escuro forte
+# zz_titles_forte: b23f2e         # vermelho quase marron
+# zz_green_strong: 1b4332
+# zz_green_medium: 40916c
+# zz_green_weak: 95d5b2
+# zz_gray_medium: 677f87
 
 codex:
   # Trivia: color https://en.wiktionary.org/wiki/color#Latin
@@ -294,6 +295,16 @@ header:
   font_size: $base_font_size_small
   line_height: 1
   vertical_align: middle
+# header:
+  # recto:
+  #   left:
+  #     content: '{page-number}'
+  # recto:
+  #   center:
+  #     content: '(C) ACME -- v{revnumber}, {docdate}'
+  # verso:
+  #   center:
+  #     content: $header-recto-center-content
 footer:
   font_size: $base_font_size_small
   # NOTE if background_color is set, background and border will span width of page
@@ -306,17 +317,26 @@ footer:
   recto:
     #columns: "<50% =0% >50%"
     right:
-      content: '{page-number}'
+      # content: '{page-number}'
+      content: '{section-or-chapter-title} | {page-number}'
   verso:
     #columns: $footer_recto_columns
     left:
-      content: $footer_recto_right_content
-
-
-
-
-
-
+      # content: '{page-number}'
+      content: '{page-number} | {section-or-chapter-title}'
+# footer:
+#   height: 0.75in
+#   line-height: 1.2
+#   recto:
+#     right:
+#       content: |
+#         Section Title - Page Number +
+#         {section-or-chapter-title} - {page-number}
+#   verso:
+#     left:
+#       content: |
+#         Page Number - Chapter Title +
+#         {page-number} - {chapter-title}
 
 
 #### ---------------------------------------------------------------------------
@@ -344,8 +364,8 @@ footer:
 
 font:
   catalog:
-    merge: true
-    # merge: false
+    # merge: true
+    merge: false
     # M+ 1p supports Latin, Latin-1 Supplement, Latin Extended, Greek, Cyrillic, Vietnamese, Japanese & an assortment of symbols
     # It also provides arrows for ->, <-, => and <= replacements in case these glyphs are missing from font
     M+ 1p Fallback: mplus1p-regular-fallback.ttf
@@ -366,6 +386,12 @@ font:
       bold: NotoSerif-Bold.ttf
       italic: NotoSerif-Italic.ttf
       bold_italic: NotoSerif-BoldItalic.ttf
+    # M+ 1mn supports ASCII and the circled numbers used for conums
+    M+ 1mn:
+      normal: mplus1mn-regular-subset.ttf
+      bold: mplus1mn-bold-subset.ttf
+      italic: mplus1mn-italic-subset.ttf
+      bold_italic: mplus1mn-bold_italic-subset.ttf
     NotoSansArabic:
       bold: NotoSansArabic-Bold.ttf
       normal: NotoSansArabic-Regular.ttf
