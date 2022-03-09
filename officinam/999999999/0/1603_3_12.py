@@ -63,6 +63,7 @@ from typing import (
     # Type,
     Union
 )
+from time import sleep
 import math
 import urllib.parse
 import requests
@@ -81,6 +82,10 @@ DESCRIPTION = """
 
 # In Python2, sys.stdin is a byte stream; in Python3, it's a text stream
 STDIN = sys.stdin.buffer
+
+# @see https://meta.wikimedia.org/wiki/User-Agent_policy
+# @see https://www.mediawiki.org/wiki/API:Etiquette
+USER_AGENT="EticaAI-multilingual-lexicography/2022.3.9 (https://meta.wikimedia.org/wiki/User:EmericusPetro; rocha@ieee.org) 1603_3_12.py/0.1"
 
 # print('getcwd:      ', os.getcwd())
 # print('oi', NUMERORDINATIO_BASIM)
@@ -568,6 +573,8 @@ class CLI_2600:
                     full_query.append(line)
 
                 sparql_backend = "https://query.wikidata.org/sparql"
+                # sparql_backend = "http://localhost:1234/"
+                # @see https://stackoverflow.com/questions/10588644
 
                 # https://www.mediawiki.org/wiki/Wikidata_Query_Service/User_Manual/en#Supported_formats
 
@@ -581,7 +588,13 @@ class CLI_2600:
                     # headers = {'Accept': 'text/tab-separated-values'}
                     headers = {'Accept': 'text/csv'}
 
+                # TODO: make it configurable via command line
+                headers['User-Agent'] = USER_AGENT
+                headers['Api-User-Agent'] = USER_AGENT
+
                 payload_query = "".join(full_query)
+                # Lets put an sleep, 3 seconds, just in case
+                sleep(2)
                 r = requests.post(sparql_backend, headers=headers, data={
                     'query': payload_query
                 })

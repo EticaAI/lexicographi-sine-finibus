@@ -427,7 +427,8 @@ def qhxl(rem: dict, query: Union[str, list]):
     for clavem, rem_item in rem.items():
         # print(clavem, rem_item, clavem.find(query))
         for query_item in query:
-            if clavem.find(query_item) > -1:
+            # if clavem.find(query_item) > -1:
+            if clavem.find(query_item) > -1 and query_item.endswith(query_item):
                 return rem_item
     return None
 
