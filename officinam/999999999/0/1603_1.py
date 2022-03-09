@@ -649,19 +649,30 @@ class Codex:
 
         textum_I = self.notitiae.translatio('{% _🗣️ 1603_1_99_10_2 🗣️_ %}')
 
-        resultatum.append('')
-        resultatum.extend(descriptio_tabulae_de_lingua(
-            ['Lingua Anglica (Abecedarium Latinum)'] * 1,
-            # [
-            #     'Every book comes with several files both for book format '
-            #     '(with additional information) and machine-readable formats '
-            #     'with documentation of how to process them. If you receive '
-            #     'this file and cannot find the alternatives, ask the human '
-            #     'who provide this file.'
-            # ]))
-            [
-                textum_I
-            ]))
+        # resultatum.append('')
+        # resultatum.extend(descriptio_tabulae_de_lingua(
+        #     ['Lingua Anglica (Abecedarium Latinum)'] * 1,
+        #     # [
+        #     #     'Every book comes with several files both for book format '
+        #     #     '(with additional information) and machine-readable formats '
+        #     #     'with documentation of how to process them. If you receive '
+        #     #     'this file and cannot find the alternatives, ask the human '
+        #     #     'who provide this file.'
+        #     # ]))
+        #     [
+        #         textum_I
+        #     ]))
+        # meta = {}
+        # meta['#item+rem+i_eng+is_latn'] = textum_I
+        # meta_tabulae = self.conceptum_ad_tabula_codicibus(meta)
+
+        # resultatum.extend(meta_tabulae)
+        # resultatum.append("\nres_explanationibus\n")
+        resultatum.extend(self.res_explanationibus({
+            '#item+rem+i_eng+is_latn': textum_I
+        }))
+
+
         resultatum.append('')
 
         if self.annexis.est_annexum(numerum_archiva + '.no1.tm.hxl.csv'):
@@ -1883,15 +1894,25 @@ class Codex:
             # modō, m, s, (dative) https://en.wiktionary.org/wiki/modus#Latin
             paginae.append('==== Methodī ex verbīs in Vicidata (Q modō)')
 
-            paginae.extend(descriptio_tabulae_de_lingua(
-                ['Lingua Anglica (Abecedarium Latinum)'] * 4,
-                [
+            # paginae.extend(descriptio_tabulae_de_lingua(
+            #     ['Lingua Anglica (Abecedarium Latinum)'] * 4,
+            #     [
+            #         vicidata_q_modo_1,
+            #         vicidata_q_modo_11,
+            #         vicidata_q_modo,
+            #         vicidata_q_modo2
+            #     ]))
+
+            vicidata_textum = "\n\n".join([
                     vicidata_q_modo_1,
                     vicidata_q_modo_11,
                     vicidata_q_modo,
                     vicidata_q_modo2
-                ]))
+                ])
 
+            paginae.extend(self.res_explanationibus({
+                '#item+rem+i_eng+is_latn': vicidata_textum
+            }))
             paginae.append('')
 
         # resultatum.append("<a id='0' href='#0'>§ 0</a> \n")
