@@ -29,17 +29,39 @@
 
 - Very temporary: //dictiōnāria de post mortis condicio//
 
-## [1603:44:101] //Dictiōnāria basibus de Scielus contra humanus//
+## [1603:44:101] //Dictiōnāria basibus de scielus contrā persōnam//
 - //Dictiōnāria basibus de Scielus contra humanus//
   - Literal English Translation: Basic dictionaries about crimes against humans
 
-> This group of dictionaries contains basic (id est, not fully detailed) concepts about crimes against humans at mostly at individual level and crimes against group of humans without intent of exterminate entire community (which have e dedicated dictionaries) for non political reasons.
+> `+//Dictiōnāria basibus de scielus contrā persōnam//+` (literal English translation: _Basic dictionaries about crimes against person_; person on singular) contains basic (id est, not fully detailed) concepts about crimes against humans at mostly at individual level and crimes against group of humans without intent of exterminate entire community (which have e dedicated dictionaries) for non-political reasons.
+
+- dictiōnāria, n, pl, nōminātīvus, https://en.wiktionary.org/wiki/dictionarium#Latin
+- dē (+ ablātīvus), n, pl, nōminātīvus, https://en.wiktionary.org/wiki/de#Latin
+- subsidium, n, s, nōminātīvus, https://en.wiktionary.org/wiki/subsidium#Latin
+  - http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0059:entry=subsidium
+  - http://ducange.enc.sorbonne.fr/SUBSIDIUM
+- basibus, f, pl, (dativus) https://en.wiktionary.org/wiki/basis#Latin
+  - http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0059:entry=basis
+- contrā (+ accūsātīvus) (https://en.wiktionary.org/wiki/contra#Latin
+- persōnam, f, s, accūsātīvus, https://en.wiktionary.org/wiki/persona#Latin
+  - http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0059:entry=persona
+  - http://ducange.enc.sorbonne.fr/PERSONA
+
 
 ## [1603:44:111] //Dictiōnāria basibus de Scielus contra communitae//
 - //Dictiōnāria basibus de Scielus contra communitae//
   - Literal English Translation: Basic dictionaries about crimes against communities
 
-> This group of dictionaries contains basic (id est, not fully detailed) concepts about crimes against collectives of humans because of their membership (de facto or perceived) of be part of the collective.
+> `+//Dictiōnāria basibus de scielus contra communitae//+` (literal English translation: _Basic dictionaries about crimes against communities_) contains basic (id est, not fully detailed) concepts about crimes against collectives of humans because of their membership (de facto or perceived) to be part of the collective. Another term for this is _Crimes against humanity_.
+
+- dictiōnāria, n, pl, nōminātīvus, https://en.wiktionary.org/wiki/dictionarium#Latin
+- dē (+ ablātīvus), n, pl, nōminātīvus, https://en.wiktionary.org/wiki/de#Latin
+- subsidium, n, s, nōminātīvus, https://en.wiktionary.org/wiki/subsidium#Latin
+  - http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0059:entry=subsidium
+  - http://ducange.enc.sorbonne.fr/SUBSIDIUM
+- basibus, f, pl, (dativus) https://en.wiktionary.org/wiki/basis#Latin
+  - http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0059:entry=basis
+- contrā (+ accūsātīvus) (https://en.wiktionary.org/wiki/contra#Latin
 
 ## [1603:44:142] //arma ignifera// (needs review)
 - https://en.wiktionary.org/wiki/vulnus#Latin

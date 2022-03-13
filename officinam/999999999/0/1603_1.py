@@ -3060,7 +3060,7 @@ class DictionariaLinguarum:
             #         resultatum_corpus_totale))
             resultatum.append("")
 
-            resultatum.append('[%header,cols="15h,25a,~,15"]')
+            resultatum.append('[%header,cols="15h,25a,~,17"]')
             resultatum.append('|===')
             # https://en.wiktionary.org/wiki/latinus#Latin
             # nōmina, n, pl, (Nominative)
