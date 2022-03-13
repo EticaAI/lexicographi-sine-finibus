@@ -29,6 +29,16 @@
 
 - Very temporary: //dictiōnāria de post mortis condicio//
 
+## [1603:44:86] //Dictiōnāria basibus dē tortūrīs//
+- //Dictiōnāria basibus de sceleribus contra humanus//
+  - Literal English Translation: Basic dictionaries about crimes against humans
+
+- dictiōnāria, n, pl, nōminātīvus, https://en.wiktionary.org/wiki/dictionarium#Latin
+- basibus, f, pl, (dativus) https://en.wiktionary.org/wiki/basis#Latin
+  - http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0059:entry=basis
+- dē (+ ablātīvus), n, pl, nōminātīvus, https://en.wiktionary.org/wiki/de#Latin
+- tortūrīs, f, pl, ablātīvus, https://en.wiktionary.org/wiki/tortura#Latin
+
 ## [1603:44:101] /Dictiōnāria basibus dē sceleribus contrā persōnam/
 - //Dictiōnāria basibus de sceleribus contra humanus//
   - Literal English Translation: Basic dictionaries about crimes against humans
@@ -84,6 +94,14 @@
   - http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0059:entry=rector
   - http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0060:entry=rector
   - http://ducange.enc.sorbonne.fr/RECTOR
+
+### //commūnitātēs generibus || different types of communities (inside the dictionary)//
+- commūnitātēs, f, pl, nōminātīvus, https://en.wiktionary.org/wiki/communitas#Latin
+- generibus, n, pl, dativus, https://en.wiktionary.org/wiki/genus#Latin
+
+### //rēctōrēs generibus || different types of rules (inside the dictionary)//
+- rēctōrēs, f, pl, nōminātīvus, https://en.wiktionary.org/wiki/rector#Latin
+- generibus, n, pl, dativus, https://en.wiktionary.org/wiki/genus#Latin
 
 ## [1603:44:142] //arma ignifera// (needs review)
 - https://en.wiktionary.org/wiki/vulnus#Latin
