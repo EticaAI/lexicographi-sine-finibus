@@ -29,6 +29,18 @@
 
 - Very temporary: //dictiōnāria de post mortis condicio//
 
+## [1603:44:101] //Dictiōnāria basibus de Scielus contra humanus//
+- //Dictiōnāria basibus de Scielus contra humanus//
+  - Literal English Translation: Basic dictionaries about crimes against humans
+
+> This group of dictionaries contains basic (id est, not fully detailed) concepts about crimes against humans at mostly at individual level and crimes against group of humans without intent of exterminate entire community (which have e dedicated dictionaries) for non political reasons.
+
+## [1603:44:111] //Dictiōnāria basibus de Scielus contra communitae//
+- //Dictiōnāria basibus de Scielus contra communitae//
+  - Literal English Translation: Basic dictionaries about crimes against communities
+
+> This group of dictionaries contains basic (id est, not fully detailed) concepts about crimes against collectives of humans because of their membership (de facto or perceived) of be part of the collective.
+
 ## [1603:44:142] //arma ignifera// (needs review)
 - https://en.wiktionary.org/wiki/vulnus#Latin
 - arma ignifera, https://latin.stackexchange.com/questions/509/why-is-there-no-word-meaning-firearm-in-contemporary-latin
