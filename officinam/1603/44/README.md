@@ -29,39 +29,61 @@
 
 - Very temporary: //dictiōnāria de post mortis condicio//
 
-## [1603:44:101] //Dictiōnāria basibus de scielus contrā persōnam//
-- //Dictiōnāria basibus de Scielus contra humanus//
+## [1603:44:101] /Dictiōnāria basibus dē sceleribus contrā persōnam/
+- //Dictiōnāria basibus de sceleribus contra humanus//
   - Literal English Translation: Basic dictionaries about crimes against humans
 
-> `+//Dictiōnāria basibus de scielus contrā persōnam//+` (literal English translation: _Basic dictionaries about crimes against person_; person on singular) contains basic (id est, not fully detailed) concepts about crimes against humans at mostly at individual level and crimes against group of humans without intent of exterminate entire community (which have e dedicated dictionaries) for non-political reasons.
+> `+//Dictiōnāria basibus dē sceleribus contrā persōnam//+` (literal English translation: _Basic dictionaries about crimes against person_; person on singular) contains basic (id est, not fully detailed) concepts about crimes against humans at mostly at individual level and crimes against group of humans without intent of exterminate entire community (which have e dedicated dictionaries) for non-political reasons.
 
 - dictiōnāria, n, pl, nōminātīvus, https://en.wiktionary.org/wiki/dictionarium#Latin
-- dē (+ ablātīvus), n, pl, nōminātīvus, https://en.wiktionary.org/wiki/de#Latin
-- subsidium, n, s, nōminātīvus, https://en.wiktionary.org/wiki/subsidium#Latin
-  - http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0059:entry=subsidium
-  - http://ducange.enc.sorbonne.fr/SUBSIDIUM
 - basibus, f, pl, (dativus) https://en.wiktionary.org/wiki/basis#Latin
   - http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0059:entry=basis
+- dē (+ ablātīvus), n, pl, nōminātīvus, https://en.wiktionary.org/wiki/de#Latin
+- sceleribus, n, pl, ablātīvus, https://en.wiktionary.org/wiki/scelus#Latin
+  - http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0059:entry=scelus
+  - http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0060:entry=scelus
+  - http://micmap.org/dicfro/search/gaffiot/scelus
 - contrā (+ accūsātīvus) (https://en.wiktionary.org/wiki/contra#Latin
 - persōnam, f, s, accūsātīvus, https://en.wiktionary.org/wiki/persona#Latin
   - http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0059:entry=persona
   - http://ducange.enc.sorbonne.fr/PERSONA
 
 
-## [1603:44:111] //Dictiōnāria basibus de Scielus contra communitae//
-- //Dictiōnāria basibus de Scielus contra communitae//
-  - Literal English Translation: Basic dictionaries about crimes against communities
+## [1603:44:111] /Dictiōnāria basibus dē sceleribus contrā ūnam commūnitātem ab rēctōribus/
+- /Dictiōnāria basibus dē sceleribus contrā ūnam commūnitātem ab rēctōribus/
+  - Literal English Translation: Basic dictionaries about crimes against one community by rulers
 
-> `+//Dictiōnāria basibus de scielus contra communitae//+` (literal English translation: _Basic dictionaries about crimes against communities_) contains basic (id est, not fully detailed) concepts about crimes against collectives of humans because of their membership (de facto or perceived) to be part of the collective. Another term for this is _Crimes against humanity_.
+> `+/Dictiōnāria basibus dē sceleribus contrā ūnam commūnitātem ab rēctōribus/+` (literal English translation: _Basic dictionaries about crimes against one community by rulers_) contains basic (id est, not fully detailed) concepts about crimes against **one** community of humans because of their membership (de facto or perceived) to be part of the community by rulers (which are supposed to protect a reign which that community is part of). \n\nA more well known term to describe the concepts here could be _Crimes against humanity_, however both [[1603:44:101]] and [[1603:44:111]] intentionally avoid terminology in Latin based on the root term _human_ to avoid confusion while having freedom to be stricter.
 
 - dictiōnāria, n, pl, nōminātīvus, https://en.wiktionary.org/wiki/dictionarium#Latin
-- dē (+ ablātīvus), n, pl, nōminātīvus, https://en.wiktionary.org/wiki/de#Latin
-- subsidium, n, s, nōminātīvus, https://en.wiktionary.org/wiki/subsidium#Latin
-  - http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0059:entry=subsidium
-  - http://ducange.enc.sorbonne.fr/SUBSIDIUM
 - basibus, f, pl, (dativus) https://en.wiktionary.org/wiki/basis#Latin
   - http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0059:entry=basis
+- dē (+ ablātīvus), n, pl, nōminātīvus, https://en.wiktionary.org/wiki/de#Latin
+- sceleribus, n, pl, ablātīvus, https://en.wiktionary.org/wiki/scelus#Latin
+  - http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0059:entry=scelus
+  - http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0060:entry=scelus
+  - http://micmap.org/dicfro/search/gaffiot/scelus
 - contrā (+ accūsātīvus) (https://en.wiktionary.org/wiki/contra#Latin
+- ūnam, f, s, accūsātīvus, https://en.wiktionary.org/wiki/unus
+  - http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0059:entry=unus
+  - http://www.perseus.tufts.edu/hopper/text?doc=Perseus%3Atext%3A1999.04.0060%3Aentry%3Dunus1
+- commūnitātem, f, s, accūsātīvus, https://en.wiktionary.org/wiki/communitas#Latin
+  - http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0059:entry=communitas
+  - http://ducange.enc.sorbonne.fr/COMMUNITAS
+- ab (+ ablātīvus) https://en.wiktionary.org/wiki/ab#Latin
+  - http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0059:entry=ab
+  - http://micmap.org/dicfro/search/gaffiot/ab
+- rēgibus, m, pl, ablātīvus, https://en.wiktionary.org/wiki/rex#Latin
+  - http://www.perseus.tufts.edu/hopper/text?doc=Perseus%3Atext%3A1999.04.0059%3Aentry%3Drex1
+  - http://www.perseus.tufts.edu/hopper/text?doc=Perseus%3Atext%3A1999.04.0060%3Aentry%3Drex
+  - http://ducange.enc.sorbonne.fr/REX
+  - http://micmap.org/dicfro/search/gaffiot/rex
+  - http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0062:entry=rex-harpers
+  - http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0063:entry=rex-cn
+- rēctōribus, m, pl, ablātīvus, https://en.wiktionary.org/wiki/rector#Latin
+  - http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0059:entry=rector
+  - http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0060:entry=rector
+  - http://ducange.enc.sorbonne.fr/RECTOR
 
 ## [1603:44:142] //arma ignifera// (needs review)
 - https://en.wiktionary.org/wiki/vulnus#Latin
