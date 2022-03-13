@@ -12,6 +12,7 @@
 #       OPTIONS:  ---
 #
 #  REQUIREMENTS:  - python3
+#                   - requests[socks]
 #          BUGS:  ---
 #         NOTES:  ---
 #       AUTHORS:  Emerson Rocha <rocha[at]ieee.org>
@@ -52,6 +53,9 @@
 # }
 # ORDER BY ASC (?id_numeric)
 
+## Example with proxy
+# export HTTP_PROXY="socks5://127.0.0.1:9050"
+# export HTTPS_PROXY="socks5://127.0.0.1:9050"
 
 # TODO: https://sinaahmadi.github.io/posts/10-essential-sparql-queries-for-lexicographical-data-on-wikidata.html
 

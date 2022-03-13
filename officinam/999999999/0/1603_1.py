@@ -43,11 +43,11 @@
 # - https://en.wikipedia.org/wiki/Nullius_in_verba
 #   - https://artigos.wiki/blog/en/Nullius_in_verba
 
-
-from multiprocessing.sharedctypes import Value
-import os
-from ossaudiodev import control_names
+# @TODO: https://docs.asciidoctor.org/asciidoc/latest/sections/parts/
+#         https://docs.asciidoctor.org/asciidoc/latest/sections
+#         /part-numbers-and-signifier/
 import sys
+import os
 import argparse
 # from pathlib import Path
 from typing import (
@@ -553,7 +553,14 @@ class Codex:
         comment = ''
         if '#item+rem+i_qcc+is_zxxx+ix_codexfacto' in rem and \
                 rem['#item+rem+i_qcc+is_zxxx+ix_codexfacto']:
-            parts = rem['#item+rem+i_qcc+is_zxxx+ix_codexfacto'].split('||')
+            temp_ix_codexfacto = rem['#item+rem+i_qcc+is_zxxx+ix_codexfacto']
+
+            if temp_ix_codexfacto.find('||') == -1:
+                raise ValueError(
+                    'Codex {0}; bad ix_codexfacto. No ||. [{1}]'.format(
+                        self.de_codex, str(temp_ix_codexfacto)))
+
+            parts = temp_ix_codexfacto.split('||')
             iri = parts[0]
             comment = parts[1]
             paginae.append(
@@ -571,7 +578,7 @@ class Codex:
 
         Trivia:
         - cōdex, m, s, (Nominative), https://en.wiktionary.org/wiki/codex#Latin
-        #Latin
+        # Latin
         - appendicī, f, s, (Dative), https://en.wiktionary.org/wiki/appendix
 
         Returns:
@@ -672,7 +679,6 @@ class Codex:
         resultatum.extend(self.res_explanationibus({
             '#item+rem+i_eng+is_latn': textum_I
         }))
-
 
         resultatum.append('')
 
@@ -1906,11 +1912,11 @@ class Codex:
             #     ]))
 
             vicidata_textum = "\n\n".join([
-                    vicidata_q_modo_1,
-                    vicidata_q_modo_11,
-                    vicidata_q_modo,
-                    vicidata_q_modo2
-                ])
+                vicidata_q_modo_1,
+                vicidata_q_modo_11,
+                vicidata_q_modo,
+                vicidata_q_modo2
+            ])
 
             paginae.extend(self.res_explanationibus({
                 '#item+rem+i_eng+is_latn': vicidata_textum
@@ -1969,7 +1975,7 @@ class Codex:
         return None
 
     def res_explanationibus(
-            self, res: dict, picturae: List[Type['CodexAnnexo']] = None) -> list:
+            self, res: dict, picturae: List[Type['CodexAnnexo']]=None) -> list:
         """rēs explānātiōnibus
 
         Trivia:
@@ -2411,7 +2417,7 @@ class CodexAnnexis:
 
     def quod_picturae(
             self,
-            numerordinatio_locali: str = None) -> List[Type['CodexAnnexo']]:
+            numerordinatio_locali: str=None) -> List[Type['CodexAnnexo']]:
         resultatum = []
         for item in self.completum:
             if numerordinatio_locali is not None:
@@ -2615,7 +2621,7 @@ class CodexSarcinarumAdnexis:
 
         return nomen
 
-    def quod_sarcinarum(self, index: str = None):
+    def quod_sarcinarum(self, index: str=None):
         resultatum = []
 
         for item in self.sarcina:
@@ -2631,7 +2637,7 @@ class CodexSarcinarumAdnexis:
 
 
 class DictionariaInterlinguarum:
-    def __init__(self, fontem_archivum: str = None):
+    def __init__(self, fontem_archivum: str=None):
         if fontem_archivum:
             self.D1613_1_7_fontem = fontem_archivum
         else:
@@ -2658,8 +2664,8 @@ class DictionariaInterlinguarum:
 
     def formatum_nomen(
             self, clavem: str,
-            objectivum_linguam: str = None,
-            auxilium_linguam: list = None) -> str:
+            objectivum_linguam: str=None,
+            auxilium_linguam: list=None) -> str:
         # fōrmātum, f, s, (Nominative) https://en.wiktionary.org/wiki/formatus
 
         meta_langs = [
@@ -2678,8 +2684,8 @@ class DictionariaInterlinguarum:
 
     def formatum_res_facto(
             self, res: dict, clavem: str,
-            objectivum_linguam: str = None,
-            auxilium_linguam: list = None
+            objectivum_linguam: str=None,
+            auxilium_linguam: list=None
     ) -> str:
         # fōrmātum, f, s, (Nominative) https://en.wiktionary.org/wiki/formatus
         # TODO: this still need improvement
@@ -2687,7 +2693,7 @@ class DictionariaInterlinguarum:
         return res_interlingualibus_formata(res, clavem)
         # return res[clavem] + '[' + clavem + ']'
 
-    def imprimere(self, linguam: list = None) -> list:
+    def imprimere(self, linguam: list=None) -> list:
         """imprimere /print/@eng-Latn
 
         @DEPRECATED using methodo direct from codex
@@ -2789,7 +2795,7 @@ class DictionariaInterlinguarum:
 
         return resultatum
 
-    def imprimereTabula(self, linguam: list = None) -> list:
+    def imprimereTabula(self, linguam: list=None) -> list:
         """imprimere /print/@eng-Latn
 
         Trivia:
@@ -2900,7 +2906,7 @@ class DictionariaInterlinguarum:
 
     def quod(self, terminum: str,
              #  factum: str = '#item+rem+i_lat+is_latn',
-             clavem: str = None) -> str:
+             clavem: str=None) -> str:
         # clavem_defallo = [
         #     '#item+rem+i_qcc+is_zxxx+ix_hxla',
         #     '#item+rem+i_qcc+is_zxxx+ix_csvsffxm'
@@ -2929,7 +2935,7 @@ class DictionariaInterlinguarum:
 
 
 class DictionariaLinguarum:
-    def __init__(self, fontem_archivum: str = None):
+    def __init__(self, fontem_archivum: str=None):
         if fontem_archivum:
             self.D1613_1_51_fontem = fontem_archivum
         else:
@@ -2958,7 +2964,7 @@ class DictionariaLinguarum:
         return datum
 
     def imprimere(
-            self, linguam: list = None, codex: Type['Codex'] = None) -> list:
+            self, linguam: list=None, codex: Type['Codex']=None) -> list:
         """imprimere /print/@eng-Latn
 
         Trivia:
@@ -3093,7 +3099,7 @@ class DictionariaLinguarum:
 
     def quod(self, terminum: str,
              #  factum: str = '#item+rem+i_lat+is_latn',
-             clavem: str = None):
+             clavem: str=None):
         clavem_defallo = [
             '#item+rem+i_qcc+is_zxxx+ix_hxla',
             # '#item+rem+i_qcc+is_zxxx+ix_hxla',
@@ -3150,7 +3156,7 @@ class DictionariaNotitiae:
     def translatio(self, textum: str) -> str:
         """translatio
 
-        /translate, if necessary, a text using 1603_1_99 as reference/@eng-Latn 
+        /translate, if necessary, a text using 1603_1_99 as reference/@eng-Latn
 
         Args:
             textum (str): Textum
@@ -3838,9 +3844,9 @@ class CLI_2600:
                     stderr=sys.stderr):
         # print('TODO')
 
-        self.pyargs = pyargs
+        self.pyargs=pyargs
 
-        a1603z1 = A1603z1()
+        a1603z1=A1603z1()
 
         # cs1603_1 = cs1603_1()
 
@@ -3852,13 +3858,13 @@ class CLI_2600:
 
         # if self.pyargs.actionem_sparql:
         if self.pyargs.codex_de:
-            formatum = 'asciidoctor'
+            formatum='asciidoctor'
             if self.pyargs.ad_asciidoctor:
-                formatum = 'asciidoctor'
+                formatum='asciidoctor'
             # if self.pyargs.ad_markdown:
             #     formatum = 'markdown'
 
-            codex = Codex(
+            codex=Codex(
                 self.pyargs.codex_de,
                 objectivum_linguam=self.pyargs.objectivum_linguam,
                 auxilium_linguam=self.pyargs.auxilium_linguam,
@@ -3872,7 +3878,7 @@ class CLI_2600:
                 return self.output(codex.imprimere_codex_copertae())
 
         if self.pyargs.dictionaria_numerordinatio:
-            dictionaria_numerordinatio = DictionariaNumerordinatio()
+            dictionaria_numerordinatio=DictionariaNumerordinatio()
             # data = ['TODO']
             return self.output(dictionaria_numerordinatio.exportatum())
 
@@ -3881,26 +3887,26 @@ class CLI_2600:
             if stdin.isatty():
 
                 with open(self.pyargs.infile) as csv_file:
-                    csv_reader = csv.reader(
+                    csv_reader=csv.reader(
                         csv_file, delimiter=args.fontem_separato)
-                    line_count = 0
+                    line_count=0
                     for row in csv_reader:
                         if a1603z1.is_ready():
                             break
                         a1603z1.est_lineam(row)
 
-                quod_query = a1603z1.exportatum()
+                quod_query=a1603z1.exportatum()
                 return self.output(quod_query)
 
             for line in sys.stdin:
                 if a1603z1.is_ready():
                     break
-                crudum_lineam = line.replace('\n', ' ').replace('\r', '')
+                crudum_lineam=line.replace('\n', ' ').replace('\r', '')
                 # TODO: deal with cases were have more than Qcode
                 # a1603z1.est_wikidata_q(codicem)
                 a1603z1.est_lineam(crudum_lineam)
 
-            quod_query = a1603z1.exportatum()
+            quod_query=a1603z1.exportatum()
             # tabulam_numerae = ['TODO']
             # return self.output(tabulam_numerae)
             return self.output(quod_query)
@@ -3910,7 +3916,7 @@ class CLI_2600:
 
     def output(self, output_collectiom):
 
-        spamwriter = csv.writer(
+        spamwriter=csv.writer(
             sys.stdout, delimiter=self.pyargs.resultatum_separato)
         for item in output_collectiom:
             # TODO: check if result is a file instead of print
@@ -3926,8 +3932,8 @@ class CLI_2600:
 
 if __name__ == "__main__":
 
-    cli_2600 = CLI_2600()
-    args = cli_2600.make_args()
+    cli_2600=CLI_2600()
+    args=cli_2600.make_args()
     # pyargs.print_help()
 
     # args.execute_cli(args)
