@@ -489,7 +489,10 @@ class Codex:
             self.auxilium_linguam = auxilium_linguam
 
         self.archiva = []
-        self.m1603_1_1__de_codex = self._init_1603_1_1()
+        # self.m1603_1_1__de_codex = self._init_1603_1_1()
+        self.m1603_1_1__de_codex = None
+        self.m1603_1_1 = None
+        self._init_1603_1_1()
         self.notitiae = DictionariaNotitiae()
         self.dictionaria_linguarum = DictionariaLinguarum()
         self.dictionaria_interlinguarum = DictionariaInterlinguarum()
@@ -514,15 +517,20 @@ class Codex:
         fullpath = fullpath + '.no1.tm.hxl.csv'
         # print('test', test, self.de_codex)
         # print('fullpath', fullpath)
+        self.m1603_1_1 = {}
         with open(fullpath) as csvfile:
             reader = csv.DictReader(csvfile)
             for lineam in reader:
+                self.m1603_1_1[lineam['#item+rem+i_qcc+is_zxxx+ix_n1603']] = \
+                    lineam
                 if lineam['#item+rem+i_qcc+is_zxxx+ix_n1603'] \
                         == numerordinatio_neo_codex:
-                    return lineam
+                    # return lineam
+                    self.m1603_1_1__de_codex = lineam
 
-        raise ValueError("{0} not defined on 1603_1_1 [{1}]".format(
-            self.de_codex, fullpath))
+        if not self.m1603_1_1__de_codex:
+            raise ValueError("{0} not defined on 1603_1_1 [{1}]".format(
+                self.de_codex, fullpath))
 
     def _init_codex(self):
         # numerordinatio = numerordinatio_neo_separatum(self.de_codex, ':')
@@ -586,7 +594,19 @@ class Codex:
             #         'Codex {0}; bad ix_codexfacto. No ||. [{1}]'.format(
             #             self.de_codex, str(temp_ix_codexfacto)))
 
-            paginae.append(str(rem))
+            clavem = temp_ix_codexfacto.replace('[', '').replace(']', '')
+
+            if clavem in self.m1603_1_1:
+                m1603_1_1_res = self.m1603_1_1[clavem]
+            else:
+                raise ValueError(
+                    'ERROR: 1603_1_1 not have {0}'.format(temp_ix_codexfacto))
+
+            paginae.append('==== {0} {1}'.format(
+                temp_ix_codexfacto, m1603_1_1_res['#item+rem+i_mul+is_zyyy']))
+            # paginae.append(str(rem))
+            paginae.extend(self.res_explanationibus(m1603_1_1_res))
+            # paginae.append(str(m1603_1_1_res))
             paginae.append('')
             # parts = temp_ix_codexfacto.split('||')
             # iri = parts[0]
@@ -1174,7 +1194,7 @@ class Codex:
             referentia_textum = self.quod_res(
                 '0_1603_1_7_1_4_' + str(item))
             if referentia_textum and len(referentia_textum) > 0:
-                # dictionaria_necessitatibus.extend(self._referencia(referentia_textum, index))
+
                 dictionaria_necessitatibus.extend(
                     self._dictionaria_necessitatibus(referentia_textum, index))
 
