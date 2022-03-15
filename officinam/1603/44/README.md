@@ -29,15 +29,19 @@
 
 - Very temporary: //dictiōnāria de post mortis condicio//
 
-## [1603:44:86] //Dictiōnāria basibus dē tortūrīs//
-- //Dictiōnāria basibus de sceleribus contra humanus//
-  - Literal English Translation: Basic dictionaries about crimes against humans
-
+## [1603:44:86] //Dictiōnāria basibus dē tortūrīs modīs//
+- //Dictiōnāria basibus dē tortūrīs modīs//
+  - Literal English Translation: Basic dictionaries about methods of tortures 
 - dictiōnāria, n, pl, nōminātīvus, https://en.wiktionary.org/wiki/dictionarium#Latin
 - basibus, f, pl, (dativus) https://en.wiktionary.org/wiki/basis#Latin
   - http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0059:entry=basis
 - dē (+ ablātīvus), n, pl, nōminātīvus, https://en.wiktionary.org/wiki/de#Latin
 - tortūrīs, f, pl, ablātīvus, https://en.wiktionary.org/wiki/tortura#Latin
+  - http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0059:entry=tortura
+  - http://ducange.enc.sorbonne.fr/TORTURA
+- methodīs, f, pl, dativus/ablātīvus fhttps://en.wiktionary.org/wiki/methodus#Latin
+- modīs, m, pl, dativus/ablātīvus https://en.wiktionary.org/wiki/modus#Latin
+
 
 ## [1603:44:101] /Dictiōnāria basibus dē sceleribus contrā persōnam/
 - //Dictiōnāria basibus de sceleribus contra humanus//
