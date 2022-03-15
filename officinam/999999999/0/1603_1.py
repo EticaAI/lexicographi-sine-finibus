@@ -1189,23 +1189,23 @@ class Codex:
         # resultatum.append("\nres_explanationibus\n")
         paginae.extend(self.res_explanationibus(meta))
 
-        dictionaria_necessitatibus = []
-        for index, item in enumerate(range(100)):
-            referentia_textum = self.quod_res(
-                '0_1603_1_7_1_4_' + str(item))
-            if referentia_textum and len(referentia_textum) > 0:
+        # dictionaria_necessitatibus = []
+        # for index, item in enumerate(range(100)):
+        #     referentia_textum = self.quod_res(
+        #         '0_1603_1_7_1_4_' + str(item))
+        #     if referentia_textum and len(referentia_textum) > 0:
 
-                dictionaria_necessitatibus.extend(
-                    self._dictionaria_necessitatibus(referentia_textum, index))
+        #         dictionaria_necessitatibus.extend(
+        #             self._dictionaria_necessitatibus(referentia_textum, index))
 
-        if len(dictionaria_necessitatibus) > 0:
-            paginae.append('=== Dictiōnāria necessitātibus')
-            # paginae.append('')
-            # paginae.append('----')
-            # paginae.append(str(referentia))
-            paginae.extend(dictionaria_necessitatibus)
-            # paginae.append('----')
-            paginae.append('')
+        # if len(dictionaria_necessitatibus) > 0:
+        #     paginae.append('=== Dictiōnāria necessitātibus')
+        #     # paginae.append('')
+        #     # paginae.append('----')
+        #     # paginae.append(str(referentia))
+        #     paginae.extend(dictionaria_necessitatibus)
+        #     # paginae.append('----')
+        #     paginae.append('')
 
         # paginae.extend(descriptio_tabulae_de_lingua(
         #     'Lingua Anglica (Abecedarium Latinum)',
@@ -1459,6 +1459,38 @@ class Codex:
             resultatum.append("\n")
 
         return resultatum
+
+    def codex_externo(self) -> list:
+        """cōdex externō
+
+        Trivia:
+        - cōdex, m, s, (Nominative), https://en.wiktionary.org/wiki/codex#Latin
+        - externīs, m, pl---, https://en.wiktionary.org/wiki/externus#Latin
+
+        Returns:
+            [list]:
+        """
+        paginae = []
+        dictionaria_necessitatibus = []
+        for index, item in enumerate(range(100)):
+            referentia_textum = self.quod_res(
+                '0_1603_1_7_1_4_' + str(item))
+            if referentia_textum and len(referentia_textum) > 0:
+
+                dictionaria_necessitatibus.extend(
+                    self._dictionaria_necessitatibus(referentia_textum, index))
+
+        if len(dictionaria_necessitatibus) > 0:
+            paginae.append('== Externīs')
+            paginae.append('=== Dictiōnāria necessitātibus')
+            # paginae.append('')
+            # paginae.append('----')
+            # paginae.append(str(referentia))
+            paginae.extend(dictionaria_necessitatibus)
+            # paginae.append('----')
+            paginae.append('')
+
+        return paginae
 
     def codex_nota_bene(self) -> list:
         """cōdex notā bene
@@ -1745,6 +1777,7 @@ class Codex:
 
         codex_nota_bene = self.codex_nota_bene()
         codex_archio = self.codex_archio()
+        codex_externo = self.codex_externo()
         # Compute methodi_ex_codice last (to receive statistics of others)
         methodi_ex_codice = self.methodi_ex_codice()
 
@@ -1756,6 +1789,10 @@ class Codex:
         paginae.extend(methodi_ex_codice)
         paginae.extend(['', '<<<', ''])
         paginae.extend(codex_archio)
+        if len(codex_externo) > 0:
+            paginae.extend(codex_externo)
+            paginae.extend(['', '<<<', ''])
+
         paginae.extend(['', '<<<', ''])
         paginae.extend(["[.text-center]\n", 'Dictiōnāria initiīs'])
         paginae.extend(['', '<<<', ''])
