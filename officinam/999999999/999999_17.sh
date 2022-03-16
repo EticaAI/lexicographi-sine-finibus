@@ -83,12 +83,12 @@ file_download_if_necessary "$DATA_1603_1_51" "1603_1_51" "csv" "tm.hxl.csv" "hxl
 file_convert_numerordinatio_de_hxltm "1603_1_51" "1" "0"
 ### Really boostrapping downloads, end _________________________________________
 
-# # FORCE_REDOWNLOAD_REM="1603_1_51"
-# file_download_if_necessary "$DATA_1603_1_51" "1603_1_51" "csv" "tm.hxl.csv" "hxltmcli" "1"
-# file_convert_numerordinatio_de_hxltm "1603_1_51" "1" "0"
+# # FORCE_REDOWNLOAD_REM="1603_1_51" (This is quick, try leave always enabled)
+file_download_if_necessary "$DATA_1603_1_51" "1603_1_51" "csv" "tm.hxl.csv" "hxltmcli" "1"
+file_convert_numerordinatio_de_hxltm "1603_1_51" "1" "0"
 # # file_merge_numerordinatio_de_wiki_q "1603_1_51" "0" "0"
-# neo_codex_de_numerordinatio "1603_1_51" "0" "0"
-# neo_codex_de_numerordinatio_pdf "1603_1_51" "0" "0"
+neo_codex_de_numerordinatio "1603_1_51" "0" "0"
+neo_codex_de_numerordinatio_pdf "1603_1_51" "0" "0"
 
 # file_download_if_necessary "$DATA_1603_45_1" "1603_45_1" "csv" "tm.hxl.csv" "hxltmcli" "1"
 # file_convert_numerordinatio_de_hxltm "1603_45_1" "1" "0"
