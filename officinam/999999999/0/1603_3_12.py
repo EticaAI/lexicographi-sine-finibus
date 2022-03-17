@@ -597,8 +597,8 @@ class CLI_2600:
                 headers['Api-User-Agent'] = USER_AGENT
 
                 payload_query = "".join(full_query)
-                # Lets put an sleep, 2 seconds, just in case
-                sleep(2)
+                # Lets put an sleep, 3 seconds, just in case
+                sleep(3)
                 r = requests.post(sparql_backend, headers=headers, data={
                     'query': payload_query
                 })
