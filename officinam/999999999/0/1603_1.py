@@ -1763,6 +1763,8 @@ class Codex:
     def imprimere(self) -> list:
         """imprimere /print/@eng-Latn
 
+        /print book (AsciiDoc format)/@eng-Latn
+
         Trivia:
         - cōdex, m, s, (Nominative), https://en.wiktionary.org/wiki/codex#Latin
         - imprimere, v, s, (), https://en.wiktionary.org/wiki/imprimo#Latin
@@ -1836,10 +1838,52 @@ class Codex:
     def imprimere_codex_copertae(self) -> list:
         """imprimere /print/@eng-Latn
 
+        /print book cover (SVG format)/@eng-Latn
+
         Trivia:
         - cōdex, m, s, (Nominative), https://en.wiktionary.org/wiki/codex#Latin
         - imprimere, v, s, (), https://en.wiktionary.org/wiki/imprimo#Latin
         - pāginae, f, pl, (Nominative), https://en.wiktionary.org/wiki/pagina
+
+        Returns:
+            [list]:
+        """
+        # We simulate book press without actually storing the result
+        self.imprimere()
+        from pathlib import Path
+        template = Path(NUMERORDINATIO_BASIM +
+                        '/999999999/0/codex_copertae.svg').read_text()
+        codex_copertae = template.replace(
+            '{{codex_numero}}', numerordinatio_neo_separatum(self.de_codex, ':'))
+        codex_copertae = codex_copertae.replace(
+            '{{codex_nomini}}', self.m1603_1_1__de_codex['#item+rem+i_mul+is_zyyy'])
+        codex_copertae = codex_copertae.replace(
+            '{{concepta}}', str(self.summis_concepta))
+        codex_copertae = codex_copertae.replace(
+            '{{res_lingualibus}}', str(len(self.usus_linguae)))
+        codex_copertae = codex_copertae.replace(
+            '{{res_interlingualibus}}', str(len(self.usus_ix_qcc)))
+        paginae = []
+        paginae.append(codex_copertae)
+
+        return paginae
+
+    def imprimere_codex_in_tabulam_json(self) -> list:
+        """imprimere /print/@eng-Latn
+
+        /print book cover (SVG format)/@eng-Latn
+
+        Trivia:
+        - cōdex, m, s, (Nominative), https://en.wiktionary.org/wiki/codex#Latin
+        - imprimere, v, s, (), https://en.wiktionary.org/wiki/imprimo#Latin
+        - in (+ ablative), in (+ accusative)
+          https://en.wiktionary.org/wiki/in#Latin
+          - (+ accusative) into, to 
+        - tabulam, f, s, /accusative/,
+          https://en.wiktionary.org/wiki/tabula#Latin
+        - json, ---,
+          - https://www.json.org/
+          - https://www.mediawiki.org/wiki/Help:Tabular_Data
 
         Returns:
             [list]:
