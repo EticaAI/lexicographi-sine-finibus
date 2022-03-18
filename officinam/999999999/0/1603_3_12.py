@@ -81,7 +81,7 @@ NUMERORDINATIO_BASIM = os.getenv('NUMERORDINATIO_BASIM', os.getcwd())
 NUMERORDINATIO_DEFALLO = int(os.getenv('NUMERORDINATIO_DEFALLO', '60'))  # �
 NUMERORDINATIO_MISSING = "�"
 DESCRIPTION = """
-2600.60 is (...)
+1603_3_12.py is (...)
 """
 
 # In Python2, sys.stdin is a byte stream; in Python3, it's a text stream
