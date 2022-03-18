@@ -2686,7 +2686,7 @@ class CodexInTabulamJson:
         for _clavem, item in self.codex.dictionaria_linguarum.dictionaria_codex.items():
             # raise ValueError(str(item))
             if '#item+rem+i_qcc+is_zxxx+ix_wikilngm' in item and \
-                item['#item+rem+i_qcc+is_zxxx+ix_wikilngm']:
+                    item['#item+rem+i_qcc+is_zxxx+ix_wikilngm']:
                 hashtag = '#item+rem' + item['#item+rem+i_qcc+is_zxxx+ix_hxla']
                 self.linguae[hashtag] = \
                     item['#item+rem+i_qcc+is_zxxx+ix_wikilngm']
@@ -2853,12 +2853,37 @@ class CodexInTabulamJson:
         Returns:
             [list]:
         """
+        # numerum = self.codex.m1603_1_1__de_codex['#item+rem+i_qcc+is_zxxx+ix_n1603']
+        # nomen = self.codex.m1603_1_1__de_codex['#item+rem+i_mul+is_zyyy']
+        descriptionem = '[{0}] {1}'.format(
+            self.codex.m1603_1_1__de_codex['#item+rem+i_qcc+is_zxxx+ix_n1603'],
+            self.codex.m1603_1_1__de_codex['#item+rem+i_mul+is_zyyy']
+        )
+
+        scope_and_content = self.codex.quod_res('0_1603_1_7_2616_7535')
+        if scope_and_content:
+            codexfacto = qhxl(scope_and_content, [
+                              '#item+rem+i_qcc+is_zxxx+ix_codexfacto'])
+            if codexfacto:
+                import textwrap
+                codexfacto = codexfacto.replace(
+                    '\\n', '').replace('\\t', '').strip()
+                # Wikimedia Data Preview wants very short descriptions
+                codexfacto = textwrap.shorten(codexfacto, 350)
+                # if len(codexfacto) > 400:
+                #     codexfacto = codexfacto[:400] + '...'
+
+                descriptionem = '{0}. {1}'.format(
+                    descriptionem, codexfacto)
+
+        # 0_1603_1_7_2616_7535
+
         resultatum = {
             'license': "CC0-1.0",
             'sources': "https://github.com/EticaAI/multilingual-lexicography "
             "+ https://www.wikidata.org/wiki/Help:Multilingual",
             'description': {
-                'la': str(self.codex.de_codex)
+                'la': descriptionem
             },
             'schema': {
                 'fields': self._columnae()
