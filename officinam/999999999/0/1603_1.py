@@ -85,6 +85,8 @@ Exemplōrum gratiā:
 
     {0} --codex-de 1603_25_1 --codex-copertae
 
+    {0} --codex-de 1603_25_1 --codex-in-tabulam-json
+
 """.format(__file__)
 
 NUMERORDINATIO_BASIM = os.getenv('NUMERORDINATIO_BASIM', os.getcwd())
@@ -1878,7 +1880,7 @@ class Codex:
         - imprimere, v, s, (), https://en.wiktionary.org/wiki/imprimo#Latin
         - in (+ ablative), in (+ accusative)
           https://en.wiktionary.org/wiki/in#Latin
-          - (+ accusative) into, to 
+          - (+ accusative) into, to
         - tabulam, f, s, /accusative/,
           https://en.wiktionary.org/wiki/tabula#Latin
         - json, ---,
@@ -1891,22 +1893,12 @@ class Codex:
         # We simulate book press without actually storing the result
         self.imprimere()
         from pathlib import Path
-        template = Path(NUMERORDINATIO_BASIM +
-                        '/999999999/0/codex_copertae.svg').read_text()
-        codex_copertae = template.replace(
-            '{{codex_numero}}', numerordinatio_neo_separatum(self.de_codex, ':'))
-        codex_copertae = codex_copertae.replace(
-            '{{codex_nomini}}', self.m1603_1_1__de_codex['#item+rem+i_mul+is_zyyy'])
-        codex_copertae = codex_copertae.replace(
-            '{{concepta}}', str(self.summis_concepta))
-        codex_copertae = codex_copertae.replace(
-            '{{res_lingualibus}}', str(len(self.usus_linguae)))
-        codex_copertae = codex_copertae.replace(
-            '{{res_interlingualibus}}', str(len(self.usus_ix_qcc)))
-        paginae = []
-        paginae.append(codex_copertae)
+        # @TODO
+        # paginae = ['{"TODO": 1}']
 
-        return paginae
+        tabulam = CodexInTabulamJson(self)
+
+        return [tabulam.imprimere_textum()]
 
     def methodi_ex_codice(self) -> list:
         """Methodī ex cōdice
@@ -2640,6 +2632,106 @@ class CodexExtero:
         # https://en.wiktionary.org/wiki/caveo#Latin
         # methodīs, f, pl, (Dative) https://en.wiktionary.org/wiki/methodus#Latin
         return "TODO CodexExtero methodis"
+
+
+class CodexInTabulamJson:
+    """Codex Sarcinarum Adnexīs
+
+    //Packages of attachments from Codex//
+
+    Trivia:
+    - cōdex, m, s, (Nominative) https://en.wiktionary.org/wiki/codex#Latin
+    - adnexīs, m/f/n, pl (Dative) https://en.wiktionary.org/wiki/adnexus#Latin
+    - annexīs, m/f/n, pl (Dative) https://en.wiktionary.org/wiki/annexus#Latin
+    - sarcinārum, f, pl, (Gengitive) https://en.wiktionary.org/wiki/sarcina
+
+    /print book cover (SVG format)/@eng-Latn
+
+    Trivia:
+    - cōdex, m, s, (Nominative), https://en.wiktionary.org/wiki/codex#Latin
+    - imprimere, v, s, (), https://en.wiktionary.org/wiki/imprimo#Latin
+    - in (+ ablative), in (+ accusative)
+        https://en.wiktionary.org/wiki/in#Latin
+        - (+ accusative) into, to
+    - tabulam, f, s, /accusative/,
+        https://en.wiktionary.org/wiki/tabula#Latin
+    - json, ---,
+        - https://www.json.org/
+        - https://www.mediawiki.org/wiki/Help:Tabular_Data
+    """
+
+    # sarcinae = ['todo']
+    # completum = []
+    # sarcina_index = []
+    # sarcina = []
+
+    def __init__(
+        self,
+        codex: Type['Codex']
+    ):
+        self.codex = codex
+
+    def _columnae(self) -> list:
+        """_columnae /Column fields of the tabular format/@eng-Latn
+
+        Trivia:
+        - columnae, f, pl, /Nominative/, https://en.wiktionary.org/wiki/columna
+
+        Returns:
+            list: _description_
+        """
+        res = []
+        res.append({'name': '#item+conceptum+codicem', 'type': 'string'})
+        res.append(
+            {'name': '#item+rem+i_qcc+is_zxxx+ix_wikiq', 'type': 'string'})
+        res.append(
+            {'name': '#item+rem+i_mul+is_zyyy', 'type': 'string'})
+        return res
+
+    def dicitionaria_rebus(self) -> list:
+        """_columnae /Column fields of the tabular format/@eng-Latn
+
+        Trivia:
+        - rēbus, f, pl, /Dative/, https://en.wiktionary.org/wiki/res#Latin
+        - dictiōnāria, n, pl, /Nominative/
+          https://en.wiktionary.org/wiki/dictionarium#Latin
+
+        Returns:
+            list: _description_
+        """
+        res = []
+
+        res.append([
+            '1',
+            'Q1',
+            '/salvi mundi!/@lat-Latn'
+        ])
+        return res
+
+    def imprimere_textum(self) -> list:
+        """imprimere /print/@eng-Latn
+
+        Trivia:
+        - cōdex, m, s, (Nominative), https://en.wiktionary.org/wiki/codex#Latin
+        - imprimere, v, s, (), https://en.wiktionary.org/wiki/imprimo#Latin
+
+        Returns:
+            [list]:
+        """
+        resultatum = {
+            'license': "CC0-1.0",
+            'sources': "https://github.com/EticaAI/multilingual-lexicography "
+            "+ https://www.wikidata.org/wiki/Help:Multilingual",
+            'schema': {
+                'fields': self._columnae()
+            },
+            'data': self.dicitionaria_rebus()
+        }
+        # paginae = ['{"TODO": 11}']
+        import json
+
+        return json.dumps(
+            resultatum, indent=4, ensure_ascii=False, sort_keys=False)
 
 
 class CodexSarcinarumAdnexis:
@@ -3929,12 +4021,24 @@ class CLI_2600:
             type=lambda x: x.split(',')
         )
 
-        archivum.add_argument(
+        codex.add_argument(
             '--codex-copertae',
             help='Pre-calculate the codex, but only generate '
             'Codex cover (SVG)',
             # metavar='',
             dest='codex_copertae',
+            # const=True,
+            action='store_true',
+            # nargs='?'
+        )
+
+        codex.add_argument(
+            '--codex-in-tabulam-json',
+            help='Pre-calculate the codex, but only generate '
+            'Tabular Data (MediaWiki syntax 1) (JSON). '
+            'See https://www.mediawiki.org/wiki/Help:Tabular_Data',
+            # metavar='',
+            dest='codex_in_tabulam_json',
             # const=True,
             action='store_true',
             # nargs='?'
@@ -4024,10 +4128,16 @@ class CLI_2600:
                 # codex_copertae=self.pyargs.codex_copertae
             )
             # data = ['TODO']
-            if not self.pyargs.codex_copertae:
+            # codex_in_tabulam_json
+            if not self.pyargs.codex_copertae and \
+                    not self.pyargs.codex_in_tabulam_json:
                 return self.output(codex.imprimere())
-            else:
+            elif self.pyargs.codex_in_tabulam_json:
+                return self.output(codex.imprimere_codex_in_tabulam_json())
+            elif self.pyargs.codex_copertae:
                 return self.output(codex.imprimere_codex_copertae())
+            else:
+                raise ValueError('ERROR: unknown codex option')
 
         if self.pyargs.dictionaria_numerordinatio:
             dictionaria_numerordinatio = DictionariaNumerordinatio()
