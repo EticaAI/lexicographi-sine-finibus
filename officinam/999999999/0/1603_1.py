@@ -2663,13 +2663,35 @@ class CodexInTabulamJson:
     # sarcinae = ['todo']
     # completum = []
     # sarcina_index = []
-    # sarcina = []
+    linguae = {}
 
     def __init__(
         self,
         codex: Type['Codex']
     ):
         self.codex = codex
+
+        self.initiari()
+
+    def initiari(self):
+        """initiarī
+
+        Trivia:
+        - initiārī, https://en.wiktionary.org/wiki/initio#Latin
+        """
+        # self.linguae['#item+rem+i_lat+is_latn'] = 'la'
+        # self.linguae['#item+rem+i_eng+is_latn'] = 'en'
+        # self.linguae['#item+rem+i_por+is_latn'] = 'pt'
+
+        for _clavem, item in self.codex.dictionaria_linguarum.dictionaria_codex.items():
+            # raise ValueError(str(item))
+            if '#item+rem+i_qcc+is_zxxx+ix_wikilngm' in item and \
+                item['#item+rem+i_qcc+is_zxxx+ix_wikilngm']:
+                hashtag = '#item+rem' + item['#item+rem+i_qcc+is_zxxx+ix_hxla']
+                self.linguae[hashtag] = \
+                    item['#item+rem+i_qcc+is_zxxx+ix_wikilngm']
+
+        # raise ValueError(str(self.linguae))
 
     def _columnae(self) -> list:
         """_columnae /Column fields of the tabular format/@eng-Latn
@@ -2681,19 +2703,22 @@ class CodexInTabulamJson:
             list: _description_
         """
         res = []
-        res.append({'name': 'item__conceptum__codicem', 'type': 'string',
+        res.append({'name': 'codicem', 'type': 'string',
                     'title': {
-                        'la': 'Codicem'
+                        'la': 'Codicem',
+                        'en': 'Numerordinatio local Code',
                     }})
         res.append(
-            {'name': 'item__rem__i_qcc__is_zxxx__ix_wikiq', 'type': 'string',
+            {'name': 'ix_wikiq', 'type': 'string',
              'title': {
-                 'la': 'Q ID'
+                 'la': 'Vicidata QID',
+                 'en': 'Wikidata QID'
              }})
         res.append(
-            {'name': 'item__rem__i_mul__is_zyyy', 'type': 'string',
+            {'name': 'rem__i_mul__is_zyyy', 'type': 'string',
              'title': {
-                 'la': 'Linguae multiplīs (Scrīptum incognitō)'
+                 'la': 'Linguae multiplīs (Scrīptum incognitō)',
+                 'en': 'Multiple languages (unknown writing system)'
              }})
 
         clavem = self.codex.codex[0].keys()
@@ -2707,15 +2732,35 @@ class CodexInTabulamJson:
         #          'pt': 'Lingua Lusitana (Abecedarium Latinum)',
         #      }})
         res.append(
-            {'name': 'item__rem__terminum', 'type': 'localized',
+            {'name': 'rem__terminum', 'type': 'localized',
              'title': {
                  'la': 'Rēs linguālibus',
                  'en': 'Lingual thing',
-                #  'en': 'Lingua Anglica (Abecedarium Latinum)',
-                #  'pt': 'Lingua Lusitana (Abecedarium Latinum)',
+                 #  'en': 'Lingua Anglica (Abecedarium Latinum)',
+                 #  'pt': 'Lingua Lusitana (Abecedarium Latinum)',
              }})
 
         return res
+
+    def _linguae_ex_re(self, res) -> list:
+        """linguae ex rē /Languages of the thing/@eng-Latn
+
+        Trivia:
+        - rēs, f, s, /Nominative/, https://en.wiktionary.org/wiki/res#Latin
+        - linguīs, f, pl, /Nominative/, https://en.wiktionary.org/wiki/columna
+        - linguae, f, pl, /Nominative/,
+        - ex (+ ablative), https://en.wiktionary.org/wiki/ex#Latin
+        - rē, f, s, /Ablative)
+
+        Returns:
+            list: _description_
+        """
+        resultatum = {}
+        for clavem, item in res.items():
+            if clavem in self.linguae and item:
+                resultatum[self.linguae[clavem]] = item
+
+        return resultatum if resultatum else None
 
     def dicitionaria_rebus(self) -> list:
         """_columnae /Column fields of the tabular format/@eng-Latn
@@ -2730,38 +2775,72 @@ class CodexInTabulamJson:
         """
         res = []
 
-        res.append([
-            '1',
-            'Q1',
-            '/salvi mundi!/@lat-Latn',
-            {
-                'la': 'testum est',
-                'en': 'testing testing',
-                'pt': 'teste teste',
-            }
-        ])
-        res.append([
-            '2',
-            'Q2',
-            '/test/@lat-Latn',
-            None
-        ])
-        res.append([
-            '2_3',
-            'Q345',
-            '/test test test/@lat-Latn',
-            {
-                'pt': 'teste teste',
-            }
-        ])
-        res.append([
-            '33',
-            'Q33',
-            '/teste em espanhol/@por-Latn',
-            {
-                'es': 'teste en espanol',
-            }
-        ])
+        # res.append([
+        #     '1',
+        #     'Q1',
+        #     '/salvi mundi!/@lat-Latn',
+        #     {
+        #         'la': 'testum est',
+        #         'en': 'testing testing',
+        #         'pt': 'teste teste',
+        #     }
+        # ])
+        # res.append([
+        #     '2',
+        #     'Q2',
+        #     '/test/@lat-Latn',
+        #     None
+        # ])
+        # res.append([
+        #     '2_3',
+        #     'Q345',
+        #     '/test test test/@lat-Latn',
+        #     {
+        #         'pt': 'teste teste',
+        #     }
+        # ])
+        # res.append([
+        #     '33',
+        #     'Q33',
+        #     '/teste em espanhol/@por-Latn',
+        #     {
+        #         'es': 'teste en espanol',
+        #     }
+        # ])
+
+        for item in self.codex.codex:
+            codicem_loci = item['#item+conceptum+codicem']
+
+            if codicem_loci.find('0_999') == 0:
+                continue
+
+            if codicem_loci.find('0_1603') == 0:
+                continue
+
+            if '#item+rem+i_mul+is_zyyy' in item \
+                    and item['#item+rem+i_mul+is_zyyy']:
+                item_rem_mul = item['#item+rem+i_mul+is_zyyy']
+            elif '#item+rem+i_lat+is_latn' in item \
+                    and item['#item+rem+i_lat+is_latn']:
+                item_rem_mul = item['#item+rem+i_lat+is_latn']
+            else:
+                item_rem_mul = None
+
+            if '#item+rem+i_qcc+is_zxxx+ix_wikiq' in item \
+                    and item['#item+rem+i_qcc+is_zxxx+ix_wikiq']:
+                qcodicem = item['#item+rem+i_qcc+is_zxxx+ix_wikiq']
+            else:
+                qcodicem = None
+
+            # item_data =
+            res.append([
+                item['#item+conceptum+codicem'],
+                qcodicem,
+                item_rem_mul,
+                self._linguae_ex_re(item)
+            ])
+            # item_data.append(item['#item+conceptum+codicem'])
+
         return res
 
     def imprimere_textum(self) -> list:
