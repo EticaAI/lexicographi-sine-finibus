@@ -2681,11 +2681,40 @@ class CodexInTabulamJson:
             list: _description_
         """
         res = []
-        res.append({'name': '#item+conceptum+codicem', 'type': 'string'})
+        res.append({'name': 'item__conceptum__codicem', 'type': 'string',
+                    'title': {
+                        'la': 'Codicem'
+                    }})
         res.append(
-            {'name': '#item+rem+i_qcc+is_zxxx+ix_wikiq', 'type': 'string'})
+            {'name': 'item__rem__i_qcc__is_zxxx__ix_wikiq', 'type': 'string',
+             'title': {
+                 'la': 'Q ID'
+             }})
         res.append(
-            {'name': '#item+rem+i_mul+is_zyyy', 'type': 'string'})
+            {'name': 'item__rem__i_mul__is_zyyy', 'type': 'string',
+             'title': {
+                 'la': 'Linguae multiplīs (Scrīptum incognitō)'
+             }})
+
+        clavem = self.codex.codex[0].keys()
+        # for item in clavem:
+        #     pass
+        # res.append(
+        #     {'name': 'item__rem__terminum', 'type': 'localized',
+        #      'title': {
+        #          'la': 'Lingua Latina (Abecedarium Latinum)',
+        #          'en': 'Lingua Anglica (Abecedarium Latinum)',
+        #          'pt': 'Lingua Lusitana (Abecedarium Latinum)',
+        #      }})
+        res.append(
+            {'name': 'item__rem__terminum', 'type': 'localized',
+             'title': {
+                 'la': 'Rēs linguālibus',
+                 'en': 'Lingual thing',
+                #  'en': 'Lingua Anglica (Abecedarium Latinum)',
+                #  'pt': 'Lingua Lusitana (Abecedarium Latinum)',
+             }})
+
         return res
 
     def dicitionaria_rebus(self) -> list:
@@ -2704,7 +2733,34 @@ class CodexInTabulamJson:
         res.append([
             '1',
             'Q1',
-            '/salvi mundi!/@lat-Latn'
+            '/salvi mundi!/@lat-Latn',
+            {
+                'la': 'testum est',
+                'en': 'testing testing',
+                'pt': 'teste teste',
+            }
+        ])
+        res.append([
+            '2',
+            'Q2',
+            '/test/@lat-Latn',
+            None
+        ])
+        res.append([
+            '2_3',
+            'Q345',
+            '/test test test/@lat-Latn',
+            {
+                'pt': 'teste teste',
+            }
+        ])
+        res.append([
+            '33',
+            'Q33',
+            '/teste em espanhol/@por-Latn',
+            {
+                'es': 'teste en espanol',
+            }
         ])
         return res
 
@@ -2722,6 +2778,9 @@ class CodexInTabulamJson:
             'license': "CC0-1.0",
             'sources': "https://github.com/EticaAI/multilingual-lexicography "
             "+ https://www.wikidata.org/wiki/Help:Multilingual",
+            'description': {
+                'la': str(self.codex.de_codex)
+            },
             'schema': {
                 'fields': self._columnae()
             },

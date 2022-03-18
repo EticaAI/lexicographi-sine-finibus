@@ -20,6 +20,7 @@
 /officinam/**/**.tbx
 /officinam/**/**.png
 /officinam/**/**.jpg
+/officinam/**/**.json
 # /officinam/README.md
 /officinam/LICENSE.md
 /officinam/package.json
