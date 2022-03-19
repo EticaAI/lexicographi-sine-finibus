@@ -31,6 +31,8 @@
 #   ./999999999/999999999.lib.sh
 
 ROOTDIR="$(pwd)"
+_S3CFG="$HOME/.config/s3cfg/s3cfg-lsf1603.ini"
+S3CFG="${S3CFG:-${_S3CFG}}"
 
 # If columns are defined (and not empty), we may remove some numbers before publishing
 NUMERORDINATIO_STATUS_CONCEPTUM_MINIMAM="${NUMERORDINATIO_STATUS_CONCEPTUM_MINIMAM:-10}"
@@ -1526,10 +1528,10 @@ upload_cdn() {
 
   # echo "_path_clean [$_path_clean]"
   # echo "_basim_objectivum [$_basim_objectivum]"
-  blue=$(tput setaf 4)
-  normal=$(tput sgr0)
-  printf "%40s\n" "${blue}${FUNCNAME[0]} [$numerordinatio]${normal}"
-  # echo "${FUNCNAME[0]} [$numerordinatio]"
+  # blue=$(tput setaf 4)
+  # normal=$(tput sgr0)
+  # printf "%40s\n" "${blue}${FUNCNAME[0]} [$numerordinatio]${normal}"
+  echo "${FUNCNAME[0]} [$numerordinatio]"
 
   # NOTE: we could implement explicit file patterns to (not) syncronize.
   #       However, as long as local disk already have excatly what we need
@@ -1898,3 +1900,56 @@ fi
 #### wikidata tests
 # @see https://github.com/maxlath/wikibase-cli
 # npm install -g wikibase-cli
+
+################################################################################
+##### BEFORE HERE, POTENTIALY DEPRECATED. Eventually remove it #################
+# The last part of this helper is just catch-all functions to abstract other   #
+# boring calls.                                                                #
+################################################################################
+
+#######################################
+# TODO...
+#
+# Globals:
+#   ROOTDIR
+# Arguments:
+#   numerordinatio
+# Outputs:
+#   Convert files
+#######################################
+save_log() {
+  numerordinatio="$1"
+
+  # yq -yi '.authentication.anonymous.enabled |= true' 1603/1603.statum.yml
+
+}
+
+#######################################
+# āctiōnēs complētīs pūblicīs, complete actions (and publish online)
+#
+# Globals:
+#   ROOTDIR
+# Arguments:
+#   numerordinatio
+# Outputs:
+#   Convert files
+#######################################
+actiones_completis_publicis() {
+  numerordinatio="$1"
+
+  blue=$(tput setaf 4)
+  normal=$(tput sgr0)
+  printf "%40s\n" "${blue}${FUNCNAME[0]} [$numerordinatio]${normal}"
+
+  # @TODO: implement the download
+  # file_download_if_necessary "$DATA_1603_45_31" "1603_45_31" "csv" "tm.hxl.csv" "hxltmcli" "1"
+  file_convert_numerordinatio_de_hxltm "$numerordinatio" "1" "0"
+  file_translate_csv_de_numerordinatio_q "$numerordinatio" "0" "0"
+  file_merge_numerordinatio_de_wiki_q "$numerordinatio" "0" "0"
+  file_convert_tmx_de_numerordinatio11 "$numerordinatio"
+  file_convert_tbx_de_numerordinatio11 "$numerordinatio"
+  neo_codex_de_numerordinatio "$numerordinatio" "0" "0"
+  neo_codex_de_numerordinatio_epub "$numerordinatio" "0" "0"
+  neo_codex_de_numerordinatio_pdf "$numerordinatio" "0" "0"
+  upload_cdn "$numerordinatio"
+}

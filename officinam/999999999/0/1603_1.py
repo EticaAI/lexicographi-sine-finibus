@@ -2633,6 +2633,58 @@ class CodexExtero:
         # methodīs, f, pl, (Dative) https://en.wiktionary.org/wiki/methodus#Latin
         return "TODO CodexExtero methodis"
 
+class LibrariaStatusQuo:
+    """Librāria status quo
+
+    _[eng-Latn]
+    Temporary class to bridge some metadata; needs refactoring later
+    [eng-Latn]_
+
+    Trivia:
+    - librāria, n, s, (Nominative), https://en.wiktionary.org/wiki/librarium#Latin
+    - Status quo, ---, https://en.wikipedia.org/wiki/Status_quo
+    - Cōdex, m, s, (Nominative), https://en.wiktionary.org/wiki/codex
+    - https://latin.stackexchange.com/questions/2102
+      /most-accurate-latin-word-for-book-in-this-context
+    - exterō, m, s, (Dative) https://en.wiktionary.org/wiki/exter#Latin
+    """
+
+    def __init__(
+        self,
+        codex: Type['Codex']
+
+    ):
+        self.codex = codex
+        pass
+
+    def intro(self):
+
+        # TODO: this obviously is temporary
+
+        paginae = []
+
+        # We're temporary not using this (2022-04-19)
+
+        # methodi_ex_codice_intro = """This section explains the methodology of this book and it's machine readable formats. For your convenience the information used to explain the concepts (such as natural language and interlingual codes) which appears in this book are also summarized here. This approach is done both for reviews not needing to open other books (or deal with machine readable files) and also to spot errors on other dictionaries. +++<br><br>+++ About how the book and the dictionaries are compiled, a division of "baseline concept table" and (when relevant for a codex) "translations conciliation" is given different methodologies. +++<br><br>+++ Every book contains at minimum the baseline concept table and explanation of the used fields. This approach helps to release dictionaries faster while ensuring both humans and machines can know what to expect even when they are not ready to receive translations."""
+        # methodi_ex_codice_intro = \
+        #     self.codex.notitiae.translatio('{% _🗣️ 1603_1_99_10_10 🗣️_ %}')
+
+        # paginae.extend(descriptio_tabulae_de_lingua(
+        #     'Lingua Anglica (Abecedarium Latinum)',
+        #     methodi_ex_codice_intro
+        # ))
+        return paginae
+
+    def cavere(self):
+        # https://en.wiktionary.org/wiki/caveo#Latin
+        # https://en.wiktionary.org/wiki/caveo#Latin
+        return "TODO LibrariaStatusQuo"
+
+    def imprimere(self):
+        # https://en.wiktionary.org/wiki/caveo#Latin
+        # methodīs, f, pl, (Dative) https://en.wiktionary.org/wiki/methodus#Latin
+        return ["TODO LibrariaStatusQuo"]
+
 
 class CodexInTabulamJson:
     """Codex Sarcinarum Adnexīs
@@ -4207,6 +4259,34 @@ class CLI_2600:
             # nargs='?'
         )
 
+        # https://en.wikipedia.org/wiki/Status_quo
+        # https://en.wiktionary.org/wiki/status_quo#English
+        status_quo = parser.add_argument_group(
+            "Status quō",
+            "Calculate current situation. Used to take other actions")
+
+        status_quo.add_argument(
+            '--status-quo',
+            help='Compute the status quo, using a codex as initial reference',
+            # metavar='',
+            dest='status_quo',
+            # const=True,
+            action='store_true',
+            # nargs='?'
+        )
+
+        # https://en.wiktionary.org/wiki/novus
+        # https://en.wiktionary.org/wiki/status#English
+        status_quo.add_argument(
+            '--status-novo',
+            help='Status novō. New state. Persist changes if necessary',
+            # metavar='',
+            dest='status_novo',
+            # const=True,
+            action='store_true',
+            # nargs='?'
+        )
+
         # # --agendum-linguam is a draft. Not 100% implemented
         # parser.add_argument(
         #     '--agendum-linguam', '-AL',
@@ -4292,6 +4372,10 @@ class CLI_2600:
             )
             # data = ['TODO']
             # codex_in_tabulam_json
+            if self.pyargs.status_novo:
+                libraria = LibrariaStatusQuo(codex)
+
+                return self.output(libraria.imprimere())
             if not self.pyargs.codex_copertae and \
                     not self.pyargs.codex_in_tabulam_json:
                 return self.output(codex.imprimere())
