@@ -26,9 +26,19 @@
 # Comment next line if not want to stop on first error
 set -e
 
+_S3CFG="$HOME/.config/s3cfg/s3cfg-lsf1603.ini"
+S3CFG="${S3CFG:-${_S3CFG}}"
+
 # See also
 # - https://github.com/s3tools/s3cmd)
 # - https://github.com/marketplace/actions/use-s3cmd
+# - https://wasabi-support.zendesk.com/hc/en-us/articles/360000016712-How-do-I-set-up-Wasabi-for-user-access-separation-
 
 # https://console.wasabisys.com/#/file_manager/lsf1603/
 # https://s3.wasabisys.com/lsf1603/63/101/1603_63_101.mul-Latn.codex.pdf
+
+# s3cmd info s3://lsf1603
+set -x
+# s3cmd info --config "$S3CFG" s3://lsf1603
+s3cmd ls --config "$S3CFG" s3://lsf1603
+# s3cmd la --config "$S3CFG"
