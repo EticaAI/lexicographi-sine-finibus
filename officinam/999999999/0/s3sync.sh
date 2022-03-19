@@ -76,8 +76,8 @@ s3cmd_access_test() {
   # _path_clean="${$_path/aa/bb}"
   _path_clean=${_path/1603\//''}
 
-  _basim_fontem="${ROOTDIR}/$_path"
-  _basim_objectivum="s3://lsf1603/$_path_clean"
+  _basim_fontem="${ROOTDIR}/$_path/"
+  _basim_objectivum="s3://lsf1603/$_path_clean/"
 
   echo "_path_clean [$_path_clean]"
   echo "_basim_objectivum [$_basim_objectivum]"
@@ -107,16 +107,22 @@ s3cmd_sync_upload() {
   _nomen=$(numerordinatio_neo_separatum "$numerordinatio" "_")
   _prefix=$(numerordinatio_neo_separatum "$numerordinatio" ":")
   # _path_clean="${$_path/aa/bb}"
-  _path_clean=${1603\///$_path}
+  _path_clean=${_path/1603\//''}
 
+  _basim_fontem="${ROOTDIR}/$_path/"
+  _basim_objectivum="s3://lsf1603/$_path_clean/"
 
-  _basim_fontem="${ROOTDIR}/$_path"
-  _basim_objectivum="s3://lsf1603/$_path_clean"
+  echo "_path_clean [$_path_clean]"
+  echo "_basim_objectivum [$_basim_objectivum]"
 
-  s3cmd ls --config "$S3CFG" "$_basim_objectivum"
-
+  # s3cmd ls "$_basim_objectivum" --config "$S3CFG"
+  # s3cmd du "$_basim_objectivum" --config "$S3CFG"
+  # s3cmd info "s3://lsf1603" --config "$S3CFG"
+  set -x
+  # s3cmd sync --recursive "$_basim_fontem" "$_basim_objectivum" --delete-removed --dry-run --acl-public --config "$S3CFG"
+  s3cmd sync --recursive "$_basim_fontem" "$_basim_objectivum" --delete-removed --acl-public --config "$S3CFG"
+  set +x
 }
 
-
-s3cmd_access_test "$1"
-# s3cmd_sync_upload "$1"
+# s3cmd_access_test "$1"
+s3cmd_sync_upload "$1"
