@@ -21,6 +21,7 @@
 /officinam/**/**.png
 /officinam/**/**.jpg
 /officinam/**/**.json
+/officinam/**/**.statum.yml
 # /officinam/README.md
 /officinam/LICENSE.md
 /officinam/package.json

@@ -1461,9 +1461,9 @@ __numerordinatio_scientiam_initiale() {
 #     /360018526192-How-do-I-use-Cloudflare-with-Wasabi-?source=search
 #
 # - Bucket name:
-#   - lsf1603.etica.ai
+#   - lsf-cdn.etica.ai
 # - DNS Configuration (on CloudFlare frontend, if using eu-central-1)
-#   > lsf1603 CNAME s3.eu-central-1.wasabisys.com
+#   > lsf-cdn CNAME s3.eu-central-1.wasabisys.com
 #
 # Example
 #   upload_cdn_test 1603_1_51
@@ -1482,13 +1482,13 @@ upload_cdn_test() {
   _nomen=$(numerordinatio_neo_separatum "$numerordinatio" "_")
   _prefix=$(numerordinatio_neo_separatum "$numerordinatio" ":")
   # _path_clean="${$_path/aa/bb}"
-  _path_clean=${_path/1603\//''}
+  # _path_clean=${_path/1603\//''}
 
   _basim_fontem="${ROOTDIR}/$_path/"
-  _basim_objectivum="s3://lsf1603.etica.ai/$_path_clean/"
+  _basim_objectivum="s3://lsf-cdn.etica.ai/$_path/"
 
-  echo "_path_clean [$_path_clean]"
-  echo "_basim_objectivum [$_basim_objectivum]"
+  # echo "_path_clean [$_path]"
+  # echo "_basim_objectivum [$_basim_objectivum]"
 
   set -x
   s3cmd ls "$_basim_objectivum" --list-md5 --config "$S3CFG"
@@ -1521,10 +1521,10 @@ upload_cdn() {
   _nomen=$(numerordinatio_neo_separatum "$numerordinatio" "_")
   _prefix=$(numerordinatio_neo_separatum "$numerordinatio" ":")
   # _path_clean="${$_path/aa/bb}"
-  _path_clean=${_path/1603\//''}
+  # _path_clean=${_path/1603\//''}
 
   _basim_fontem="${ROOTDIR}/$_path/"
-  _basim_objectivum="s3://lsf1603.etica.ai/$_path_clean/"
+  _basim_objectivum="s3://lsf-cdn.etica.ai/$_path/"
 
   # echo "_path_clean [$_path_clean]"
   # echo "_basim_objectivum [$_basim_objectivum]"
@@ -1542,10 +1542,16 @@ upload_cdn() {
   #       expected behavior (but means only syncronize really at the end
   #       of operations)
 
+  # TODO: check some way to set content always utf-8, such as
+  #       > Content-Type: text/html; charset=utf-8.
+  #       This file https://lsf-cdn.etica.ai/1603/45/1/1603_45_1.no11.xml
+  #       is returning 'content-type: text/plain' without utf-8 on preview
+
   # set -x
   s3cmd sync "$_basim_fontem" "$_basim_objectivum" \
     --recursive --delete-removed --acl-public \
     --no-progress --stats \
+    --add-header= \
     --config "$S3CFG"
   # set +x
 }
@@ -1917,8 +1923,19 @@ fi
 # Outputs:
 #   Convert files
 #######################################
-save_log() {
+temp_save_status() {
   numerordinatio="$1"
+
+  _path=$(numerordinatio_neo_separatum "$numerordinatio" "/")
+  _nomen=$(numerordinatio_neo_separatum "$numerordinatio" "_")
+  _prefix=$(numerordinatio_neo_separatum "$numerordinatio" ":")
+
+  status_archivum_codex="${ROOTDIR}/$_path/$_nomen.statum.yml"
+  # status_global_temp="${ROOTDIR}/$_path/$_nomen.statum.yml"
+
+  "${ROOTDIR}/999999999/0/1603_1.py" \
+    --codex-de "$_nomen" --status-novo \
+    > "$status_archivum_codex"
 
   # yq -yi '.authentication.anonymous.enabled |= true' 1603/1603.statum.yml
 
@@ -1951,5 +1968,6 @@ actiones_completis_publicis() {
   neo_codex_de_numerordinatio "$numerordinatio" "0" "0"
   neo_codex_de_numerordinatio_epub "$numerordinatio" "0" "0"
   neo_codex_de_numerordinatio_pdf "$numerordinatio" "0" "0"
+  temp_save_status "$numerordinatio"
   upload_cdn "$numerordinatio"
 }

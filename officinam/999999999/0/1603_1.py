@@ -12,6 +12,7 @@
 #       OPTIONS:  ---
 #
 #  REQUIREMENTS:  - python3
+#                   - pip3 install pyyaml
 #          BUGS:  ---
 #         NOTES:  ---
 #       AUTHORS:  Emerson Rocha <rocha[at]ieee.org>
@@ -70,6 +71,8 @@ import datetime
 # from itertools import product
 # valueee = list(itertools.permutations([1, 2, 3]))
 import csv
+
+import yaml
 
 __EPILOGUM__ = """
 Exemplōrum gratiā:
@@ -2633,6 +2636,7 @@ class CodexExtero:
         # methodīs, f, pl, (Dative) https://en.wiktionary.org/wiki/methodus#Latin
         return "TODO CodexExtero methodis"
 
+
 class LibrariaStatusQuo:
     """Librāria status quo
 
@@ -2649,31 +2653,102 @@ class LibrariaStatusQuo:
     - exterō, m, s, (Dative) https://en.wiktionary.org/wiki/exter#Latin
     """
 
+    linguae = {}
+    archivum = {}
+    cdn = {
+        'codex' : [],
+        'dictionaria' : [],
+        'annexis' : [],
+    }
+
+    _cdn_archivum_suffix = (
+        '.mul-Latn.codex.epub',
+        '.mul-Latn.codex.pdf',
+        '.mul-Latn.codex.adoc',
+        '.no1.tm.hxl.csv',
+        '.no11.tm.hxl.csv',
+        '.wikiq.tm.hxl.csv',
+        '.nnx.tm.hxl.csv'  # 0.nnx.tm.hxl.csv, anexes index
+    )
+    _suffix_codex = (
+        '.mul-Latn.codex.epub',
+        '.mul-Latn.codex.pdf',
+        '.mul-Latn.codex.adoc',
+    )
+    _suffix_dictionaria = (
+        '.no1.tm.hxl.csv',
+        '.no11.tm.hxl.csv',
+        '.wikiq.tm.hxl.csv',
+        '.no1.tmx',
+        '.no11.tmx',
+        '.no1.tbx',
+        '.no11.tbx',
+        # ...
+    )
+    _suffix_annexis = (
+        '.nnx.tm.hxl.csv',
+    )
+
+    # No 1603 prefix
+    cdn_prefix: str = 'https://lsf1603.etica.ai/'
+
     def __init__(
         self,
         codex: Type['Codex']
-
     ):
         self.codex = codex
-        pass
 
-    def intro(self):
+        self.initiari()
 
-        # TODO: this obviously is temporary
+    def initiari(self):
+        """initiarī
 
-        paginae = []
+        Trivia:
+        - initiārī, https://en.wiktionary.org/wiki/initio#Latin
+        """
+        # self.linguae['#item+rem+i_lat+is_latn'] = 'la'
+        # self.linguae['#item+rem+i_eng+is_latn'] = 'en'
+        # self.linguae['#item+rem+i_por+is_latn'] = 'pt'
 
-        # We're temporary not using this (2022-04-19)
+        # We simulate book press without actually storing the result
+        self.codex.imprimere()
 
-        # methodi_ex_codice_intro = """This section explains the methodology of this book and it's machine readable formats. For your convenience the information used to explain the concepts (such as natural language and interlingual codes) which appears in this book are also summarized here. This approach is done both for reviews not needing to open other books (or deal with machine readable files) and also to spot errors on other dictionaries. +++<br><br>+++ About how the book and the dictionaries are compiled, a division of "baseline concept table" and (when relevant for a codex) "translations conciliation" is given different methodologies. +++<br><br>+++ Every book contains at minimum the baseline concept table and explanation of the used fields. This approach helps to release dictionaries faster while ensuring both humans and machines can know what to expect even when they are not ready to receive translations."""
-        # methodi_ex_codice_intro = \
-        #     self.codex.notitiae.translatio('{% _🗣️ 1603_1_99_10_10 🗣️_ %}')
+        for _clavem, item in self.codex.dictionaria_linguarum.dictionaria_codex.items():
+            # raise ValueError(str(item))
+            if '#item+rem+i_qcc+is_zxxx+ix_wikilngm' in item and \
+                    item['#item+rem+i_qcc+is_zxxx+ix_wikilngm']:
+                hashtag = '#item+rem' + item['#item+rem+i_qcc+is_zxxx+ix_hxla']
+                self.linguae[hashtag] = \
+                    item['#item+rem+i_qcc+is_zxxx+ix_wikilngm']
 
-        # paginae.extend(descriptio_tabulae_de_lingua(
-        #     'Lingua Anglica (Abecedarium Latinum)',
-        #     methodi_ex_codice_intro
-        # ))
-        return paginae
+        self.archivum = self.codex.annexis.completum
+        _cdn_temp = []
+        for item in self.archivum:
+            if item.endswith(self._suffix_codex):
+                self.cdn['codex'].append(self.cdn_prefix + item)
+            if item.endswith(self._suffix_dictionaria):
+                self.cdn['dictionaria'].append(self.cdn_prefix + item)
+            if item.endswith(self._suffix_annexis):
+                self.cdn['annexis'].append(self.cdn_prefix + item)
+
+        #     if item.endswith(self._cdn_archivum_suffix):
+        #         _cdn_temp.append(self.cdn_prefix + item)
+        # self.cdn = _cdn_temp
+
+        # TODO: order the result
+        # if len(_cdn_temp) > 0:
+        #     for refs in self._cdn_archivum_suffix:
+        #         for item in _cdn_temp:
+
+        # for _clavem, item in self.codex.annexis.dictionaria_codex.items():
+        #     # raise ValueError(str(item))
+        #     if '#item+rem+i_qcc+is_zxxx+ix_wikilngm' in item and \
+        #             item['#item+rem+i_qcc+is_zxxx+ix_wikilngm']:
+        #         hashtag = '#item+rem' + item['#item+rem+i_qcc+is_zxxx+ix_hxla']
+        #         self.linguae[hashtag] = \
+        #             item['#item+rem+i_qcc+is_zxxx+ix_wikilngm']
+
+        # raise ValueError(str(self.linguae))
 
     def cavere(self):
         # https://en.wiktionary.org/wiki/caveo#Latin
@@ -2681,9 +2756,30 @@ class LibrariaStatusQuo:
         return "TODO LibrariaStatusQuo"
 
     def imprimere(self):
+        nomen = self.codex.m1603_1_1__de_codex['#item+rem+i_mul+is_zyyy']
+        summis_concepta = self.codex.summis_concepta
+        usus_linguae = len(self.codex.usus_linguae)
+        usus_ix_qcc = len(self.codex.usus_ix_qcc)
+
+        resultatum = {
+                self.codex.de_codex: {
+                    'meta': {
+                        'nomen': nomen
+                    },
+                    'cdn': self.cdn,
+                    'status': {
+                        'concepta': summis_concepta,
+                        'res_lingualibus': usus_linguae,
+                        'res_interlingualibus': usus_ix_qcc,
+                    }
+                }
+            }
+
         # https://en.wiktionary.org/wiki/caveo#Latin
         # methodīs, f, pl, (Dative) https://en.wiktionary.org/wiki/methodus#Latin
-        return ["TODO LibrariaStatusQuo"]
+        # return [yaml.dump([self.linguae, self.archivum, self.cdn])]
+        # return [yaml.dump([self.linguae, self.cdn])]
+        return [yaml.dump(resultatum, allow_unicode=True)]
 
 
 class CodexInTabulamJson:
