@@ -39,6 +39,47 @@
 # @see https://doc.wikimedia.org/pywikibot/stable/installation.html
 
 
+
+### Example of initialization guide for uploader, start ________________________
+# @see https://github.com/wikimedia/pywikibot
+# @see https://doc.wikimedia.org/pywikibot/stable/installation.html
+# pip3 install requests
+# pip3 install wikitextparser
+# git clone https://gerrit.wikimedia.org/r/pywikibot/core.git \
+#   /workspace/git/EticaAI/pywikibot
+# cd /workspace/git/EticaAI/pywikibot
+# git submodule update --init
+# python3 pwb.py generate_user_files
+# > options (example)
+#   1
+#   commons
+#   EmericusPetro
+#   n
+#   BotPassword's "bot name" for EmericusPetroBot: EmericusPetroBot@EmericusPet
+#                                                                         roBot
+#   BotPassword's "password" for "EmericusPetroBot@EmericusPetroBot " (no 
+#                                                      characters will be shown)
+
+# cd /workspace/git/EticaAI/pywikibot
+# python3 pwb.py login
+# python3 pwb.py upload /workspace/git/EticaAI/multilingual-lexicography-automation/officinam/1603/45/31/1603_45_31.mul-Latn.tab.json
+
+# (...) Using this tutorial (without need to use pywikibot)
+# https://www.mediawiki.org/wiki/API:Upload#Python
+# (...)
+# Test file
+# https://raw.githubusercontent.com/EticaAI/n-data/main/1603/45/31/1603_45_31.mul-Latn.tab.json
+# https://eticaai.github.io/n-data/1603/45/31/1603_45_31.mul-Latn.tab.json
+
+# URL de teste
+#    https://commons.wikimedia.org/wiki/Data:Sandbox/EmericusPetro/Example.tab
+# URL (no commons)
+#  https://commons.wikimedia.org/wiki/Special:ApiSandbox#action=upload&format=json&filename=File_1.jpg&file=file_contents_here&token=123Token&ignorewarnings=1
+#
+# https://commons.wikimedia.org/w/api.php?action=upload&format=json&filename=EmericusPetro%2FExample.tab&ignorewarnings=1&url=https%3A%2F%2Feticaai.github.io%2Fn-data%2F1603%2F45%2F31%2F1603_45_31.mul-Latn.tab.json&token=
+
+### Example of initialization guide for uploader, end __________________________
+
 import os
 import sys
 import argparse
@@ -64,12 +105,24 @@ os.environ['PYWIKIBOT_DIR'] = _HOME + '/.config/pywikibot/'
 
 # PYWIKIBOT_DIR=/home/fititnt/.config/pywikibot pwb login
 
+# https://commons.wikimedia.org/wiki/Data:Sandbox/EmericusPetro/Example.tab
 
 import pywikibot
+# site = pywikibot.Site('en', 'wikipedia')  # The site we want to run our bot on
+# page = pywikibot.Page(site, 'Wikipedia:Sandbox')
 site = pywikibot.Site('en', 'wikipedia')  # The site we want to run our bot on
 page = pywikibot.Page(site, 'Wikipedia:Sandbox')
 page.text = page.text.replace('foo', 'bar')
 page.save('Replacing "foo" with "bar"')  # Saves the page
+
+# via https://github.com/wikimedia/pywikibot
+# 
+# git clone https://gerrit.wikimedia.org/r/pywikibot/core.git /workspace/git/temp/pywikibot-core
+# cd /workspace/git/temp/pywikibot-core
+# git submodule update --init
+# python3 pwb.py script_name
+# python3 pwb.py login
+
 
 
 # class CLI_2600:
