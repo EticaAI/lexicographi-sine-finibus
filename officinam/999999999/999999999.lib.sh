@@ -11,6 +11,9 @@
 #       OPTIONS:  ---
 #
 #  REQUIREMENTS:  - Bash shell (or better)
+#                 - python3 (call scripts from 999999999/0/)
+#                 - s3cmd (https://github.com/s3tools/s3cmd)
+#                   - pip3 install s3cmd
 #
 #          BUGS:  ---
 #         NOTES:  ---
@@ -1445,6 +1448,112 @@ __numerordinatio_scientiam_initiale() {
   # return 0
 }
 
+#######################################
+# Basic tests to check of synchronization
+#
+# CDN (If using Wasabi as CND + Cloudflare as frontend):
+# - Check this documentations:
+#   - https://wasabi-support.zendesk.com/hc/en-us/articles
+#     /360000016712-How-do-I-set-up-Wasabi-for-user-access-separation-
+#   - https://wasabi-support.zendesk.com/hc/en-us/articles
+#     /360018526192-How-do-I-use-Cloudflare-with-Wasabi-?source=search
+#
+# - Bucket name:
+#   - lsf1603.etica.ai
+# - DNS Configuration (on CloudFlare frontend, if using eu-central-1)
+#   > lsf1603 CNAME s3.eu-central-1.wasabisys.com
+#
+# Example
+#   upload_cdn_test 1603_1_51
+#
+# Globals:
+#   ROOTDIR
+#   S3CFG
+# Arguments:
+#   numerordinatio
+# Outputs:
+#   Show results of test
+#######################################
+upload_cdn_test() {
+  numerordinatio="$1"
+  _path=$(numerordinatio_neo_separatum "$numerordinatio" "/")
+  _nomen=$(numerordinatio_neo_separatum "$numerordinatio" "_")
+  _prefix=$(numerordinatio_neo_separatum "$numerordinatio" ":")
+  # _path_clean="${$_path/aa/bb}"
+  _path_clean=${_path/1603\//''}
+
+  _basim_fontem="${ROOTDIR}/$_path/"
+  _basim_objectivum="s3://lsf1603.etica.ai/$_path_clean/"
+
+  echo "_path_clean [$_path_clean]"
+  echo "_basim_objectivum [$_basim_objectivum]"
+
+  set -x
+  s3cmd ls "$_basim_objectivum" --list-md5 --config "$S3CFG"
+  s3cmd du "$_basim_objectivum" --config "$S3CFG"
+  s3cmd info "s3://lsf1603.etica.ai" --config "$S3CFG"
+  set +x
+
+}
+
+#######################################
+# Synchronization of files by numerordinatio
+#
+# Requires:
+#   pip3 install s3cmd
+#
+# Example
+#   upload_cdn 1603_1_51
+#
+# Globals:
+#   ROOTDIR
+#   S3CFG
+# Arguments:
+#   numerordinatio
+# Outputs:
+#   Convert files
+#######################################
+upload_cdn() {
+  numerordinatio="$1"
+  _path=$(numerordinatio_neo_separatum "$numerordinatio" "/")
+  _nomen=$(numerordinatio_neo_separatum "$numerordinatio" "_")
+  _prefix=$(numerordinatio_neo_separatum "$numerordinatio" ":")
+  # _path_clean="${$_path/aa/bb}"
+  _path_clean=${_path/1603\//''}
+
+  _basim_fontem="${ROOTDIR}/$_path/"
+  _basim_objectivum="s3://lsf1603.etica.ai/$_path_clean/"
+
+  # echo "_path_clean [$_path_clean]"
+  # echo "_basim_objectivum [$_basim_objectivum]"
+  blue=$(tput setaf 4)
+  normal=$(tput sgr0)
+  printf "%40s\n" "${blue}${FUNCNAME[0]} [$numerordinatio]${normal}"
+  # echo "${FUNCNAME[0]} [$numerordinatio]"
+
+  # NOTE: we could implement explicit file patterns to (not) syncronize.
+  #       However, as long as local disk already have excatly what we need
+  #       Leave strict syncronization tend to be better
+
+  # NOTE: the current approach, if current directory does not have
+  #       all files re-generated, will delete files on the CDN. This is the
+  #       expected behavior (but means only syncronize really at the end
+  #       of operations)
+
+  # set -x
+  s3cmd sync "$_basim_fontem" "$_basim_objectivum" \
+    --recursive --delete-removed --acl-public \
+    --no-progress --stats \
+    --config "$S3CFG"
+  # set +x
+}
+
+################################################################################
+##### AFTER HERE, POTENTIALY DEPRECATED. Eventually remove it ##################
+# Most logit here was replaced with high level python, but parts may still be  #
+# in use. Not really a issue remove then, just a matter of test before remove  #
+################################################################################
+
 # DEPRECATED! Use 0/2600.60.py
 __numerordinatio_codicem_lineam() {
   lineam="$1"
@@ -1487,6 +1596,7 @@ __numerordinatio_translatio_numerum_pariae() {
   # echo "Debug: input $codeword_purum: Sum: $total; parity; ${total: -1}"
   echo "${total: -1}"
 }
+
 
 # __numerordinatio_translatio_numerum_pariae 123
 # __numerordinatio_translatio_numerum_pariae 456

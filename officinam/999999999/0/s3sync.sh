@@ -6,7 +6,8 @@
 #         USAGE:  ./999999999/0/s3sync.sh 1603_NN_NN
 #                 time ./999999999/0/s3sync.sh 1603_63_101
 #
-#   DESCRIPTION:  ---
+#   DESCRIPTION:  @DEPRECATED. Logit moved to 999999999.lib.sh. No really
+#                 necessary have additional script for this
 #
 #       OPTIONS:  ---
 #
@@ -33,96 +34,107 @@ ROOTDIR="$(pwd)"
 # shellcheck source=../999999999.lib.sh
 . "$ROOTDIR"/999999999/999999999.lib.sh
 
-# See also
-# - https://github.com/s3tools/s3cmd)
-# - https://github.com/marketplace/actions/use-s3cmd
-# - https://wasabi-support.zendesk.com/hc/en-us/articles/360000016712-How-do-I-set-up-Wasabi-for-user-access-separation-
-# - https://monotai.com/howto-host-static-websites-on-wasabi.html
-# - TODO: maybe also map a subdomain to a domain
-#  - https://wasabi-support.zendesk.com/hc/en-us/articles/115001405332-How-do-I-map-a-Wasabi-public-file-s-to-a-website-
+#### Additional configurations, start __________________________________________
 
-# https://console.wasabisys.com/#/file_manager/lsf1603/
-# - https://s3.wasabisys.com/lsf1603/63/101/1603_63_101.mul-Latn.codex.pdf
-# - https://lsf1603.s3.wasabisys.com/63/101/1603_63_101.mul-Latn.codex.pdf
-# - https://lsf1603.s3.eu-central-1.wasabisys.com/63/101/1603_63_101.mul-Latn.codex.pdf
-# - https://lsf1603.s3.wasabisys.com/
-# Etica.AI DNS
-# - lsf1603.etica.ai (cloudflare) -> lsf1603.s3.wasabisys.com
-# - https://lsf1603.etica.ai/63/101/1603_63_101.mul-Latn.codex.pdf
+### Wasabi client configuration ------------------------------------------------
+# - Create account with read/write access only to the desired bucked
+# - Make sure it already works before trying to setup CDN
 
-
-# s3cmd info s3://lsf1603
-# set -x
-# s3cmd info --config "$S3CFG" s3://lsf1603
-# s3cmd ls --config "$S3CFG" s3://lsf1603
-# s3cmd la --config "$S3CFG"
-
-#######################################
-# Test access
+### CDN (If using Wasabi as CND + Cloudflare as frontend) ----------------------
+# Check this documentations:
+#   - https://wasabi-support.zendesk.com/hc/en-us/articles
+#     /360000016712-How-do-I-set-up-Wasabi-for-user-access-separation-
+#   - https://wasabi-support.zendesk.com/hc/en-us/articles
+#     /360018526192-How-do-I-use-Cloudflare-with-Wasabi-?source=search
 #
-# Globals:
-#   ROOTDIR
-#   S3CFG
-# Arguments:
-#   numerordinatio
-# Outputs:
-#   Convert files
-#######################################
-s3cmd_access_test() {
-  numerordinatio="$1"
-  _path=$(numerordinatio_neo_separatum "$numerordinatio" "/")
-  _nomen=$(numerordinatio_neo_separatum "$numerordinatio" "_")
-  _prefix=$(numerordinatio_neo_separatum "$numerordinatio" ":")
-  # _path_clean="${$_path/aa/bb}"
-  _path_clean=${_path/1603\//''}
+# Bucket name:
+#   - lsf1603.etica.ai
+# DNS Configuration (on CloudFlare frontend, if using eu-central-1)
+#   > lsf1603 CNAME s3.eu-central-1.wasabisys.com
 
-  _basim_fontem="${ROOTDIR}/$_path/"
-  _basim_objectivum="s3://lsf1603/$_path_clean/"
+#### Additional configurations, end ____________________________________________
 
-  echo "_path_clean [$_path_clean]"
-  echo "_basim_objectivum [$_basim_objectivum]"
+# #######################################
+# # Test access
+# #
+# # Globals:
+# #   ROOTDIR
+# #   S3CFG
+# # Arguments:
+# #   numerordinatio
+# # Outputs:
+# #   Convert files
+# #######################################
+# s3cmd_access_test() {
+#   numerordinatio="$1"
+#   _path=$(numerordinatio_neo_separatum "$numerordinatio" "/")
+#   _nomen=$(numerordinatio_neo_separatum "$numerordinatio" "_")
+#   _prefix=$(numerordinatio_neo_separatum "$numerordinatio" ":")
+#   # _path_clean="${$_path/aa/bb}"
+#   _path_clean=${_path/1603\//''}
 
-  set -x
-  s3cmd ls "$_basim_objectivum" --config "$S3CFG"
-  s3cmd du "$_basim_objectivum" --config "$S3CFG"
-  s3cmd info "s3://lsf1603" --config "$S3CFG"
-  set +x
+#   _basim_fontem="${ROOTDIR}/$_path/"
+#   _basim_objectivum="s3://lsf1603.etica.ai/$_path_clean/"
 
-}
+#   echo "_path_clean [$_path_clean]"
+#   echo "_basim_objectivum [$_basim_objectivum]"
 
-#######################################
-# Synchronization of files by numerordinatio
-#
-# Globals:
-#   ROOTDIR
-#   S3CFG
-# Arguments:
-#   numerordinatio
-# Outputs:
-#   Convert files
-#######################################
-s3cmd_sync_upload() {
-  numerordinatio="$1"
-  _path=$(numerordinatio_neo_separatum "$numerordinatio" "/")
-  _nomen=$(numerordinatio_neo_separatum "$numerordinatio" "_")
-  _prefix=$(numerordinatio_neo_separatum "$numerordinatio" ":")
-  # _path_clean="${$_path/aa/bb}"
-  _path_clean=${_path/1603\//''}
+#   set -x
+#   s3cmd ls "$_basim_objectivum" --list-md5 --config "$S3CFG"
+#   s3cmd du "$_basim_objectivum" --config "$S3CFG"
+#   s3cmd info "s3://lsf1603.etica.ai" --config "$S3CFG"
+#   set +x
 
-  _basim_fontem="${ROOTDIR}/$_path/"
-  _basim_objectivum="s3://lsf1603/$_path_clean/"
+# }
 
-  echo "_path_clean [$_path_clean]"
-  echo "_basim_objectivum [$_basim_objectivum]"
+# #######################################
+# # Synchronization of files by numerordinatio
+# #
+# # Globals:
+# #   ROOTDIR
+# #   S3CFG
+# # Arguments:
+# #   numerordinatio
+# # Outputs:
+# #   Convert files
+# #######################################
+# s3cmd_sync_upload() {
+#   numerordinatio="$1"
+#   _path=$(numerordinatio_neo_separatum "$numerordinatio" "/")
+#   _nomen=$(numerordinatio_neo_separatum "$numerordinatio" "_")
+#   _prefix=$(numerordinatio_neo_separatum "$numerordinatio" ":")
+#   # _path_clean="${$_path/aa/bb}"
+#   _path_clean=${_path/1603\//''}
 
-  # s3cmd ls "$_basim_objectivum" --config "$S3CFG"
-  # s3cmd du "$_basim_objectivum" --config "$S3CFG"
-  # s3cmd info "s3://lsf1603" --config "$S3CFG"
-  set -x
-  # s3cmd sync --recursive "$_basim_fontem" "$_basim_objectivum" --delete-removed --dry-run --acl-public --config "$S3CFG"
-  s3cmd sync --recursive "$_basim_fontem" "$_basim_objectivum" --delete-removed --acl-public --config "$S3CFG"
-  set +x
-}
+#   _basim_fontem="${ROOTDIR}/$_path/"
+#   _basim_objectivum="s3://lsf1603.etica.ai/$_path_clean/"
+
+#   # echo "_path_clean [$_path_clean]"
+#   # echo "_basim_objectivum [$_basim_objectivum]"
+#   blue=$(tput setaf 4)
+#   normal=$(tput sgr0)
+#   printf "%40s\n" "${blue}${FUNCNAME[0]} [$numerordinatio]${normal}"
+#   # echo "${FUNCNAME[0]} [$numerordinatio]"
+
+#   # NOTE: we could implement explicit file patterns to (not) syncronize.
+#   #       However, as long as local disk already have excatly what we need
+#   #       Leave strict syncronization tend to be better
+
+#   # NOTE: the current approach, if current directory does not have
+#   #       all files re-generated, will delete files on the CDN. This is the
+#   #       expected behavior (but means only syncronize really at the end
+#   #       of operations)
+
+#   # set -x
+#   s3cmd sync "$_basim_fontem" "$_basim_objectivum" \
+#     --recursive --delete-removed --acl-public \
+#     --no-progress --stats \
+#     --config "$S3CFG"
+#   # set +x
+# }
 
 # s3cmd_access_test "$1"
-s3cmd_sync_upload "$1"
+# s3cmd_sync_upload "$1"
+# upload_cdn "$1"
+upload_cdn "$1"
+# upload_cdn_test "$1"
