@@ -84,15 +84,17 @@ Exemplōrum gratiā:
 
     {0} --dictionaria-numerordinatio
 
-    {0} --codex-de 1603_25_1
+    {0} --codex-de 1603_63_101
 
-    {0} --codex-de 1603_25_1 --codex-copertae
+    {0} --codex-de 1603_63_101 --codex-copertae
 
-    {0} --codex-de 1603_25_1 --codex-in-tabulam-json
+    {0} --codex-de 1603_63_101 --codex-in-tabulam-json
 
-    {0} --codex-de 1603_25_1 --status-quo
+    {0} --codex-de 1603_63_101 --status-quo
 
-    {0} --codex-de 1603_25_1 --status-quo --ex-librario
+    {0} --codex-de 1603_63_101 --status-quo --ex-librario
+
+    {0} --codex-de 1603_63_101 --status-quo --ex-librario --status-in-markdown
 
 """.format(__file__)
 
@@ -153,6 +155,7 @@ EXTENSIONES_PICTURIS = [
 EXTENSIONES_IGNORATIS = [
 
 ]
+
 
 def numerordinatio_neo_separatum(
         numerordinatio: str, separatum: str = "_") -> str:
@@ -2698,10 +2701,12 @@ class LibrariaStatusQuo:
     def __init__(
         self,
         codex: Type['Codex'],
-        ex_librario: bool = False
+        ex_librario: bool = False,
+        status_in_markdown: bool = False
     ):
         self.codex = codex
         self.ex_librario = ex_librario
+        self.status_in_markdown = status_in_markdown
 
         self.initiari()
 
@@ -2809,7 +2814,6 @@ class LibrariaStatusQuo:
         # methodīs, f, pl, (Dative) https://en.wiktionary.org/wiki/methodus#Latin
         # return [yaml.dump([self.linguae, self.archivum, self.cdn])]
         # return [yaml.dump([self.linguae, self.cdn])]
-        
 
 
 class CodexInTabulamJson:
@@ -4389,13 +4393,25 @@ class CLI_2600:
         # https://en.wiktionary.org/wiki/status_quo#English
         status_quo = parser.add_argument_group(
             "Status quō",
-            "Calculate current situation. Used to take other actions")
+            "Calculate current situation. Used to take other actions. "
+            "Requires --codex-de 1603_NN_NN"
+        )
 
         status_quo.add_argument(
             '--status-quo',
             help='Compute the status quo, using a codex as initial reference',
             # metavar='',
             dest='status_quo',
+            # const=True,
+            action='store_true',
+            # nargs='?'
+        )
+
+        status_quo.add_argument(
+            '--status-in-markdown',
+            help='Return status in Markdown (instead of YAML)',
+            # metavar='',
+            dest='status_in_markdown',
             # const=True,
             action='store_true',
             # nargs='?'
@@ -4500,7 +4516,10 @@ class CLI_2600:
             # data = ['TODO']
             # codex_in_tabulam_json
             if self.pyargs.status_quo:
-                libraria = LibrariaStatusQuo(codex, self.pyargs.ex_librario)
+                libraria = LibrariaStatusQuo(
+                    codex,
+                    self.pyargs.ex_librario,
+                    self.pyargs.status_in_markdown)
 
                 return self.output(libraria.imprimere())
             if not self.pyargs.codex_copertae and \
