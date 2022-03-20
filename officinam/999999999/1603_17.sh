@@ -121,6 +121,7 @@ file_convert_numerordinatio_de_hxltm "1603_1_7" "1" "0"
 neo_codex_de_numerordinatio "1603_1_7" "0" "0"
 neo_codex_de_numerordinatio_pdf "1603_1_7" "0" "0"
 
+# TODO: this need some work
 file_download_if_necessary "$DATA_1603_1_101" "1603_1_101" "csv" "tm.hxl.csv" "hxltmcli" "1"
 file_convert_numerordinatio_de_hxltm "1603_1_101" "1" "0"
 # file_merge_numerordinatio_de_wiki_q "1603_1_101" "0" "0"

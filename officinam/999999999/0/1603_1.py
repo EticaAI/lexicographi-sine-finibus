@@ -516,6 +516,7 @@ class Codex:
         self.dictionaria_linguarum = DictionariaLinguarum()
         self.dictionaria_interlinguarum = DictionariaInterlinguarum()
         self.codex = self._init_codex()
+        self.n1603ia = self._init_ix_n1603ia()
         # self.annexa = self._init_annexa()
 
         self.annexis = CodexAnnexis(self, self.de_codex)
@@ -573,6 +574,29 @@ class Codex:
                 codex_lineam.append(lineam)
 
         return codex_lineam
+
+    def _init_ix_n1603ia(self) -> dict:
+        resultatum = {}
+        if '#item+rem+i_qcc+is_zxxx+ix_n1603ia' not in self.m1603_1_1__de_codex:
+            return resultatum
+        ix_n1603ia_crudum = \
+            self.m1603_1_1__de_codex['#item+rem+i_qcc+is_zxxx+ix_n1603ia']
+        if not ix_n1603ia_crudum or len(ix_n1603ia_crudum.strip()) == 0:
+            return resultatum
+
+        crudum = map(str.strip, ix_n1603ia_crudum.split('|'))
+        for item in crudum:
+            parts = item.split('-')
+            try:
+
+                resultatum[parts[0]] = int(parts[1])
+            except IndexError:
+                raise ValueError('[1603:1:1] xi_n1603ia <[{0}] [{1}]>'.format(
+                    self.m1603_1_1__de_codex['#item+rem+i_qcc+is_zxxx+ix_n1603'],
+                    str(ix_n1603ia_crudum)
+                ))
+
+        return resultatum
 
     def _referencia(self, rem: dict, index: int = 1) -> list:
         paginae = []
@@ -2762,7 +2786,6 @@ class LibrariaStatusQuo:
 
         # raise ValueError(str(self.linguae))
 
-
     def crc(self, res: Union[set, list]) -> str:
         return crc32(b'TODO')
 
@@ -2773,6 +2796,7 @@ class LibrariaStatusQuo:
         usus_ix_qcc = len(self.codex.usus_ix_qcc)
 
         resultatum = {
+            'annotationes_internalibus': self.codex.n1603ia,
             'meta': {
                 'nomen': nomen
             },
