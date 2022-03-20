@@ -28,6 +28,7 @@ officinam/1603/1603.statum.yml
 /officinam/package.json
 /officinam/package-lock.json
 /officinam/node_modules
+*~lock.*
 
 /officinam/**/**\.~[0-9]/*
 !/officinam/**/**\.~[0-9]/.gitkep

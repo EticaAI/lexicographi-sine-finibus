@@ -201,6 +201,7 @@ numerordinatio_neo_separatum() {
 #######################################
 # Download remote file. Only executed if local file is old. Try validate
 # downloads before replacing objective files.
+# Note: see file_download_1603_xlsx() for download entire xlsx at once.
 #
 # Globals:
 #   ROOTDIR
@@ -278,6 +279,110 @@ file_download_if_necessary() {
   fi
 
   file_update_if_necessary "$archivum_typum" "$objectivum_archivum_temporarium" "$objectivum_archivum"
+}
+
+#######################################
+# Download Google sheets to local cache
+#
+# Globals:
+#   ROOTDIR
+#   DATA_1603
+# Arguments:
+#   est_temporarium
+# Outputs:
+#   Writes .xlsx
+#######################################
+file_download_1603_xlsx() {
+  est_temporarium="${6:-"1"}"
+  iri="$DATA_1603"
+
+  if [ "$est_temporarium" -eq "1" ]; then
+    _basim="${ROOTDIR}/999999"
+  else
+    _basim="${ROOTDIR}"
+  fi
+
+  _path=$(numerordinatio_neo_separatum "$numerordinatio" "/")
+  _nomen=$(numerordinatio_neo_separatum "$numerordinatio" "_")
+
+  echo "${FUNCNAME[0]} ..."
+
+  objectivum_archivum="${_basim}/1603/1603.xlsx"
+  objectivum_archivum_temporarium="${ROOTDIR}/999999/0/1603.xlsx"
+
+  if [ -f "$objectivum_archivum" ]; then
+    is_stale=$(stale_archive "$objectivum_archivum" "360")
+    if [ "$is_stale" = "1" ]; then
+      echo "Cache exist, but more than 5min old, Downloading again"
+    else
+      echo "Cache exist, but less than 5min old. Wait or delete manually:"
+      echo "   $objectivum_archivum"
+      return 0
+    fi
+  fi
+
+  # TODO: make some quick checks to see if the temp xlsx seems okay
+  wget "$iri" -O "$objectivum_archivum_temporarium"
+  if [ -f "$objectivum_archivum" ]; then
+    rm "$objectivum_archivum"
+  fi
+
+  mv "$objectivum_archivum_temporarium" "$objectivum_archivum"
+}
+
+#######################################
+# Convert HXLTM to numerordinatio with these defaults:
+# - '#meta' are removed
+# - Fields with empty or zeroed concept code are excluded
+# - '#status+conceptum' (if defined) less than 0 are excluded
+# - '#status' are removed
+#
+# Globals:
+#   ROOTDIR
+#   NUMERORDINATIO_STATUS_CONCEPTUM_MINIMAM
+#   NUMERORDINATIO_STATUS_CONCEPTUM_CODICEM_MINIMAM
+# Arguments:
+#   numerordinatio
+#   est_temporarium_fontem (default "1", from 99999/)
+#   est_temporarium_objectivumm (dfault "0", from real namespace)
+# Outputs:
+#   Convert files
+#######################################
+file_convert_csv_de_xlsx() {
+  numerordinatio="$1"
+  est_temporarium_fontem="${2:-"1"}"
+  est_temporarium_objectivum="${3:-"1"}"
+  opus_papyro="${4:-"10"}"
+
+  _path=$(numerordinatio_neo_separatum "$numerordinatio" "/")
+  _nomen=$(numerordinatio_neo_separatum "$numerordinatio" "_")
+  _prefix=$(numerordinatio_neo_separatum "$numerordinatio" ":")
+
+  echo "${FUNCNAME[0]} ...[$numerordinatio]"
+
+  if [ "$est_temporarium_fontem" -eq "1" ]; then
+    _basim_fontem="${ROOTDIR}/999999"
+  else
+    _basim_fontem="${ROOTDIR}"
+  fi
+  if [ "$est_temporarium_objectivum" -eq "1" ]; then
+    _basim_objectivum="${ROOTDIR}/999999"
+  else
+    _basim_objectivum="${ROOTDIR}"
+  fi
+
+  fontem_archivum="${_basim_fontem}/1603/1603.xlsx"
+  objectivum_archivum="${_basim_objectivum}/$_path/$_nomen.tm.hxl.csv"
+  objectivum_archivum_temporarium="${ROOTDIR}/999999/0/$_nomen.tm.hxl.csv"
+
+  set -x
+  hxltmcli --sheet "$opus_papyro" "$fontem_archivum" "$objectivum_archivum_temporarium"
+  set +x
+
+  # Strip empty header (already is likely to be ,,,,,,)
+  sed -i '1d' "${objectivum_archivum_temporarium}"
+
+  file_update_if_necessary csv "$objectivum_archivum_temporarium" "$objectivum_archivum"
 }
 
 #######################################
