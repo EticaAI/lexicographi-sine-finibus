@@ -2701,12 +2701,11 @@ class LibrariaStatusQuo:
     def __init__(
         self,
         codex: Type['Codex'],
-        ex_librario: bool = False,
-        status_in_markdown: bool = False
+        ex_librario: bool = False
     ):
         self.codex = codex
         self.ex_librario = ex_librario
-        self.status_in_markdown = status_in_markdown
+        # self.status_in_markdown = status_in_markdown
 
         self.initiari()
 
@@ -2772,13 +2771,31 @@ class LibrariaStatusQuo:
             },
             'cdn': self.cdn,
             'status': {
-                'concepta': summis_concepta,
-                'res_lingualibus': usus_linguae,
-                'res_interlingualibus': usus_ix_qcc,
+                'crc': {
+                    'concepta': None,
+                    'res_lingualibus': None,
+                    'res_interlingualibus': None,
+                },
+                'summa': {
+                    'concepta': summis_concepta,
+                    'res_lingualibus': usus_linguae,
+                    'res_interlingualibus': usus_ix_qcc,
+                }
             }
         }
 
         return resultatum
+
+    def librarium_vacuum(self) -> dict:
+        return {
+            'librarium': {},
+            'status': {
+                'summa': {
+                    'codex': 0,
+                    'concepta': 0,
+                }
+            }
+        }
 
     def status_librario(self):
         librario_status = NUMERORDINATIO_BASIM + '/1603/1603.statum.yml'
@@ -2790,30 +2807,60 @@ class LibrariaStatusQuo:
                 # if not resultatum or 'librarium' not in resultatum:
                 #     resultatum = {'librarium': {}}
                 if resultatum is None or 'librarium' not in resultatum:
-                    resultatum = {'codex': [], 'librarium': {}}
+                    resultatum = self.librarium_vacuum()
             return resultatum
         except OSError:
             vacuum = {'codex': [], 'librarium': {}}
             return vacuum
 
+    def status_librario_ex_codex(self):
+        ex_codice = self.ex_codice()
+        ex_librario = self.status_librario()
+        ex_librario['librarium'][self.codex.de_codex] = ex_codice
+
+        ex_librario['status'] = {
+            'summa': {
+                'codex': 0,
+                'concepta': 0,
+            }
+        }
+
+        for codex, item in ex_librario['librarium'].items():
+            ex_librario['status']['summa']['codex'] += 1
+            ex_librario['status']['summa']['concepta'] += \
+                item['status']['summa']['concepta']
+
+        return ex_librario
+
     def imprimere(self):
-
-        resultatum = self.ex_codice()
-
         if self.ex_librario:
-            ex_codice = self.ex_codice()
-            ex_librario = self.status_librario()
-            ex_librario['librarium'][self.codex.de_codex] = ex_codice
-            # ex_librario['codex'].append(self.codex.de_codex)
-
-            return [yaml.dump(ex_librario, allow_unicode=True)]
+            return [yaml.dump(
+                self.status_librario_ex_codex(), allow_unicode=True)]
         else:
             return [yaml.dump(self.ex_codice(), allow_unicode=True)]
 
-        # https://en.wiktionary.org/wiki/caveo#Latin
-        # methodīs, f, pl, (Dative) https://en.wiktionary.org/wiki/methodus#Latin
-        # return [yaml.dump([self.linguae, self.archivum, self.cdn])]
-        # return [yaml.dump([self.linguae, self.cdn])]
+    def imprimere_in_markdown(self):
+        if not self.ex_librario:
+            raise NotImplementedError(
+                '--status-in-markdown requires --ex-librario')
+        paginae = []
+        status = self.status_librario_ex_codex()
+        paginae.append('# 1603 Librārium')
+        for codex, item in status['librarium'].items():
+            paginae.append('## {0} {1}'.format(codex, item['meta']['nomen']))
+            paginae.append('- status')
+            paginae.append(
+                '  - concepta: {0}'.format(item['status']['summa']['concepta']))
+            paginae.append(
+                '  - res_interlingualibus: {0}'.format(
+                    item['status']['summa']['res_interlingualibus']))
+            paginae.append(
+                '  - res_lingualibus: {0}'.format(
+                    item['status']['summa']['res_lingualibus']))
+
+        # return [yaml.dump(
+        #     status, allow_unicode=True)]
+        return paginae
 
 
 class CodexInTabulamJson:
@@ -4518,10 +4565,12 @@ class CLI_2600:
             if self.pyargs.status_quo:
                 libraria = LibrariaStatusQuo(
                     codex,
-                    self.pyargs.ex_librario,
-                    self.pyargs.status_in_markdown)
+                    self.pyargs.ex_librario)
 
+                if self.pyargs.status_in_markdown:
+                    return self.output(libraria.imprimere_in_markdown())
                 return self.output(libraria.imprimere())
+
             if not self.pyargs.codex_copertae and \
                     not self.pyargs.codex_in_tabulam_json:
                 return self.output(codex.imprimere())
