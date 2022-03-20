@@ -373,14 +373,28 @@ file_convert_csv_de_xlsx() {
 
   fontem_archivum="${_basim_fontem}/1603/1603.xlsx"
   objectivum_archivum="${_basim_objectivum}/$_path/$_nomen.tm.hxl.csv"
+  objectivum_archivum_temporarium_csv="${ROOTDIR}/999999/0/$_nomen.csv"
   objectivum_archivum_temporarium="${ROOTDIR}/999999/0/$_nomen.tm.hxl.csv"
 
   set -x
-  hxltmcli --sheet "$opus_papyro" "$fontem_archivum" "$objectivum_archivum_temporarium"
+  # hxltmcli --sheet "$opus_papyro" "$fontem_archivum" "$objectivum_archivum_temporarium"
+  # hxlclean --sheet "$opus_papyro" "$fontem_archivum" "$objectivum_archivum_temporarium"
+  in2csv --format xlsx --no-inference --skip-lines 17 --sheet "$_nomen" "$fontem_archivum" > "${objectivum_archivum_temporarium_csv}"
+  # issue: in2csv is adding ".0" to #item+conceptum+codicem for integers. even with --no-inference
   set +x
 
+  hxlselect --query="#item+conceptum+codicem>0" "${objectivum_archivum_temporarium_csv}" "$objectivum_archivum_temporarium"
+
+  # hxlselect --query="#item+conceptum+codicem>0" \
+  #   "${objectivum_archivum_temporarium_csv}" |
+  #   hxlreplace --tags="item+conceptum+codicem" --pattern=".0" --substitution="" \
+  #     >"$objectivum_archivum_temporarium"
+
+  # TODO: remove the ".0" suffixes created by in2csv on
+  #       (at least) #item+conceptum+codicem column
+
   # Strip empty header (already is likely to be ,,,,,,)
-  sed -i '1d' "${objectivum_archivum_temporarium}"
+  # sed -i '1d' "${objectivum_archivum_temporarium}"
 
   file_update_if_necessary csv "$objectivum_archivum_temporarium" "$objectivum_archivum"
 }
