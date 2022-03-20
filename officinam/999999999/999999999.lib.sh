@@ -862,10 +862,10 @@ file_translate_csv_de_numerordinatio_q() {
   # exit 1
 
   # TODO: implement check if return result on 1603_45_1~5.wikiq.tm.hxl.csv
-  #       is something such as 
+  #       is something such as
   #  ----
   #  #Service load too high,# please come back later
-  #  
+  #
   #
   #  -----
   echo "1/5"
@@ -1605,7 +1605,6 @@ __numerordinatio_translatio_numerum_pariae() {
   echo "${total: -1}"
 }
 
-
 # __numerordinatio_translatio_numerum_pariae 123
 # __numerordinatio_translatio_numerum_pariae 456
 
@@ -1932,19 +1931,27 @@ temp_save_status() {
 
   status_archivum_codex="${ROOTDIR}/$_path/$_nomen.statum.yml"
   status_archivum_librario="${ROOTDIR}/1603/1603.statum.yml"
+  objectivum_archivum_temporarium="${ROOTDIR}/999999/0/1603+$_nomen.statum.yml"
 
   "${ROOTDIR}/999999999/0/1603_1.py" \
     --codex-de "$_nomen" --status-quo \
-    > "$status_archivum_codex"
+    >"$status_archivum_codex"
 
-  echo "$status_archivum_librario status_archivum_librario "
+  # echo "$status_archivum_librario status_archivum_librario "
 
   set -x
   "${ROOTDIR}/999999999/0/1603_1.py" \
     --codex-de "$_nomen" --status-quo --ex-librario \
-    > "$status_archivum_librario"
+    >"$objectivum_archivum_temporarium"
   set +x
-  # yq -yi '.authentication.anonymous.enabled |= true' 1603/1603.statum.yml
+
+  # NOTE: this operation should be atomic. But for sake of portability,
+  #       we're using temporary file without flog or setlock or something.
+  #       Trying to use --status-quo --ex-librario
+  #       without temporary file will reset old information. That's why
+  #       we're using temp file
+  rm "$status_archivum_librario" &&
+    mv "$objectivum_archivum_temporarium" "$status_archivum_librario"
 
 }
 

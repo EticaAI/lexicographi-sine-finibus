@@ -2786,7 +2786,7 @@ class LibrariaStatusQuo:
                 #     resultatum = {'librarium': {}}
                 if resultatum is None or 'librarium' not in resultatum:
                     resultatum = {'codex': [], 'librarium': {}}
-                return resultatum
+            return resultatum
         except OSError:
             vacuum = {'codex': [], 'librarium': {}}
             return vacuum
@@ -2799,7 +2799,7 @@ class LibrariaStatusQuo:
             ex_codice = self.ex_codice()
             ex_librario = self.status_librario()
             ex_librario['librarium'][self.codex.de_codex] = ex_codice
-            ex_librario['codex'].append(self.codex.de_codex)
+            # ex_librario['codex'].append(self.codex.de_codex)
 
             return [yaml.dump(ex_librario, allow_unicode=True)]
         else:
