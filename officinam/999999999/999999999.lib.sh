@@ -1931,12 +1931,19 @@ temp_save_status() {
   _prefix=$(numerordinatio_neo_separatum "$numerordinatio" ":")
 
   status_archivum_codex="${ROOTDIR}/$_path/$_nomen.statum.yml"
-  # status_global_temp="${ROOTDIR}/$_path/$_nomen.statum.yml"
+  status_archivum_librario="${ROOTDIR}/1603/1603.statum.yml"
 
   "${ROOTDIR}/999999999/0/1603_1.py" \
-    --codex-de "$_nomen" --status-novo \
+    --codex-de "$_nomen" --status-quo \
     > "$status_archivum_codex"
 
+  echo "$status_archivum_librario status_archivum_librario "
+
+  set -x
+  "${ROOTDIR}/999999999/0/1603_1.py" \
+    --codex-de "$_nomen" --status-quo --ex-librario \
+    > "$status_archivum_librario"
+  set +x
   # yq -yi '.authentication.anonymous.enabled |= true' 1603/1603.statum.yml
 
 }

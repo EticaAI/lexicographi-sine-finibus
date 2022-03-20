@@ -90,6 +90,10 @@ Exemplōrum gratiā:
 
     {0} --codex-de 1603_25_1 --codex-in-tabulam-json
 
+    {0} --codex-de 1603_25_1 --status-quo
+
+    {0} --codex-de 1603_25_1 --status-quo --ex-librario
+
 """.format(__file__)
 
 NUMERORDINATIO_BASIM = os.getenv('NUMERORDINATIO_BASIM', os.getcwd())
@@ -149,7 +153,6 @@ EXTENSIONES_PICTURIS = [
 EXTENSIONES_IGNORATIS = [
 
 ]
-
 
 def numerordinatio_neo_separatum(
         numerordinatio: str, separatum: str = "_") -> str:
@@ -2656,9 +2659,9 @@ class LibrariaStatusQuo:
     linguae = {}
     archivum = {}
     cdn = {
-        'codex' : [],
-        'dictionaria' : [],
-        'annexis' : [],
+        'codex': [],
+        'dictionaria': [],
+        'annexis': [],
     }
 
     _cdn_archivum_suffix = (
@@ -2690,13 +2693,15 @@ class LibrariaStatusQuo:
     )
 
     # No 1603 prefix
-    cdn_prefix: str = 'https://lsf1603.etica.ai/'
+    cdn_prefix: str = 'https://lsf-cdn.etica.ai/'
 
     def __init__(
         self,
-        codex: Type['Codex']
+        codex: Type['Codex'],
+        ex_librario: bool = False
     ):
         self.codex = codex
+        self.ex_librario = ex_librario
 
         self.initiari()
 
@@ -2750,36 +2755,61 @@ class LibrariaStatusQuo:
 
         # raise ValueError(str(self.linguae))
 
-    def cavere(self):
-        # https://en.wiktionary.org/wiki/caveo#Latin
-        # https://en.wiktionary.org/wiki/caveo#Latin
-        return "TODO LibrariaStatusQuo"
-
-    def imprimere(self):
+    def ex_codice(self):
         nomen = self.codex.m1603_1_1__de_codex['#item+rem+i_mul+is_zyyy']
         summis_concepta = self.codex.summis_concepta
         usus_linguae = len(self.codex.usus_linguae)
         usus_ix_qcc = len(self.codex.usus_ix_qcc)
 
         resultatum = {
-                self.codex.de_codex: {
-                    'meta': {
-                        'nomen': nomen
-                    },
-                    'cdn': self.cdn,
-                    'status': {
-                        'concepta': summis_concepta,
-                        'res_lingualibus': usus_linguae,
-                        'res_interlingualibus': usus_ix_qcc,
-                    }
-                }
+            'meta': {
+                'nomen': nomen
+            },
+            'cdn': self.cdn,
+            'status': {
+                'concepta': summis_concepta,
+                'res_lingualibus': usus_linguae,
+                'res_interlingualibus': usus_ix_qcc,
             }
+        }
+
+        return resultatum
+
+    def status_librario(self):
+        librario_status = NUMERORDINATIO_BASIM + '/1603/1603.statum.yml'
+
+        try:
+            with open(librario_status) as _file:
+                # fruits_list = yaml.load(_file, Loader=yaml.FullLoader)
+                resultatum = yaml.load(_file, Loader=yaml.FullLoader)
+                # if not resultatum or 'librarium' not in resultatum:
+                #     resultatum = {'librarium': {}}
+                if resultatum is None or 'librarium' not in resultatum:
+                    resultatum = {'codex': [], 'librarium': {}}
+                return resultatum
+        except OSError:
+            vacuum = {'codex': [], 'librarium': {}}
+            return vacuum
+
+    def imprimere(self):
+
+        resultatum = self.ex_codice()
+
+        if self.ex_librario:
+            ex_codice = self.ex_codice()
+            ex_librario = self.status_librario()
+            ex_librario['librarium'][self.codex.de_codex] = ex_codice
+            ex_librario['codex'].append(self.codex.de_codex)
+
+            return [yaml.dump(ex_librario, allow_unicode=True)]
+        else:
+            return [yaml.dump(self.ex_codice(), allow_unicode=True)]
 
         # https://en.wiktionary.org/wiki/caveo#Latin
         # methodīs, f, pl, (Dative) https://en.wiktionary.org/wiki/methodus#Latin
         # return [yaml.dump([self.linguae, self.archivum, self.cdn])]
         # return [yaml.dump([self.linguae, self.cdn])]
-        return [yaml.dump(resultatum, allow_unicode=True)]
+        
 
 
 class CodexInTabulamJson:
@@ -4371,13 +4401,14 @@ class CLI_2600:
             # nargs='?'
         )
 
-        # https://en.wiktionary.org/wiki/novus
-        # https://en.wiktionary.org/wiki/status#English
+        # - ex (+ ablative), https://en.wiktionary.org/wiki/ex#Latin
+        # - librāriō, n, s, /Ablative/,
+        #     https://en.wiktionary.org/wiki/librarium#Latin
         status_quo.add_argument(
-            '--status-novo',
+            '--ex-librario',
             help='Status novō. New state. Persist changes if necessary',
             # metavar='',
-            dest='status_novo',
+            dest='ex_librario',
             # const=True,
             action='store_true',
             # nargs='?'
@@ -4468,8 +4499,8 @@ class CLI_2600:
             )
             # data = ['TODO']
             # codex_in_tabulam_json
-            if self.pyargs.status_novo:
-                libraria = LibrariaStatusQuo(codex)
+            if self.pyargs.status_quo:
+                libraria = LibrariaStatusQuo(codex, self.pyargs.ex_librario)
 
                 return self.output(libraria.imprimere())
             if not self.pyargs.codex_copertae and \
