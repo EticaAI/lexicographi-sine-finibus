@@ -67,6 +67,9 @@ import fnmatch
 # import json
 import datetime
 
+from zlib import crc32
+
+
 # from itertools import permutations
 # from itertools import product
 # valueee = list(itertools.permutations([1, 2, 3]))
@@ -2759,6 +2762,10 @@ class LibrariaStatusQuo:
 
         # raise ValueError(str(self.linguae))
 
+
+    def crc(self, res: Union[set, list]) -> str:
+        return crc32(b'TODO')
+
     def ex_codice(self):
         nomen = self.codex.m1603_1_1__de_codex['#item+rem+i_mul+is_zyyy']
         summis_concepta = self.codex.summis_concepta
@@ -2770,11 +2777,11 @@ class LibrariaStatusQuo:
                 'nomen': nomen
             },
             'cdn': self.cdn,
-            'status': {
+            'status_quo': {
                 'crc': {
                     'concepta': None,
-                    'res_lingualibus': None,
-                    'res_interlingualibus': None,
+                    'res_lingualibus': self.crc(self.codex.usus_linguae),
+                    'res_interlingualibus': self.crc(self.codex.usus_ix_qcc),
                 },
                 'summa': {
                     'concepta': summis_concepta,
@@ -2789,7 +2796,7 @@ class LibrariaStatusQuo:
     def librarium_vacuum(self) -> dict:
         return {
             'librarium': {},
-            'status': {
+            'status_quo': {
                 'summa': {
                     'codex': 0,
                     'concepta': 0,
@@ -2818,17 +2825,17 @@ class LibrariaStatusQuo:
         ex_librario = self.status_librario()
         ex_librario['librarium'][self.codex.de_codex] = ex_codice
 
-        ex_librario['status'] = {
+        ex_librario['status_quo'] = {
             'summa': {
                 'codex': 0,
-                'concepta': 0,
+                'concepta_non_unicum': 0,
             }
         }
 
-        for codex, item in ex_librario['librarium'].items():
-            ex_librario['status']['summa']['codex'] += 1
-            ex_librario['status']['summa']['concepta'] += \
-                item['status']['summa']['concepta']
+        for _codex, item in ex_librario['librarium'].items():
+            ex_librario['status_quo']['summa']['codex'] += 1
+            ex_librario['status_quo']['summa']['concepta_non_unicum'] += \
+                item['status_quo']['summa']['concepta']
 
         return ex_librario
 
@@ -2846,17 +2853,23 @@ class LibrariaStatusQuo:
         paginae = []
         status = self.status_librario_ex_codex()
         paginae.append('# 1603 Librārium')
+        paginae.append('- status_quo')
+        paginae.append('  - summa')
+        paginae.append('    - codex: {0}'.format(
+            status['status_quo']['summa']['codex']))
+        paginae.append('    - concepta_non_unicum: {0}'.format(
+            status['status_quo']['summa']['concepta_non_unicum']))
         for codex, item in status['librarium'].items():
             paginae.append('## {0} {1}'.format(codex, item['meta']['nomen']))
-            paginae.append('- status')
+            paginae.append('- status_quo')
             paginae.append(
-                '  - concepta: {0}'.format(item['status']['summa']['concepta']))
+                '  - concepta: {0}'.format(item['status_quo']['summa']['concepta']))
             paginae.append(
                 '  - res_interlingualibus: {0}'.format(
-                    item['status']['summa']['res_interlingualibus']))
+                    item['status_quo']['summa']['res_interlingualibus']))
             paginae.append(
                 '  - res_lingualibus: {0}'.format(
-                    item['status']['summa']['res_lingualibus']))
+                    item['status_quo']['summa']['res_lingualibus']))
 
         # return [yaml.dump(
         #     status, allow_unicode=True)]
