@@ -348,11 +348,13 @@ file_download_1603_xlsx() {
 # Outputs:
 #   Convert files
 #######################################
-file_convert_csv_de_xlsx() {
+file_convert_csv_de_downloaded_xlsx() {
   numerordinatio="$1"
   est_temporarium_fontem="${2:-"1"}"
   est_temporarium_objectivum="${3:-"1"}"
-  opus_papyro="${4:-"10"}"
+  # opus_papyro="${4:-"10"}" # Not really necessary if using in2csv
+                             # (name of sheet). However it still trying to infer
+                             # the numbers
 
   _path=$(numerordinatio_neo_separatum "$numerordinatio" "/")
   _nomen=$(numerordinatio_neo_separatum "$numerordinatio" "_")
@@ -376,14 +378,20 @@ file_convert_csv_de_xlsx() {
   objectivum_archivum_temporarium_csv="${ROOTDIR}/999999/0/$_nomen.csv"
   objectivum_archivum_temporarium="${ROOTDIR}/999999/0/$_nomen.tm.hxl.csv"
 
-  set -x
+  # set -x
   # hxltmcli --sheet "$opus_papyro" "$fontem_archivum" "$objectivum_archivum_temporarium"
   # hxlclean --sheet "$opus_papyro" "$fontem_archivum" "$objectivum_archivum_temporarium"
+  # in2csv --format xlsx --no-inference --skip-lines 17 --sheet "$_nomen" "$fontem_archivum" > "${objectivum_archivum_temporarium_csv}"
   in2csv --format xlsx --no-inference --skip-lines 17 --sheet "$_nomen" "$fontem_archivum" > "${objectivum_archivum_temporarium_csv}"
   # issue: in2csv is adding ".0" to #item+conceptum+codicem for integers. even with --no-inference
-  set +x
+  # set +x
 
   hxlselect --query="#item+conceptum+codicem>0" "${objectivum_archivum_temporarium_csv}" "$objectivum_archivum_temporarium"
+
+  # mlr --csv cat 999999/0/1603_45_1.csv
+
+  # sed 's/.0,/,/'  999999/0/1603_45_1.csv
+  # sed 's/.0,/,/' 999999/0/1603_45_1.csv
 
   # hxlselect --query="#item+conceptum+codicem>0" \
   #   "${objectivum_archivum_temporarium_csv}" |
@@ -395,6 +403,11 @@ file_convert_csv_de_xlsx() {
 
   # Strip empty header (already is likely to be ,,,,,,)
   # sed -i '1d' "${objectivum_archivum_temporarium}"
+
+  # HOTFIX (MAY CANSE ISSUES):
+  #      replace ".0," (maximum one per line) with "," as temporary hotfix for
+  #      type inference. We need better long term solution for this.
+  sed -i 's/.0,/,/' "$objectivum_archivum_temporarium"
 
   file_update_if_necessary csv "$objectivum_archivum_temporarium" "$objectivum_archivum"
 }
