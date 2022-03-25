@@ -525,6 +525,7 @@ class Codex:
         self.usus_linguae = set()
         self.usus_linguae_concepta = {}
         self.usus_ix_qcc = set()
+        self.usus_picturae = set()
         self.summis_concepta = 0
 
     def _init_1603_1_1(self):
@@ -1359,6 +1360,8 @@ class Codex:
                 # link = item.quod_temp_link()
                 link = item.quod_link()
                 # resultatum.append('![{0}]({1})\n'.format(titulum, trivium))
+
+                self.usus_picturae.add(trivium)
                 resultatum.append(
                     'image::{1}[title="++{0}++"]\n'.format(titulum, trivium))
                 if link:
@@ -1412,6 +1415,7 @@ class Codex:
                         titulum = item.quod_titulum()
                         # link = item.quod_temp_link()
                         # link = item.quod_link()
+                        self.usus_picturae.add(trivium)
                         resultatum.append(
                             'image::{1}[title="++{0}++"]\n'.format(
                                 titulum, trivium))
@@ -1901,6 +1905,8 @@ class Codex:
             '{{res_lingualibus}}', str(len(self.usus_linguae)))
         codex_copertae = codex_copertae.replace(
             '{{res_interlingualibus}}', str(len(self.usus_ix_qcc)))
+        codex_copertae = codex_copertae.replace(
+            '{{picturae}}', str(len(self.usus_picturae)))
         paginae = []
         paginae.append(codex_copertae)
 
@@ -2226,6 +2232,8 @@ class Codex:
                 titulum = pictura.quod_titulum()
                 # link = item.quod_temp_link()
                 link = pictura.quod_link()
+
+                self.usus_picturae.add(trivium)
 
                 nomen = '**' + pictura.quod_id() + '**'
                 if link and len(link):
