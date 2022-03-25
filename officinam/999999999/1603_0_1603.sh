@@ -35,7 +35,7 @@ PURGATORIA_EXTENSIONEM=( "no1.tm.hxl.csv" "wikiq.tm.hxl.csv" "no11.tm.hxl.csv" "
 ## Use cached files (avoid overload Google Sheets), but gives hint to re-generate translations
 # PURGATORIA_EXTENSIONEM=( "no1.tm.hxl.csv" "wikiq.tm.hxl.csv" "no11.tm.hxl.csv" )
 
-PURGATORIA_CONCEPTUM+=( "1603_1_1" )
+# PURGATORIA_CONCEPTUM+=( "1603_1_1" )
 # PURGATORIA_CONCEPTUM+=( "1603_1_6" )
 # PURGATORIA_CONCEPTUM+=( "1603_1_7" )
 # PURGATORIA_CONCEPTUM+=( "1603_1_51" )
@@ -60,7 +60,7 @@ PURGATORIA_CONCEPTUM+=( "1603_1_1" )
 # PURGATORIA_CONCEPTUM+=( "1603_63_1" )
 # PURGATORIA_CONCEPTUM+=( "1603_45_19" )
 # PURGATORIA_CONCEPTUM+=( "1603_64_41" )
-# PURGATORIA_CONCEPTUM+=( "1603_63_101" )
+PURGATORIA_CONCEPTUM+=( "1603_63_101" )
 
 DE_FACTO="${DE_FACTO:-'0'}"
 # DRYRUM="0"
