@@ -293,7 +293,11 @@ def _pre_pad(textum: str) -> str:
     if not textum:
         return textum
 
-    return textum.replace("\n\n", "\n+++<br><br>+++\n")
+    # textum = textum.replace("\n\n", '\n+++<br><br>+++\n')
+    textum = textum.replace("\\n\\n", '\n+++<br><br>+++\n')
+
+    return textum
+    # return 'bbb' + textum
 
 
 def _pad(textum: str, pad: int) -> str:
@@ -1057,6 +1061,8 @@ class Codex:
         # @see https://docs.asciidoctor.org/asciidoc/latest/sections/appendix/
         # https://en.wiktionary.org/wiki/appendix#Latin
         resultatum.append(":appendix-caption: Appendix")
+        # resultatum.append(":sectnums:")
+        # resultatum.append(":partnums:")
         resultatum.append(":source-highlighter: rouge")
         # resultatum.append(":tip-caption: 💡")
         # resultatum.append(":note-caption: ℹ️")
@@ -1402,7 +1408,7 @@ class Codex:
                 term = qhxl(speciale_note, meta_langs)
                 term2 = self.notitiae.translatio(term)
                 meta = {}
-                meta['#item+rem+i_qcc+is_zxxx+ix_wikip7535'] = term2
+                meta['#item+rem+i_qcc+is_zxxx+ix_wikip7535'] = _pre_pad(term2)
                 # meta_tabulae = self.conceptum_ad_tabula_codicibus(meta)
 
                 resultatum.append("<<<")
