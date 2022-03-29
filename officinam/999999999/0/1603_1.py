@@ -293,7 +293,7 @@ def _pre_pad(textum: str) -> str:
     if not textum:
         return textum
 
-    # textum = textum.replace("\n\n", '\n+++<br><br>+++\n')
+    textum = textum.replace("\n\n", '\n+++<br><br>+++\n')
     textum = textum.replace("\\n\\n", '\n+++<br><br>+++\n')
 
     return textum
@@ -1403,6 +1403,9 @@ class Codex:
             speciale_note = self.quod_res(
                 '0_1603_1_7_2616_7535_' + codicem_normale)
 
+            # @DEPRECATED: reconsider if we keep or remove it. For now
+            #              we're using #meta+rem+i_qcc+is_zxxx+ix_wikip7535
+            #              as one additional column
             if speciale_note and \
                     qhxl(speciale_note, meta_langs) is not None:
                 term = qhxl(speciale_note, meta_langs)
@@ -2103,11 +2106,11 @@ class Codex:
             #         vicidata_q_modo2
             #     ]))
 
-            vicidata_textum = "\n\n".join([
-                vicidata_q_modo_1,
-                vicidata_q_modo_11,
-                vicidata_q_modo,
-                vicidata_q_modo2
+            vicidata_textum = "\n+++<br><br>+++\n".join([
+                _pre_pad(vicidata_q_modo_1),
+                _pre_pad(vicidata_q_modo_11),
+                _pre_pad(vicidata_q_modo),
+                _pre_pad(vicidata_q_modo2)
             ])
 
             paginae.extend(self.res_explanationibus({
