@@ -95,9 +95,9 @@ Exemplōrum gratiā:
 
     {0} --codex-de 1603_63_101 --status-quo
 
-    {0} --codex-de 1603_63_101 --status-quo --ex-librario
+    {0} --codex-de 1603_63_101 --status-quo --ex-librario="cdn"
 
-    {0} --codex-de 1603_63_101 --status-quo --ex-librario --status-in-markdown
+    {0} --codex-de 1603_63_101 --status-quo --ex-librario="locale" --status-in-markdown
 
 """.format(__file__)
 

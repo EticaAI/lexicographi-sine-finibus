@@ -1687,6 +1687,8 @@ upload_cdn() {
     --no-progress --stats \
     --config "$S3CFG"
   set +x
+
+  temp_save_status "$numerordinatio" "cdn"
 }
 
 ################################################################################
@@ -2057,11 +2059,12 @@ fi
 #######################################
 temp_save_status() {
   numerordinatio="$1"
+  ex_librario="$2"
 
   _path=$(numerordinatio_neo_separatum "$numerordinatio" "/")
   _nomen=$(numerordinatio_neo_separatum "$numerordinatio" "_")
   _prefix=$(numerordinatio_neo_separatum "$numerordinatio" ":")
-  _ex_librario='locale'
+  _ex_librario="$ex_librario"
 
   status_archivum_codex="${ROOTDIR}/$_path/$_nomen.statum.yml"
   status_archivum_librario="${ROOTDIR}/1603/1603.$_ex_librario.statum.yml"
@@ -2075,7 +2078,7 @@ temp_save_status() {
 
   set -x
   "${ROOTDIR}/999999999/0/1603_1.py" \
-    --codex-de "$_nomen" --status-quo --ex-librario='locale' \
+    --codex-de "$_nomen" --status-quo --ex-librario="$_ex_librario" \
     >"$objectivum_archivum_temporarium"
   set +x
 
@@ -2116,6 +2119,6 @@ actiones_completis_publicis() {
   neo_codex_de_numerordinatio "$numerordinatio" "0" "0"
   neo_codex_de_numerordinatio_epub "$numerordinatio" "0" "0"
   neo_codex_de_numerordinatio_pdf "$numerordinatio" "0" "0"
-  temp_save_status "$numerordinatio"
+  # temp_save_status "$numerordinatio" "locale"
   upload_cdn "$numerordinatio"
 }
