@@ -1681,13 +1681,12 @@ upload_cdn() {
   #       This file https://lsf-cdn.etica.ai/1603/45/1/1603_45_1.no11.xml
   #       is returning 'content-type: text/plain' without utf-8 on preview
 
-  # set -x
+  set -x
   s3cmd sync "$_basim_fontem" "$_basim_objectivum" \
     --recursive --delete-removed --acl-public \
     --no-progress --stats \
-    --add-header= \
     --config "$S3CFG"
-  # set +x
+  set +x
 }
 
 ################################################################################
