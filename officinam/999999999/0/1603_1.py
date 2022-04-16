@@ -469,6 +469,61 @@ def qhxl_attr_2_bcp47(hxlatt: str):
     return resultatum
 
 
+def ix_n1603ia(ix_n1603ia: str, de_codex: str = '1603:?:?') -> dict:
+    resultatum = {}
+
+    if not ix_n1603ia or len(ix_n1603ia.strip()) == 0:
+        return resultatum
+
+    crudum = map(str.strip, ix_n1603ia.split('|'))
+    for item in crudum:
+        parts = item.split('-')
+        try:
+            resultatum[parts[0]] = int(parts[1])
+        except IndexError:
+            raise ValueError('[1603:1:1] xi_n1603ia <[{0}] [{1}]>'.format(
+                de_codex,
+                str(ix_n1603ia)
+            ))
+
+    return resultatum
+
+
+def ix_n1603ia_quaero(n1603ia: dict, quaero: str = '') -> bool:
+    """ix_n1603ia_quaero _summary_
+
+    Example
+
+    Args:
+        n1603ia (dict): _description_
+        quaero (str, optional): _description_. Defaults to ''.
+
+    Example:
+      {publicum}>10 && {internale}<1
+
+    Returns:
+        bool: _description_
+    """
+    resultatum = False
+    if not quaero or len(quaero) < 1:
+        return None
+
+    # if not ix_n1603ia or len(ix_n1603ia.strip()) == 0:
+    #     return resultatum
+
+    # crudum = map(str.strip, ix_n1603ia.split('|'))
+    # for item in crudum:
+    #     parts = item.split('-')
+    #     try:
+    #         resultatum[parts[0]] = int(parts[1])
+    #     except IndexError:
+    #         raise ValueError('[1603:1:1] xi_n1603ia <[{0}] [{1}]>'.format(
+    #             de_codex,
+    #             str(ix_n1603ia)
+    #         ))
+
+    return resultatum
+
 # About github ASCIDoctor
 #  - https://gist.github.com/dcode/0cfbf2699a1fe9b46ff04c41721dda74
 
@@ -586,24 +641,29 @@ class Codex:
         resultatum = {}
         if '#item+rem+i_qcc+is_zxxx+ix_n1603ia' not in self.m1603_1_1__de_codex:
             return resultatum
-        ix_n1603ia_crudum = \
-            self.m1603_1_1__de_codex['#item+rem+i_qcc+is_zxxx+ix_n1603ia']
-        if not ix_n1603ia_crudum or len(ix_n1603ia_crudum.strip()) == 0:
-            return resultatum
+        # ix_n1603ia_crudum = \
+        #     self.m1603_1_1__de_codex['#item+rem+i_qcc+is_zxxx+ix_n1603ia']
+        # if not ix_n1603ia_crudum or len(ix_n1603ia_crudum.strip()) == 0:
+        #     return resultatum
 
-        crudum = map(str.strip, ix_n1603ia_crudum.split('|'))
-        for item in crudum:
-            parts = item.split('-')
-            try:
+        return ix_n1603ia(
+            self.m1603_1_1__de_codex['#item+rem+i_qcc+is_zxxx+ix_n1603ia'],
+            self.m1603_1_1__de_codex['#item+rem+i_qcc+is_zxxx+ix_n1603']
+        )
 
-                resultatum[parts[0]] = int(parts[1])
-            except IndexError:
-                raise ValueError('[1603:1:1] xi_n1603ia <[{0}] [{1}]>'.format(
-                    self.m1603_1_1__de_codex['#item+rem+i_qcc+is_zxxx+ix_n1603'],
-                    str(ix_n1603ia_crudum)
-                ))
+        # crudum = map(str.strip, ix_n1603ia_crudum.split('|'))
+        # for item in crudum:
+        #     parts = item.split('-')
+        #     try:
 
-        return resultatum
+        #         resultatum[parts[0]] = int(parts[1])
+        #     except IndexError:
+        #         raise ValueError('[1603:1:1] xi_n1603ia <[{0}] [{1}]>'.format(
+        #             self.m1603_1_1__de_codex['#item+rem+i_qcc+is_zxxx+ix_n1603'],
+        #             str(ix_n1603ia_crudum)
+        #         ))
+
+        # return resultatum
 
     def _referencia(self, rem: dict, index: int = 1) -> list:
         paginae = []
@@ -4353,7 +4413,12 @@ class OpusTemporibus:
             # #item +rem +i_qcc +is_zxxx +ix_n1603ia
             if len(item['#item+rem+i_qcc+is_zxxx+ix_n1603ia']) > 0:
                 self.codex_opus.append(clavem)
-                self.opus.append([clavem, item['#item+rem+i_qcc+is_zxxx+ix_n1603ia']])
+                ix_n1603ia_item = ix_n1603ia(
+                    item['#item+rem+i_qcc+is_zxxx+ix_n1603ia'])
+                # self.opus.append(
+                #     [clavem, item['#item+rem+i_qcc+is_zxxx+ix_n1603ia']])
+                self.opus.append(
+                    [clavem, ix_n1603ia_item])
 
     def imprimere(self):
         resultatum = []
@@ -4605,6 +4670,17 @@ class CLI_2600:
             help='ex opere temporibus. Out of work times (crontab)',
             # metavar='',
             dest='ex_opere_temporibus',
+            # const='',
+            # action='store_true',
+            nargs='?'
+        )
+        opus_temporibus.add_argument(
+            '--quaero-ix_n1603ia',
+            help='Query ix_n1603ia. Rudimentar && (AND) and || (OR). '
+            'Use var<1 to test 0 or undefined. '
+            'Query ix_n1603ia. Filter. Ex. "{publicum}>10 && {internale}<1"',
+            # metavar='',
+            dest='quaero_ix_n1603ia',
             # const='',
             # action='store_true',
             nargs='?'
