@@ -2745,7 +2745,7 @@ class LibrariaStatusQuo:
     def __init__(
         self,
         codex: Type['Codex'],
-        ex_librario: bool = False
+        ex_librario: str = ''
     ):
         self.codex = codex
         self.ex_librario = ex_librario
@@ -2846,7 +2846,11 @@ class LibrariaStatusQuo:
         }
 
     def status_librario(self):
-        librario_status = NUMERORDINATIO_BASIM + '/1603/1603.statum.yml'
+        # librario_status = NUMERORDINATIO_BASIM + '/1603/1603.statum.yml'
+        librario_status = NUMERORDINATIO_BASIM + \
+            '/1603/1603.{0}.statum.yml'.format(
+            self.ex_librario
+        )
 
         try:
             with open(librario_status) as _file:
@@ -2881,7 +2885,7 @@ class LibrariaStatusQuo:
         return ex_librario
 
     def imprimere(self):
-        if self.ex_librario:
+        if self.ex_librario and len(self.ex_librario) > 0:
             return [yaml.dump(
                 self.status_librario_ex_codex(), allow_unicode=True)]
         else:
@@ -2890,7 +2894,7 @@ class LibrariaStatusQuo:
     def imprimere_in_markdown(self):
         if not self.ex_librario:
             raise NotImplementedError(
-                '--status-in-markdown requires --ex-librario')
+                '--status-in-markdown requires --ex-librario="locale"')
         paginae = []
         status = self.status_librario_ex_codex()
         paginae.append('# 1603 Librārium')
@@ -4526,9 +4530,9 @@ class CLI_2600:
             help='Status novō. New state. Persist changes if necessary',
             # metavar='',
             dest='ex_librario',
-            # const=True,
-            action='store_true',
-            # nargs='?'
+            const='',
+            # action='store_true',
+            nargs='?'
         )
 
         # # --agendum-linguam is a draft. Not 100% implemented
