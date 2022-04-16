@@ -156,6 +156,7 @@
   - //opus tempus//@lat-Latn
 - opus, s, n, Nom., https://en.wiktionary.org/wiki/opus#Latin
 - temporibus, pl, n, Dativus, https://en.wiktionary.org/wiki/tempus#Latin
+- ex (+ ablative), https://en.wiktionary.org/wiki/ex#Latin
 
 <!--
 - statūs, https://en.wiktionary.org/wiki/status#Latin

@@ -99,6 +99,8 @@ Exemplōrum gratiā:
 
     {0} --codex-de 1603_63_101 --status-quo --ex-librario="locale" --status-in-markdown
 
+    {0} --codex-de 1603_63_101 --ex-opere-temporibus='cdn'
+
 """.format(__file__)
 
 NUMERORDINATIO_BASIM = os.getenv('NUMERORDINATIO_BASIM', os.getcwd())
@@ -2849,8 +2851,8 @@ class LibrariaStatusQuo:
         # librario_status = NUMERORDINATIO_BASIM + '/1603/1603.statum.yml'
         librario_status = NUMERORDINATIO_BASIM + \
             '/1603/1603.{0}.statum.yml'.format(
-            self.ex_librario
-        )
+                self.ex_librario
+            )
 
         try:
             with open(librario_status) as _file:
@@ -4309,6 +4311,60 @@ class A1603z1:
         return resultatum
 
 
+class OpusTemporibus:
+    """Numerordĭnātĭo item
+
+    Trivia:
+    - opus, s, n, Nom., https://en.wiktionary.org/wiki/opus#Latin
+    - temporibus, pl, n, Dativus, https://en.wiktionary.org/wiki/tempus#Latin
+    """
+
+    libraria_status_quo: Type['LibrariaStatusQuo']
+    codex_opus: list = []
+    opus: list = []
+
+    def __init__(
+        self,
+        ex_opere_temporibus: str,
+        ex_librario: str = ''
+    ):
+        self.ex_opere_temporibus = ex_opere_temporibus
+        self.ex_librario = ex_librario
+
+        self.initiari()
+        # self.dictionaria_codex = dictionaria_codex
+
+    def initiari(self):
+        """initiarī
+
+        Trivia:
+        - initiārī, https://en.wiktionary.org/wiki/initio#Latin
+        """
+        # self.linguae['#item+rem+i_lat+is_latn'] = 'la'
+        # self.linguae['#item+rem+i_eng+is_latn'] = 'en'
+        # self.linguae['#item+rem+i_por+is_latn'] = 'pt'
+
+        self.codex = Codex('1603_1_1')
+
+        self.libraria_status_quo = LibrariaStatusQuo(
+            self.codex, self.ex_librario)
+
+        for clavem, item in self.codex.m1603_1_1.items():
+            # #item +rem +i_qcc +is_zxxx +ix_n1603ia
+            if len(item['#item+rem+i_qcc+is_zxxx+ix_n1603ia']) > 0:
+                self.codex_opus.append(clavem)
+                self.opus.append([clavem, item['#item+rem+i_qcc+is_zxxx+ix_n1603ia']])
+
+    def imprimere(self):
+        resultatum = []
+        resultatum.append('TODO OpusTemporibus')
+        # resultatum.extend(self.codex.imprimere())
+        # resultatum.extend(str(self.codex.m1603_1_1))
+        # resultatum.extend(self.codex_opus)
+        resultatum.extend(self.opus)
+        return resultatum
+
+
 class NumerordinatioItem:
     """Numerordĭnātĭo item
 
@@ -4535,6 +4591,25 @@ class CLI_2600:
             nargs='?'
         )
 
+        # https://en.wikipedia.org/wiki/Status_quo
+        # https://en.wiktionary.org/wiki/status_quo#English
+        opus_temporibus = parser.add_argument_group(
+            "Opus temporibus",
+            "Crontab/cronjob information "
+            # "Requires --codex-de 1603_NN_NN"
+        )
+
+        # # ex opere temporibus
+        opus_temporibus.add_argument(
+            '--ex-opere-temporibus',
+            help='ex opere temporibus. Out of work times (crontab)',
+            # metavar='',
+            dest='ex_opere_temporibus',
+            # const='',
+            # action='store_true',
+            nargs='?'
+        )
+
         # # --agendum-linguam is a draft. Not 100% implemented
         # parser.add_argument(
         #     '--agendum-linguam', '-AL',
@@ -4602,6 +4677,15 @@ class CLI_2600:
         # cs1603_1.est_verbum_limiti(args.verbum_limiti)
         a1603z1.est_resultatum_separato(args.resultatum_separato)
         a1603z1.est_fontem_separato(args.fontem_separato)
+
+        # if self.pyargs.actionem_sparql:
+        if self.pyargs.ex_opere_temporibus and \
+                len(self.pyargs.ex_opere_temporibus) > 0:
+
+            opus_temporibus = OpusTemporibus(
+                self.pyargs.ex_opere_temporibus)
+            return self.output(opus_temporibus.imprimere())
+            raise NotImplementedError('TODO')
 
         # if self.pyargs.actionem_sparql:
         if self.pyargs.codex_de:
