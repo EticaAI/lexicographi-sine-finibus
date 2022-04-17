@@ -469,27 +469,90 @@ def qhxl_attr_2_bcp47(hxlatt: str):
     return resultatum
 
 
-def mathematica(quero=str) -> bool:
+def mathematica(quero: str, meta: str = '') -> bool:
+    """mathematica
+
+    Rudimentar mathematical operations (boolean result)
+
+    Args:
+        quero (_type_, optional): _description_. Defaults to str.
+
+    Returns:
+        bool: True if evaluate to True.
+    """
     neo_quero = quero.replace(' ', '').replace('(', '').replace(')', '')
+
+    if quero == 'True':
+        return True
+
+    if quero == 'False':
+        return False
+
+    if neo_quero.find('&&') > -1:
+        parts = neo_quero.split('&&')
+        # print(parts)
+        return bool(parts[0]) and bool(parts[1])
+
+    if neo_quero.find('||') > -1:
+        parts = neo_quero.split('||')
+        return bool(parts[0]) or bool(parts[1])
 
     # regula = r"(\d*)(.{1,2})(\d*)"
     regula = r"(?P<n1>(\d*))(?P<op>(\D{1,2}))(?P<n2>(\d*))"
 
-    r1 = re.findall(regula, quero)
-    # if r1:
+    r1 = re.match(regula, neo_quero)
+    if r1.group('op') == '==':
+        return int(r1.group('n1')) == int(r1.group('n2'))
 
-    # return regula
-    return r1['op']
-    # return True
+    if r1.group('op') == '!=':
+        return int(r1.group('n1')) != int(r1.group('n2'))
+
+    if r1.group('op') == '<=':
+        return int(r1.group('n1')) <= int(r1.group('n2'))
+
+    if r1.group('op') == '>=':
+        return int(r1.group('n1')) >= int(r1.group('n2'))
+
+    if r1.group('op') == '<':
+        return int(r1.group('n1')) < int(r1.group('n2'))
+
+    if r1.group('op') == '>':
+        return int(r1.group('n1')) > int(r1.group('n2'))
+
+    raise ValueError(
+        'mathematica: <quaero> [{1}] <op>? [{0}]'.format(str(quero), meta))
 
 
-def logicum(quero=str) -> bool:
+def logicum(quero: str) -> bool:
+    neo_quero = quero
     # https://regex101.com/r/LbYVhw/1
     # {(.*?)}
     #     {publicum}>10 && {internale}<1
     #     ({publicum}>10) && ({internale}<1)
-    return mathematica(quero)
-    return True
+
+    regula = r"\((.*?)\)"
+    r1 = re.match(regula, neo_quero)
+    if r1:
+        # neo_quero = neo_quero.replace(r1[1], str(r1[1]))
+        neo_quero = neo_quero.replace(r1[0], str(logicum(r1[1])))
+
+        # TODO: what if have more than one? Test and implement it
+        #     r1 = re.match(regula, neo_quero)
+        # raise ValueError([r1[1], neo_quero])
+    # while r1:
+    #     # neo_quero = neo_quero.replace(r1[1], str(r1[1]))
+    #     neo_quero = neo_quero.replace(r1[1], mathematica(str(r1[1], quero)))
+    #     # print(1, r1)
+    #     r1 = re.match(regula, neo_quero)
+        # raise ValueError([r1[1], neo_quero])
+        # raise ValueError(str(r1))
+        # pass
+
+    # while r1:
+
+    # if quero.find('||'):
+
+    return mathematica(neo_quero, quero)
 
 
 def ix_n1603ia(ix_n1603ia: str, de_codex: str = '1603:?:?') -> dict:
@@ -546,7 +609,8 @@ def ix_n1603ia_quaero(n1603ia: dict, quaero: str = '') -> bool:
 
     resultatum_logicum = logicum(neo_quaero)
 
-    raise ValueError(str([quaero, neo_quaero, resultatum_logicum, n1603ia]))
+    # raise ValueError(str([quaero, neo_quaero, resultatum_logicum, n1603ia]))
+    return resultatum_logicum
 
     # if not ix_n1603ia or len(ix_n1603ia.strip()) == 0:
     #     return resultatum
@@ -4457,10 +4521,11 @@ class OpusTemporibus:
                 self.codex_opus.append(clavem)
                 ix_n1603ia_item = ix_n1603ia(
                     item['#item+rem+i_qcc+is_zxxx+ix_n1603ia'])
-                # print(self.quaero_ix_n1603ia)
+                # print(ix_n1603ia_item, self.quaero_ix_n1603ia, ix_n1603ia_quaero(ix_n1603ia_item, self.quaero_ix_n1603ia))
 
                 if self.quaero_ix_n1603ia and len(self.quaero_ix_n1603ia) > 0:
                     if not ix_n1603ia_quaero(ix_n1603ia_item, self.quaero_ix_n1603ia):
+                        # print('not in {0} {1}'.format(ix_n1603ia_item, self.quaero_ix_n1603ia))
                         continue
 
                 # self.opus.append(
