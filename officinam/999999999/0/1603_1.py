@@ -61,6 +61,8 @@ from typing import (
     Union,
     List
 )
+import random
+
 from copy import copy
 import re
 import fnmatch
@@ -2998,8 +3000,9 @@ class LibrariaStatusQuo:
         usus_linguae = len(self.codex.usus_linguae)
         usus_ix_qcc = len(self.codex.usus_ix_qcc)
 
-        time_expected = datetime.datetime.now()
-        tempus_opus = datetime.datetime.now()
+        # time_expected = datetime.datetime.now().replace(microsecond=0)
+        # tempus_opus = datetime.datetime.now()
+        tempus_opus = datetime.datetime.now().replace(microsecond=0)
 
         resultatum = {
             'annotationes_internalibus': self.codex.n1603ia,
@@ -3024,9 +3027,6 @@ class LibrariaStatusQuo:
                 }
             }
         }
-        # time_expected = datetime.datetime.now()
-        # time_actual = datetime.datetime.fromisoformat(time_expected.isoformat())
-        # assert time_actual == time_expected
 
         return resultatum
 
@@ -4518,6 +4518,7 @@ class OpusTemporibus:
     opus: list = []
     in_limitem: int = 0
     in_ordinem: str = None
+    quaero_numerordinatio: list = []
 
     def __init__(
         self,
@@ -4526,6 +4527,7 @@ class OpusTemporibus:
         quaero_ix_n1603ia: str = '',
         in_limitem: Union[str, int] = '',
         in_ordinem: str = None,
+        quaero_numerordinatio: Union[list, str] = None,
     ):
         self.ex_opere_temporibus = ex_opere_temporibus
         # self.ex_librario = ex_librario
@@ -4535,7 +4537,15 @@ class OpusTemporibus:
             self.in_limitem = int(in_limitem)
 
         if in_ordinem:
-            self.in_ordinem = int(in_ordinem)
+            self.in_ordinem = in_ordinem
+
+        if quaero_numerordinatio and len(quaero_numerordinatio) > 0:
+            if not isinstance(quaero_numerordinatio, list):
+                quaero_numerordinatio = quaero_numerordinatio.split(',')
+
+            for item in quaero_numerordinatio:
+                self.quaero_numerordinatio.append(
+                    numerordinatio_neo_separatum(item, '_'))
 
         self.initiari()
         # self.dictionaria_codex = dictionaria_codex
@@ -4593,6 +4603,18 @@ class OpusTemporibus:
         # resultatum.extend(str(self.codex.m1603_1_1))
         # resultatum.extend(self.codex_opus)
         resultatum.extend(self.opus)
+
+        if self.in_ordinem == 'chaos':
+            random.shuffle(resultatum)
+
+        # print('oi', self.quaero_numerordinatio)
+
+        if len(self.quaero_numerordinatio) > 0:
+            _resultatum = []
+            for item in resultatum:
+                if item[0] in self.quaero_numerordinatio:
+                    _resultatum.append(item)
+            resultatum = _resultatum
 
         if self.in_limitem > 0 and len(resultatum) > self.in_limitem:
             resultatum = resultatum[:self.in_limitem]
@@ -4855,6 +4877,20 @@ class CLI_2600:
             # action='store_true',
             nargs='?'
         )
+        opus_temporibus.add_argument(
+            '--quaero-numerordinatio',
+            help='Query Numerordĭnātĭo. Additional filter list for focused '
+            ' base of dictionaries. Ideal to check if some groups meet '
+            'other filters. '
+            'Example: if result return empty and other queries are to check '
+            'if need to fetch again from Wikidata Q, then you assume no '
+            'new fetch is necessary',
+            # metavar='',
+            dest='quaero_numerordinatio',
+            # const='',
+            # action='store_true',
+            nargs='?'
+        )
 
         # in (+ ablative), in (+ accusative);;
         #   (+ accusative) toward, towards, against, at
@@ -4869,13 +4905,16 @@ class CLI_2600:
         )
 
         # https://en.wiktionary.org/wiki/ordo#Latin
+        # https://en.wiktionary.org/wiki/chaos#Latin
         opus_temporibus.add_argument(
             '--in-ordinem',
             help='/Against arrangement (ordering) of/. Sort result list to '
-            'this rule ',
+            'this rule. Options: '
+            'numerordinatio=natural order; chaos=random order',
             dest='in_ordinem',
             nargs='?',
-            choices=['rock', 'paper', 'scissors']
+            choices=['numerordinatio', 'chaos'],
+            default='numerordinatio'
         )
 
         # # --agendum-linguam is a draft. Not 100% implemented
@@ -4950,12 +4989,13 @@ class CLI_2600:
         if self.pyargs.ex_opere_temporibus and \
                 len(self.pyargs.ex_opere_temporibus) > 0:
 
-            # print(self.pyargs.quaero_ix_n1603ia)
+            # print(self.pyargs.quaero_numerordinatio)
             opus_temporibus = OpusTemporibus(
                 self.pyargs.ex_opere_temporibus,
                 self.pyargs.quaero_ix_n1603ia,
-                in_limitem = self.pyargs.in_limitem,
-                in_ordinem = self.pyargs.in_ordinem,
+                in_limitem=self.pyargs.in_limitem,
+                in_ordinem=self.pyargs.in_ordinem,
+                quaero_numerordinatio=self.pyargs.quaero_numerordinatio,
             )
             return self.output(opus_temporibus.imprimere())
 
