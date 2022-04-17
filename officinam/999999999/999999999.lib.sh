@@ -2073,7 +2073,7 @@ opus_temporibus_cdn() {
   while IFS=$'\t' read -r -a line; do
     echo "${line[0]}"
 
-    actiones_completis_publicis "${line[0]}"
+    # actiones_completis_publicis "${line[0]}"
     # echo "${line[1]}"
     # echo "${line[2]}"
   done <"${opus_temporibus_temporarium}"
@@ -2150,6 +2150,7 @@ actiones_completis_publicis() {
   file_merge_numerordinatio_de_wiki_q "$numerordinatio" "0" "0"
   file_convert_tmx_de_numerordinatio11 "$numerordinatio"
   file_convert_tbx_de_numerordinatio11 "$numerordinatio"
+  neo_codex_copertae_de_numerordinatio "$numerordinatio" "0" "0"
   neo_codex_de_numerordinatio "$numerordinatio" "0" "0"
   neo_codex_de_numerordinatio_epub "$numerordinatio" "0" "0"
   neo_codex_de_numerordinatio_pdf "$numerordinatio" "0" "0"

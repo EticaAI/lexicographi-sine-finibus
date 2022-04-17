@@ -4516,16 +4516,26 @@ class OpusTemporibus:
     libraria_status_quo: Type['LibrariaStatusQuo']
     codex_opus: list = []
     opus: list = []
+    in_limitem: int = 0
+    in_ordinem: str = None
 
     def __init__(
         self,
         ex_opere_temporibus: str,
         # ex_librario: str = '',
-        quaero_ix_n1603ia: str = ''
+        quaero_ix_n1603ia: str = '',
+        in_limitem: Union[str, int] = '',
+        in_ordinem: str = None,
     ):
         self.ex_opere_temporibus = ex_opere_temporibus
         # self.ex_librario = ex_librario
         self.quaero_ix_n1603ia = quaero_ix_n1603ia
+
+        if in_limitem:
+            self.in_limitem = int(in_limitem)
+
+        if in_ordinem:
+            self.in_ordinem = int(in_ordinem)
 
         self.initiari()
         # self.dictionaria_codex = dictionaria_codex
@@ -4583,6 +4593,10 @@ class OpusTemporibus:
         # resultatum.extend(str(self.codex.m1603_1_1))
         # resultatum.extend(self.codex_opus)
         resultatum.extend(self.opus)
+
+        if self.in_limitem > 0 and len(resultatum) > self.in_limitem:
+            resultatum = resultatum[:self.in_limitem]
+
         return resultatum
 
 
@@ -4842,6 +4856,28 @@ class CLI_2600:
             nargs='?'
         )
 
+        # in (+ ablative), in (+ accusative);;
+        #   (+ accusative) toward, towards, against, at
+        # https://en.wiktionary.org/wiki/in#Latin
+        # https://en.wiktionary.org/wiki/limes#Latin
+        opus_temporibus.add_argument(
+            '--in-limitem',
+            help='/Against the limit of/. Limit maximum number of cron jobs '
+            'to show. ',
+            dest='in_limitem',
+            nargs='?'
+        )
+
+        # https://en.wiktionary.org/wiki/ordo#Latin
+        opus_temporibus.add_argument(
+            '--in-ordinem',
+            help='/Against arrangement (ordering) of/. Sort result list to '
+            'this rule ',
+            dest='in_ordinem',
+            nargs='?',
+            choices=['rock', 'paper', 'scissors']
+        )
+
         # # --agendum-linguam is a draft. Not 100% implemented
         # parser.add_argument(
         #     '--agendum-linguam', '-AL',
@@ -4917,7 +4953,9 @@ class CLI_2600:
             # print(self.pyargs.quaero_ix_n1603ia)
             opus_temporibus = OpusTemporibus(
                 self.pyargs.ex_opere_temporibus,
-                self.pyargs.quaero_ix_n1603ia
+                self.pyargs.quaero_ix_n1603ia,
+                in_limitem = self.pyargs.in_limitem,
+                in_ordinem = self.pyargs.in_ordinem,
             )
             return self.output(opus_temporibus.imprimere())
 
