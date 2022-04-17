@@ -2048,6 +2048,29 @@ fi
 ################################################################################
 
 #######################################
+# Opus temporibus
+#
+# Globals:
+#   ROOTDIR
+# Arguments:
+#   numerordinatio
+# Outputs:
+#   Convert files
+#######################################
+opus_temporibus_cdn() {
+  # ...
+  echo "TODO..."
+  blue=$(tput setaf 4)
+  normal=$(tput sgr0)
+  printf "%40s\n" "${blue}${FUNCNAME[0]}${normal}"
+
+  "${ROOTDIR}/999999999/0/1603_1.py" \
+    --ex-opere-temporibus='cdn' --quaero-ix_n1603ia='({publicum}>=1)' \
+
+  # ./999999999/0/1603_1.py --ex-opere-temporibus='cdn' --quaero-ix_n1603ia='({publicum}>=1)'
+}
+
+#######################################
 # TODO...
 #
 # Globals:
@@ -2122,3 +2145,4 @@ actiones_completis_publicis() {
   # temp_save_status "$numerordinatio" "locale"
   upload_cdn "$numerordinatio"
 }
+

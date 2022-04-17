@@ -66,6 +66,8 @@ import re
 import fnmatch
 # import json
 import datetime
+# from datetime import datetime
+
 
 from zlib import crc32
 
@@ -97,9 +99,13 @@ Exemplōrum gratiā:
 
     {0} --codex-de 1603_63_101 --status-quo --ex-librario="cdn"
 
-    {0} --codex-de 1603_63_101 --status-quo --ex-librario="locale" --status-in-markdown
+    {0} --codex-de 1603_63_101 --status-quo --ex-librario="locale" \
+--status-in-markdown
 
     {0} --codex-de 1603_63_101 --ex-opere-temporibus='cdn'
+
+    {0} --ex-opere-temporibus='cdn' \
+--quaero-ix_n1603ia='({{publicum}}>=9)&&({{victionarium_q}}>9)'
 
 """.format(__file__)
 
@@ -480,7 +486,8 @@ def mathematica(quero: str, meta: str = '') -> bool:
     Returns:
         bool: True if evaluate to True.
     """
-    neo_quero = quero.replace(' ', '').replace('(', '').replace(')', '')
+    # neo_quero = quero.replace(' ', '').replace('(', '').replace(')', '')
+    neo_quero = quero.replace(' ', '')
 
     if quero == 'True':
         return True
@@ -491,11 +498,13 @@ def mathematica(quero: str, meta: str = '') -> bool:
     if neo_quero.find('&&') > -1:
         parts = neo_quero.split('&&')
         # print(parts)
-        return bool(parts[0]) and bool(parts[1])
+        # return bool(parts[0]) and bool(parts[1])
+        return logicum(parts[0]) and logicum(parts[1])
 
     if neo_quero.find('||') > -1:
         parts = neo_quero.split('||')
-        return bool(parts[0]) or bool(parts[1])
+        # return bool(parts[0]) or bool(parts[1])
+        return logicum(parts[0]) or logicum(parts[1])
 
     # regula = r"(\d*)(.{1,2})(\d*)"
     regula = r"(?P<n1>(\d*))(?P<op>(\D{1,2}))(?P<n2>(\d*))"
@@ -524,35 +533,43 @@ def mathematica(quero: str, meta: str = '') -> bool:
 
 
 def logicum(quero: str) -> bool:
-    neo_quero = quero
-    # https://regex101.com/r/LbYVhw/1
-    # {(.*?)}
-    #     {publicum}>10 && {internale}<1
-    #     ({publicum}>10) && ({internale}<1)
+    neo_quero = quero.replace(' ', '')
+    # neo_quero = quero
+
+    if neo_quero == 'True':
+        return True
+
+    if neo_quero == 'False':
+        return False
 
     regula = r"\((.*?)\)"
+
     r1 = re.match(regula, neo_quero)
+    # TODO: This is obviously hardcoded. Implement some way to do as many as
+    #       necessary on a loop or something.
+
     if r1:
-        # neo_quero = neo_quero.replace(r1[1], str(r1[1]))
         neo_quero = neo_quero.replace(r1[0], str(logicum(r1[1])))
 
-        # TODO: what if have more than one? Test and implement it
-        #     r1 = re.match(regula, neo_quero)
-        # raise ValueError([r1[1], neo_quero])
-    # while r1:
-    #     # neo_quero = neo_quero.replace(r1[1], str(r1[1]))
-    #     neo_quero = neo_quero.replace(r1[1], mathematica(str(r1[1], quero)))
-    #     # print(1, r1)
-    #     r1 = re.match(regula, neo_quero)
-        # raise ValueError([r1[1], neo_quero])
-        # raise ValueError(str(r1))
-        # pass
+    r1 = re.match(regula, neo_quero)
+    if r1:
+        neo_quero = neo_quero.replace(r1[0], str(logicum(r1[1])))
 
-    # while r1:
+    r1 = re.match(regula, neo_quero)
+    if r1:
+        neo_quero = neo_quero.replace(r1[0], str(logicum(r1[1])))
+
+    r1 = re.match(regula, neo_quero)
+    if r1:
+        neo_quero = neo_quero.replace(r1[0], str(logicum(r1[1])))
+
+    if neo_quero == True or neo_quero == False:
+        return neo_quero
 
     # if quero.find('||'):
 
     return mathematica(neo_quero, quero)
+    # return logicum(neo_quero)
 
 
 def ix_n1603ia(ix_n1603ia: str, de_codex: str = '1603:?:?') -> dict:
@@ -2978,6 +2995,9 @@ class LibrariaStatusQuo:
         usus_linguae = len(self.codex.usus_linguae)
         usus_ix_qcc = len(self.codex.usus_ix_qcc)
 
+        time_expected = datetime.datetime.now()
+        tempus_opus = datetime.datetime.now()
+
         resultatum = {
             'annotationes_internalibus': self.codex.n1603ia,
             'meta': {
@@ -2994,9 +3014,16 @@ class LibrariaStatusQuo:
                     'concepta': summis_concepta,
                     'res_lingualibus': usus_linguae,
                     'res_interlingualibus': usus_ix_qcc,
+                },
+                'tempus': {
+                    'opus': tempus_opus.isoformat()
+                    # TODO: add success, fail, and other times
                 }
             }
         }
+        # time_expected = datetime.datetime.now()
+        # time_actual = datetime.datetime.fromisoformat(time_expected.isoformat())
+        # assert time_actual == time_expected
 
         return resultatum
 
@@ -4514,13 +4541,26 @@ class OpusTemporibus:
 
         self.libraria_status_quo = LibrariaStatusQuo(
             self.codex, self.ex_opere_temporibus)
-
+        _status_libraria = self.libraria_status_quo.status_librario_ex_codex()
         for clavem, item in self.codex.m1603_1_1.items():
             # #item +rem +i_qcc +is_zxxx +ix_n1603ia
+
+            neo_clavem = numerordinatio_neo_separatum(clavem, '_')
             if len(item['#item+rem+i_qcc+is_zxxx+ix_n1603ia']) > 0:
                 self.codex_opus.append(clavem)
                 ix_n1603ia_item = ix_n1603ia(
                     item['#item+rem+i_qcc+is_zxxx+ix_n1603ia'])
+
+                status_quo_ex_codice = {}
+
+                _status_quo_ex_codice = _status_libraria['librarium']
+
+                # print(_status_quo_ex_codice)
+                if neo_clavem in _status_quo_ex_codice and \
+                    'status_quo' in _status_quo_ex_codice[neo_clavem]:
+                    status_quo_ex_codice = _status_quo_ex_codice[neo_clavem]['status_quo']
+                else:
+                    status_quo_ex_codice = {}
                 # print(ix_n1603ia_item, self.quaero_ix_n1603ia, ix_n1603ia_quaero(ix_n1603ia_item, self.quaero_ix_n1603ia))
 
                 if self.quaero_ix_n1603ia and len(self.quaero_ix_n1603ia) > 0:
@@ -4531,11 +4571,11 @@ class OpusTemporibus:
                 # self.opus.append(
                 #     [clavem, item['#item+rem+i_qcc+is_zxxx+ix_n1603ia']])
                 self.opus.append(
-                    [clavem, ix_n1603ia_item])
+                    [neo_clavem, ix_n1603ia_item, status_quo_ex_codice])
 
     def imprimere(self):
         resultatum = []
-        resultatum.append('TODO OpusTemporibus')
+        # resultatum.append('TODO OpusTemporibus')
         # resultatum.extend(self.codex.imprimere())
         # resultatum.extend(str(self.codex.m1603_1_1))
         # resultatum.extend(self.codex_opus)
