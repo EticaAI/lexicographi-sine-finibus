@@ -2064,8 +2064,19 @@ opus_temporibus_cdn() {
   normal=$(tput sgr0)
   printf "%40s\n" "${blue}${FUNCNAME[0]}${normal}"
 
+  opus_temporibus_temporarium="${ROOTDIR}/999999/0/1603.cdn.statum.tsv"
+
   "${ROOTDIR}/999999999/0/1603_1.py" \
-    --ex-opere-temporibus='cdn' --quaero-ix_n1603ia='({publicum}>=1)' \
+    --ex-opere-temporibus='cdn' --quaero-ix_n1603ia='({publicum}>=11)' \
+    > "$opus_temporibus_temporarium"
+
+  while IFS=$'\t' read -r -a line; do
+    echo "${line[0]}"
+
+    actiones_completis_publicis "${line[0]}"
+    # echo "${line[1]}"
+    # echo "${line[2]}"
+  done <"${opus_temporibus_temporarium}"
 
   # ./999999999/0/1603_1.py --ex-opere-temporibus='cdn' --quaero-ix_n1603ia='({publicum}>=1)'
 }

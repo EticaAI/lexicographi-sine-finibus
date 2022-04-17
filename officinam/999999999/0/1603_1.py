@@ -2930,6 +2930,9 @@ class LibrariaStatusQuo:
         codex: Type['Codex'],
         ex_librario: str = ''
     ):
+        # TODO: implement a way to not re-calculate the status quo (feature
+        #       required by crontab/crojob)
+
         self.codex = codex
         self.ex_librario = ex_librario
         # self.status_in_markdown = status_in_markdown
@@ -4557,15 +4560,15 @@ class OpusTemporibus:
 
                 # print(_status_quo_ex_codice)
                 if neo_clavem in _status_quo_ex_codice and \
-                    'status_quo' in _status_quo_ex_codice[neo_clavem]:
-                    status_quo_ex_codice = _status_quo_ex_codice[neo_clavem]['status_quo']
+                        'status_quo' in _status_quo_ex_codice[neo_clavem]:
+                    status_quo_ex_codice = \
+                        _status_quo_ex_codice[neo_clavem]['status_quo']
                 else:
                     status_quo_ex_codice = {}
-                # print(ix_n1603ia_item, self.quaero_ix_n1603ia, ix_n1603ia_quaero(ix_n1603ia_item, self.quaero_ix_n1603ia))
 
                 if self.quaero_ix_n1603ia and len(self.quaero_ix_n1603ia) > 0:
-                    if not ix_n1603ia_quaero(ix_n1603ia_item, self.quaero_ix_n1603ia):
-                        # print('not in {0} {1}'.format(ix_n1603ia_item, self.quaero_ix_n1603ia))
+                    if not ix_n1603ia_quaero(
+                            ix_n1603ia_item, self.quaero_ix_n1603ia):
                         continue
 
                 # self.opus.append(
