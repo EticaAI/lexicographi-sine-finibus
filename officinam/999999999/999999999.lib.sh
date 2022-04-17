@@ -918,7 +918,8 @@ neo_codex_de_numerordinatio_pdf() {
 # Arguments:
 #   numerordinatio
 #   est_temporarium_fontem (default "1", from 99999/)
-#   est_temporarium_objectivumm (dfault "0", from real namespace)
+#   est_temporarium_objectivumm (default "0", from real namespace)
+#   always_stale (default "0", if 1, don't run stale_archive check)
 # Outputs:
 #   Convert files
 #######################################
@@ -926,6 +927,7 @@ file_translate_csv_de_numerordinatio_q() {
   numerordinatio="$1"
   est_temporarium_fontem="${2:-"1"}"
   est_temporarium_objectivum="${3:-"0"}"
+  always_stale="${4:-"0"}"
 
   _path=$(numerordinatio_neo_separatum "$numerordinatio" "/")
   _nomen=$(numerordinatio_neo_separatum "$numerordinatio" "_")
@@ -963,7 +965,12 @@ file_translate_csv_de_numerordinatio_q() {
 
   # echo "${FUNCNAME[0]} sources changed_recently. Reloading..."
 
-  if [ -z "$(stale_archive "$objectivum_archivum")" ]; then return 0; fi
+  if [ -z "$(stale_archive "$objectivum_archivum")" ]; then
+    if [ "$always_stale" != '1' ]; then
+        return 0;
+    fi
+    echo "Cache may exist, but always_stale enabled [$numerordinatio]"
+  fi
 
   echo "[ DOWNLOAD Wikidata ] ${FUNCNAME[0]} stale data on [$objectivum_archivum], refreshing..."
 
@@ -2149,7 +2156,11 @@ actiones_completis_publicis() {
   # @TODO: implement the download
   # file_download_if_necessary "$DATA_1603_45_31" "1603_45_31" "csv" "tm.hxl.csv" "hxltmcli" "1"
   file_convert_numerordinatio_de_hxltm "$numerordinatio" "1" "0"
-  file_translate_csv_de_numerordinatio_q "$numerordinatio" "0" "0"
+
+  # @TODO: implement decent check if need download Wikidata Q again
+  #        now is hardcoded as "1" on last parameter
+  # file_translate_csv_de_numerordinatio_q "$numerordinatio" "0" "0"
+  file_translate_csv_de_numerordinatio_q "$numerordinatio" "0" "0" "1"
   file_merge_numerordinatio_de_wiki_q "$numerordinatio" "0" "0"
   file_convert_tmx_de_numerordinatio11 "$numerordinatio"
   file_convert_tbx_de_numerordinatio11 "$numerordinatio"
@@ -2161,3 +2172,16 @@ actiones_completis_publicis() {
   upload_cdn "$numerordinatio"
 }
 
+# TODO: document...
+deploy_0_9_markdown() {
+  # ROOTDIR assumed to be on officinam
+  objectivum_archivum="${ROOTDIR}/README.md"
+  echo "${FUNCNAME[0]} [$objectivum_archivum]..."
+
+  "${ROOTDIR}/999999999/0/1603_1.py" \
+    --codex-de 1603_1_1 \
+    --status-quo \
+    --ex-librario="cdn" \
+    --status-in-markdown \
+  > "$objectivum_archivum"
+}

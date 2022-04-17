@@ -71,6 +71,7 @@ import datetime
 # from datetime import datetime
 
 
+import json
 from zlib import crc32
 
 
@@ -2189,6 +2190,9 @@ class Codex:
             ]
             scope_and_content = self.quod_res('0_1603_1_7_2616_7535')
             # paginae.append(str(scope_and_content))
+
+            # @TODO: use self.quod_res_methodi_ex_dictionariorum_corde() instead
+            #        of this block
             if scope_and_content and \
                     qhxl(scope_and_content, meta_langs) is not None:
                 term = qhxl(scope_and_content, meta_langs)
@@ -2351,6 +2355,32 @@ class Codex:
                     res['#item+conceptum+codicem'], '_')
             if res_codicem == codicem:
                 return res
+
+        return None
+
+    def quod_res_caveat_lector(self) -> str:
+        meta_langs = [
+            '#item+rem+i_qcc+is_zxxx+ix_codexfacto'
+        ]
+        caveat_lector = self.quod_res('0_1603_1_7_2617_9289584')
+        if caveat_lector and \
+                qhxl(caveat_lector, meta_langs) is not None:
+            term = qhxl(caveat_lector, meta_langs)
+            term2 = self.notitiae.translatio(term)
+            return term2
+
+        return None
+
+    def quod_res_methodi_ex_dictionariorum_corde(self) -> str:
+        meta_langs = [
+            '#item+rem+i_qcc+is_zxxx+ix_codexfacto'
+        ]
+        scope_and_content = self.quod_res('0_1603_1_7_2616_7535')
+        if scope_and_content and \
+                qhxl(scope_and_content, meta_langs) is not None:
+            term = qhxl(scope_and_content, meta_langs)
+            term2 = self.notitiae.translatio(term)
+            return term2
 
         return None
 
@@ -2992,7 +3022,11 @@ class LibrariaStatusQuo:
         # raise ValueError(str(self.linguae))
 
     def crc(self, res: Union[set, list]) -> str:
-        return crc32(b'TODO')
+        if isinstance(res, set):
+            res = list(res)
+        json_text = json.dumps(res)
+        # return crc32(b'TODO')
+        return crc32(json_text.encode())
 
     def ex_codice(self):
         nomen = self.codex.m1603_1_1__de_codex['#item+rem+i_mul+is_zyyy']
@@ -3004,9 +3038,22 @@ class LibrariaStatusQuo:
         # tempus_opus = datetime.datetime.now()
         tempus_opus = datetime.datetime.now().replace(microsecond=0)
 
+        methodi_ex_dictionariorum_corde = \
+            self.codex.quod_res_methodi_ex_dictionariorum_corde()
+        caveat_lector = \
+            self.codex.quod_res_caveat_lector()
+
         resultatum = {
             'annotationes_internalibus': self.codex.n1603ia,
             'meta': {
+                # Caveat lector
+                'caveat_lector': {
+                    'mul-Zyyy': caveat_lector
+                },
+                # Methodī ex dictiōnāriōrum corde
+                'methodi_ex_dictionariorum_corde': {
+                    'mul-Zyyy': methodi_ex_dictionariorum_corde
+                },
                 'nomen': nomen
             },
             'cdn': self.cdn,
@@ -3015,11 +3062,13 @@ class LibrariaStatusQuo:
                     'concepta': None,
                     'res_lingualibus': self.crc(self.codex.usus_linguae),
                     'res_interlingualibus': self.crc(self.codex.usus_ix_qcc),
+                    'res_picturae': None,
                 },
                 'summa': {
                     'concepta': summis_concepta,
                     'res_lingualibus': usus_linguae,
                     'res_interlingualibus': usus_ix_qcc,
+                    'res_picturae': None,
                 },
                 'tempus': {
                     'opus': tempus_opus.isoformat()
@@ -3100,6 +3149,7 @@ class LibrariaStatusQuo:
             status['status_quo']['summa']['codex']))
         paginae.append('    - concepta_non_unicum: {0}'.format(
             status['status_quo']['summa']['concepta_non_unicum']))
+        paginae.append('')
         for codex, item in status['librarium'].items():
             paginae.append('## {0} {1}'.format(codex, item['meta']['nomen']))
             paginae.append('- status_quo')
@@ -3111,6 +3161,7 @@ class LibrariaStatusQuo:
             paginae.append(
                 '  - res_lingualibus: {0}'.format(
                     item['status_quo']['summa']['res_lingualibus']))
+            paginae.append('')
 
         # return [yaml.dump(
         #     status, allow_unicode=True)]
