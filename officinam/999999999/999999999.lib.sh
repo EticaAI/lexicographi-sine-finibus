@@ -353,8 +353,8 @@ file_convert_csv_de_downloaded_xlsx() {
   est_temporarium_fontem="${2:-"1"}"
   est_temporarium_objectivum="${3:-"1"}"
   # opus_papyro="${4:-"10"}" # Not really necessary if using in2csv
-                             # (name of sheet). However it still trying to infer
-                             # the numbers
+  # (name of sheet). However it still trying to infer
+  # the numbers
 
   _path=$(numerordinatio_neo_separatum "$numerordinatio" "/")
   _nomen=$(numerordinatio_neo_separatum "$numerordinatio" "_")
@@ -382,7 +382,7 @@ file_convert_csv_de_downloaded_xlsx() {
   # hxltmcli --sheet "$opus_papyro" "$fontem_archivum" "$objectivum_archivum_temporarium"
   # hxlclean --sheet "$opus_papyro" "$fontem_archivum" "$objectivum_archivum_temporarium"
   # in2csv --format xlsx --no-inference --skip-lines 17 --sheet "$_nomen" "$fontem_archivum" > "${objectivum_archivum_temporarium_csv}"
-  in2csv --format xlsx --no-inference --skip-lines 17 --sheet "$_nomen" "$fontem_archivum" > "${objectivum_archivum_temporarium_csv}"
+  in2csv --format xlsx --no-inference --skip-lines 17 --sheet "$_nomen" "$fontem_archivum" >"${objectivum_archivum_temporarium_csv}"
   # issue: in2csv is adding ".0" to #item+conceptum+codicem for integers. even with --no-inference
   # set +x
 
@@ -967,7 +967,7 @@ file_translate_csv_de_numerordinatio_q() {
 
   if [ -z "$(stale_archive "$objectivum_archivum")" ]; then
     if [ "$always_stale" != '1' ]; then
-        return 0;
+      return 0
     fi
     echo "Cache may exist, but always_stale enabled [$numerordinatio]"
   fi
@@ -2055,6 +2055,39 @@ fi
 ################################################################################
 
 #######################################
+# Check if Numerodinatio needs Wikidata Q
+#
+# Globals:
+#   ROOTDIR
+# Arguments:
+#   numerordinatio
+# Outputs:
+#   (empty)
+# Returns:
+#   0: success; have the tag
+#   1: fail; do not have the tag
+#######################################
+quaero__ix_n1603ia__victionarium_q() {
+  numerordinatio="$1"
+
+  _nomen=$(numerordinatio_neo_separatum "$numerordinatio" "_")
+
+  resultatum=$("${ROOTDIR}/999999999/0/1603_1.py" \
+    --ex-opere-temporibus='cdn' \
+    --quaero-ix_n1603ia='{victionarium_q}>1' \
+    --quaero-numerordinatio="$_nomen")
+
+  # echo "resultatum"
+  # echo "[$resultatum]"
+
+  if [ -z "$resultatum" ]; then
+    return 1
+  else
+    return 0
+  fi
+}
+
+#######################################
 # Opus temporibus
 #
 # Globals:
@@ -2078,7 +2111,7 @@ opus_temporibus_cdn() {
     --quaero-ix_n1603ia='({publicum}>=11)' \
     --in-ordinem=chaos \
     --in-limitem=2 \
-    > "$opus_temporibus_temporarium"
+    >"$opus_temporibus_temporarium"
 
   while IFS=$'\t' read -r -a line; do
     # echo "${line[0]}"
@@ -2148,10 +2181,11 @@ temp_save_status() {
 #######################################
 actiones_completis_publicis() {
   numerordinatio="$1"
+  echo ""
 
   blue=$(tput setaf 4)
   normal=$(tput sgr0)
-  printf "%40s\n" "${blue}${FUNCNAME[0]} [$numerordinatio]${normal}"
+  printf "\t%40s\n" "${blue}${FUNCNAME[0]} [$numerordinatio]${normal}"
 
   # @TODO: implement the download
   # file_download_if_necessary "$DATA_1603_45_31" "1603_45_31" "csv" "tm.hxl.csv" "hxltmcli" "1"
@@ -2160,10 +2194,17 @@ actiones_completis_publicis() {
   # @TODO: implement decent check if need download Wikidata Q again
   #        now is hardcoded as "1" on last parameter
   # file_translate_csv_de_numerordinatio_q "$numerordinatio" "0" "0"
-  file_translate_csv_de_numerordinatio_q "$numerordinatio" "0" "0" "1"
-  file_merge_numerordinatio_de_wiki_q "$numerordinatio" "0" "0"
-  file_convert_tmx_de_numerordinatio11 "$numerordinatio"
-  file_convert_tbx_de_numerordinatio11 "$numerordinatio"
+
+  if [ -z "$(quaero__ix_n1603ia__victionarium_q "$numerordinatio")" ]; then
+    echo "yay"
+    file_translate_csv_de_numerordinatio_q "$numerordinatio" "0" "0" "1"
+    file_merge_numerordinatio_de_wiki_q "$numerordinatio" "0" "0"
+    file_convert_tmx_de_numerordinatio11 "$numerordinatio"
+    file_convert_tbx_de_numerordinatio11 "$numerordinatio"
+  else
+    echo "noop"
+  fi
+
   neo_codex_copertae_de_numerordinatio "$numerordinatio" "0" "0"
   neo_codex_de_numerordinatio "$numerordinatio" "0" "0"
   neo_codex_de_numerordinatio_epub "$numerordinatio" "0" "0"
@@ -2183,5 +2224,5 @@ deploy_0_9_markdown() {
     --status-quo \
     --ex-librario="cdn" \
     --status-in-markdown \
-  > "$objectivum_archivum"
+    >"$objectivum_archivum"
 }

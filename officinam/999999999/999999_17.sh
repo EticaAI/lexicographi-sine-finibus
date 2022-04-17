@@ -156,8 +156,11 @@ file_convert_numerordinatio_de_hxltm "1603_1_51" "1" "0"
 # temp_save_status "1603_45_31"
 # actiones_completis_publicis "1603_45_31"
 # actiones_completis_publicis "1603_63_101"
-# opus_temporibus_cdn
+opus_temporibus_cdn
 deploy_0_9_markdown
+
+# quaero__ix_n1603ia__victionarium_q "1603_63_101" && echo "1603_63_101"
+# quaero__ix_n1603ia__victionarium_q "1603_1_1" && echo "1603_1_1"
 
 # file_download_if_necessary "$DATA_1603_23_36" "1603_23_36" "csv" "tm.hxl.csv" "hxltmcli" "1"
 # file_convert_numerordinatio_de_hxltm "1603_23_36" "1" "0"
