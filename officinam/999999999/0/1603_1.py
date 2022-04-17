@@ -469,6 +469,29 @@ def qhxl_attr_2_bcp47(hxlatt: str):
     return resultatum
 
 
+def mathematica(quero=str) -> bool:
+    neo_quero = quero.replace(' ', '').replace('(', '').replace(')', '')
+
+    # regula = r"(\d*)(.{1,2})(\d*)"
+    regula = r"(?P<n1>(\d*))(?P<op>(\D{1,2}))(?P<n2>(\d*))"
+
+    r1 = re.findall(regula, quero)
+    # if r1:
+
+    # return regula
+    return r1['op']
+    # return True
+
+
+def logicum(quero=str) -> bool:
+    # https://regex101.com/r/LbYVhw/1
+    # {(.*?)}
+    #     {publicum}>10 && {internale}<1
+    #     ({publicum}>10) && ({internale}<1)
+    return mathematica(quero)
+    return True
+
+
 def ix_n1603ia(ix_n1603ia: str, de_codex: str = '1603:?:?') -> dict:
     resultatum = {}
 
@@ -505,8 +528,25 @@ def ix_n1603ia_quaero(n1603ia: dict, quaero: str = '') -> bool:
         bool: _description_
     """
     resultatum = False
+    neo_quaero = quaero
     if not quaero or len(quaero) < 1:
         return None
+
+    regula = r"{(.*?)}"
+
+    r1 = re.findall(regula, quaero)
+    if r1:
+        for clavem in r1:
+            if clavem in n1603ia:
+                neo_quaero = neo_quaero.replace(
+                    '{' + clavem + '}', str(n1603ia[clavem]))
+            else:
+                neo_quaero = neo_quaero.replace('{' + clavem + '}', '0')
+            # print(codicem)
+
+    resultatum_logicum = logicum(neo_quaero)
+
+    raise ValueError(str([quaero, neo_quaero, resultatum_logicum, n1603ia]))
 
     # if not ix_n1603ia or len(ix_n1603ia.strip()) == 0:
     #     return resultatum
@@ -4386,10 +4426,12 @@ class OpusTemporibus:
     def __init__(
         self,
         ex_opere_temporibus: str,
-        ex_librario: str = ''
+        # ex_librario: str = '',
+        quaero_ix_n1603ia: str = ''
     ):
         self.ex_opere_temporibus = ex_opere_temporibus
-        self.ex_librario = ex_librario
+        # self.ex_librario = ex_librario
+        self.quaero_ix_n1603ia = quaero_ix_n1603ia
 
         self.initiari()
         # self.dictionaria_codex = dictionaria_codex
@@ -4407,7 +4449,7 @@ class OpusTemporibus:
         self.codex = Codex('1603_1_1')
 
         self.libraria_status_quo = LibrariaStatusQuo(
-            self.codex, self.ex_librario)
+            self.codex, self.ex_opere_temporibus)
 
         for clavem, item in self.codex.m1603_1_1.items():
             # #item +rem +i_qcc +is_zxxx +ix_n1603ia
@@ -4415,6 +4457,12 @@ class OpusTemporibus:
                 self.codex_opus.append(clavem)
                 ix_n1603ia_item = ix_n1603ia(
                     item['#item+rem+i_qcc+is_zxxx+ix_n1603ia'])
+                # print(self.quaero_ix_n1603ia)
+
+                if self.quaero_ix_n1603ia and len(self.quaero_ix_n1603ia) > 0:
+                    if not ix_n1603ia_quaero(ix_n1603ia_item, self.quaero_ix_n1603ia):
+                        continue
+
                 # self.opus.append(
                 #     [clavem, item['#item+rem+i_qcc+is_zxxx+ix_n1603ia']])
                 self.opus.append(
@@ -4758,10 +4806,12 @@ class CLI_2600:
         if self.pyargs.ex_opere_temporibus and \
                 len(self.pyargs.ex_opere_temporibus) > 0:
 
+            # print(self.pyargs.quaero_ix_n1603ia)
             opus_temporibus = OpusTemporibus(
-                self.pyargs.ex_opere_temporibus)
+                self.pyargs.ex_opere_temporibus,
+                self.pyargs.quaero_ix_n1603ia
+            )
             return self.output(opus_temporibus.imprimere())
-            raise NotImplementedError('TODO')
 
         # if self.pyargs.actionem_sparql:
         if self.pyargs.codex_de:
