@@ -293,7 +293,7 @@ file_download_if_necessary() {
 #   Writes .xlsx
 #######################################
 file_download_1603_xlsx() {
-  est_temporarium="${6:-"1"}"
+  est_temporarium="${1:-"1"}"
   iri="$DATA_1603"
 
   if [ "$est_temporarium" -eq "1" ]; then
