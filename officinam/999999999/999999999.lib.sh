@@ -2074,16 +2074,21 @@ quaero__ix_n1603ia__victionarium_q() {
 
   resultatum=$("${ROOTDIR}/999999999/0/1603_1.py" \
     --ex-opere-temporibus='cdn' \
-    --quaero-ix_n1603ia='{victionarium_q}>1' \
+    --quaero-ix_n1603ia='{victionarium_q}>=1' \
     --quaero-numerordinatio="$_nomen")
+
+  # resultatum=${resultatum//[[:blank:]]/}
 
   # echo "resultatum"
   # echo "[$resultatum]"
 
   if [ -z "$resultatum" ]; then
+    echo 1
     return 1
+    # return 0
   else
     return 0
+    # return 1
   fi
 }
 
@@ -2106,9 +2111,16 @@ opus_temporibus_cdn() {
 
   opus_temporibus_temporarium="${ROOTDIR}/999999/0/1603.cdn.statum.tsv"
 
+  # "${ROOTDIR}/999999999/0/1603_1.py" \
+  #   --ex-opere-temporibus='cdn' \
+  #   --quaero-ix_n1603ia='({publicum}>=10)' \
+  #   --in-ordinem=chaos \
+  #   --in-limitem=2 \
+  #   >"$opus_temporibus_temporarium"
+
   "${ROOTDIR}/999999999/0/1603_1.py" \
     --ex-opere-temporibus='cdn' \
-    --quaero-ix_n1603ia='({publicum}>=11)' \
+    --quaero-ix_n1603ia='({publicum}>=1)' \
     --in-ordinem=chaos \
     --in-limitem=2 \
     >"$opus_temporibus_temporarium"
@@ -2196,13 +2208,13 @@ actiones_completis_publicis() {
   # file_translate_csv_de_numerordinatio_q "$numerordinatio" "0" "0"
 
   if [ -z "$(quaero__ix_n1603ia__victionarium_q "$numerordinatio")" ]; then
-    echo "yay"
+    # echo "yay"
     file_translate_csv_de_numerordinatio_q "$numerordinatio" "0" "0" "1"
     file_merge_numerordinatio_de_wiki_q "$numerordinatio" "0" "0"
     file_convert_tmx_de_numerordinatio11 "$numerordinatio"
     file_convert_tbx_de_numerordinatio11 "$numerordinatio"
-  else
-    echo "noop"
+  # else
+  #   echo "noop"
   fi
 
   neo_codex_copertae_de_numerordinatio "$numerordinatio" "0" "0"
