@@ -478,6 +478,35 @@ def qhxl_attr_2_bcp47(hxlatt: str):
     return resultatum
 
 
+def sort_numerodinatio_clavem(item):
+    """sort_numerodinatio_clavem
+
+    Hotfix to force order somewhat intuitive order with Numerordinatio keys.
+    Coerces each part to it's numeric value and group by upper orderring
+
+    Args:
+        item (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
+    # Use case status['librarium'].items()
+    ordo_simples = 0
+    # codex_crudum = item[0]
+    codex_crudum = item[0].split('_')
+    # ordo_simples = (100000 - int(codex_crudum[0])) * (10 ** 4)
+    ordo_simples = (int(codex_crudum[0]) * (1000 ** 3))
+
+    if len(codex_crudum) >= 2:
+        ordo_simples = ordo_simples + (int(codex_crudum[1]) * (1000 ** 2))
+    if len(codex_crudum) >= 3:
+        ordo_simples = ordo_simples + (int(codex_crudum[2]) * (1000 ** 1))
+    if len(codex_crudum) >= 4:
+        ordo_simples = ordo_simples + (int(codex_crudum[3]) * (1000 ** 0))
+
+    return ordo_simples
+
+
 def mathematica(quero: str, meta: str = '') -> bool:
     """mathematica
 
@@ -3151,7 +3180,17 @@ class LibrariaStatusQuo:
             status['status_quo']['summa']['concepta_non_unicum']))
         paginae.append('')
 
-        for codex, item in status['librarium'].items():
+        items_sorted = status['librarium'].items()
+
+        # items_sorted = items_sorted.sort(key=sort_numerodinatio_clavem)
+        items_sorted = sorted(items_sorted, key=sort_numerodinatio_clavem)
+
+        paginae.extend(self.imprimere_in_markdown_tabula_contentorum(
+            items_sorted
+        ))
+
+        # for codex, item in status['librarium'].items():
+        for codex, item in items_sorted:
 
             caveat_lector = self.imprimere_res_caveat_lector(item)
             corde = self.imprimere_res_methodi_ex_dictionariorum_corde(item)
@@ -3159,6 +3198,20 @@ class LibrariaStatusQuo:
             paginae.append(
                 '## {0} {1}'.format(codex, item['meta']['nomen']))
 
+            paginae.append('')
+
+            # # DEBUG
+            # paginae.append(
+            #     '{0} {1} {2} {3}'.format(
+            #         '1603_45_3',
+            #         sort_numerodinatio_clavem(['1603_45_3', 'a']),
+            #         '1603_44_101',
+            #         sort_numerodinatio_clavem(['1603_44_101', 'a'])
+            #     )
+            # )
+
+            paginae.append('')
+            paginae.append('<a href="#{0}" id="{0}">§ {0}</a>'.format(codex))
             paginae.append('')
 
             paginae.append('- status_quo')
@@ -3204,6 +3257,26 @@ class LibrariaStatusQuo:
 
         # return [yaml.dump(
         #     status, allow_unicode=True)]
+        return paginae
+
+    def imprimere_in_markdown_tabula_contentorum(self, items_sorted):
+        paginae = []
+        paginae.append('')
+        paginae.append('----')
+        paginae.append('**Tabula contentorum**')
+        for codex, item in items_sorted:
+            paginae.append(
+                '- <a href="#{0}">{0}</a> '
+                '<sup>C.{1}</sup> <sub>r.I.{2}</sub>  <sub>r.L.{3}</sub>'.format(
+                codex,
+                item['status_quo']['summa']['concepta'],
+                item['status_quo']['summa']['res_interlingualibus'],
+                item['status_quo']['summa']['res_lingualibus'],
+            ))
+
+        paginae.append('')
+        paginae.append('----')
+        paginae.append('')
         return paginae
 
     def imprimere_res_caveat_lector(self, item):
