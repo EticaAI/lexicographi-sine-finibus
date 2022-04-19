@@ -154,11 +154,16 @@ file_update_if_necessary() {
     # sha256sum "$objectivum_archivum"
     # sha256sum "$fontem_archivum"
 
-    # if [ -s "$objectivum_archivum" ] && [ "$(cmp "$fontem_archivum" "$objectivum_archivum")" = "" ]; then
-    if [ -s "$objectivum_archivum" ] && [ "$(cmp --silent "$fontem_archivum" "$objectivum_archivum")" = "" ]; then
+    # TODO: this function may bug with some cases when --silent is enabled
+
+    if [ -s "$objectivum_archivum" ] && [ "$(cmp "$fontem_archivum" "$objectivum_archivum")" = "" ]; then
+    # if [ -s "$objectivum_archivum" ] && [ "$(cmp --silent "$fontem_archivum" "$objectivum_archivum")" = "" ]; then
       echo "INFO: already equal. Temporary will be discarted"
       # echo "      [$fontem_archivum]"
       # echo "      [$objectivum_archivum]"
+      sha256sum "$objectivum_archivum"
+      sha256sum "$fontem_archivum"
+
       rm "$fontem_archivum"
     else
       echo "Not equal. Temporary will replace target file"
@@ -289,7 +294,7 @@ file_download_if_necessary() {
 
 #######################################
 # Download Google sheets to local cache
-# Default stale time: 10min
+# Default stale time: 15 min
 #
 # Globals:
 #   ROOTDIR
@@ -319,11 +324,11 @@ file_download_1603_xlsx() {
 
   if [ -f "$objectivum_archivum" ]; then
     # is_stale=$(stale_archive "$objectivum_archivum" "360")
-    is_stale=$(stale_archive "$objectivum_archivum" "10")
+    is_stale=$(stale_archive "$objectivum_archivum" "15")
     if [ "$is_stale" = "1" ]; then
-      echo "Cache exist, but more than 5min old, Downloading again"
+      echo "Cache exist, but more than 15 min old, Downloading again"
     else
-      echo "Cache exist, but less than 5min old. Wait or delete manually:"
+      echo "Cache exist, but less than 15 min old. Wait or delete manually:"
       echo "   $objectivum_archivum"
       return 0
     fi
@@ -384,7 +389,8 @@ file_convert_csv_de_downloaded_xlsx() {
 
   fontem_archivum="${_basim_fontem}/1603/1603.xlsx"
   objectivum_archivum="${_basim_objectivum}/$_path/$_nomen.tm.hxl.csv"
-  objectivum_archivum_temporarium_csv="${ROOTDIR}/999999/0/$_nomen.csv"
+  objectivum_archivum_temporarium_csv="${ROOTDIR}/999999/0/$_nomen~prehotfix-0s.csv"
+  objectivum_archivum_temporarium_csv2="${ROOTDIR}/999999/0/$_nomen.csv"
   objectivum_archivum_temporarium="${ROOTDIR}/999999/0/$_nomen.tm.hxl.csv"
 
   echo "${FUNCNAME[0]}: [$numerordinatio]; [$fontem_archivum] --> [$objectivum_archivum]"
@@ -399,6 +405,7 @@ file_convert_csv_de_downloaded_xlsx() {
 
   hxlselect --query="#item+conceptum+codicem>0" "${objectivum_archivum_temporarium_csv}" "$objectivum_archivum_temporarium"
 
+  "${ROOTDIR}/999999999/0/hotfix0s.py" "$objectivum_archivum_temporarium" "$objectivum_archivum_temporarium_csv2"
 
   # https://github.com/dilshod/xlsx2csv
   # pip3 install xlsx2csv
@@ -414,8 +421,6 @@ file_convert_csv_de_downloaded_xlsx() {
   #        desnecessarias
 
   # mlr --csv put -f 999999999/0/xlsx-csv-zeroes.mlr 999999/0/1603_1_1--old.csv
-
-
 
   # mlr --csv cat 999999/0/1603_45_1.csv
 
@@ -438,7 +443,8 @@ file_convert_csv_de_downloaded_xlsx() {
   #      type inference. We need better long term solution for this.
   # sed -i 's/.0,/,/' "$objectivum_archivum_temporarium"
 
-  file_update_if_necessary csv "$objectivum_archivum_temporarium" "$objectivum_archivum"
+  rm "$objectivum_archivum_temporarium"
+  file_update_if_necessary csv "$objectivum_archivum_temporarium_csv2" "$objectivum_archivum"
 }
 
 #######################################
@@ -483,7 +489,7 @@ file_convert_numerordinatio_de_hxltm() {
   objectivum_archivum="${_basim_objectivum}/$_path/$_nomen.no1.tm.hxl.csv"
   objectivum_archivum_temporarium="${ROOTDIR}/999999/0/$_nomen.no1.tm.hxl.csv"
 
-  echo "${FUNCNAME[0]} [$numerordinatio]"
+  echo "${FUNCNAME[0]} [$numerordinatio] [$fontem_archivum] -> [$objectivum_archivum]"
 
   # echo "$fontem_archivum"
 
