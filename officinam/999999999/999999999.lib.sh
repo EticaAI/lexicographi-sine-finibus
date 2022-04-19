@@ -409,6 +409,12 @@ file_convert_csv_de_downloaded_xlsx() {
   #
   #   mlr --csv head -n 2 999999/0/1603_1_1--old.csv
 
+  # @TODO: simplesmente criar um script python em vez de usar ferramenta
+  #        externa para resolver os .0 do final. Ja reduz mais dependencias
+  #        desnecessarias
+
+  # mlr --csv put -f 999999999/0/xlsx-csv-zeroes.mlr 999999/0/1603_1_1--old.csv
+
 
 
   # mlr --csv cat 999999/0/1603_45_1.csv
