@@ -14,6 +14,7 @@
 #                 - python3 (call scripts from 999999999/0/)
 #                 - s3cmd (https://github.com/s3tools/s3cmd)
 #                   - pip3 install s3cmd
+#                 - ssconvert (sudo apt install gnumeric)
 #
 #          BUGS:  ---
 #         NOTES:  ---
@@ -131,7 +132,7 @@ file_update_if_necessary() {
   # echo "fontem_archivum $fontem_archivum"
   # echo "objectivum_archivum $objectivum_archivum"
 
-  echo "${FUNCNAME[0]} ..."
+  echo "${FUNCNAME[0]} ... [$fontem_archivum] --> [$objectivum_archivum]"
 
   case "${formatum_archivum}" in
   csv)
@@ -344,6 +345,9 @@ file_download_1603_xlsx() {
 # - '#status+conceptum' (if defined) less than 0 are excluded
 # - '#status' are removed
 #
+# Requires:
+#   ssconvert (sudo apt install gnumeric)
+#
 # Globals:
 #   ROOTDIR
 #   NUMERORDINATIO_STATUS_CONCEPTUM_MINIMAM
@@ -385,15 +389,27 @@ file_convert_csv_de_downloaded_xlsx() {
 
   echo "${FUNCNAME[0]}: [$numerordinatio]; [$fontem_archivum] --> [$objectivum_archivum]"
 
-  # set -x
+  set -x
   # hxltmcli --sheet "$opus_papyro" "$fontem_archivum" "$objectivum_archivum_temporarium"
   # hxlclean --sheet "$opus_papyro" "$fontem_archivum" "$objectivum_archivum_temporarium"
   # in2csv --format xlsx --no-inference --skip-lines 17 --sheet "$_nomen" "$fontem_archivum" > "${objectivum_archivum_temporarium_csv}"
   in2csv --format xlsx --no-inference --skip-lines 17 --sheet "$_nomen" "$fontem_archivum" >"${objectivum_archivum_temporarium_csv}"
   # issue: in2csv is adding ".0" to #item+conceptum+codicem for integers. even with --no-inference
-  # set +x
+  set +x
 
   hxlselect --query="#item+conceptum+codicem>0" "${objectivum_archivum_temporarium_csv}" "$objectivum_archivum_temporarium"
+
+
+  # https://github.com/dilshod/xlsx2csv
+  # pip3 install xlsx2csv
+  # (don't work)
+  # TODO: test miller after converted CSV to only clean the .0
+  #       @see https://guillim.github.io/terminal/2018/06/19/MLR-for-CSV-manipulation.html
+  #       @see https://miller.readthedocs.io/en/latest/operating-on-all-fields/
+  #
+  #   mlr --csv head -n 2 999999/0/1603_1_1--old.csv
+
+
 
   # mlr --csv cat 999999/0/1603_45_1.csv
 
@@ -460,6 +476,8 @@ file_convert_numerordinatio_de_hxltm() {
   fontem_archivum="${_basim_fontem}/$_path/$_nomen.tm.hxl.csv"
   objectivum_archivum="${_basim_objectivum}/$_path/$_nomen.no1.tm.hxl.csv"
   objectivum_archivum_temporarium="${ROOTDIR}/999999/0/$_nomen.no1.tm.hxl.csv"
+
+  echo "${FUNCNAME[0]} [$numerordinatio]"
 
   # echo "$fontem_archivum"
 
