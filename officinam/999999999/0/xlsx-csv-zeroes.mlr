@@ -1,7 +1,0 @@
-map inrec = $*;
-$* = {};
-for (oldkey, value in inrec) {
-  # newkey = clean_whitespace(gsub(oldkey, "\n", " "));
-  newkey = gsub(oldkey, ".0", "");
-  $[newkey] = value;
-}
