@@ -726,8 +726,11 @@ class Codex:
         self.m1603_1_1__de_codex = None
         self.m1603_1_1 = None
         self._init_1603_1_1()
-        self.notitiae = DictionariaNotitiae()
         self.dictionaria_linguarum = DictionariaLinguarum()
+        self.notitiae = DictionariaNotitiae(
+            auxilium_linguam=auxilium_linguam,
+            dictionaria_linguarum=self.dictionaria_linguarum
+        )
         self.dictionaria_interlinguarum = DictionariaInterlinguarum()
         self.codex = self._init_codex()
         self.n1603ia = self._init_ix_n1603ia()
@@ -3268,11 +3271,11 @@ class LibrariaStatusQuo:
             paginae.append(
                 '- <a href="#{0}">{0}</a> '
                 '<sup>C.{1}</sup> <sub>r.I.{2}</sub>  <sub>r.L.{3}</sub>'.format(
-                codex,
-                item['status_quo']['summa']['concepta'],
-                item['status_quo']['summa']['res_interlingualibus'],
-                item['status_quo']['summa']['res_lingualibus'],
-            ))
+                    codex,
+                    item['status_quo']['summa']['concepta'],
+                    item['status_quo']['summa']['res_interlingualibus'],
+                    item['status_quo']['summa']['res_lingualibus'],
+                ))
 
         paginae.append('')
         paginae.append('----')
@@ -4198,10 +4201,24 @@ class DictionariaNotitiae:
 
     """
 
-    def __init__(self):
+    auxilium_linguam = ['lat-Latn']
+
+    def __init__(
+        self,
+        auxilium_linguam: list = None,
+        dictionaria_linguarum: Type['DictionariaLinguarum'] = None
+    ):
 
         self.fontem = NUMERORDINATIO_BASIM + \
             "/1603/1/99/1603_1_99.no1.tm.hxl.csv"
+
+        if auxilium_linguam:
+            self.auxilium_linguam = auxilium_linguam
+        if dictionaria_linguarum:
+            self.dictionaria_linguarum = dictionaria_linguarum
+        else:
+            self.dictionaria_linguarum = DictionariaLinguarum()
+
         self.dictionaria = self._init_dictionaria()
 
     def _init_dictionaria(self):
