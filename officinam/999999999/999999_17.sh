@@ -64,14 +64,15 @@ ROOTDIR="$(pwd)"
 #### Manual action, TEST locally, one per time, START --------------------------
 # Download entire XLSX to local temp
 file_download_1603_xlsx "1"
-# actiones_completis_locali "1603_1_1"
+actiones_completis_locali "1603_1_1"
 # actiones_completis_locali "1603_1_51"
+actiones_completis_locali "1603_1_2020"
 # actiones_completis_locali "1603_99_876"
 
 #### Manual action, TEST locally, one per time, END ----------------------------
 
 ## Full drill (remote, randon publish few at time)
-opus_temporibus_cdn
-deploy_0_9_markdown
+# opus_temporibus_cdn
+# deploy_0_9_markdown
 
 # @TODO: maybe check ssdiff (diff spreadsheets) to our uses. 
