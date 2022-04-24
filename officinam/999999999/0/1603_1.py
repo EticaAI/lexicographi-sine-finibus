@@ -3086,7 +3086,7 @@ class Codex:
 
         if linguae_totale > 0:
 
-            paginae.append("Rēs linguālibus::")
+            paginae.append("Rēs linguālibus ({0})::".format(linguae_totale))
 
             for lingua in linguae:
                 paginae.append("  {0}:::\n{1}".format(
