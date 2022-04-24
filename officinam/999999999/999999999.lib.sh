@@ -153,22 +153,28 @@ file_update_if_necessary() {
   if [ -f "$objectivum_archivum" ]; then
     # sha256sum "$objectivum_archivum"
     # sha256sum "$fontem_archivum"
-
+    objectivum_archivum_hash=$(sha256sum "$objectivum_archivum" | cut -d ' ' -f 1)
+    fontem_archivum_hash=$(sha256sum "$fontem_archivum" | cut -d ' ' -f 1)
+    # sha256sum "$fontem_archivum"
+    # echo "objectivum_archivum_hash [$objectivum_archivum_hash]"
+    # echo "fontem_archivum_hash [$fontem_archivum_hash]"
     # TODO: this function may bug with some cases when --silent is enabled
 
-    if [ -s "$objectivum_archivum" ] && [ "$(cmp "$fontem_archivum" "$objectivum_archivum")" = "" ]; then
-    # if [ -s "$objectivum_archivum" ] && [ "$(cmp --silent "$fontem_archivum" "$objectivum_archivum")" = "" ]; then
+    # if [ "$fontem_archivum_hash" != "$objectivum_archivum_hash" ]; then
+    if [[ "$fontem_archivum_hash" != "$objectivum_archivum_hash" ]]; then
+      echo "Not equal. Temporary will replace target file [$fontem_archivum_hash] --> [$objectivum_archivum_hash]"
+      # sha256sum "$objectivum_archivum"
+      # sha256sum "$fontem_archivum"
+      rm "$objectivum_archivum"
+      mv "$fontem_archivum" "$objectivum_archivum"
+    else
       echo "INFO: already equal. Temporary will be discarted"
       # echo "      [$fontem_archivum]"
       # echo "      [$objectivum_archivum]"
-      sha256sum "$objectivum_archivum"
-      sha256sum "$fontem_archivum"
+      # sha256sum "$objectivum_archivum"
+      # sha256sum "$fontem_archivum"
 
       rm "$fontem_archivum"
-    else
-      echo "Not equal. Temporary will replace target file"
-      rm "$objectivum_archivum"
-      mv "$fontem_archivum" "$objectivum_archivum"
     fi
   else
     mv "$fontem_archivum" "$objectivum_archivum"
