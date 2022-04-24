@@ -711,7 +711,7 @@ def numerordinatio_nomen_v2(
             resultatum_item = helper(rem, item_attr)
             if resultatum_item:
                 if auxilium_linguam_admonitioni is False or \
-                    resultatum_item.lower().endswith('@' + item.lower()):
+                        resultatum_item.lower().endswith('@' + item.lower()):
                     return _brevis(resultatum_item)
                 else:
                     return _brevis('/' + resultatum_item + '/@' + item)
@@ -3069,7 +3069,8 @@ class Codex:
                     # We're assuming if content have line breaks, it is complex
                     # and we will not give hint about language.
                     # This can be reviewed on the future
-                    if item_text_i18n.find("\n") == -1:
+                    if item_text_i18n.find("\n") == -1 and \
+                            item_text_i18n.find("+++") == -1:
 
                         item_text_i18n = '+++<span lang="{1}">{0}</span>+++'.format(
                             item_textum,
@@ -3188,7 +3189,8 @@ class Codex:
                     # We're assuming if content have line breaks, it is complex
                     # and we will not give hint about language.
                     # This can be reviewed on the future
-                    if item_text_i18n.find("\n") == -1:
+                    if item_text_i18n.find("\n") == -1 and \
+                            item_text_i18n.find("+++") == -1:
 
                         item_text_i18n = '+++<span lang="{1}">{0}</span>+++'.format(
                             item_textum,
