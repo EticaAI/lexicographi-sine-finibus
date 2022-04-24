@@ -677,13 +677,13 @@ neo_codex_de_numerordinatio() {
 
   echo "${FUNCNAME[0]} [$objectivum_archivum]"
 
-  set -x
+  # set -x
   "${ROOTDIR}/999999999/0/1603_1.py" \
     --objectivum-linguam="$est_objectivum_linguam" \
     --auxilium-linguam="$est_auxilium_linguam" \
     --codex-de "$_nomen" \
     >"$objectivum_archivum"
-  set +x
+  # set +x
 }
 
 #######################################
@@ -2167,19 +2167,19 @@ opus_temporibus_cdn() {
   #   --in-limitem=2 \
   #   >"$opus_temporibus_temporarium"
 
-  "${ROOTDIR}/999999999/0/1603_1.py" \
-    --ex-opere-temporibus='cdn' \
-    --quaero-ix_n1603ia='({publicum}>=1)' \
-    --in-ordinem=chaos \
-    --in-limitem=2 \
-    >"$opus_temporibus_temporarium"
-
   # "${ROOTDIR}/999999999/0/1603_1.py" \
   #   --ex-opere-temporibus='cdn' \
   #   --quaero-ix_n1603ia='({publicum}>=1)' \
   #   --in-ordinem=chaos \
-  #   --in-limitem=25 \
+  #   --in-limitem=2 \
   #   >"$opus_temporibus_temporarium"
+
+  "${ROOTDIR}/999999999/0/1603_1.py" \
+    --ex-opere-temporibus='cdn' \
+    --quaero-ix_n1603ia='({publicum}>=1)' \
+    --in-ordinem=chaos \
+    --in-limitem=25 \
+    >"$opus_temporibus_temporarium"
 
   while IFS=$'\t' read -r -a line; do
     # echo "${line[0]}"

@@ -669,19 +669,23 @@ def numerordinatio_nomen(
 
 
 def numerordinatio_nomen_v2(
-        rem: dict, objectivum_linguam: str = 'mul-Zyyy',
-        auxilium_linguam: list = None) -> str:
+        rem: dict,
+        objectivum_linguam: str = 'mul-Zyyy',
+        auxilium_linguam: list = None,
+        auxilium_linguam_admonitioni: bool = True
+) -> str:
     """numerordinatio_nomen_v2
 
     _extended_summary_
 
     Args:
         rem (dict): _description_
-        objectivum_linguam (str, optional): _description_. Defaults to 'mul-Zyyy'.
-        auxilium_linguam (list, optional): _description_. Defaults to None.
+        objectivum_linguam (str, optional):  Defaults to 'mul-Zyyy'.
+        objectivum_linguam (str, optional):  Defaults to 'mul-Zyyy'.
+        auxilium_linguam_admonitioni (bool, optional): Defaults to None.
 
     Returns:
-        str: _description_
+        str:
 
     >>> rem = {'#item+rem+i_lat+is_latn': 'Salvi, Mundi!'}
     >>> numerordinatio_nomen_v2(rem, 'mul-Latn', ['por-Latn', 'lat-Latn'])
@@ -697,8 +701,6 @@ def numerordinatio_nomen_v2(
 
     objectivum_attr = qhxl_bcp47_2_hxlattr(objectivum_linguam)
 
-    # auxilium = list(map(qhxl_bcp47_2_hxlattr, auxilium_linguam))
-
     perfectum = helper(rem, objectivum_attr)
     if perfectum:
         return _brevis(perfectum)
@@ -708,7 +710,8 @@ def numerordinatio_nomen_v2(
             item_attr = qhxl_bcp47_2_hxlattr(item)
             resultatum_item = helper(rem, item_attr)
             if resultatum_item:
-                if resultatum_item.lower().endswith('@' + item.lower()):
+                if auxilium_linguam_admonitioni is False or \
+                    resultatum_item.lower().endswith('@' + item.lower()):
                     return _brevis(resultatum_item)
                 else:
                     return _brevis('/' + resultatum_item + '/@' + item)
@@ -1190,6 +1193,9 @@ class Codex:
         # >>> codex = Codex('1603_25_1')
         # >>> codex.sarcinarum.__dict__
     """
+
+    objectivum_linguam = 'mul-Zyyy'
+    auxilium_linguam = []
 
     def __init__(
         self,
@@ -4794,9 +4800,16 @@ class DictionariaNotitiae:
     def translatio_codicem(self, codex: str) -> str:
         for clavem, conceptum in self.dictionaria.items():
             if codex == clavem:
-                return conceptum['#item+rem+i_eng+is_latn']
+                return numerordinatio_nomen_v2(
+                    conceptum,
+                    self.codex.objectivum_linguam,
+                    self.codex.auxilium_linguam,
+                    auxilium_linguam_admonitioni=False
+                )
+
+                # return conceptum['#item+rem+i_eng+is_latn']
         return None
-        return '[ @TODO ' + codex + ' ]'
+        # return '[ @TODO ' + codex + ' ]'
 
 
 class DictionariaNumerordinatio:
@@ -5278,6 +5291,7 @@ class OpusTemporibus:
         # self.linguae['#item+rem+i_eng+is_latn'] = 'en'
         # self.linguae['#item+rem+i_por+is_latn'] = 'pt'
 
+        # self.codex = Codex('1603_1_1', 'lat-Latn', ['mul-Zyyy'])
         self.codex = Codex('1603_1_1')
 
         self.libraria_status_quo = LibrariaStatusQuo(
