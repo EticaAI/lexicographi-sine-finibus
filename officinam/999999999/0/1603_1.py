@@ -3706,6 +3706,11 @@ class LibrariaStatusQuo:
         else:
             return [yaml.dump(self.ex_codice(), allow_unicode=True)]
 
+    def imprimere_in_csvw(self) -> list:
+        # https://github.com/w3c/csvw
+        # https://www.w3.org/TR/tabular-data-primer/
+        raise NotImplementedError('TODO')
+
     def imprimere_in_datapackage(self) -> list:
         """imprimere_in_datapackage
 

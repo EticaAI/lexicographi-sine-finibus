@@ -449,8 +449,8 @@ file_convert_csv_de_downloaded_xlsx() {
   #      type inference. We need better long term solution for this.
   # sed -i 's/.0,/,/' "$objectivum_archivum_temporarium"
 
-  # rm "$objectivum_archivum_temporarium_csv"
-  # rm "$objectivum_archivum_temporarium"
+  rm "$objectivum_archivum_temporarium_csv"
+  rm "$objectivum_archivum_temporarium"
   file_update_if_necessary csv "$objectivum_archivum_temporarium_csv2" "$objectivum_archivum"
 }
 
@@ -515,8 +515,10 @@ file_convert_numerordinatio_de_hxltm() {
   # @TODO: implement NUMERORDINATIO_STATUS_CONCEPTUM_CODICEM_MINIMAM
   #        instead of hardcode 1|2|3|4|5|6|7|8|9
 
+  # hxlcut --exclude="#meta" \
   hxlcut --exclude="#meta" \
     "$fontem_archivum" |
+    hxlcut --skip-untagged |
     hxlselect --query="#item+conceptum+codicem>0" |
     hxlselect --query='#status+conceptum+codicem~^(1|2|3|4|5|6|7|8|9)$' --reverse |
     hxladd --before --spec="#item+conceptum+numerordinatio=${_prefix}:{{#item+conceptum+codicem}}" |
