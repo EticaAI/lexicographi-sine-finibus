@@ -629,6 +629,46 @@ file_convert_tmx_de_numerordinatio11() {
 }
 
 #######################################
+# Hotfix to remove duplicated merge keys in files (in place change)
+# See file_merge_numerordinatio_de_wiki_q() for reasoning
+#
+# Globals:
+#   ROOTDIR
+# Arguments:
+#   archivum
+# Outputs:
+#   Convert files
+#######################################
+file_hotfix_duplicated_merge_key() {
+  archivum="$1"
+  hashtag_duplicated="${2:-"#item+rem+i_qcc+is_zxxx+ix_wikiq"}"
+  _nomen_archivum=$(basename "$archivum")
+  _hashtag_deleteme="$hashtag_duplicated+ix_deleteme"
+
+  hotfix_archivum_temporarium_1="${ROOTDIR}/999999/0/$_nomen_archivum~hotfix-key-1.csv"
+  hotfix_archivum_temporarium_2="${ROOTDIR}/999999/0/$_nomen_archivum~hotfix-key-2.csv"
+
+  echo "${FUNCNAME[0]} [$archivum]"
+  fontem_hxlhashags=$(head -n1 "$archivum")
+  temp_hxlhashags=${fontem_hxlhashags/"$hashtag_duplicated"/"$_hashtag_deleteme"}
+
+  echo "$temp_hxlhashags" >"$hotfix_archivum_temporarium_1"
+  tail -n+2 <"$archivum" >>"$hotfix_archivum_temporarium_1"
+
+  hxlcut --exclude='#item+rem+i_qcc+is_zxxx+ix_wikiq+ix_deleteme' \
+    "$hotfix_archivum_temporarium_1" \
+    >"$hotfix_archivum_temporarium_2"
+
+  rm "$archivum"
+  rm "$hotfix_archivum_temporarium_1"
+
+  # Delete first line of ,,,,,,,,,,,,,,,, (...)
+  sed -i '1d' "${hotfix_archivum_temporarium_2}"
+
+  mv "$hotfix_archivum_temporarium_2" "$archivum"
+}
+
+#######################################
 # Create a codex (documentation) from an Numerordinatio standard file
 #
 # Globals:
@@ -1235,7 +1275,7 @@ file_merge_numerordinatio_de_wiki_q() {
     # We apply 'hxlclean --lower' only on writting systems which this make
     # sence. On this case at least '+is_latn,+is_cyrl'
     hxlrename \
-      --rename='item+conceptum+codicem:#item+rem+i_qcc+is_zxxx+ix_wikiq+ix_deleteme' \
+      --rename='item+conceptum+codicem:#item+rem+i_qcc+is_zxxx+ix_wikiq' \
       "$fontem_q_archivum" |
       hxlclean --lower='#*+is_latn,#*+is_cyrl' \
         >"$fontem_q_archivum_temporarium"
@@ -1243,7 +1283,7 @@ file_merge_numerordinatio_de_wiki_q() {
     # We apply 'hxlclean --lower' only on writting systems which this make
     # sence. On this case at least '+is_latn,+is_cyrl'
     hxlrename \
-      --rename='item+conceptum+codicem:#item+rem+i_qcc+is_zxxx+ix_wikiq+ix_deleteme' \
+      --rename='item+conceptum+codicem:#item+rem+i_qcc+is_zxxx+ix_wikiq' \
       "$fontem_q_archivum" \
       >"$fontem_q_archivum_temporarium"
   fi
@@ -1256,11 +1296,10 @@ file_merge_numerordinatio_de_wiki_q() {
 
   # echo "oi2"
 
-  hxlmerge --keys='#item+rem+i_qcc+is_zxxx+ix_wikiq+ix_deleteme' \
+  hxlmerge --keys='#item+rem+i_qcc+is_zxxx+ix_wikiq' \
     --tags='#item+rem' \
     --merge="$fontem_q_archivum_temporarium" \
     "$fontem_archivum" \
-    | hxlcut --exclude='#item+rem+i_qcc+is_zxxx+ix_wikiq+ix_deleteme' \
     >"$objectivum_archivum_temporarium"
 
   # BUG: if we use hxlmerge --replace, instead of not be repeated on final
@@ -1277,7 +1316,11 @@ file_merge_numerordinatio_de_wiki_q() {
   #   >"$objectivum_archivum_temporarium"
   # set +x
 
+  # | hxlcut --exclude='#item+rem+i_qcc+is_zxxx+ix_wikiq+ix_deleteme'
+
   sed -i '1d' "${objectivum_archivum_temporarium}"
+
+  file_hotfix_duplicated_merge_key "${objectivum_archivum_temporarium}" '#item+rem+i_qcc+is_zxxx+ix_wikiq'
 
   # cp "$objectivum_archivum_temporarium" "$objectivum_archivum_temporarium.tmp"
   # rm "$fontem_q_archivum_temporarium"
@@ -2295,7 +2338,7 @@ actiones_completis_locali() {
 
   if [ -z "$(quaero__ix_n1603ia__victionarium_q "$numerordinatio")" ]; then
     # echo "yay"
-    # file_translate_csv_de_numerordinatio_q "$numerordinatio" "0" "0" "1"
+    file_translate_csv_de_numerordinatio_q "$numerordinatio" "0" "0" "1"
     file_merge_numerordinatio_de_wiki_q "$numerordinatio" "0" "0"
     file_convert_tmx_de_numerordinatio11 "$numerordinatio"
     file_convert_tbx_de_numerordinatio11 "$numerordinatio"
@@ -2329,7 +2372,7 @@ actiones_completis_publicis() {
   normal=$(tput sgr0)
   printf "\t%40s\n" "${blue}${FUNCNAME[0]} [$numerordinatio]${normal}"
 
-  actiones_completis_locali  "$numerordinatio"
+  actiones_completis_locali "$numerordinatio"
   upload_cdn "$numerordinatio"
 }
 
