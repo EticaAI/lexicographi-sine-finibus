@@ -764,6 +764,7 @@ def _pre_pad(textum: str) -> str:
 
 
 def _pad(textum: str, pad: int) -> str:
+    textum = textum.replace('\\n', '\n')
     lineam = textum.splitlines()
     resultatum = ''
     for rem in lineam:
@@ -2998,7 +2999,8 @@ class Codex:
         # if interlinguae_totale > 1:
         if len(interlinguae) > 0:
 
-            paginae.append("Rēs interlinguālibus::")
+            paginae.append("Rēs interlinguālibus ({0})::".format(
+                len(interlinguae)))
 
             for interlingua in interlinguae:
                 paginae.append("  {0}:::\n{1}".format(
@@ -3069,7 +3071,8 @@ class Codex:
                     # We're assuming if content have line breaks, it is complex
                     # and we will not give hint about language.
                     # This can be reviewed on the future
-                    if item_text_i18n.find("\n") == -1 and \
+                    if item_text_i18n.find('\\n') == -1 and \
+                        item_text_i18n.find('\n') == -1 and \
                             item_text_i18n.find("+++") == -1:
 
                         item_text_i18n = '+++<span lang="{1}">{0}</span>+++'.format(
@@ -3189,7 +3192,8 @@ class Codex:
                     # We're assuming if content have line breaks, it is complex
                     # and we will not give hint about language.
                     # This can be reviewed on the future
-                    if item_text_i18n.find("\n") == -1 and \
+                    if item_text_i18n.find('\\n') == -1 and \
+                        item_text_i18n.find('\n') == -1 and \
                             item_text_i18n.find("+++") == -1:
 
                         item_text_i18n = '+++<span lang="{1}">{0}</span>+++'.format(
@@ -3701,6 +3705,9 @@ class LibrariaStatusQuo:
                 self.status_librario_ex_codex(), allow_unicode=True)]
         else:
             return [yaml.dump(self.ex_codice(), allow_unicode=True)]
+
+    def imprimere_in_datapackage(self):
+        return self.imprimere_in_markdown()
 
     def imprimere_in_markdown(self):
         if not self.ex_librario:
@@ -5563,6 +5570,16 @@ class CLI_2600:
             # nargs='?'
         )
 
+        status_quo.add_argument(
+            '--status-in-datapackage',
+            help='Return status in frictionless datapackage.json',
+            # metavar='',
+            dest='status_in_datapackage',
+            # const=True,
+            action='store_true',
+            # nargs='?'
+        )
+
         # - ex (+ ablative), https://en.wiktionary.org/wiki/ex#Latin
         # - librāriō, n, s, /Ablative/,
         #     https://en.wiktionary.org/wiki/librarium#Latin
@@ -5751,6 +5768,8 @@ class CLI_2600:
 
                 if self.pyargs.status_in_markdown:
                     return self.output(libraria.imprimere_in_markdown())
+                if self.pyargs.status_in_datapackage:
+                    return self.output(libraria.imprimere_in_datapackage())
                 return self.output(libraria.imprimere())
 
             if not self.pyargs.codex_copertae and \
