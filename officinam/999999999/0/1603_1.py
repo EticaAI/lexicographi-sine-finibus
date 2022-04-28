@@ -3706,13 +3706,59 @@ class LibrariaStatusQuo:
         else:
             return [yaml.dump(self.ex_codice(), allow_unicode=True)]
 
-    def imprimere_in_datapackage(self):
-        return self.imprimere_in_markdown()
+    def imprimere_in_datapackage(self) -> list:
+        """imprimere_in_datapackage
 
-    def imprimere_in_markdown(self):
+        Trivia:
+        - datapackage, ---, https://specs.frictionlessdata.io/
+        - sarcina, f, s, Nom., https://en.wiktionary.org/wiki/sarcina
+
+
+        Returns:
+            list:
+        """
+        paginae = []
+        if self.ex_librario:
+            sarcina = {
+                'name': '1603',
+                'profile': 'data-package-catalog',
+                'resources': []
+            }
+            status = self.status_librario_ex_codex()
+            items_sorted = status['librarium'].items()
+            items_sorted = sorted(items_sorted, key=sort_numerodinatio_clavem)
+
+            for codex, item in items_sorted:
+                _path = numerordinatio_neo_separatum(codex, '/')
+                _nomen = numerordinatio_neo_separatum(codex, '_')
+
+                sarcina['resources'].append({
+                    # 'profile': 'data-package-catalog',  # To create sublevels
+                    'format': 'json',
+                    'name': _nomen,
+                    'path': _path + '/datapackage.json',
+                    'profile': 'tabular-data-package'
+                })
+        else:
+            ex_codice = self.ex_codice()
+            sarcina = {
+                'name': '1603',
+                'profile': 'tabular-data-package',
+                '_TODO': ex_codice
+            }
+
+            # raise NotImplementedError(
+            #     '--status-in-markdown requires --ex-librario')
+
+        paginae.append(json.dumps(
+            sarcina, indent=4, ensure_ascii=False, sort_keys=False))
+
+        return paginae
+
+    def imprimere_in_markdown(self) -> list:
         if not self.ex_librario:
             raise NotImplementedError(
-                '--status-in-markdown requires --ex-librario="locale"')
+                '--status-in-markdown requires --ex-librario')
         paginae = []
         status = self.status_librario_ex_codex()
         paginae.append('# 1603 Librārium')
@@ -5572,7 +5618,8 @@ class CLI_2600:
 
         status_quo.add_argument(
             '--status-in-datapackage',
-            help='Return status in frictionless datapackage.json',
+            help='Return status in frictionless datapackage.json. '
+            'With --ex-librario returns profile data-package-catalog.',
             # metavar='',
             dest='status_in_datapackage',
             # const=True,
