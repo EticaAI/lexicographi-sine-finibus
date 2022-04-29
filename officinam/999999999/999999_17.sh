@@ -61,6 +61,9 @@ ROOTDIR="$(pwd)"
 # file_convert_numerordinatio_de_hxltm "1603_1_51" "1" "0"
 ### Really boostrapping downloads, end _________________________________________
 
+# TODO: the formats .no1.tm.hxl.csv stopped being updated with the default
+#       drill, like days ago; need re-implement it (rocha, 2022-04-29)
+
 #### Manual action, TEST locally, one per time, START --------------------------
 # Download entire XLSX to local temp
 file_download_1603_xlsx "1"
@@ -71,7 +74,8 @@ file_download_1603_xlsx "1"
 # actiones_completis_locali "1603_1_2020"
 # actiones_completis_locali "1603_44_86"
 # actiones_completis_locali "1603_45_31"
-actiones_completis_locali "1603_63_101"
+# actiones_completis_locali "1603_63_101"
+# actiones_completis_locali "1603_44_86"
 # actiones_completis_locali "1603_99_876"
 # actiones_completis_locali "1603_1_8000"
 

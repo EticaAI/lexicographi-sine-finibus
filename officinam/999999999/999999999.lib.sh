@@ -503,14 +503,14 @@ file_convert_numerordinatio_de_hxltm() {
   # if [ -z "$(changed_recently "$fontem_archivum")" ]; then return 0; fi
   # echo "${FUNCNAME[0]} sources changed_recently. Reloading..."
 
-  if [ ! -e "$objectivum_archivum" ]; then
-    echo "${FUNCNAME[0]} objective not exist. Reloading... [$objectivum_archivum]"
-  elif [ -z "$(changed_recently "$fontem_archivum")" ]; then
-    # echo "${FUNCNAME[0]} objective exist, sources not changed recently"
-    return 0
-  else
-    echo "${FUNCNAME[0]} sources changed_recently. Reloading... [$fontem_archivum]"
-  fi
+  # if [ ! -e "$objectivum_archivum" ]; then
+  #   echo "${FUNCNAME[0]} objective not exist. Reloading... [$objectivum_archivum]"
+  # elif [ -z "$(changed_recently "$fontem_archivum")" ]; then
+  #   echo "${FUNCNAME[0]} objective exist, sources not changed recently"
+  #   return 0
+  # else
+  #   echo "${FUNCNAME[0]} sources changed_recently. Reloading... [$fontem_archivum]"
+  # fi
 
   # @TODO: implement NUMERORDINATIO_STATUS_CONCEPTUM_CODICEM_MINIMAM
   #        instead of hardcode 1|2|3|4|5|6|7|8|9
@@ -2240,19 +2240,19 @@ opus_temporibus_cdn() {
   #   --in-limitem=2 \
   #   >"$opus_temporibus_temporarium"
 
-  "${ROOTDIR}/999999999/0/1603_1.py" \
-    --ex-opere-temporibus='cdn' \
-    --quaero-ix_n1603ia='({publicum}>=1)' \
-    --in-ordinem=chaos \
-    --in-limitem=10 \
-    >"$opus_temporibus_temporarium"
-
   # "${ROOTDIR}/999999999/0/1603_1.py" \
   #   --ex-opere-temporibus='cdn' \
   #   --quaero-ix_n1603ia='({publicum}>=1)' \
   #   --in-ordinem=chaos \
-  #   --in-limitem=25 \
+  #   --in-limitem=10 \
   #   >"$opus_temporibus_temporarium"
+
+  "${ROOTDIR}/999999999/0/1603_1.py" \
+    --ex-opere-temporibus='cdn' \
+    --quaero-ix_n1603ia='({publicum}>=1)' \
+    --in-ordinem=chaos \
+    --in-limitem=25 \
+    >"$opus_temporibus_temporarium"
 
   while IFS=$'\t' read -r -a line; do
     # echo "${line[0]}"

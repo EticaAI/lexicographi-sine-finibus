@@ -1,4 +1,4 @@
-# Multilingual dictionaries
+# Multilingual lexicography
 **[working draft] The Etica.AI + HXL-CPLP [monorepo](https://en.wikipedia.org/wiki/Monorepo) with public domain automation scripts for [practical lexicography](https://en.wikipedia.org/wiki/Lexicography) on selected topics. Goal of both compilation of existing translations ([such as Wikidata](https://www.wikidata.org/wiki/Wikidata:Licensing)) and preparation for new terminology translation initiatives.**
 
 More about on:
