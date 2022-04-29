@@ -3785,7 +3785,27 @@ class LibrariaStatusQuo:
         paginae.append(json.dumps(
             sarcina, indent=2, ensure_ascii=False, sort_keys=False))
 
+        # self.imprimere_in_datapackage_sqlite()
+        # raise ValueError('testing')
+
         return paginae
+
+    def imprimere_in_datapackage_sqlite(self) -> list:
+        # https://framework.frictionlessdata.io/docs/tutorials
+        # /formats/sql-tutorial/
+        from frictionless import Package
+
+        _path = numerordinatio_neo_separatum(self.codex.de_codex, '/')
+
+        # package = Package('path/to/datapackage.json')
+        # package = Package(_path + '/datapackage.json')
+        # package = Package('/1603/1/51/datapackage.json')
+        package = Package(
+            '/workspace/git/EticaAI/multilingual-lexicography-automation/officinam/1603/1/51/datapackage.json')
+        # package.to_sql('postgresql://database')
+        package.to_sql('sqlite:///sqlite.db')
+
+        return ['TESTI ONLY']
 
     def imprimere_in_markdown(self) -> list:
         if not self.ex_librario:
@@ -5929,6 +5949,8 @@ class CLI_2600:
                 libraria = LibrariaStatusQuo(
                     codex,
                     self.pyargs.ex_librario)
+
+                libraria.imprimere_in_datapackage_sqlite()
 
                 if self.pyargs.status_in_markdown:
                     return self.output(libraria.imprimere_in_markdown())

@@ -2368,7 +2368,7 @@ actiones_completis_locali() {
   neo_codex_copertae_de_numerordinatio "$numerordinatio" "0" "0"
   neo_codex_de_numerordinatio "$numerordinatio" "0" "0"
   neo_codex_de_numerordinatio_epub "$numerordinatio" "0" "0"
-  neo_codex_de_numerordinatio_pdf "$numerordinatio" "0" "0"
+  # neo_codex_de_numerordinatio_pdf "$numerordinatio" "0" "0"
   temp_save_status "$numerordinatio" "locale"
 
 }
