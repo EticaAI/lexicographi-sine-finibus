@@ -3745,11 +3745,25 @@ class LibrariaStatusQuo:
                 })
         else:
             ex_codice = self.ex_codice()
+
+            _path = numerordinatio_neo_separatum(self.codex.de_codex, '/')
+            # _nomen = numerordinatio_neo_separatum(codex, '_')
+
             sarcina = {
                 'name': '1603',
                 'profile': 'tabular-data-package',
-                '_TODO': ex_codice
+                'resources': [],
+                # '_TODO2': self.codex.de_codex,
+                # '_TODO': ex_codice,
             }
+
+            archivum_no1 = TabulaSimplici(
+                _path + '/' + self.codex.de_codex + '.no1.tm.hxl.csv',
+                self.codex.de_codex
+            )
+
+            if archivum_no1.praeparatio():
+                sarcina['resources'].append(archivum_no1.quod_datapackage())
 
             # raise NotImplementedError(
             #     '--status-in-markdown requires --ex-librario')
@@ -5416,18 +5430,22 @@ class TabulaSimplici:
     """
 
     archivum_trivio: str = ''
-    codex_opus: list = []
-    opus: list = []
-    in_limitem: int = 0
-    in_ordinem: str = None
-    quaero_numerordinatio: list = []
+    nomen: str = ''
+    statum: bool = None
+    # codex_opus: list = []
+    # opus: list = []
+    # in_limitem: int = 0
+    # in_ordinem: str = None
+    # quaero_numerordinatio: list = []
 
     def __init__(
         self,
-        archivum_trivio: str
+        archivum_trivio: str,
+        nomen: str
     ):
         self.archivum_trivio = archivum_trivio
-        self.initiari()
+        self.nomen = nomen
+        # self.initiari()
 
     def initiari(self):
         """initiarī
@@ -5437,8 +5455,25 @@ class TabulaSimplici:
         """
         pass
 
-    def meta(self) -> dict:
-        resultatum = {}
+    def praeparatio(self):
+        """praeparātiō
+
+        Trivia:
+        - praeparātiō, s, f, Nom., https://en.wiktionary.org/wiki/praeparatio
+        """
+        # pass
+        self.statum = True
+        return self.statum
+
+    def quod_datapackage(self) -> dict:
+        resultatum = {
+            'name': self.nomen,
+            'path': self.nomen,
+            'profile': 'tabular-data-resource',
+            'schema': {
+                'fields': []
+            }
+        }
         return resultatum
 
 
