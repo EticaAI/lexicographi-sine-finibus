@@ -93,6 +93,7 @@ actiones_completis_locali "1603_63_101"
 # pip3 install frictionless-py
 #     frictionless validate data/invalid.csv
 #     frictionless validate 1603/63/101/1603_63_101.no11.tm.hxl.csv
+#     frictionless validate 1603/63/101/datapackage.json
 
 # https://github.com/CLARIAH/COW
 # pip3 install cow-csvw

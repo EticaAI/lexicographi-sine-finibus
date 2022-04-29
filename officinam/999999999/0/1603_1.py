@@ -3750,7 +3750,7 @@ class LibrariaStatusQuo:
             # _nomen = numerordinatio_neo_separatum(codex, '_')
 
             sarcina = {
-                'name': '1603',
+                'name': self.codex.de_codex,
                 'profile': 'tabular-data-package',
                 'resources': [],
                 # '_TODO2': self.codex.de_codex,
@@ -3759,17 +3759,31 @@ class LibrariaStatusQuo:
 
             archivum_no1 = TabulaSimplici(
                 _path + '/' + self.codex.de_codex + '.no1.tm.hxl.csv',
-                self.codex.de_codex
+                self.codex.de_codex + '.no1.tm.hxl.csv'
+            )
+            archivum_no11 = TabulaSimplici(
+                _path + '/' + self.codex.de_codex + '.no11.tm.hxl.csv',
+                self.codex.de_codex + '.no11.tm.hxl.csv'
+            )
+            archivum_wikiq = TabulaSimplici(
+                _path + '/' + self.codex.de_codex + '.wikiq.tm.hxl.csv',
+                self.codex.de_codex + '.wikiq.tm.hxl.csv'
             )
 
             if archivum_no1.praeparatio():
                 sarcina['resources'].append(archivum_no1.quod_datapackage())
 
+            if archivum_no11.praeparatio():
+                sarcina['resources'].append(archivum_no11.quod_datapackage())
+
+            if archivum_wikiq.praeparatio():
+                sarcina['resources'].append(archivum_wikiq.quod_datapackage())
+
             # raise NotImplementedError(
             #     '--status-in-markdown requires --ex-librario')
 
         paginae.append(json.dumps(
-            sarcina, indent=4, ensure_ascii=False, sort_keys=False))
+            sarcina, indent=2, ensure_ascii=False, sort_keys=False))
 
         return paginae
 
@@ -5432,6 +5446,8 @@ class TabulaSimplici:
     archivum_trivio: str = ''
     nomen: str = ''
     statum: bool = None
+    caput: list = []
+    res_totali: int = 0
     # codex_opus: list = []
     # opus: list = []
     # in_limitem: int = 0
@@ -5447,13 +5463,27 @@ class TabulaSimplici:
         self.nomen = nomen
         # self.initiari()
 
-    def initiari(self):
+    def _initiari(self):
         """initiarī
 
         Trivia:
         - initiārī, https://en.wiktionary.org/wiki/initio#Latin
         """
-        pass
+        if not os.path.exists(self.archivum_trivio):
+            self.statum = False
+            return self.statum
+
+        with open(self.archivum_trivio) as csvfile:
+            reader = csv.reader(csvfile)
+            for lineam in reader:
+                if len(self.caput) == 0:
+                    self.caput = lineam
+                    continue
+                # TODO: what about empty lines?
+                self.res_totali += 1
+
+        self.statum = True
+        return self.statum
 
     def praeparatio(self):
         """praeparātiō
@@ -5461,8 +5491,7 @@ class TabulaSimplici:
         Trivia:
         - praeparātiō, s, f, Nom., https://en.wiktionary.org/wiki/praeparatio
         """
-        # pass
-        self.statum = True
+        self._initiari()
         return self.statum
 
     def quod_datapackage(self) -> dict:
@@ -5472,8 +5501,22 @@ class TabulaSimplici:
             'profile': 'tabular-data-resource',
             'schema': {
                 'fields': []
+            },
+            'stats': {
+                'fields': len(self.caput),
+                'rows': self.res_totali,
             }
         }
+
+        for caput_rei in self.caput:
+            item = {
+                'name': caput_rei,
+                # TODO: actually get rigth type from reference dictionaries
+                # 'type': 'Any',
+                'type': 'string',
+            }
+            resultatum['schema']['fields'].append(item)
+
         return resultatum
 
 
