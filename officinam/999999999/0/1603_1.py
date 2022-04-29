@@ -3718,7 +3718,6 @@ class LibrariaStatusQuo:
         - datapackage, ---, https://specs.frictionlessdata.io/
         - sarcina, f, s, Nom., https://en.wiktionary.org/wiki/sarcina
 
-
         Returns:
             list:
         """
@@ -5405,6 +5404,41 @@ class OpusTemporibus:
         if self.in_limitem > 0 and len(resultatum) > self.in_limitem:
             resultatum = resultatum[:self.in_limitem]
 
+        return resultatum
+
+
+class TabulaSimplici:
+    """Tabula simplicī /Simple Table/@eng-Latn
+
+    Trivia:
+    - tabula, s, f, nominativus, https://en.wiktionary.org/wiki/tabula#Latin
+    - simplicī, s, m/f/n, Dativus, https://en.wiktionary.org/wiki/simplex#Latin
+    """
+
+    archivum_trivio: str = ''
+    codex_opus: list = []
+    opus: list = []
+    in_limitem: int = 0
+    in_ordinem: str = None
+    quaero_numerordinatio: list = []
+
+    def __init__(
+        self,
+        archivum_trivio: str
+    ):
+        self.archivum_trivio = archivum_trivio
+        self.initiari()
+
+    def initiari(self):
+        """initiarī
+
+        Trivia:
+        - initiārī, https://en.wiktionary.org/wiki/initio#Latin
+        """
+        pass
+
+    def meta(self) -> dict:
+        resultatum = {}
         return resultatum
 
 
