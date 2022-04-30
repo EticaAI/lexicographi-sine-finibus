@@ -69,7 +69,7 @@ import fnmatch
 # import json
 import datetime
 # from datetime import datetime
-
+from pathlib import Path
 
 import json
 from zlib import crc32
@@ -3765,15 +3765,18 @@ class LibrariaStatusQuo:
 
             archivum_no1 = TabulaSimplici(
                 _path + '/' + self.codex.de_codex + '.no1.tm.hxl.csv',
-                self.codex.de_codex + '.no1.tm.hxl.csv'
+                self.codex.de_codex + '.no1.tm.hxl.csv',
+                False
             )
             archivum_no11 = TabulaSimplici(
                 _path + '/' + self.codex.de_codex + '.no11.tm.hxl.csv',
-                self.codex.de_codex + '.no11.tm.hxl.csv'
+                self.codex.de_codex + '.no11.tm.hxl.csv',
+                False
             )
             archivum_wikiq = TabulaSimplici(
                 _path + '/' + self.codex.de_codex + '.wikiq.tm.hxl.csv',
-                self.codex.de_codex + '.wikiq.tm.hxl.csv'
+                self.codex.de_codex + '.wikiq.tm.hxl.csv',
+                False
             )
 
             if archivum_no1.praeparatio():
@@ -4483,8 +4486,7 @@ class DataApothecae:
             '/sqlite.TEMP.datapackage.json'
 
         self.praeparatio_datapackage(temporarium=temporarium)
-
-        print('temporarium', temporarium)
+        # print('temporarium', temporarium)
 
         # package = Package(
         #     NUMERORDINATIO_BASIM + '/1603/1/51/datapackage.json')
@@ -4493,8 +4495,9 @@ class DataApothecae:
         sqlite_path = 'sqlite:///' + NUMERORDINATIO_BASIM + '/' \
             + self.data_apothecae_ad
         package.to_sql(sqlite_path)
+        os.remove(temporarium)
 
-        self.resultatum.append('TODO: create datapackage first; then sqlite.')
+        # self.resultatum.append('TODO: create datapackage first; then sqlite.')
         self.resultatum.append(sqlite_path)
 
     @staticmethod
@@ -5648,6 +5651,8 @@ class TabulaSimplici:
     caput: list = []
     res_totali: int = 0
     ex_radice: bool = False
+    archivum_trivio_ex_radice: str = ''
+    archivum_nomini: str = ''
     # codex_opus: list = []
     # opus: list = []
     # in_limitem: int = 0
@@ -5675,6 +5680,11 @@ class TabulaSimplici:
             self.statum = False
             return self.statum
 
+        self.archivum_trivio_ex_radice = \
+            self.archivum_trivio.replace(NUMERORDINATIO_BASIM, '')
+
+        self.archivum_nomini = Path(self.archivum_trivio_ex_radice).name
+
         with open(self.archivum_trivio) as csvfile:
             reader = csv.reader(csvfile)
             for lineam in reader:
@@ -5697,14 +5707,10 @@ class TabulaSimplici:
         return self.statum
 
     def quod_datapackage(self) -> dict:
-        if self.ex_radice:
-            _path = '{0}/{1}'.format(
-                numerordinatio_neo_separatum(self.nomen, '/'),
-                self.nomen
-            )
+        if self.ex_radice is True:
+            _path = self.archivum_trivio_ex_radice
         else:
-            # _path = self.nomen
-            _path = self.archivum_trivio
+            _path = self.archivum_nomini
 
         resultatum = {
             'name': self.nomen,
@@ -5724,7 +5730,6 @@ class TabulaSimplici:
             item = {
                 'name': caput_rei,
                 # TODO: actually get rigth type from reference dictionaries
-                # 'type': 'Any',
                 'type': 'string',
             }
             resultatum['schema']['fields'].append(item)
