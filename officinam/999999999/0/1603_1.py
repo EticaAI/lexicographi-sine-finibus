@@ -4397,6 +4397,9 @@ class DataApothecae:
         """
         pass
 
+    def imprimere(self) -> list:
+        return self.resultatum
+
     def praeparatio(self):
         """praeparātiō
 
@@ -4416,15 +4419,18 @@ class DataApothecae:
             'locale')
 
         if self.data_apothecae_formato == 'datapackage':
-            return self.praeparatio_datapackage(libraria)
+            # return self.praeparatio_datapackage(libraria)
+            return self.praeparatio_datapackage()
         if self.data_apothecae_formato == 'sqlite':
-            return self.praeparatio_sqlite(libraria)
+            # return self.praeparatio_sqlite(libraria)
+            return self.praeparatio_sqlite()
 
         return True
 
-    def praeparatio_datapackage(self, libraria: Type['LibrariaStatusQuo']):
+    def praeparatio_datapackage(
+            self,
+            temporarium: str = None):
         """praeparatio_datapackage
-
 
         Args:
             libraria (LibrariaStatusQuo):
@@ -4435,58 +4441,54 @@ class DataApothecae:
             'profile': 'data-package-catalog',
             'resources': []
         }
-        # _path = numerordinatio_neo_separatum('1603_1_1', '/')
-        no1_11603_1_1 = TabulaSimplici(
-            '1603/1/1/1603_1_1.no1.tm.hxl.csv',
-            '1603_1_1'
-        )
-        no11_11603_1_1 = TabulaSimplici(
-            '1603/1/1/1603_1_1.no11.tm.hxl.csv',
-            '1603_1_1'
-        )
 
-        if no11_11603_1_1.praeparatio():
-            sarcina['resources'].append(no11_11603_1_1.quod_datapackage())
-        elif no1_11603_1_1.praeparatio():
-            sarcina['resources'].append(no1_11603_1_1.quod_datapackage())
+        sarcina['resources'].append(DataApothecae.quod_tabula('1603_1_1'))
+        sarcina['resources'].append(DataApothecae.quod_tabula('1603_1_51'))
 
-        no1_11603_1_51 = TabulaSimplici(
-            '1603/1/51/1603_1_51.no1.tm.hxl.csv',
-            '1603_1_151'
-        )
-        no11_11603_1_51 = TabulaSimplici(
-            '1603/1/1/1603_1_51.no11.tm.hxl.csv',
-            '1603_1_51'
-        )
-
-        if no11_11603_1_51.praeparatio():
-            sarcina['resources'].append(no11_11603_1_51.quod_datapackage())
-        elif no1_11603_1_51.praeparatio():
-            sarcina['resources'].append(no1_11603_1_51.quod_datapackage())
+        for codex in self.data_apothecae_ex:
+            sarcina['resources'].append(
+                DataApothecae.quod_tabula(codex))
 
         paginae.append(json.dumps(
             sarcina, indent=2, ensure_ascii=False, sort_keys=False))
 
-        _path_archivum = NUMERORDINATIO_BASIM + '/' + self.data_apothecae_ad
-        with open(_path_archivum, 'w') as archivum:
-            # Further file processing goes here
-            for lineam in paginae:
-                archivum.write(lineam)
+        if temporarium:
+            with open(temporarium, 'w') as archivum:
+                for lineam in paginae:
+                    archivum.write(lineam)
+        else:
+            _path_archivum = NUMERORDINATIO_BASIM + '/' + self.data_apothecae_ad
+            self.resultatum.append('TODO praeparatio_datapackage')
+            self.resultatum.append(_path_archivum)
 
-        self.resultatum.append('TODO praeparatio_datapackage')
-        self.resultatum.append(_path_archivum)
+            with open(_path_archivum, 'w') as archivum:
+                # Further file processing goes here
+                for lineam in paginae:
+                    archivum.write(lineam)
 
-    def praeparatio_sqlite(self, libraria: Type['LibrariaStatusQuo']):
+    def praeparatio_sqlite(self):
         """praeparatio_sqlite
 
         Args:
             libraria (LibrariaStatusQuo):
         """
-
+        # NOTE: we only use frictionless on this step. Thats why we dont
+        #       require for averange operations
         from frictionless import Package
-        # TODO: temporary test.
-        package = Package(
-            NUMERORDINATIO_BASIM + '/1603/1/51/datapackage.json')
+
+        # temporarium = NUMERORDINATIO_BASIM + \
+        #     '/sqlite.{0}.datapackage.json'.format(
+        #         random.randrange(1, 999999))
+        temporarium = NUMERORDINATIO_BASIM + \
+            '/sqlite.TEMP.datapackage.json'
+
+        self.praeparatio_datapackage(temporarium=temporarium)
+
+        print('temporarium', temporarium)
+
+        # package = Package(
+        #     NUMERORDINATIO_BASIM + '/1603/1/51/datapackage.json')
+        package = Package(temporarium)
 
         sqlite_path = 'sqlite:///' + NUMERORDINATIO_BASIM + '/' \
             + self.data_apothecae_ad
@@ -4495,8 +4497,31 @@ class DataApothecae:
         self.resultatum.append('TODO: create datapackage first; then sqlite.')
         self.resultatum.append(sqlite_path)
 
-    def imprimere(self) -> list:
-        return self.resultatum
+    @staticmethod
+    def quod_tabula(numerodination: str, strictum: bool = True):
+
+        nomen = numerordinatio_neo_separatum(numerodination, '_')
+        _path = numerordinatio_neo_separatum(numerodination, '/')
+
+        archivum_no11 = TabulaSimplici(
+            _path + '/' + nomen + '.no11.tm.hxl.csv',
+            nomen,
+            True
+        )
+        if archivum_no11.praeparatio():
+            return archivum_no11.quod_datapackage()
+
+        archivum_no1 = TabulaSimplici(
+            _path + '/' + nomen + '.no1.tm.hxl.csv',
+            nomen,
+            True
+        )
+        if archivum_no1.praeparatio():
+            return archivum_no1.quod_datapackage()
+
+        if strictum:
+            raise ValueError('quod_tabula {0}'.format(numerodination))
+        return None
 
 
 class DictionariaInterlinguarum:
@@ -5622,6 +5647,7 @@ class TabulaSimplici:
     statum: bool = None
     caput: list = []
     res_totali: int = 0
+    ex_radice: bool = False
     # codex_opus: list = []
     # opus: list = []
     # in_limitem: int = 0
@@ -5631,10 +5657,12 @@ class TabulaSimplici:
     def __init__(
         self,
         archivum_trivio: str,
-        nomen: str
+        nomen: str,
+        ex_radice: bool = False
     ):
         self.archivum_trivio = archivum_trivio
         self.nomen = nomen
+        self.ex_radice = ex_radice
         # self.initiari()
 
     def _initiari(self):
@@ -5669,9 +5697,19 @@ class TabulaSimplici:
         return self.statum
 
     def quod_datapackage(self) -> dict:
+        if self.ex_radice:
+            _path = '{0}/{1}'.format(
+                numerordinatio_neo_separatum(self.nomen, '/'),
+                self.nomen
+            )
+        else:
+            # _path = self.nomen
+            _path = self.archivum_trivio
+
         resultatum = {
             'name': self.nomen,
-            'path': self.nomen,
+            # 'path': self.nomen,
+            'path': _path,
             'profile': 'tabular-data-resource',
             'schema': {
                 'fields': []
