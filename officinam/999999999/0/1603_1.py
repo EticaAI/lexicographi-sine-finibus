@@ -4461,7 +4461,7 @@ class DataApothecae:
                     archivum.write(lineam)
         else:
             _path_archivum = NUMERORDINATIO_BASIM + '/' + self.data_apothecae_ad
-            self.resultatum.append('TODO praeparatio_datapackage')
+            # self.resultatum.append('TODO praeparatio_datapackage')
             self.resultatum.append(_path_archivum)
 
             with open(_path_archivum, 'w') as archivum:
@@ -5831,6 +5831,19 @@ class CLI_2600:
             nargs='?'
         )
 
+        commune = parser.add_argument_group(
+            "Commūne",
+            "Generic options reused by more than one operation mode.")
+
+        commune.add_argument(
+            '--codex-de',
+            help='Generate documentation of dictionaries',
+            # metavar='',
+            dest='codex_de',
+            # const=True,
+            nargs='?'
+        )
+
         archivum = parser.add_argument_group(
             "Archivum",
             "(DEFAULT USE) Use archive as source (directory not ready yet)")
@@ -5869,6 +5882,13 @@ class CLI_2600:
             type=lambda x: x.split(',')
         )
 
+        data_apothecae.add_argument(
+            '--data-apothecae-ex-archivo',
+            help='Path to file with list (one item per line) of dictionaries '
+            'to initialize',
+            dest='data_apothecae_ex_archivo',
+        )
+
         # fōrmātō, s, n, Dativus, https://en.wiktionary.org/wiki/formatus#Latin
         data_apothecae.add_argument(
             '--data-apothecae-formato',
@@ -5899,16 +5919,16 @@ class CLI_2600:
         # https://en.wiktionary.org/wiki/codex#Latin
         codex = parser.add_argument_group(
             "Codex",
-            "Book/manual creation")
+            "Book/manual creation. Requires --codex-de=1603_NN_NN")
 
-        codex.add_argument(
-            '--codex-de',
-            help='Generate documentation of dictionaries',
-            # metavar='',
-            dest='codex_de',
-            # const=True,
-            nargs='?'
-        )
+        # codex.add_argument(
+        #     '--codex-de',
+        #     help='Generate documentation of dictionaries',
+        #     # metavar='',
+        #     dest='codex_de',
+        #     # const=True,
+        #     nargs='?'
+        # )
 
         codex.add_argument(
             '--objectivum-linguam',
@@ -5962,7 +5982,8 @@ class CLI_2600:
         status_quo = parser.add_argument_group(
             "Status quō",
             "Calculate current situation. Used to take other actions. "
-            "Requires --codex-de 1603_NN_NN"
+            "Requires --codex-de 1603_NN_NN (focused Codex). "
+            "Works with --quaero-ix_n1603ia."
         )
 
         status_quo.add_argument(
@@ -5988,7 +6009,8 @@ class CLI_2600:
         status_quo.add_argument(
             '--status-in-datapackage',
             help='Return status in frictionless datapackage.json. '
-            'With --ex-librario returns profile data-package-catalog.',
+            'With --ex-librario returns profile data-package-catalog. '
+            ' (low level of details)',
             # metavar='',
             dest='status_in_datapackage',
             # const=True,
@@ -6146,17 +6168,34 @@ class CLI_2600:
         a1603z1.est_resultatum_separato(args.resultatum_separato)
         a1603z1.est_fontem_separato(args.fontem_separato)
 
-        if self.pyargs.data_apothecae_ex and \
-                len(self.pyargs.data_apothecae_ex) > 0:
-            # codex = Codex('1603_1_1')
-            # libraria = LibrariaStatusQuo(
-            #     codex,
-            #     'locale')
+        if (self.pyargs.data_apothecae_ex and
+                len(self.pyargs.data_apothecae_ex) > 0) or \
+                (self.pyargs.data_apothecae_ex_archivo and
+                    len(self.pyargs.data_apothecae_ex_archivo)):
+
+            if self.pyargs.data_apothecae_ex:
+                data_apothecae_ex = self.pyargs.data_apothecae_ex
+            else:
+                # f = open(self.pyargs.data_apothecae_ex_archivo, "r")
+                # data_apothecae_ex = list(f.readlines())
+                data_apothecae_ex = []
+                # print(f.readlines())
+                with open(
+                        self.pyargs.data_apothecae_ex_archivo, "r") as archivum:
+                    for _lineam in archivum:
+                        if _lineam.startswith('#') or len(_lineam.strip()) == 0:
+                            continue
+                        lineam = _lineam.rstrip('\n')
+                        if lineam.find(',') > -1:
+                            lineam = lineam.split(',')[0]
+                        data_apothecae_ex.append(lineam)
+            # print(data_apothecae_ex)
 
             # libraria.imprimere_in_datapackage_sqlite()
 
             data_apothecae = DataApothecae(
-                self.pyargs.data_apothecae_ex,
+                # self.pyargs.data_apothecae_ex,
+                data_apothecae_ex,
                 data_apothecae_ad=self.pyargs.data_apothecae_ad,
                 data_apothecae_formato=self.pyargs.data_apothecae_formato,
             )

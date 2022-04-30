@@ -67,7 +67,7 @@ ROOTDIR="$(pwd)"
 #### Manual action, TEST locally, one per time, START --------------------------
 # Download entire XLSX to local temp
 file_download_1603_xlsx "1"
-actiones_completis_locali "1603_1_1"
+# actiones_completis_locali "1603_1_1"
 # actiones_completis_locali "1603_1_7"
 # actiones_completis_locali "1603_1_51"
 # actiones_completis_locali "1603_1_99"
@@ -87,8 +87,8 @@ actiones_completis_locali "1603_1_1"
 # deploy_0_9_markdown
 
 ## Full drill (remote, randon publish few at time)
-# opus_temporibus_cdn
-# deploy_0_9_markdown
+opus_temporibus_cdn
+deploy_0_9_markdown
 
 # @TODO: maybe check ssdiff (diff spreadsheets) to our uses. 
 
@@ -105,3 +105,9 @@ actiones_completis_locali "1603_1_1"
 #     cow_tool convert 1603/63/101/1603_63_101.no11.tm.hxl.csv
 
 # https://github.com/cldf/csvw
+
+# ./999999999/0/1603_1.py --data-apothecae-ex='1603_45_1,1603_45_31' --data-apothecae-ad='apothecae.datapackage.json'
+# ./999999999/0/1603_1.py --data-apothecae-ex='1603_45_1,1603_45_31' --data-apothecae-ad='apothecae.sqlite'
+
+# printf "1603_45_1\n1603_45_31" > 999999/0/apothecae-list.txt
+# ./999999999/0/1603_1.py --data-apothecae-ex-archivo='999999/0/apothecae-list.txt' --data-apothecae-ad='apothecae.datapackage.json'
