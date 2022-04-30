@@ -727,6 +727,7 @@ neo_codex_de_numerordinatio() {
 
   # set -x
   "${ROOTDIR}/999999999/0/1603_1.py" \
+     --methodus='codex' \
     --objectivum-linguam="$est_objectivum_linguam" \
     --auxilium-linguam="$est_auxilium_linguam" \
     --codex-de "$_nomen" \
@@ -797,6 +798,7 @@ neo_codex_copertae_de_numerordinatio() {
   # "${ROOTDIR}/999999999/0/1603_1.py" --codex-de 1603_25_1 --codex-copertae
 
   "${ROOTDIR}/999999999/0/1603_1.py" \
+     --methodus='codex' \
     --objectivum-linguam="$est_objectivum_linguam" \
     --auxilium-linguam="$est_auxilium_linguam" \
     --codex-de "$_nomen" \
@@ -2187,7 +2189,13 @@ quaero__ix_n1603ia__victionarium_q() {
 
   _nomen=$(numerordinatio_neo_separatum "$numerordinatio" "_")
 
+  # resultatum=$("${ROOTDIR}/999999999/0/1603_1.py" \
+  #   --ex-opere-temporibus='cdn' \
+  #   --quaero-ix_n1603ia='{victionarium_q}>=1' \
+  #   --quaero-numerordinatio="$_nomen")
+
   resultatum=$("${ROOTDIR}/999999999/0/1603_1.py" \
+    --methodus='opus-temporibus' \
     --ex-opere-temporibus='cdn' \
     --quaero-ix_n1603ia='{victionarium_q}>=1' \
     --quaero-numerordinatio="$_nomen")
@@ -2234,6 +2242,7 @@ opus_temporibus_cdn() {
   ### Dependencies, end -------------------------------------
 
   # "${ROOTDIR}/999999999/0/1603_1.py" \
+  #   --methodus='opus-temporibus' \
   #   --ex-opere-temporibus='cdn' \
   #   --quaero-ix_n1603ia='({publicum}>=10)' \
   #   --in-ordinem=chaos \
@@ -2241,6 +2250,7 @@ opus_temporibus_cdn() {
   #   >"$opus_temporibus_temporarium"
 
   "${ROOTDIR}/999999999/0/1603_1.py" \
+    --methodus='opus-temporibus' \
     --ex-opere-temporibus='cdn' \
     --quaero-ix_n1603ia='({publicum}>=1)' \
     --in-ordinem=chaos \
@@ -2248,6 +2258,7 @@ opus_temporibus_cdn() {
     >"$opus_temporibus_temporarium"
 
   # "${ROOTDIR}/999999999/0/1603_1.py" \
+  #   --methodus='opus-temporibus' \
   #   --ex-opere-temporibus='cdn' \
   #   --quaero-ix_n1603ia='({publicum}>=1)' \
   #   --in-ordinem=chaos \
@@ -2262,7 +2273,7 @@ opus_temporibus_cdn() {
     # echo "${line[2]}"
   done <"${opus_temporibus_temporarium}"
 
-  # ./999999999/0/1603_1.py --ex-opere-temporibus='cdn' --quaero-ix_n1603ia='({publicum}>=1)'
+  # ./999999999/0/1603_1.py --methodus='opus-temporibus' --ex-opere-temporibus='cdn' --quaero-ix_n1603ia='({publicum}>=1)'
 }
 
 #######################################
@@ -2291,10 +2302,12 @@ temp_save_status() {
   objectivum_archivum_temporarium="${ROOTDIR}/999999/0/1603+$_nomen.statum.yml"
 
   "${ROOTDIR}/999999999/0/1603_1.py" \
+    --methodus='status-quo' \
     --codex-de "$_nomen" --status-quo \
     >"$status_archivum_codex"
 
   "${ROOTDIR}/999999999/0/1603_1.py" \
+    --methodus='status-quo' \
     --codex-de "$_nomen" --status-quo --status-in-datapackage \
     >"$datapackage_dictionaria"
 
@@ -2302,6 +2315,7 @@ temp_save_status() {
 
   # set -x
   "${ROOTDIR}/999999999/0/1603_1.py" \
+    --methodus='status-quo' \
     --codex-de "$_nomen" --status-quo --ex-librario="$_ex_librario" \
     >"$objectivum_archivum_temporarium"
   # set +x
@@ -2310,6 +2324,7 @@ temp_save_status() {
   # we can overryde directly
   # set -x
   "${ROOTDIR}/999999999/0/1603_1.py" \
+    --methodus='status-quo' \
     --codex-de "$_nomen" --status-quo --ex-librario="$_ex_librario" \
     --status-in-datapackage \
     >"$datapackage_librario"
@@ -2402,6 +2417,7 @@ deploy_0_9_markdown() {
   echo "${FUNCNAME[0]} [$objectivum_archivum]..."
 
   "${ROOTDIR}/999999999/0/1603_1.py" \
+    --methodus='status-quo' \
     --codex-de 1603_1_1 \
     --status-quo \
     --ex-librario="cdn" \

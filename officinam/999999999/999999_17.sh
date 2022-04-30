@@ -27,8 +27,8 @@ set -e
 
 # time HTTPS_PROXY="socks5://127.0.0.1:9050" ./999999999/999999_17.sh
 
-# ./999999999/0/1603_1.py --codex-de 1603_45_31 --codex-in-tabulam-json | jq
-# ./999999999/0/1603_1.py --codex-de 1603_45_31 --codex-in-tabulam-json > 1603/45/31/1603_45_31.mul-Latn.tab.json
+# ./999999999/0/1603_1.py --methodus='codex' --codex-de 1603_45_31 --codex-in-tabulam-json | jq
+# ./999999999/0/1603_1.py --methodus='codex' --codex-de 1603_45_31 --codex-in-tabulam-json > 1603/45/31/1603_45_31.mul-Latn.tab.json
 # https://commons.wikimedia.org/wiki/Data:Sandbox/EmericusPetro/Example.tab
 
 # @TODO: implement download entire sheet
@@ -106,8 +106,8 @@ deploy_0_9_markdown
 
 # https://github.com/cldf/csvw
 
-# ./999999999/0/1603_1.py --data-apothecae-ex='1603_45_1,1603_45_31' --data-apothecae-ad='apothecae.datapackage.json'
-# ./999999999/0/1603_1.py --data-apothecae-ex='1603_45_1,1603_45_31' --data-apothecae-ad='apothecae.sqlite'
+# ./999999999/0/1603_1.py --methodus='data-apothecae' --data-apothecae-ex='1603_45_1,1603_45_31' --data-apothecae-ad='apothecae.datapackage.json'
+# ./999999999/0/1603_1.py --methodus='data-apothecae' --data-apothecae-ex='1603_45_1,1603_45_31' --data-apothecae-ad='apothecae.sqlite'
 
 # printf "1603_45_1\n1603_45_31" > 999999/0/apothecae-list.txt
-# ./999999999/0/1603_1.py --data-apothecae-ex-archivo='999999/0/apothecae-list.txt' --data-apothecae-ad='apothecae.datapackage.json'
+# ./999999999/0/1603_1.py --methodus='data-apothecae' --data-apothecae-ex-archivo='999999/0/apothecae-list.txt' --data-apothecae-ad='apothecae.datapackage.json'

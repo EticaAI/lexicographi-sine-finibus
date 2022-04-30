@@ -113,39 +113,61 @@ Frictionless, can be used to convert/validate files.
 """.format(__file__)
 
 __EPILOGUM__ = """
-Exemplōrum gratiā:
+------------------------------------------------------------------------------
+                            EXEMPLŌRUM GRATIĀ
+------------------------------------------------------------------------------
+HXLTM explānātiōnī . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
     printf "#item+conceptum+codicem,#item+rem+i_qcc+is_zxxx+ix_wikiq" | \
-{0} --de-archivum
+{0} --methodus='hxltm-explanationi'
     cat 1603/1/1/1603_1_1.no1.tm.hxl.csv | \
-{0} --de-archivum
-    {0} --de-archivum 1603/1/1/1603_1_1.no1.tm.hxl.csv
+{0} --methodus='hxltm-explanationi'
+    {0} --methodus='hxltm-explanationi' 1603/1/1/1603_1_1.no1.tm.hxl.csv
 
-    {0} --dictionaria-numerordinatio
 
-    {0} --codex-de 1603_63_101
-
-    {0} --codex-de 1603_63_101 --codex-copertae
-
-    {0} --codex-de 1603_63_101 --codex-in-tabulam-json
-
-    {0} --codex-de 1603_63_101 --status-quo
-
-    {0} --codex-de 1603_63_101 --status-quo --ex-librario="cdn"
-
-    {0} --codex-de 1603_63_101 --status-quo --ex-librario="locale" \
---status-in-markdown
-
-    {0} --codex-de 1603_63_101 --ex-opere-temporibus='cdn'
-
-    {0} --ex-opere-temporibus='cdn' \
---quaero-ix_n1603ia='({{publicum}}>=9)&&({{victionarium_q}}>9)'
-
-    {0} --data-apothecae-ex='1603_45_1,1603_45_31' \
+Data apothēcae . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+    printf "1603_45_1\\n1603_45_31" > 999999/0/apothecae-list.txt
+    {0} --methodus='data-apothecae' \
+--data-apothecae-ex-archivo='999999/0/apothecae-list.txt' \
 --data-apothecae-ad='apothecae.datapackage.json'
 
-    {0} --data-apothecae-ex='1603_45_1,1603_45_31' \
+    {0} --methodus='data-apothecae' \
+--data-apothecae-ex='1603_45_1,1603_45_31' \
+--data-apothecae-ad='apothecae.datapackage.json'
+
+    {0} --methodus='data-apothecae' \
+--data-apothecae-ex='1603_45_1,1603_45_31' \
 --data-apothecae-ad='apothecae.sqlite'
 
+
+Dictionaria Numerordĭnātĭo (deprecated) . . . . . . . . . . . . . . . . . . . .
+    {0} --methodus='deprecatum-dictionaria-numerordinatio'
+
+Cōdex . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+    {0} --methodus='codex' --codex-de 1603_63_101
+
+    {0} --methodus='codex' --codex-de 1603_63_101 --codex-copertae
+
+    {0} --methodus='codex' --codex-de 1603_63_101 --codex-in-tabulam-json
+
+
+Status quō . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+    {0} --methodus='status-quo' --codex-de 1603_63_101
+
+    {0} --methodus='status-quo' --codex-de 1603_63_101 --ex-librario='cdn'
+
+    {0} --methodus='status-quo'  --codex-de 1603_63_101 --ex-librario='locale' \
+--status-in-markdown
+
+
+Opus temporibus . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+    {0} --methodus='opus-temporibus' --ex-opere-temporibus='cdn'
+
+    {0} --methodus='opus-temporibus' --ex-opere-temporibus='cdn' \
+--quaero-ix_n1603ia='({{publicum}}>=9)&&({{victionarium_q}}>9)'
+
+------------------------------------------------------------------------------
+                            EXEMPLŌRUM GRATIĀ
+------------------------------------------------------------------------------
 """.format(__file__)
 
 NUMERORDINATIO_BASIM = os.getenv('NUMERORDINATIO_BASIM', os.getcwd())
@@ -5845,16 +5867,46 @@ class CLI_2600:
 
         commune.add_argument(
             '--methodus',
-            help='Type of operation to perform.',
+            help='REQUIRED. Mode of operation to perform. '
+            'See next sections to check exclusive options for each '
+            'type.',
             dest='methodus',
             nargs='?',
             choices=[
+                'codex',
+                'data-apothecae',
                 'hxltm-explanationi',
-                'data-apothecae'
+                'opus-temporibus',
+                'status-quo',
+                'deprecatum-dictionaria-numerordinatio'
             ],
             # required=True
-            # default='numerordinatio'
+            default=None
         )
+
+        commune.add_argument(
+            '--quaero-ix_n1603ia',
+            help='Query ix_n1603ia. Rudimentar && (AND) and || (OR). '
+            'Use var<1 to test 0 or undefined. '
+            'Query ix_n1603ia. Filter. Ex. "{publicum}>10 && {internale}<1"',
+            # metavar='',
+            dest='quaero_ix_n1603ia',
+            # const='',
+            # action='store_true',
+            nargs='?'
+        )
+
+        # objectīvum, n, s, nominativus, en.wiktionary.org/wiki/objectivus
+        # fōrmātō, n, s, dativus, https://en.wiktionary.org/wiki/formatus#Latin
+        commune.add_argument(
+            '--objectivum-formato',
+            help='Objectīvum fōrmātō. Override format of exported result',
+            dest='objectivum_formato',
+            nargs='?',
+            default=None
+        )
+
+        # @TODO implement objectivum_formato as default
 
         # commune.add_argument(
         #     '--codex-de',
@@ -5885,31 +5937,33 @@ class CLI_2600:
             nargs='?'
         )
 
-        archivum = parser.add_argument_group(
+        # archivum = parser.add_argument_group(
+        parser.add_argument_group(
             # "Archivum",
             "HXLTM explānātiōnī",
-            '[--methodum=\'hxltm-explanationi\'] '
+            '[ --methodus=\'hxltm-explanationi\' ] '
             'Simple explanation about a single HXLTM file (tabular output). '
             'See also status quo for more advanced information. '
             'Accepts path and piped in data. '
         )
 
-        archivum.add_argument(
-            '--de-archivum',
-            help='Parse single archive',
-            # metavar='',
-            dest='de_archivum',
-            # const=True,
-            action='store_true',
-            # nargs='?'
-        )
+        # archivum.add_argument(
+        #     '--de-archivum',
+        #     help='(deprecated, can be removed) Parse single archive',
+        #     # metavar='',
+        #     dest='de_archivum',
+        #     # const=True,
+        #     action='store_true',
+        #     # nargs='?'
+        # )
 
         # data, n, pl, nominativus, https://en.wiktionary.org/wiki/datum#Latin
         # apothēcae, f, s, dativus, https://en.wiktionary.org/wiki/apotheca#Latin
         data_apothecae = parser.add_argument_group(
             "Data apothēcae",
-            'data apothēcae. (One) Warehouse of datasets. '
-            'Compile selected dictionaries to a single place '
+            '[ --methodus=\'data-apothecae\' ] '
+            'data apothēcae. Data warehouse mode. '
+            'Compile (sense: export) selected dictionaries to a single place '
             '(likely single database entry point)'
         )
 
@@ -5923,7 +5977,8 @@ class CLI_2600:
 
         data_apothecae.add_argument(
             '--data-apothecae-ex',
-            help='Comma-separated list of dictionaries to initialize',
+            help='Comma-separated list of dictionaries to initialize '
+            'the data warehouse. ',
             dest='data_apothecae_ex',
             type=lambda x: x.split(',')
         )
@@ -5931,7 +5986,7 @@ class CLI_2600:
         data_apothecae.add_argument(
             '--data-apothecae-ex-archivo',
             help='Path to file with list (one item per line) of dictionaries '
-            'to initialize',
+            'to initialize the data warehouse',
             dest='data_apothecae_ex_archivo',
         )
 
@@ -5946,25 +6001,28 @@ class CLI_2600:
             default=None
         )
 
-        dictionaria = parser.add_argument_group(
-            "Dictionaria",
-            "Generate dictionaries. No input required (uses disk 1603 and "
-            "999999999/1603 data files)")
-
-        dictionaria.add_argument(
-            '--dictionaria-numerordinatio',
-            help='Dictionary of all possible values on stricter '
-            ' Numerordĭnātĭo (HXLStantad container)',
-            # metavar='',
-            dest='dictionaria_numerordinatio',
-            # const=True,
-            action='store_true',
-            # nargs='?'
+        # dictionaria = parser.add_argument_group(
+        parser.add_argument_group(
+            "Dictionaria Numerordĭnātĭo (undocumented feature, deprecated)",
+            '[ --methodus=\'deprecatum-dictionaria-numerordinatio\' ] '
+            'Regex table (not in use). No options required'
         )
+
+        # dictionaria.add_argument(
+        #     '--dictionaria-numerordinatio',
+        #     help='Dictionary of all possible values on stricter '
+        #     ' Numerordĭnātĭo (HXLStantad container)',
+        #     # metavar='',
+        #     dest='dictionaria_numerordinatio',
+        #     # const=True,
+        #     action='store_true',
+        #     # nargs='?'
+        # )
 
         # https://en.wiktionary.org/wiki/codex#Latin
         codex = parser.add_argument_group(
-            "Codex",
+            "Cōdex",
+            '[ --methodus=\'codex\' ] '
             "Book/manual creation. Requires --codex-de=1603_NN_NN")
 
         codex.add_argument(
@@ -6023,10 +6081,21 @@ class CLI_2600:
             # nargs='?'
         )
 
+        codex.add_argument(
+            '--objectivum-formatum-asciidoctor',
+            help='(Default) Output Asciidoctor format',
+            # metavar='',
+            dest='ad_asciidoctor',
+            # const=True,
+            action='store_true',
+            # nargs='?'
+        )
+
         # https://en.wikipedia.org/wiki/Status_quo
         # https://en.wiktionary.org/wiki/status_quo#English
         status_quo = parser.add_argument_group(
             "Status quō",
+            '[ --methodus=\'status-quo\' ] '
             "Calculate current situation. Used to take other actions. "
             "Requires --codex-de 1603_NN_NN (focused Codex). "
             "Works with --quaero-ix_n1603ia."
@@ -6081,6 +6150,7 @@ class CLI_2600:
         # https://en.wiktionary.org/wiki/status_quo#English
         opus_temporibus = parser.add_argument_group(
             "Opus temporibus",
+            '[ --methodus=\'opus-temporibus\' ] '
             "Crontab/cronjob information "
             # "Requires --codex-de 1603_NN_NN"
         )
@@ -6095,17 +6165,17 @@ class CLI_2600:
             # action='store_true',
             nargs='?'
         )
-        opus_temporibus.add_argument(
-            '--quaero-ix_n1603ia',
-            help='Query ix_n1603ia. Rudimentar && (AND) and || (OR). '
-            'Use var<1 to test 0 or undefined. '
-            'Query ix_n1603ia. Filter. Ex. "{publicum}>10 && {internale}<1"',
-            # metavar='',
-            dest='quaero_ix_n1603ia',
-            # const='',
-            # action='store_true',
-            nargs='?'
-        )
+        # opus_temporibus.add_argument(
+        #     '--quaero-ix_n1603ia',
+        #     help='Query ix_n1603ia. Rudimentar && (AND) and || (OR). '
+        #     'Use var<1 to test 0 or undefined. '
+        #     'Query ix_n1603ia. Filter. Ex. "{publicum}>10 && {internale}<1"',
+        #     # metavar='',
+        #     dest='quaero_ix_n1603ia',
+        #     # const='',
+        #     # action='store_true',
+        #     nargs='?'
+        # )
         opus_temporibus.add_argument(
             '--quaero-numerordinatio',
             help='Query Numerordĭnātĭo. Additional filter list for focused '
@@ -6184,16 +6254,6 @@ class CLI_2600:
         #     # nargs='?'
         # )
 
-        dictionaria.add_argument(
-            '--objectivum-formatum-asciidoctor',
-            help='(Default) Output Asciidoctor format',
-            # metavar='',
-            dest='ad_asciidoctor',
-            # const=True,
-            action='store_true',
-            # nargs='?'
-        )
-
         return parser.parse_args()
 
     # def execute_cli(self, args, stdin=STDIN, stdout=sys.stdout,
@@ -6204,20 +6264,14 @@ class CLI_2600:
 
         self.pyargs = pyargs
 
-        a1603z1 = A1603z1()
+        # if (self.pyargs.data_apothecae_ex and
+        #         len(self.pyargs.data_apothecae_ex) > 0) or \
+        #         (self.pyargs.data_apothecae_ex_archivo and
+        #             len(self.pyargs.data_apothecae_ex_archivo)):
 
-        # cs1603_1 = cs1603_1()
-
-        # print('self.pyargs', self.pyargs)
-
-        # cs1603_1.est_verbum_limiti(args.verbum_limiti)
-        a1603z1.est_resultatum_separato(args.resultatum_separato)
-        a1603z1.est_fontem_separato(args.fontem_separato)
-
-        if (self.pyargs.data_apothecae_ex and
-                len(self.pyargs.data_apothecae_ex) > 0) or \
-                (self.pyargs.data_apothecae_ex_archivo and
-                    len(self.pyargs.data_apothecae_ex_archivo)):
+        # TODO: raise error if target already exist, so user could
+        #       avoid override something
+        if pyargs.methodus == 'data-apothecae':
 
             if self.pyargs.data_apothecae_ex:
                 data_apothecae_ex = self.pyargs.data_apothecae_ex
@@ -6251,9 +6305,16 @@ class CLI_2600:
             return self.output(data_apothecae.imprimere())
             # return self.output(['TODO...'])
 
-        # if self.pyargs.actionem_sparql:
-        if self.pyargs.ex_opere_temporibus and \
-                len(self.pyargs.ex_opere_temporibus) > 0:
+        # Opus temporibus _____________________________________________________
+        # if self.pyargs.dictionaria_numerordinatio:
+        # if pyargs.methodus == 'opus-temporibus' or \
+        #         self.pyargs.ex_opere_temporibus and \
+        #         len(self.pyargs.ex_opere_temporibus) > 0:
+        if pyargs.methodus == 'opus-temporibus':
+
+            # # if self.pyargs.actionem_sparql:
+            # if self.pyargs.ex_opere_temporibus and \
+            #         len(self.pyargs.ex_opere_temporibus) > 0:
 
             # print(self.pyargs.quaero_numerordinatio)
             opus_temporibus = OpusTemporibus(
@@ -6265,8 +6326,37 @@ class CLI_2600:
             )
             return self.output(opus_temporibus.imprimere())
 
+        # status_quo ___________________________________________________________
+        if pyargs.methodus == 'status-quo':
+            # if self.pyargs.status_quo:
+            formatum = 'asciidoctor'
+            if self.pyargs.ad_asciidoctor:
+                formatum = 'asciidoctor'
+            # if self.pyargs.ad_markdown:
+            #     formatum = 'markdown'
+
+            codex = Codex(
+                self.pyargs.codex_de,
+                objectivum_linguam=self.pyargs.objectivum_linguam,
+                auxilium_linguam=self.pyargs.auxilium_linguam,
+                formatum=formatum,
+                # codex_copertae=self.pyargs.codex_copertae
+            )
+
+            libraria = LibrariaStatusQuo(
+                codex,
+                self.pyargs.ex_librario)
+
+            if self.pyargs.status_in_markdown:
+                return self.output(libraria.imprimere_in_markdown())
+            if self.pyargs.status_in_datapackage:
+                return self.output(libraria.imprimere_in_datapackage())
+            return self.output(libraria.imprimere())
+
+        # Cōdex ________________________________________________________________
         # if self.pyargs.actionem_sparql:
-        if self.pyargs.codex_de:
+        # if self.pyargs.codex_de:
+        if pyargs.methodus == 'codex':
             formatum = 'asciidoctor'
             if self.pyargs.ad_asciidoctor:
                 formatum = 'asciidoctor'
@@ -6282,16 +6372,16 @@ class CLI_2600:
             )
             # data = ['TODO']
             # codex_in_tabulam_json
-            if self.pyargs.status_quo:
-                libraria = LibrariaStatusQuo(
-                    codex,
-                    self.pyargs.ex_librario)
+            # if self.pyargs.status_quo:
+            #     libraria = LibrariaStatusQuo(
+            #         codex,
+            #         self.pyargs.ex_librario)
 
-                if self.pyargs.status_in_markdown:
-                    return self.output(libraria.imprimere_in_markdown())
-                if self.pyargs.status_in_datapackage:
-                    return self.output(libraria.imprimere_in_datapackage())
-                return self.output(libraria.imprimere())
+            #     if self.pyargs.status_in_markdown:
+            #         return self.output(libraria.imprimere_in_markdown())
+            #     if self.pyargs.status_in_datapackage:
+            #         return self.output(libraria.imprimere_in_datapackage())
+            #     return self.output(libraria.imprimere())
 
             if not self.pyargs.codex_copertae and \
                     not self.pyargs.codex_in_tabulam_json:
@@ -6303,12 +6393,26 @@ class CLI_2600:
             else:
                 raise ValueError('ERROR: unknown codex option')
 
-        if self.pyargs.dictionaria_numerordinatio:
+        # Dictionaria Numerordĭnātĭo _________________________________________
+        # if self.pyargs.dictionaria_numerordinatio:
+        # if pyargs.methodus == 'deprecatum-dictionaria-numerordinatio' or \
+        #         ('dictionaria_numerordinatio' in pyargs and
+        #             pyargs.dictionaria_numerordinatio):
+        if pyargs.methodus == 'deprecatum-dictionaria-numerordinatio':
+
             dictionaria_numerordinatio = DictionariaNumerordinatio()
             # data = ['TODO']
             return self.output(dictionaria_numerordinatio.exportatum())
 
-        if self.pyargs.de_archivum:
+        # HXLTM explānātiōnī __________________________________________________
+        # if self.pyargs.de_archivum:
+        # if pyargs.methodus == 'hxltm-explanationi' or \
+        #         ('de_archivum' in pyargs and pyargs.de_archivum):
+        if pyargs.methodus == 'hxltm-explanationi':
+
+            a1603z1 = A1603z1()
+            a1603z1.est_resultatum_separato(args.resultatum_separato)
+            a1603z1.est_fontem_separato(args.fontem_separato)
 
             if stdin.isatty():
 
