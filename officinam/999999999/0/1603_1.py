@@ -4423,12 +4423,46 @@ class DataApothecae:
         return True
 
     def praeparatio_datapackage(self, libraria: Type['LibrariaStatusQuo']):
+        """praeparatio_datapackage
+
+
+        Args:
+            libraria (LibrariaStatusQuo):
+        """
         paginae = []
         sarcina = {
             'name': '1603',
             'profile': 'data-package-catalog',
             'resources': []
         }
+        # _path = numerordinatio_neo_separatum('1603_1_1', '/')
+        no1_11603_1_1 = TabulaSimplici(
+            '1603/1/1/1603_1_1.no1.tm.hxl.csv',
+            '1603_1_1'
+        )
+        no11_11603_1_1 = TabulaSimplici(
+            '1603/1/1/1603_1_1.no11.tm.hxl.csv',
+            '1603_1_1'
+        )
+
+        if no11_11603_1_1.praeparatio():
+            sarcina['resources'].append(no11_11603_1_1.quod_datapackage())
+        elif no1_11603_1_1.praeparatio():
+            sarcina['resources'].append(no1_11603_1_1.quod_datapackage())
+
+        no1_11603_1_51 = TabulaSimplici(
+            '1603/1/51/1603_1_51.no1.tm.hxl.csv',
+            '1603_1_151'
+        )
+        no11_11603_1_51 = TabulaSimplici(
+            '1603/1/1/1603_1_51.no11.tm.hxl.csv',
+            '1603_1_51'
+        )
+
+        if no11_11603_1_51.praeparatio():
+            sarcina['resources'].append(no11_11603_1_51.quod_datapackage())
+        elif no1_11603_1_51.praeparatio():
+            sarcina['resources'].append(no1_11603_1_51.quod_datapackage())
 
         paginae.append(json.dumps(
             sarcina, indent=2, ensure_ascii=False, sort_keys=False))
@@ -4443,6 +4477,11 @@ class DataApothecae:
         self.resultatum.append(_path_archivum)
 
     def praeparatio_sqlite(self, libraria: Type['LibrariaStatusQuo']):
+        """praeparatio_sqlite
+
+        Args:
+            libraria (LibrariaStatusQuo):
+        """
 
         from frictionless import Package
         # TODO: temporary test.
