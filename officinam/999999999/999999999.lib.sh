@@ -798,7 +798,7 @@ neo_codex_copertae_de_numerordinatio() {
   # "${ROOTDIR}/999999999/0/1603_1.py" --codex-de 1603_25_1 --codex-copertae
 
   "${ROOTDIR}/999999999/0/1603_1.py" \
-     --methodus='codex' \
+    --methodus='codex' \
     --objectivum-linguam="$est_objectivum_linguam" \
     --auxilium-linguam="$est_auxilium_linguam" \
     --codex-de "$_nomen" \
@@ -2303,12 +2303,14 @@ temp_save_status() {
 
   "${ROOTDIR}/999999999/0/1603_1.py" \
     --methodus='status-quo' \
-    --codex-de "$_nomen" --status-quo \
+    --status-quo-in-yaml \
+    --codex-de "$_nomen" \
     >"$status_archivum_codex"
 
   "${ROOTDIR}/999999999/0/1603_1.py" \
     --methodus='status-quo' \
-    --codex-de "$_nomen" --status-quo --status-in-datapackage \
+    --status-quo-in-datapackage \
+    --codex-de "$_nomen" --status-quo \
     >"$datapackage_dictionaria"
 
   # echo "$status_archivum_librario status_archivum_librario "
@@ -2316,7 +2318,8 @@ temp_save_status() {
   # set -x
   "${ROOTDIR}/999999999/0/1603_1.py" \
     --methodus='status-quo' \
-    --codex-de "$_nomen" --status-quo --ex-librario="$_ex_librario" \
+    --status-quo-in-yaml \
+    --codex-de "$_nomen" --ex-librario="$_ex_librario" \
     >"$objectivum_archivum_temporarium"
   # set +x
 
@@ -2325,8 +2328,8 @@ temp_save_status() {
   # set -x
   "${ROOTDIR}/999999999/0/1603_1.py" \
     --methodus='status-quo' \
-    --codex-de "$_nomen" --status-quo --ex-librario="$_ex_librario" \
-    --status-in-datapackage \
+    --status-quo-in-datapackage \
+    --codex-de "$_nomen" --ex-librario="$_ex_librario" \
     >"$datapackage_librario"
   # set +x
 
@@ -2341,6 +2344,106 @@ temp_save_status() {
   else
     mv "$objectivum_archivum_temporarium" "$status_archivum_librario"
   fi
+
+}
+
+#######################################
+# Quick routine to frictionless validate datapackage from a librario
+#
+# Globals:
+#   ROOTDIR
+# Arguments:
+#   numerordinatio
+# Outputs:
+#   Convert files
+#######################################
+temp_validate_librario() {
+  ex_librario="$2"
+
+  # _path=$(numerordinatio_neo_separatum "$numerordinatio" "/")
+  # _nomen=$(numerordinatio_neo_separatum "$numerordinatio" "_")
+  # _prefix=$(numerordinatio_neo_separatum "$numerordinatio" ":")
+  _ex_librario="$ex_librario"
+
+  # status_archivum_codex="${ROOTDIR}/$_path/$_nomen.statum.yml"
+  # datapackage_dictionaria="${ROOTDIR}/$_path/datapackage.json"
+  # datapackage_librario="${ROOTDIR}/datapackage.json"
+  # status_archivum_librario="${ROOTDIR}/1603/1603.$_ex_librario.statum.yml"
+  # objectivum_archivum_temporarium="${ROOTDIR}/999999/0/1603+$_nomen.statum.yml"
+  opus_temporibus_temporarium="${ROOTDIR}/999999/0/1603.$_ex_librario.statum.tsv"
+
+  # blue=$(tput setaf 4)
+  magenta=$(tput setaf 6)
+  normal=$(tput sgr0)
+  printf "\t%40s\n" "${magenta}${FUNCNAME[0]} [$_ex_librario]${normal}"
+
+  # "${ROOTDIR}/999999999/0/1603_1.py" \
+  #   --methodus='opus-temporibus' \
+  #   --ex-opere-temporibus="$_ex_librario" \
+  #   --quaero-ix_n1603ia='({publicum}>=9)' \
+  #   --codex-de "$_nomen" --status-quo \
+  #   >"$opus_temporibus_temporarium"
+
+
+  while IFS=$'\t' read -r -a line; do
+    # echo "${line[0]}"
+
+    _codex="${line[0]}"
+    _nomen=$(numerordinatio_codicem_transation_separator "$_codex" "_" "_")
+    _path=$(numerordinatio_codicem_transation_separator "$_codex" "/" "_")
+    _datapackage="$_path/datapackage.json"
+
+    # actiones_completis_publicis "${line[0]}"
+    # echo "${line[0]}" "$_codex" "$_path" "$_nomen"
+    # echo "  $_datapackage"
+    frictionless validate "$_datapackage"
+    # echo "$_codex"
+    # echo "${line[1]}"
+    # echo "${line[2]}"
+  done <"$opus_temporibus_temporarium"
+
+# ./999999999/0/1603_1.py --methodus='opus-temporibus' --ex-opere-temporibus='locale' --quaero-ix_n1603ia='({publicum}>=9)' > 999999/0/apothecae-list.txt
+
+#   "${ROOTDIR}/999999999/0/1603_1.py" \
+#     --methodus='status-quo' \
+#     --codex-de "$_nomen" --status-quo \
+#     >"$status_archivum_codex"
+
+#   "${ROOTDIR}/999999999/0/1603_1.py" \
+#     --methodus='status-quo' \
+#     --codex-de "$_nomen" --status-quo --status-in-datapackage \
+#     >"$datapackage_dictionaria"
+
+#   # echo "$status_archivum_librario status_archivum_librario "
+
+#   # set -x
+#   "${ROOTDIR}/999999999/0/1603_1.py" \
+#     --methodus='status-quo' \
+#     --codex-de "$_nomen" --status-quo --ex-librario="$_ex_librario" \
+#     >"$objectivum_archivum_temporarium"
+#   # set +x
+
+#   # We use statum.yml, not datapackage to know state of the library. That's why
+#   # we can overryde directly
+#   # set -x
+#   "${ROOTDIR}/999999999/0/1603_1.py" \
+#     --methodus='status-quo' \
+#     --codex-de "$_nomen" --status-quo --ex-librario="$_ex_librario" \
+#     --status-in-datapackage \
+#     >"$datapackage_librario"
+#   # set +x
+
+#   # NOTE: this operation should be atomic. But for sake of portability,
+#   #       we're using temporary file without flog or setlock or something.
+#   #       Trying to use --status-quo --ex-librario
+#   #       without temporary file will reset old information. That's why
+#   #       we're using temp file
+#   if [ -f "$status_archivum_librario" ]; then
+#     rm "$status_archivum_librario" &&
+#       mv "$objectivum_archivum_temporarium" "$status_archivum_librario"
+#   else
+#     mv "$objectivum_archivum_temporarium" "$status_archivum_librario"
+#   fi
 
 }
 
@@ -2421,6 +2524,6 @@ deploy_0_9_markdown() {
     --codex-de 1603_1_1 \
     --status-quo \
     --ex-librario="cdn" \
-    --status-in-markdown \
+    --status-quo-in-markdown \
     >"$objectivum_archivum"
 }

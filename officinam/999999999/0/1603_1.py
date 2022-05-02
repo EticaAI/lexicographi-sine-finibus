@@ -138,6 +138,14 @@ Data apothēcae . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 --data-apothecae-ex='1603_45_1,1603_45_31' \
 --data-apothecae-ad='apothecae.sqlite'
 
+    {0} --methodus='opus-temporibus' --ex-opere-temporibus='locale' \
+--quaero-ix_n1603ia='({{publicum}}>=9)' > 999999/0/apothecae-list.txt
+    {0} --methodus='data-apothecae' \
+--data-apothecae-ex-archivo='999999/0/apothecae-list.txt' \
+--data-apothecae-ad='apothecae.datapackage.json'
+    {0} --methodus='data-apothecae' \
+--data-apothecae-ex-archivo='999999/0/apothecae-list.txt' \
+--data-apothecae-ad='apothecae.sqlite'
 
 Dictionaria Numerordĭnātĭo (deprecated) . . . . . . . . . . . . . . . . . . . .
     {0} --methodus='deprecatum-dictionaria-numerordinatio'
@@ -3582,11 +3590,13 @@ class LibrariaStatusQuo:
 
     # No 1603 prefix
     cdn_prefix: str = 'https://lsf-cdn.etica.ai/'
+    quaero_ix_n1603ia: str = None
 
     def __init__(
         self,
         codex: Type['Codex'],
-        ex_librario: str = ''
+        ex_librario: str = '',
+        # quaero_ix_n1603ia: str = None,
     ):
         # TODO: implement a way to not re-calculate the status quo (feature
         #       required by crontab/crojob)
@@ -3594,6 +3604,7 @@ class LibrariaStatusQuo:
         self.codex = codex
         self.ex_librario = ex_librario
         # self.status_in_markdown = status_in_markdown
+        # self.quaero_ix_n1603ia = quaero_ix_n1603ia
 
         self.initiari()
 
@@ -3762,6 +3773,19 @@ class LibrariaStatusQuo:
         else:
             return [yaml.dump(self.ex_codice(), allow_unicode=True)]
 
+    def imprimere_in_json(self):
+        if self.ex_librario and len(self.ex_librario) > 0:
+            # return [yaml.dump(
+            #     self.status_librario_ex_codex(), allow_unicode=True)]
+            return [json.dumps(
+                self.status_librario_ex_codex(),
+                indent=2, ensure_ascii=False, sort_keys=False)]
+        else:
+            # return [yaml.dump(self.ex_codice(), allow_unicode=True)]
+            return [json.dumps(
+                self.ex_codice(),
+                indent=2, ensure_ascii=False, sort_keys=False)]
+
     def imprimere_in_csvw(self) -> list:
         # https://github.com/w3c/csvw
         # https://www.w3.org/TR/tabular-data-primer/
@@ -3869,7 +3893,7 @@ class LibrariaStatusQuo:
     def imprimere_in_markdown(self) -> list:
         if not self.ex_librario:
             raise NotImplementedError(
-                '--status-in-markdown requires --ex-librario')
+                '--status--quo-in-markdown requires --ex-librario')
         paginae = []
         status = self.status_librario_ex_codex()
         paginae.append('# 1603 Librārium')
@@ -4499,6 +4523,8 @@ class DataApothecae:
         sarcina['resources'].append(DataApothecae.quod_tabula('1603_1_51'))
 
         for codex in self.data_apothecae_ex:
+            if codex in ['1603_1_1', '1603_1_51']:
+                continue
             sarcina['resources'].append(
                 DataApothecae.quod_tabula(codex))
 
@@ -5582,6 +5608,7 @@ class OpusTemporibus:
     opus: list = []
     in_limitem: int = 0
     in_ordinem: str = None
+    quaero_ix_n1603ia: str = None
     quaero_numerordinatio: list = []
 
     def __init__(
@@ -5884,18 +5911,6 @@ class CLI_2600:
             default=None
         )
 
-        commune.add_argument(
-            '--quaero-ix_n1603ia',
-            help='Query ix_n1603ia. Rudimentar && (AND) and || (OR). '
-            'Use var<1 to test 0 or undefined. '
-            'Query ix_n1603ia. Filter. Ex. "{publicum}>10 && {internale}<1"',
-            # metavar='',
-            dest='quaero_ix_n1603ia',
-            # const='',
-            # action='store_true',
-            nargs='?'
-        )
-
         # objectīvum, n, s, nominativus, en.wiktionary.org/wiki/objectivus
         # fōrmātō, n, s, dativus, https://en.wiktionary.org/wiki/formatus#Latin
         commune.add_argument(
@@ -6112,8 +6127,28 @@ class CLI_2600:
         )
 
         status_quo.add_argument(
-            '--status-in-markdown',
-            help='Return status in Markdown (instead of YAML)',
+            '--status-quo-in-yaml',
+            help='Return status in YAML',
+            # metavar='',
+            dest='status_in_yaml',
+            # const=True,
+            action='store_true',
+            # nargs='?'
+        )
+
+        status_quo.add_argument(
+            '--status-quo-in-json',
+            help='Return status in JSON',
+            # metavar='',
+            dest='status_in_json',
+            # const=True,
+            action='store_true',
+            # nargs='?'
+        )
+
+        status_quo.add_argument(
+            '--status-quo-in-markdown',
+            help='Return status in Markdown',
             # metavar='',
             dest='status_in_markdown',
             # const=True,
@@ -6122,7 +6157,7 @@ class CLI_2600:
         )
 
         status_quo.add_argument(
-            '--status-in-datapackage',
+            '--status-quo-in-datapackage',
             help='Return status in frictionless datapackage.json. '
             'With --ex-librario returns profile data-package-catalog. '
             ' (low level of details)',
@@ -6155,7 +6190,7 @@ class CLI_2600:
             # "Requires --codex-de 1603_NN_NN"
         )
 
-        # # ex opere temporibus
+        # ex opere temporibus
         opus_temporibus.add_argument(
             '--ex-opere-temporibus',
             help='ex opere temporibus. Out of work times (crontab)',
@@ -6165,17 +6200,26 @@ class CLI_2600:
             # action='store_true',
             nargs='?'
         )
-        # opus_temporibus.add_argument(
-        #     '--quaero-ix_n1603ia',
-        #     help='Query ix_n1603ia. Rudimentar && (AND) and || (OR). '
-        #     'Use var<1 to test 0 or undefined. '
-        #     'Query ix_n1603ia. Filter. Ex. "{publicum}>10 && {internale}<1"',
-        #     # metavar='',
-        #     dest='quaero_ix_n1603ia',
-        #     # const='',
-        #     # action='store_true',
-        #     nargs='?'
-        # )
+        opus_temporibus.add_argument(
+            '--opus-temporibus-in-tsv',
+            help='Result in TSV (without headers); first column is Codex',
+            # metavar='',
+            dest='opus_temporibus_in_tsv',
+            # const='',
+            # action='store_true',
+            nargs='?'
+        )
+        opus_temporibus.add_argument(
+            '--quaero-ix_n1603ia',
+            help='Query ix_n1603ia. Rudimentar && (AND) and || (OR). '
+            'Use var<1 to test 0 or undefined. '
+            'Query ix_n1603ia. Filter. Ex. "{publicum}>10 && {internale}<1"',
+            # metavar='',
+            dest='quaero_ix_n1603ia',
+            # const='',
+            # action='store_true',
+            nargs='?'
+        )
         opus_temporibus.add_argument(
             '--quaero-numerordinatio',
             help='Query Numerordĭnātĭo. Additional filter list for focused '
@@ -6286,6 +6330,8 @@ class CLI_2600:
                         if _lineam.startswith('#') or len(_lineam.strip()) == 0:
                             continue
                         lineam = _lineam.rstrip('\n')
+                        if lineam.find("\t") > -1:
+                            lineam = lineam.split("\t")[0]
                         if lineam.find(',') > -1:
                             lineam = lineam.split(',')[0]
                         data_apothecae_ex.append(lineam)
@@ -6340,32 +6386,30 @@ class CLI_2600:
             #     objectivum_formato = objectivum_formato
             # else:
 
-            # if self.pyargs.status_quo:
-            formatum = 'asciidoctor'
-            if self.pyargs.ad_asciidoctor:
-                formatum = 'asciidoctor'
-            # if self.pyargs.ad_markdown:
-            #     formatum = 'markdown'
-
             codex = Codex(
-                # self.pyargs.codex_de,
                 codex_de,
                 objectivum_linguam=self.pyargs.objectivum_linguam,
                 auxilium_linguam=self.pyargs.auxilium_linguam,
-                # formatum=formatum,
-                # codex_copertae=self.pyargs.codex_copertae
             )
 
             libraria = LibrariaStatusQuo(
                 codex,
                 self.pyargs.ex_librario)
 
-            if self.pyargs.status_in_markdown:
+            if self.pyargs.status_in_yaml or \
+                self.pyargs.objectivum_formato == 'yaml':
+                return self.output(libraria.imprimere())
+            if self.pyargs.status_in_json or \
+                self.pyargs.objectivum_formato == 'json':
+                return self.output(libraria.imprimere_in_json())
+            if self.pyargs.status_in_markdown or \
+                self.pyargs.objectivum_formato == 'markdown':
                 return self.output(libraria.imprimere_in_markdown())
-            if self.pyargs.status_in_datapackage:
+            if self.pyargs.status_in_datapackage or \
+                self.pyargs.objectivum_formato == 'datapackage':
                 return self.output(libraria.imprimere_in_datapackage())
 
-            return self.output(libraria.imprimere())
+            raise ValueError('--status-quo-[option] ?')
 
         # Cōdex ________________________________________________________________
         # if self.pyargs.actionem_sparql:
