@@ -159,13 +159,14 @@ Cōdex . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 
 Status quō . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-    {0} --methodus='status-quo' --codex-de 1603_63_101
+    {0} --methodus='status-quo' --status-quo-in-json --codex-de 1603_63_101
 
-    {0} --methodus='status-quo' --codex-de 1603_63_101 --ex-librario='cdn'
+    {0} --methodus='status-quo' --status-quo-in-rdf-skos-turtle --codex-de 1603_63_101
 
-    {0} --methodus='status-quo'  --codex-de 1603_63_101 --ex-librario='locale' \
---status-in-markdown
+    {0} --methodus='status-quo' --status-quo-in-yaml --ex-librario='cdn'
 
+    {0} --methodus='status-quo' --status-quo-in-datapackage \
+--ex-librario='locale'
 
 Opus temporibus . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
     {0} --methodus='opus-temporibus' --ex-opere-temporibus='cdn'
@@ -3550,6 +3551,9 @@ class LibrariaStatusQuo:
     - https://latin.stackexchange.com/questions/2102
       /most-accurate-latin-word-for-book-in-this-context
     - exterō, m, s, (Dative) https://en.wiktionary.org/wiki/exter#Latin
+
+    - https://github.com/EticaAI/multilingual-lexicography/issues/38
+      - https://www.fao.org/agrovoc/linked-data
     """
 
     linguae = {}
@@ -4010,6 +4014,9 @@ class LibrariaStatusQuo:
                 'mul-Zyyy' in item['meta']['caveat_lector']:
             return item['meta']['caveat_lector']['mul-Zyyy']
         return None
+
+    def imprimere_in_rdf_skos_ttl(self) -> list:
+        return self.imprimere_in_datapackage()
 
     def imprimere_res_methodi_ex_dictionariorum_corde(self, item):
         if item and 'meta' in item and \
@@ -6168,6 +6175,18 @@ class CLI_2600:
             # nargs='?'
         )
 
+        status_quo.add_argument(
+            '--status-quo-in-rdf-skos-turtle',
+            help='RDF/SKOS Turtle format.'
+            'Simple Knowledge Organization System. '
+            'https://www.w3.org/TR/skos-reference/',
+            # metavar='',
+            dest='status_in_rdf_skos_ttl',
+            # const=True,
+            action='store_true',
+            # nargs='?'
+        )
+
         # - ex (+ ablative), https://en.wiktionary.org/wiki/ex#Latin
         # - librāriō, n, s, /Ablative/,
         #     https://en.wiktionary.org/wiki/librarium#Latin
@@ -6397,17 +6416,20 @@ class CLI_2600:
                 self.pyargs.ex_librario)
 
             if self.pyargs.status_in_yaml or \
-                self.pyargs.objectivum_formato == 'yaml':
+                    self.pyargs.objectivum_formato == 'yaml':
                 return self.output(libraria.imprimere())
             if self.pyargs.status_in_json or \
-                self.pyargs.objectivum_formato == 'json':
+                    self.pyargs.objectivum_formato == 'json':
                 return self.output(libraria.imprimere_in_json())
             if self.pyargs.status_in_markdown or \
-                self.pyargs.objectivum_formato == 'markdown':
+                    self.pyargs.objectivum_formato == 'markdown':
                 return self.output(libraria.imprimere_in_markdown())
             if self.pyargs.status_in_datapackage or \
-                self.pyargs.objectivum_formato == 'datapackage':
+                    self.pyargs.objectivum_formato == 'datapackage':
                 return self.output(libraria.imprimere_in_datapackage())
+            if self.pyargs.status_in_rdf_skos_ttl or \
+                    self.pyargs.objectivum_formato == 'datapackage':
+                return self.output(libraria.imprimere_in_rdf_skos_ttl())
 
             raise ValueError('--status-quo-[option] ?')
 
