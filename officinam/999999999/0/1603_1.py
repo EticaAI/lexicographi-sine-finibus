@@ -6328,6 +6328,18 @@ class CLI_2600:
 
         # status_quo ___________________________________________________________
         if pyargs.methodus == 'status-quo':
+            if self.pyargs.codex_de:
+                codex_de = self.pyargs.codex_de
+            else:
+                if self.pyargs.ex_librario:
+                    codex_de = '1603_1_1'
+                else:
+                    raise ValueError('--ex-librario=[{locale,cdn}] ?')
+
+            # if self.pyargs.objectivum_formato:
+            #     objectivum_formato = objectivum_formato
+            # else:
+
             # if self.pyargs.status_quo:
             formatum = 'asciidoctor'
             if self.pyargs.ad_asciidoctor:
@@ -6336,10 +6348,11 @@ class CLI_2600:
             #     formatum = 'markdown'
 
             codex = Codex(
-                self.pyargs.codex_de,
+                # self.pyargs.codex_de,
+                codex_de,
                 objectivum_linguam=self.pyargs.objectivum_linguam,
                 auxilium_linguam=self.pyargs.auxilium_linguam,
-                formatum=formatum,
+                # formatum=formatum,
                 # codex_copertae=self.pyargs.codex_copertae
             )
 
@@ -6351,6 +6364,7 @@ class CLI_2600:
                 return self.output(libraria.imprimere_in_markdown())
             if self.pyargs.status_in_datapackage:
                 return self.output(libraria.imprimere_in_datapackage())
+
             return self.output(libraria.imprimere())
 
         # Cōdex ________________________________________________________________
