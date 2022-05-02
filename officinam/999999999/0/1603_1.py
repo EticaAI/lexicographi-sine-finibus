@@ -4016,7 +4016,48 @@ class LibrariaStatusQuo:
         return None
 
     def imprimere_in_rdf_skos_ttl(self) -> list:
-        return self.imprimere_in_datapackage()
+        """imprimere_in_rdf_skos_ttl _summary_
+
+        @see https://www.w3.org/TR/skos-reference/
+        @see https://www.w3.org/TR/turtle/
+        @see https://www.w3.org/2015/03/ShExValidata/
+
+        Returns:
+            list: _description_
+        """
+        if self.ex_librario:
+            raise NotImplementedError(
+                '--status--quo-in-rdf-skos-ttl requires --codex_de=NNNN_NN_NNN'
+                ' and still not support --ex-librario'
+            )
+        paginae = []
+        caput = [
+            '@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .',
+            '@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .',
+            '@prefix owl: <http://www.w3.org/2002/07/owl#> .',
+            '@prefix skos: <http://www.w3.org/2004/02/skos/core#> .',
+            '# @prefix : {0}_ .'.format(self.codex.de_codex)
+        ]
+        paginae.extend(caput)
+
+        archivum_no1_et_no11 = DataApothecae.quod_tabula(self.codex.de_codex)
+        # paginae.append("# " + json.dumps(
+        paginae.append(json.dumps(
+            archivum_no1_et_no11,
+            indent=2, ensure_ascii=False, sort_keys=False))
+
+        # paginae.append("# " + str(archivum_no1_et_no11))
+
+        # archivum_no1_et_no11 = DataApothecae.quod_tabula(
+        #     self.codex.de_codex, abstractum=True)
+        # concepta = archivum_no1_et_no11.quod_rdf_skos_ttl_concepta()
+        # paginae.extend(concepta)
+        # paginae.append('# @prefix : {0}_ .'.format(self.codex.de_codex))
+
+        # paginae.extend(self.imprimere_in_datapackage())
+
+        # return self.imprimere_in_datapackage()
+        return paginae
 
     def imprimere_res_methodi_ex_dictionariorum_corde(self, item):
         if item and 'meta' in item and \
@@ -4584,7 +4625,11 @@ class DataApothecae:
         self.resultatum.append(sqlite_path)
 
     @staticmethod
-    def quod_tabula(numerodination: str, strictum: bool = True):
+    def quod_tabula(
+        numerodination: str,
+        strictum: bool = True,
+        abstractum=False
+    ):
 
         nomen = numerordinatio_neo_separatum(numerodination, '_')
         _path = numerordinatio_neo_separatum(numerodination, '/')
@@ -4595,6 +4640,8 @@ class DataApothecae:
             True
         )
         if archivum_no11.praeparatio():
+            if abstractum:
+                return archivum_no11
             return archivum_no11.quod_datapackage()
 
         archivum_no1 = TabulaSimplici(
@@ -4603,6 +4650,8 @@ class DataApothecae:
             True
         )
         if archivum_no1.praeparatio():
+            if abstractum:
+                return archivum_no1
             return archivum_no1.quod_datapackage()
 
         if strictum:
@@ -5733,6 +5782,7 @@ class TabulaSimplici:
     nomen: str = ''
     statum: bool = None
     caput: list = []
+    concepta: dict = None
     res_totali: int = 0
     ex_radice: bool = False
     archivum_trivio_ex_radice: str = ''
@@ -5781,6 +5831,36 @@ class TabulaSimplici:
         self.statum = True
         return self.statum
 
+    def _initiari_v2(self):
+        """initiarī
+
+        Trivia:
+        - initiārī, https://en.wiktionary.org/wiki/initio#Latin
+        """
+        if not os.path.exists(self.archivum_trivio):
+            self.statum = False
+            return self.statum
+
+        self.archivum_trivio_ex_radice = \
+            self.archivum_trivio.replace(NUMERORDINATIO_BASIM, '')
+
+        self.archivum_nomini = Path(self.archivum_trivio_ex_radice).name
+
+        self.concepta = {}
+        with open(self.archivum_trivio) as csvfile:
+            reader = csv.DictReader(csvfile)
+            for lineam in reader:
+                de_codex = lineam['#item+conceptum+numerordinatio']
+                self.concepta[de_codex] = lineam
+                # if len(self.caput) == 0:
+                #     self.caput = lineam
+                #     continue
+                # # TODO: what about empty lines?
+                # self.res_totali += 1
+
+        self.statum = True
+        return self.statum
+
     def praeparatio(self):
         """praeparātiō
 
@@ -5819,6 +5899,14 @@ class TabulaSimplici:
             resultatum['schema']['fields'].append(item)
 
         return resultatum
+
+    def quod_rdf_skos_ttl_concepta(self) -> list:
+        self._initiari_v2()
+
+        paginae = []
+        for codex_de, res in enumerate(self.concepta):
+            paginae.append(':{0} a skos:Concept ;'.format(codex_de))
+        return paginae
 
 
 class NumerordinatioItem:

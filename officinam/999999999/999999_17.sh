@@ -114,3 +114,7 @@ temp_validate_librario "cdn"
 
 # printf "1603_45_1\n1603_45_31" > 999999/0/apothecae-list.txt
 # ./999999999/0/1603_1.py --methodus='data-apothecae' --data-apothecae-ex-archivo='999999/0/apothecae-list.txt' --data-apothecae-ad='apothecae.datapackage.json'
+
+# ./999999999/0/1603_1.py --methodus='status-quo' --status-quo-in-rdf-skos-turtle --codex-de 1603_63_101
+
+# ./999999999/0/1603_1.py --methodus='status-quo' --status-quo-in-rdf-skos-turtle --codex-de 1603_63_101 > 1603/63/101/1603_63_101.no11.skos.ttl
