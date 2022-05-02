@@ -24,6 +24,7 @@
 /officinam/**/**.statum.yml
 /officinam/**/**.db
 /officinam/**/**.sqlite
+/officinam/**/**.skos.ttl
 officinam/1603/1603.statum.yml
 # /officinam/README.md
 /officinam/LICENSE.md
