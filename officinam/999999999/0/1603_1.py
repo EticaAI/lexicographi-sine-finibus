@@ -4029,15 +4029,13 @@ class LibrariaStatusQuo:
     def imprimere_in_rdf_skos_ttl(self) -> list:
         """imprimere_in_rdf_skos_ttl _summary_
 
-        @see https://www.w3.org/TR/skos-reference/
-        @see https://www.w3.org/TR/turtle/
-
-        @TODO: links to add to
-             https://github.com/EticaAI/multilingual-lexicography/issues/38
-             - https://www.fao.org/agrovoc/linked-data
-             - https://skos-play.sparna.fr/play/
-             - https://www.w3.org/2015/03/ShExValidata/
-             - https://skos-play.sparna.fr/skos-testing-tool
+        - https://www.w3.org/TR/skos-reference/
+        - https://www.w3.org/TR/turtle/
+        - https://github.com/EticaAI/multilingual-lexicography/issues/38
+        - https://www.fao.org/agrovoc/linked-data
+        - https://skos-play.sparna.fr/play/
+        - https://www.w3.org/2015/03/ShExValidata/
+        - https://skos-play.sparna.fr/skos-testing-tool
 
         Returns:
             list: _description_
@@ -5996,6 +5994,9 @@ class TabulaSimplici:
 
             codex_de_n = numerordinatio_neo_separatum(codex_de, ':')
             if codex_de_n.startswith('0:1603'):
+                continue
+            # This is deprecated use; used on 1603_25_1
+            if codex_de_n.startswith('0:999'):
                 continue
             numerodinatio = nomen_radici + ':' + str(codex_de_n)
             # paginae.append(':{0} a skos:Concept ;'.format(codex_de))
