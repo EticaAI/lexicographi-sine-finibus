@@ -67,7 +67,7 @@ ROOTDIR="$(pwd)"
 #### Manual action, TEST locally, one per time, START --------------------------
 # Download entire XLSX to local temp
 file_download_1603_xlsx "1"
-# actiones_completis_locali "1603_1_1"
+actiones_completis_locali "1603_1_1"
 # actiones_completis_locali "1603_1_7"
 # actiones_completis_locali "1603_1_51"
 # actiones_completis_locali "1603_1_99"
@@ -83,7 +83,8 @@ file_download_1603_xlsx "1"
 
 ## Full drill (remote, specific item)
 # actiones_completis_publicis "1603_63_101"
-actiones_completis_publicis "1603_25_1"
+# actiones_completis_publicis "1603_25_1"
+actiones_completis_publicis "1603_99_123"
 # actiones_completis_publicis "1603_1_8000"
 # deploy_0_9_markdown
 
@@ -119,3 +120,6 @@ actiones_completis_publicis "1603_25_1"
 # ./999999999/0/1603_1.py --methodus='status-quo' --status-quo-in-rdf-skos-turtle --codex-de 1603_63_101
 
 # ./999999999/0/1603_1.py --methodus='status-quo' --status-quo-in-rdf-skos-turtle --codex-de 1603_63_101 > 1603/63/101/1603_63_101.no11.skos.ttl
+# ./999999999/0/1603_1.py --methodus='status-quo' --status-quo-in-rdf-skos-turtle --codex-de 1603_1_7
+
+# ./999999999/0/1603_1.py --methodus='status-quo' --status-quo-in-rdf-skos-turtle --codex-de 1603_1_7 > ~/Downloads/1603_1_7.no11.skos.ttl
