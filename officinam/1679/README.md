@@ -26,7 +26,6 @@
   - https://dados.gov.br/pagina/processo-de-participacao-social-da-inda
 
 
-
 ## Wikiata P Relacionados ao Brasil
 
 - Wikidata:Database reports/List of properties/all
@@ -93,3 +92,20 @@ P9421	IFVPF ID	identifier for a Brazilian coffee farm in the Inventory of the Va
 P9451	Dicionário Histórico-Biográfico Brasileiro ID	identifier for a person in the Dicionário Histórico-Biográfico Brasileiro		ExternalId	0
 P10701	Reflora ID	identifier for a taxon on the Reflora Flora e Funga do Brasil website	Reflora identifier, Flora and Fungi of Brazil ID, Flora and Fungi of Brazil identifier	ExternalId	23
 ```
+
+## Tempestade de ideias - Entrada inicial para dicionários brasileiros
+
+### [1]
+### [1:1] //Nomenclatura Brasiliensi ad MM ex Numerordĭnātĭ//
+- nōmenclātūra, f, s, Nominativus, https://en.wiktionary.org/wiki/nomenclatura#Latin
+- brasīliēnsī, m/f/n, s, dativus, https://en.wiktionary.org/wiki/brasiliensis
+- //nomenclatura brasileira//@por-Latn (GooleT) -> //Brasiliensium nomenclatura//@lat-Latn
+  - https://translate.google.com/?sl=pt&tl=la&text=nomenclatura%20brasileira&op=translate
+- https://en.wiktionary.org/wiki/brasiliensis
+- (...)
+- ...//Nomenclatura Brasiliensi ad MM ex Numerordĭnātĭ//
+  - @TODO: definitivamente está com grafia ruim.
+
+### [45]
+### [45:16:76] //Espaço numérico do Brasil, relacionado à geografia//
+### [45:16:76:21] //Espaço numérico do Brasil, relacionado à geografia (Níveis 1+2+3+4+5+6)//

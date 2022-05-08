@@ -84,8 +84,9 @@ actiones_completis_locali "1603_1_1"
 ## Full drill (remote, specific item)
 # actiones_completis_publicis "1603_63_101"
 # actiones_completis_publicis "1603_25_1"
-actiones_completis_publicis "1603_99_123"
+# actiones_completis_publicis "1603_99_123"
 # actiones_completis_publicis "1603_1_8000"
+actiones_completis_locali "1679_1_1"
 # deploy_0_9_markdown
 
 ## Full drill (remote, randon publish few at time)
