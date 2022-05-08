@@ -193,3 +193,14 @@
   - geographus, m, s, Nominativus, https://en.wiktionary.org/wiki/geographus#Latin
     - geō + graphōrum
 - ... Lexicographī sine finibus
+- Lexicographī, m, pl, Nominativus
+  - lexico-, ..., https://en.wiktionary.org/wiki/lexico-
+  - -graphī, ... https://en.wiktionary.org/wiki/geographus#Latin
+  - referencia:
+    - /Lexicographi Graeci/ https://www.degruyter.com/serial/lexg-b/html
+    - https://la.wikipedia.org/wiki/Specialis:MobileLanguages/Categoria:Lexicographi
+      - https://en.m.wikipedia.org/wiki/Category:Lexicographers
+- sine (+ ablativus), https://en.wiktionary.org/wiki/sine#Latin
+- fīnibus, m, pl, Ablativus, https://en.wiktionary.org/wiki/finis#Latin
+  - http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0059:entry=finis
+- Lexicographī sine fīnibus
