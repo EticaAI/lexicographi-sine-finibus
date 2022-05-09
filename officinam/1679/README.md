@@ -31,6 +31,9 @@
 - Wikidata:Database reports/List of properties/all
   - https://www.wikidata.org/wiki/Wikidata:Database_reports/List_of_properties/all
   - https://www.wikidata.org/wiki/Wikidata:Database_reports/List_of_properties/all/pt
+- Outros links com potenciais coleções de propriedades
+  - Esse autor criou ou ajudou várias propriedades
+    - https://www.wikidata.org/wiki/User:Ederporto
 
 Nota: copiado manualmente em 2022-04-08. Eventualmente desatualizado
 
@@ -93,6 +96,16 @@ P9451	Dicionário Histórico-Biográfico Brasileiro ID	identifier for a person i
 P10701	Reflora ID	identifier for a taxon on the Reflora Flora e Funga do Brasil website	Reflora identifier, Flora and Fungi of Brazil ID, Flora and Fungi of Brazil identifier	ExternalId	23
 ```
 
+Conjunto adicionado na planilha de trabalho
+
+```tsv
+P1585	Brazilian municipality code	identifier for municipalities in Brazil	IBGE code	ExternalId	5,570
+P4251	TSE number	number assigned by the Brazilian Superior Electoral Court to registered political parties		ExternalId	36
+P6204	CNPJ	identification number issued to Brazilian companies by the Secretariat of the Federal Revenue of Brazil		ExternalId	131
+P6555	Brazilian Electoral Unit ID	unique identifier of an brazilian electoral unit, defined by the Brazilian Superior Electoral Court		ExternalId	5,570
+P9119	LexML Brazil ID	identifier for laws in the LexML system		ExternalId	27,718
+```
+
 ## Tempestade de ideias - Entrada inicial para dicionários brasileiros
 
 ### [1]
@@ -109,3 +122,5 @@ P10701	Reflora ID	identifier for a taxon on the Reflora Flora e Funga do Brasil 
 ### [45]
 ### [45:16:76] //Espaço numérico do Brasil, relacionado à geografia//
 ### [45:16:76:21] //Espaço numérico do Brasil, relacionado à geografia (Níveis 1+2+3+4+5+6)//
+
+`P1585	Brazilian municipality code	identifier for municipalities in Brazil	IBGE code	ExternalId	5,570`

@@ -200,6 +200,7 @@
     - /Lexicographi Graeci/ https://www.degruyter.com/serial/lexg-b/html
     - https://la.wikipedia.org/wiki/Specialis:MobileLanguages/Categoria:Lexicographi
       - https://en.m.wikipedia.org/wiki/Category:Lexicographers
+      - https://pt.m.wikipedia.org/wiki/Categoria:Lexic%C3%B3grafos_do_Brasil
 - sine (+ ablativus), https://en.wiktionary.org/wiki/sine#Latin
 - fīnibus, m, pl, Ablativus, https://en.wiktionary.org/wiki/finis#Latin
   - http://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0059:entry=finis
