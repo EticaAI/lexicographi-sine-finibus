@@ -403,7 +403,68 @@ ORDER BY ASC (?id_numeric)
 # }
     def query_p(self):
         # @TODO implement an MVP
-        return self.query_q()
+        langpair_full = self._query_linguam()
+        self.D1613_1_51_langpair = self._query_linguam_limit(langpair_full)
+
+        qid = ['wd:' + x for x in self.qid if isinstance(x, str)]
+
+        _pid = self.pid[0]
+        # select = '?item ' + " ".join(self._query_linguam())
+
+        # select = ['(?item AS ?item__conceptum__codicem)']
+        select = [
+            '(STRAFTER(STR(?item), "entity/") AS ?item__conceptum__codicem)']
+        # select.append('(?itemLabel AS ?meta____rem__i_por__is_latn)')
+        # select = [
+        #     '(STRAFTER(STR(?item), "entity/") AS ?item__conceptum__codicem)',
+        #     '(STRAFTER(STR(?item), "entity/") AS ?item__rem__i_qcc__is_zxxx__ix_wikiq)'
+        # ]
+        filter_otional = []
+        for pair in self.D1613_1_51_langpair:
+            select.append('?' + pair[1])
+
+            filter_otional.append(
+                'OPTIONAL { ?item rdfs:label ?' +
+                pair[1] + ' filter (lang(?' + pair[1] +
+                ') = "' + pair[0] + '"). }'
+            )
+        filter_otional_done = ['  ' + x for x in filter_otional]
+
+#         term = """
+# SELECT {select}
+# WHERE
+# {{
+#   VALUES ?item {{ {qitems} }}
+#   bind(xsd:integer(strafter(str(?item), 'Q')) as ?id_numeric) .
+# {langfilter}
+# }}
+# ORDER BY ASC (?id_numeric)
+#         """.format(
+#             qitems=" ".join(qid),
+#             select=" ".join(select),
+#             langfilter="\n".join(filter_otional_done),
+#         )
+        term = """
+SELECT {select} WHERE {{
+  {{
+    SELECT DISTINCT ?item WHERE {{
+      ?item p:{wikidata_p} ?statement0.
+      ?statement0 (ps:{wikidata_p}) _:anyValue{wikidata_p}.
+    }}
+  }}
+{langfilter}
+  bind(xsd:integer(strafter(str(?item), 'Q')) as ?id_numeric) .
+}}
+ORDER BY ASC (?id_numeric)
+        """.format(
+            wikidata_p=_pid,
+            qitems=" ".join(qid),
+            select=" ".join(select),
+            langfilter="\n".join(filter_otional_done),
+        )
+
+        # [TRY IT ↗]()
+        return term
 
     def exportatum_sparql(self):
         resultatum = []
