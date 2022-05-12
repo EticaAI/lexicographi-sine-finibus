@@ -1125,7 +1125,7 @@ file_translate_csv_de_numerordinatio_q() {
 
   # echo "$objectivum_archivum_temporarium_b_u"
   # echo "${ROOTDIR}/999999999/0/1603_3_12.py" \
-  #   --actionem-sparql-q \
+  #   --actionem-sparql \
   #   --lingua-divisioni=3 \
   #   --lingua-paginae=1 \
   #   --query <"$objectivum_archivum_temporarium_b_u"
@@ -1141,47 +1141,47 @@ file_translate_csv_de_numerordinatio_q() {
   #  -----
   echo "1/5"
   "${ROOTDIR}/999999999/0/1603_3_12.py" \
-    --actionem-sparql-q \
+    --actionem-sparql \
     --lingua-divisioni=5 \
     --lingua-paginae=1 \
     --query <"$objectivum_archivum_temporarium_b_u" |
-    ./999999999/0/1603_3_12.py --actionem-sparql-q --csv --hxltm \
+    ./999999999/0/1603_3_12.py --actionem-sparql --csv --hxltm \
       >"$objectivum_archivum_temporarium_b_u_wiki_1_5"
 
   echo "2/5"
   "${ROOTDIR}/999999999/0/1603_3_12.py" \
-    --actionem-sparql-q \
+    --actionem-sparql \
     --lingua-divisioni=5 \
     --lingua-paginae=2 \
     --query <"$objectivum_archivum_temporarium_b_u" |
-    ./999999999/0/1603_3_12.py --actionem-sparql-q --csv --hxltm \
+    ./999999999/0/1603_3_12.py --actionem-sparql --csv --hxltm \
       >"$objectivum_archivum_temporarium_b_u_wiki_2_5"
 
   echo "3/5"
   "${ROOTDIR}/999999999/0/1603_3_12.py" \
-    --actionem-sparql-q \
+    --actionem-sparql \
     --lingua-divisioni=5 \
     --lingua-paginae=3 \
     --query <"$objectivum_archivum_temporarium_b_u" |
-    ./999999999/0/1603_3_12.py --actionem-sparql-q --csv --hxltm \
+    ./999999999/0/1603_3_12.py --actionem-sparql --csv --hxltm \
       >"$objectivum_archivum_temporarium_b_u_wiki_3_5"
 
   echo "4/5"
   "${ROOTDIR}/999999999/0/1603_3_12.py" \
-    --actionem-sparql-q \
+    --actionem-sparql \
     --lingua-divisioni=5 \
     --lingua-paginae=4 \
     --query <"$objectivum_archivum_temporarium_b_u" |
-    ./999999999/0/1603_3_12.py --actionem-sparql-q --csv --hxltm \
+    ./999999999/0/1603_3_12.py --actionem-sparql --csv --hxltm \
       >"$objectivum_archivum_temporarium_b_u_wiki_4_5"
 
   echo "5/5"
   "${ROOTDIR}/999999999/0/1603_3_12.py" \
-    --actionem-sparql-q \
+    --actionem-sparql \
     --lingua-divisioni=5 \
     --lingua-paginae=5 \
     --query <"$objectivum_archivum_temporarium_b_u" |
-    ./999999999/0/1603_3_12.py --actionem-sparql-q --csv --hxltm \
+    ./999999999/0/1603_3_12.py --actionem-sparql --csv --hxltm \
       >"$objectivum_archivum_temporarium_b_u_wiki_5_5"
 
   # Merging now...
