@@ -64,38 +64,65 @@ ROOTDIR="$(pwd)"
 
 #### tests _____________________________________________________________________
 
+echo "--actionem-sparql --de=P --query --ex-interlinguis"
 printf "P1585\n" | ./999999999/0/1603_3_12.py \
   --actionem-sparql --de=P --query --ex-interlinguis \
   | ./999999999/0/1603_3_12.py --actionem-sparql --csv --hxltm \
   > 999999/0/P1585.tm.hxl.csv
 
+sleep 5
+echo "--actionem-sparql --de=P --query --lingua-divisioni=20 --lingua-paginae=1"
 printf "P1585\n" | ./999999999/0/1603_3_12.py \
   --actionem-sparql --de=P --query --lingua-divisioni=20 --lingua-paginae=1 \
   | ./999999999/0/1603_3_12.py --actionem-sparql --csv --hxltm \
   > 999999/0/P1585.wikiq~1-20.hxl.csv
 
+sleep 5
+echo "--actionem-sparql --de=P --query --lingua-divisioni=20 --lingua-paginae=2"
 printf "P1585\n" | ./999999999/0/1603_3_12.py \
   --actionem-sparql --de=P --query --lingua-divisioni=20 --lingua-paginae=2 \
   | ./999999999/0/1603_3_12.py --actionem-sparql --csv --hxltm \
   > 999999/0/P1585.wikiq~2-20.hxl.csv
 
+sleep 5
+echo "--actionem-sparql --de=P --query --lingua-divisioni=20 --lingua-paginae=3"
 printf "P1585\n" | ./999999999/0/1603_3_12.py \
   --actionem-sparql --de=P --query --lingua-divisioni=20 --lingua-paginae=3 \
   | ./999999999/0/1603_3_12.py --actionem-sparql --csv --hxltm \
   > 999999/0/P1585.wikiq~3-20.hxl.csv
 
+echo "hxlmerge..."
 hxlmerge --keys='#item+conceptum+codicem' \
   --tags='#item+rem' \
-  --merge="999999/0/P1585.wikiq~1-20.hxl.csv" \
-  "999999/0/P1585.wikiq~2-20.hxl.csv" \
+  --merge="999999/0/P1585.wikiq~2-20.hxl.csv" \
+  "999999/0/P1585.wikiq~1-20.hxl.csv" \
   >"999999/0/P1585.wikiq~1+2-20.hxl.csv"
 
 sed -i '1d' "999999/0/P1585.wikiq~1+2-20.hxl.csv"
 
 hxlmerge --keys='#item+conceptum+codicem' \
   --tags='#item+rem' \
-  --merge="999999/0/P1585.wikiq~1+2-20.hxl.csv" \
-  "999999/0/P1585.wikiq~3-20.hxl.csv" \
+  --merge="999999/0/P1585.wikiq~3-20.hxl.csv" \
+  "999999/0/P1585.wikiq~1+2-20.hxl.csv" \
   >"999999/0/P1585.wikiq~1+2+3-20.hxl.csv"
 
-sed -i '1d' "999999/0/P1585.wikiq~1+2-20.hxl.csv"
+sed -i '1d' "999999/0/P1585.wikiq~1+2+3-20.hxl.csv"
+
+hxlrename \
+  --rename='item+conceptum+codicem:#item+rem+i_qcc+is_zxxx+ix_wikiq' \
+  "999999/0/P1585.wikiq~1+2+3-20.hxl.csv" \
+  >"999999/0/P1585.wikiq~1+2+3-20~TEMP.hxl.csv"
+
+sed -i '1d' "999999/0/P1585.wikiq~1+2+3-20~TEMP.hxl.csv"
+
+hxlmerge --keys='#item+rem+i_qcc+is_zxxx+ix_wikiq' \
+  --tags='#item+rem' \
+  --merge="999999/0/P1585.wikiq~1+2+3-20~TEMP.hxl.csv" \
+  "999999/0/P1585.tm.hxl.csv" \
+  >"999999/0/1679_45_16_76_2.no11.hxl.csv"
+
+sed -i '1d' "999999/0/1679_45_16_76_2.no11.hxl.csv"
+
+file_hotfix_duplicated_merge_key "999999/0/1679_45_16_76_2.no11.hxl.csv" '#item+rem+i_qcc+is_zxxx+ix_wikiq'
+
+# 999999/0/1679_45_16_76_2.no11.hxl.csv
