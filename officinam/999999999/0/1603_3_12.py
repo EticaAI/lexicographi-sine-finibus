@@ -110,6 +110,9 @@ __EPILOGUM__ = """
 | {0} --actionem-sparql --csv --hxltm > 999999/0/test.tm.hxl.csv
 
     printf "P1585\\n" | {0} --actionem-sparql --de=P --query \
+--ex-interlinguis
+
+    printf "P1585\\n" | {0} --actionem-sparql --de=P --query \
 --lingua-divisioni=50 --lingua-paginae=1
 ------------------------------------------------------------------------------
                             EXEMPLŌRUM GRATIĀ
@@ -201,6 +204,7 @@ class CS1603z3z12:
 
         self.qid = []
         self.pid = []
+        self.ex_interlinguis = False
 
     def _init_1613_1_51_datum(self):
         # archivum = NUMERORDINATIO_BASIM + "/1613/1603_2_60.no1.tm.hxl.tsv"
@@ -307,6 +311,11 @@ class CS1603z3z12:
 
         return self
 
+    def est_wikidata_p_interlinguis(self: str):
+        self.ex_interlinguis = True
+
+        return self
+
 #     def query(self):
 #         term = """# https://en.wikiversity.org/wiki/Research_in_programming_Wikidata/Countries#List_of_countries
 # # https://w.wiki/4ij4
@@ -402,7 +411,6 @@ ORDER BY ASC (?id_numeric)
 #   }
 # }
     def query_p(self):
-        # @TODO implement an MVP
         langpair_full = self._query_linguam()
         self.D1613_1_51_langpair = self._query_linguam_limit(langpair_full)
 
@@ -466,6 +474,9 @@ ORDER BY ASC (?id_numeric)
         # [TRY IT ↗]()
         return term
 
+    def query_p_ex_interlinguis(self):
+        return self.query_p()
+
     def exportatum_sparql(self):
         resultatum = []
         # resultatum.append('#TODO')
@@ -473,7 +484,10 @@ ORDER BY ASC (?id_numeric)
         if len(self.qid) > 0:
             resultatum.append(self.query_q())
         if len(self.pid) > 0:
-            resultatum.append(self.query_p())
+            if self.ex_interlinguis:
+                resultatum.append(self.query_p())
+            else:
+                resultatum.append(self.query_p_ex_interlinguis())
         return resultatum
 
 
@@ -551,6 +565,16 @@ class CLI_2600:
             nargs='?',
             choices=['Q', 'P'],
             default='Q'
+        )
+        # linguīs, f, pl, ablativus, https://en.wiktionary.org/wiki/lingua#Latin
+        neo_codex.add_argument(
+            '--ex-interlinguis',
+            help='Change output to return interlingual (codex) only. '
+            '',
+            metavar='',
+            dest='ex_interlinguis',
+            const=True,
+            nargs='?'
         )
 
         neo_codex.add_argument(
@@ -682,8 +706,10 @@ class CLI_2600:
                     # TODO: deal with cases were have more than WikiQ
 
                     if self.pyargs.de == 'P':
+                        if self.pyargs.ex_interlinguis == 'P':
+                            cs1603_3_12.est_wikidata_p_interlinguis(codicem)
                         cs1603_3_12.est_wikidata_p(codicem)
-                    if self.pyargs.de == 'Q':
+                    elif self.pyargs.de == 'Q':
                         cs1603_3_12.est_wikidata_q(codicem)
 
                 quod_query = cs1603_3_12.exportatum_sparql()
