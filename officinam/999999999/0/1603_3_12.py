@@ -92,7 +92,9 @@ __EPILOGUM__ = """
 --ex-interlinguis
 
     printf "P1585\\n" | {0} --actionem-sparql --de=P --query \
---ex-interlinguis
+--ex-interlinguis --cum-interlinguis=P402,P1566,P1937,P6555,P8119 \
+| {0} --actionem-sparql --csv --hxltm \
+> 999999/0/P1585~P402+P1566+P1937+P6555+P8119.tm.hxl.csv
 
     printf "P1585\\n" | {0} --actionem-sparql --de=P --query \
 --lingua-divisioni=50 --lingua-paginae=1
@@ -187,6 +189,7 @@ class CS1603z3z12:
         self.qid = []
         self.pid = []
         self.ex_interlinguis = False
+        self.cum_interlinguis = []
 
     def _init_1613_1_51_datum(self):
         # archivum = NUMERORDINATIO_BASIM + "/1613/1603_2_60.no1.tm.hxl.tsv"
@@ -296,6 +299,15 @@ class CS1603z3z12:
     def est_wikidata_p_interlinguis(self, statum: bool = True):
         self.ex_interlinguis = statum
 
+    def est_wikidata_p_cum_interlinguis(self, cum_interlinguis: list = None):
+        # print('oiaa', cum_interlinguis)
+        if cum_interlinguis and len(cum_interlinguis):
+            # print('oi3')
+            for item in cum_interlinguis:
+                self.cum_interlinguis.append(item.upper().replace('P', ''))
+            # self.cum_interlinguis = cum_interlinguis
+            self.cum_interlinguis = sorted(self.cum_interlinguis)
+        # print('oi a', self.cum_interlinguis)
         return self
 
 #     def query(self):
@@ -323,7 +335,6 @@ class CS1603z3z12:
 #     ?item rdfs:label ?item_rem__rus_cyrl filter (lang(?item_rem__rus_cyrl) = "ru").
 #   }
 # }
-
 
     def query_q(self):
         langpair_full = self._query_linguam()
@@ -419,7 +430,8 @@ ORDER BY ASC (?id_numeric)
                 pair[1] + ' filter (lang(?' + pair[1] +
                 ') = "' + pair[0] + '"). }'
             )
-        filter_otional_done = ['  ' + x for x in filter_otional]
+
+        filter_optional_done = ['  ' + x for x in filter_otional]
 
 #         term = """
 # SELECT {select}
@@ -451,7 +463,7 @@ ORDER BY ASC (?id_numeric)
             wikidata_p=_pid,
             qitems=" ".join(qid),
             select=" ".join(select),
-            langfilter="\n".join(filter_otional_done),
+            langfilter="\n".join(filter_optional_done),
         )
 
         # [TRY IT ↗]()
@@ -467,9 +479,20 @@ ORDER BY ASC (?id_numeric)
             '(STRAFTER(STR(?item), "entity/") AS '
             '?item__rem__i_qcc__is_zxxx__ix_wikiq)'
         ]
-
-        # @TODO: allow command line specify additional properties to
-        #        optionally fetch together
+        filter_otional = []
+        # print('oiii',  self.cum_interlinguis)
+        # cum_interlinguis = []
+        for item in self.cum_interlinguis:
+            # print('item')
+            select.append('?item__rem__i_qcc__is_zxxx__ix_wikip{0}'.format(
+                item
+            ))
+            # OPTIONAL { ?item wdt:P6555 ?item__rem__i_qcc__is_zxxx__ix_wikip6555 . }
+            filter_otional.append(
+                'OPTIONAL { ?item wdt:P' + item +
+                ' ?item__rem__i_qcc__is_zxxx__ix_wikip' + item + ' . }'
+            )
+        filter_optional_done = ['  ' + x for x in filter_otional]
 
         term = """
 SELECT {select} WHERE {{
@@ -479,13 +502,15 @@ SELECT {select} WHERE {{
       ?statement0 (ps:{wikidata_p}) _:anyValue{wikidata_p}.
     }}
   }}
-  ?item wdt:{wikidata_p} ?wikidata_p_value . 
+  ?item wdt:{wikidata_p} ?wikidata_p_value .
+{optional_filters}
 }}
 ORDER BY ASC (?wikidata_p_value)
         """.format(
             wikidata_p=_pid,
             qitems=" ".join(qid),
-            select=" ".join(select)
+            select=" ".join(select),
+            optional_filters="\n".join(filter_optional_done),
         )
 
         return term
@@ -587,6 +612,18 @@ class CLI_2600:
             dest='ex_interlinguis',
             const=True,
             nargs='?'
+        )
+        # cum (+ablativus), https://en.wiktionary.org/wiki/cum#Latin
+        neo_codex.add_argument(
+            '--cum-interlinguis',
+            help='Add additional (but optional value) P. '
+            'Accept multiple values (use comma ,). '
+            'Used with --ex-interlinguis',
+            metavar='',
+            dest='cum_interlinguis',
+            # default='mul-Zyyy',
+            # nargs='?'
+            type=lambda x: x.split(',')
         )
 
         neo_codex.add_argument(
@@ -718,6 +755,10 @@ class CLI_2600:
                     # TODO: deal with cases were have more than WikiQ
                     # print(self.pyargs)
                     if self.pyargs.de == 'P':
+                        if self.pyargs.cum_interlinguis and \
+                                len(self.pyargs.cum_interlinguis):
+                            cs1603_3_12.est_wikidata_p_cum_interlinguis(
+                                self.pyargs.cum_interlinguis)
                         if self.pyargs.ex_interlinguis == True:
                             cs1603_3_12.est_wikidata_p_interlinguis(True)
                         cs1603_3_12.est_wikidata_p(codicem)
