@@ -30,34 +30,13 @@
 # pytest
 #    python3 -m doctest ./999999999/0/1603_3_12.py
 
-#    ./999999999/0/1603_3_12.py
-#    NUMERORDINATIO_BASIM="/external/ndata" ./999999999/0/1603_3_12.py
-#    printf "Q1065\nQ82151\n" | ./999999999/0/1603_3_12.py --actionem-sparql --query
-#    printf "Q1065\nQ82151\n" | ./999999999/0/1603_3_12.py --actionem-sparql --query | ./999999999/0/1603_3_12.py --actionem-sparql --wikidata-link
-#    printf "Q1065\nQ82151\n" | ./999999999/0/1603_3_12.py --actionem-sparql --query | ./999999999/0/1603_3_12.py --actionem-sparql --tsv > 999999/0/test.tsv
-#    printf "Q1065\nQ82151\n" | ./999999999/0/1603_3_12.py --actionem-sparql --query | ./999999999/0/1603_3_12.py --actionem-sparql --csv > 999999/0/test.csv
-#    printf "Q1065\nQ82151\n" | ./999999999/0/1603_3_12.py --actionem-sparql --query | ./999999999/0/1603_3_12.py --actionem-sparql --csv --hxltm
 
-# 1603_25_1 query
-# printf "Q3409626\nQ41055\nQ3321315\nQ160695\nQ9645\nQ9597\nQ713102\nQ133279\n" | ./999999999/0/1603_3_12.py --actionem-sparql --query
-
-
-# SELECT ?pic (STRAFTER(STR(?item), "entity/") AS ?item__conceptum__codicem) ?item__rem__i_lat__is_latn
-# WHERE
-# {
-#   VALUES ?item { wd:Q3409626  wd:Q41055  wd:Q3321315  wd:Q160695  wd:Q9645  wd:Q9597  wd:Q713102  wd:Q133279  }
-#   bind(xsd:integer(strafter(str(?item), 'Q')) as ?id_numeric) .
-#   OPTIONAL { ?item wdt:P18 ?pic }
-#   OPTIONAL { ?item rdfs:label ?item__rem__i_qcc__is_zxxx filter (lang(?item__rem__i_qcc__is_zxxx) = ""). }
-#   OPTIONAL { ?item rdfs:label ?item__rem__i_lat__is_latn filter (lang(?item__rem__i_lat__is_latn) = "la"). }
-# }
-# ORDER BY ASC (?id_numeric)
-
-## Example with proxy
+# Example with proxy
 # export HTTP_PROXY="socks5://127.0.0.1:9050"
 # export HTTPS_PROXY="socks5://127.0.0.1:9050"
 
-# TODO: https://sinaahmadi.github.io/posts/10-essential-sparql-queries-for-lexicographical-data-on-wikidata.html
+# TODO: https://sinaahmadi.github.io/posts
+#       /10-essential-sparql-queries-for-lexicographical-data-on-wikidata.html
 
 import os
 import sys
@@ -113,6 +92,9 @@ __EPILOGUM__ = """
 --ex-interlinguis
 
     printf "P1585\\n" | {0} --actionem-sparql --de=P --query \
+--ex-interlinguis
+
+    printf "P1585\\n" | {0} --actionem-sparql --de=P --query \
 --lingua-divisioni=50 --lingua-paginae=1
 ------------------------------------------------------------------------------
                             EXEMPLŌRUM GRATIĀ
@@ -124,7 +106,7 @@ STDIN = sys.stdin.buffer
 
 # @see https://meta.wikimedia.org/wiki/User-Agent_policy
 # @see https://www.mediawiki.org/wiki/API:Etiquette
-USER_AGENT="EticaAI-multilingual-lexicography/2022.3.9 (https://meta.wikimedia.org/wiki/User:EmericusPetro; rocha@ieee.org) 1603_3_12.py/0.1"
+USER_AGENT = "EticaAI-multilingual-lexicography/2022.3.9 (https://meta.wikimedia.org/wiki/User:EmericusPetro; rocha@ieee.org) 1603_3_12.py/0.1"
 
 # print('getcwd:      ', os.getcwd())
 # print('oi', NUMERORDINATIO_BASIM)
@@ -311,8 +293,8 @@ class CS1603z3z12:
 
         return self
 
-    def est_wikidata_p_interlinguis(self: str):
-        self.ex_interlinguis = True
+    def est_wikidata_p_interlinguis(self, statum: bool = True):
+        self.ex_interlinguis = statum
 
         return self
 
@@ -341,6 +323,7 @@ class CS1603z3z12:
 #     ?item rdfs:label ?item_rem__rus_cyrl filter (lang(?item_rem__rus_cyrl) = "ru").
 #   }
 # }
+
 
     def query_q(self):
         langpair_full = self._query_linguam()
@@ -392,7 +375,7 @@ ORDER BY ASC (?id_numeric)
         # [TRY IT ↗]()
         return term
 
-## Teste atual
+# Teste atual
 # SELECT DISTINCT ?item ?itemLabel WHERE {
 #   SERVICE wikibase:label {
 #     bd:serviceParam wikibase:language "[AUTO_LANGUAGE]".
@@ -403,7 +386,7 @@ ORDER BY ASC (?id_numeric)
 #         ?item p:P1585 ?statement0.
 #         ?statement0 (ps:P1585) _:anyValueP1585.
 #         #FILTER(EXISTS { ?statement0 prov:wasDerivedFrom ?reference. })
-        
+
 #         #bind(xsd:integer(strafter(str(?item), 'Q')) as ?id_numeric) .
 #       }
 #     }
@@ -475,7 +458,37 @@ ORDER BY ASC (?id_numeric)
         return term
 
     def query_p_ex_interlinguis(self):
-        return self.query_p()
+        qid = ['wd:' + x for x in self.qid if isinstance(x, str)]
+
+        _pid = self.pid[0]
+
+        select = [
+            '(?wikidata_p_value AS ?item__conceptum__codicem)',
+            '(STRAFTER(STR(?item), "entity/") AS '
+            '?item__rem__i_qcc__is_zxxx__ix_wikiq)'
+        ]
+
+        # @TODO: allow command line specify additional properties to
+        #        optionally fetch together
+
+        term = """
+SELECT {select} WHERE {{
+  {{
+    SELECT DISTINCT ?item WHERE {{
+      ?item p:{wikidata_p} ?statement0.
+      ?statement0 (ps:{wikidata_p}) _:anyValue{wikidata_p}.
+    }}
+  }}
+  ?item wdt:{wikidata_p} ?wikidata_p_value . 
+}}
+ORDER BY ASC (?wikidata_p_value)
+        """.format(
+            wikidata_p=_pid,
+            qitems=" ".join(qid),
+            select=" ".join(select)
+        )
+
+        return term
 
     def exportatum_sparql(self):
         resultatum = []
@@ -485,9 +498,9 @@ ORDER BY ASC (?id_numeric)
             resultatum.append(self.query_q())
         if len(self.pid) > 0:
             if self.ex_interlinguis:
-                resultatum.append(self.query_p())
-            else:
                 resultatum.append(self.query_p_ex_interlinguis())
+            else:
+                resultatum.append(self.query_p())
         return resultatum
 
 
@@ -511,7 +524,6 @@ class CLI_2600:
             formatter_class=argparse.RawDescriptionHelpFormatter,
             epilog=__EPILOGUM__
         )
-
 
         # https://en.wikipedia.org/wiki/Code_word
         # https://en.wikipedia.org/wiki/Coded_set
@@ -704,10 +716,10 @@ class CLI_2600:
                 for line in sys.stdin:
                     codicem = line.replace('\n', ' ').replace('\r', '')
                     # TODO: deal with cases were have more than WikiQ
-
+                    # print(self.pyargs)
                     if self.pyargs.de == 'P':
-                        if self.pyargs.ex_interlinguis == 'P':
-                            cs1603_3_12.est_wikidata_p_interlinguis(codicem)
+                        if self.pyargs.ex_interlinguis == True:
+                            cs1603_3_12.est_wikidata_p_interlinguis(True)
                         cs1603_3_12.est_wikidata_p(codicem)
                     elif self.pyargs.de == 'Q':
                         cs1603_3_12.est_wikidata_q(codicem)
