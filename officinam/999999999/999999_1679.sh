@@ -64,6 +64,15 @@ ROOTDIR="$(pwd)"
 
 #### tests _____________________________________________________________________
 
+wikidata_p_ex_interlinguis "1679_45_16_76_2" "1" "1" "P1585" "P402,P1566,P1937,P6555,P8119"
+
+wikidata_p_ex_linguis "1679_45_16_76_2" "1" "1" "P1585" "1" "20"
+
+wikidata_p_ex_totalibus "1679_45_16_76_2" "1" "1" "P1585" "P402,P1566,P1937,P6555,P8119"
+
+exit 1
+
+
 echo "--actionem-sparql --de=P --query --ex-interlinguis --cum-interlinguis=P402,P1566,P1937,P6555,P8119"
 printf "P1585\n" | ./999999999/0/1603_3_12.py \
   --actionem-sparql --de=P --query --ex-interlinguis --cum-interlinguis=P402,P1566,P1937,P6555,P8119 \

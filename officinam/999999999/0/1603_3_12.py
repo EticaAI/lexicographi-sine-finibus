@@ -302,7 +302,8 @@ class CS1603z3z12:
     def est_wikidata_p_cum_interlinguis(self, cum_interlinguis: list = None):
         if cum_interlinguis and len(cum_interlinguis):
             for item in cum_interlinguis:
-                self.cum_interlinguis.append(item.upper().replace('P', ''))
+                if len(item.strip()) > 0:
+                    self.cum_interlinguis.append(item.upper().replace('P', ''))
             self.cum_interlinguis = sorted(self.cum_interlinguis, key=int)
 
         return self

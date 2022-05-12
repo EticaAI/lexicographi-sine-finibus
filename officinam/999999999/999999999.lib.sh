@@ -134,6 +134,7 @@ file_update_if_necessary() {
 
   echo "${FUNCNAME[0]} ... [$fontem_archivum] --> [$objectivum_archivum]"
 
+  # TODO: implement frictionless validate
   case "${formatum_archivum}" in
   csv)
     is_valid=$(csvclean --dry-run "$fontem_archivum")
@@ -1853,11 +1854,192 @@ upload_cdn() {
   temp_save_status "$numerordinatio" "cdn"
 
   echo "------------------------ VALIDATE ------------------------"
-      echo "https://skos-play.sparna.fr/skos-testing-tool/test?url=https://lsf-cdn.etica.ai/$_path/$_nomen.no11.skos.ttl"
+  echo "https://skos-play.sparna.fr/skos-testing-tool/test?url=https://lsf-cdn.etica.ai/$_path/$_nomen.no11.skos.ttl"
   # echo "https://skos-play.sparna.fr/skos-testing-tool/test?url=https://lsf-cdn.etica.ai/$_path/$_nomen.no11.skos.ttl"
   echo "------------------------ VALIDATE ------------------------"
 
   # https://skos-play.sparna.fr/skos-testing-tool/test?url=https://lsf-cdn.etica.ai/1603/63/101/1603_63_101.no11.skos.ttl
+}
+
+#######################################
+# Extract data from Wikidata based on items with respective Wikidata P.
+# Lingual information only
+#
+# Globals:
+#   ROOTDIR
+# Arguments:
+#   numerordinatio
+#   est_temporarium_fontem (default "1", from 99999/)
+#   est_temporarium_objectivumm (default "0", from real namespace)
+#   ex_wikidata_p
+#   lingua_paginae
+#   lingua_divisioni
+# Outputs:
+#   File
+#######################################
+wikidata_p_ex_linguis() {
+  numerordinatio="$1"
+  est_temporarium_fontem="${2:-"1"}"
+  est_temporarium_objectivum="${3:-"0"}"
+  ex_wikidata_p="${4:-"P1585"}"
+  # P402,P1566,P1937,P6555,P8119
+  lingua_paginae="${5:-"1"}"
+  lingua_divisioni="${6:-"1"}"
+
+  _path=$(numerordinatio_neo_separatum "$numerordinatio" "/")
+  _nomen=$(numerordinatio_neo_separatum "$numerordinatio" "_")
+  _prefix=$(numerordinatio_neo_separatum "$numerordinatio" ":")
+
+  if [ "$est_temporarium_fontem" -eq "1" ]; then
+    _basim_fontem="${ROOTDIR}/999999"
+  else
+    _basim_fontem="${ROOTDIR}"
+  fi
+  if [ "$est_temporarium_objectivum" -eq "1" ]; then
+    _basim_objectivum="${ROOTDIR}/999999"
+  else
+    _basim_objectivum="${ROOTDIR}"
+  fi
+
+  # fontem_archivum="${_basim_fontem}/$_path/$_nomen.$est_objectivum_linguam.codex.adoc"
+  objectivum_archivum="${_basim_objectivum}/$_path/$_nomen~wikiq~${lingua_paginae}~${lingua_divisioni}.tm.hxl.csv"
+  objectivum_archivum_temporarium="${ROOTDIR}/999999/0/$_nomen~wikiq~${lingua_paginae}~${lingua_divisioni}.tm.hxl.csv"
+
+  echo "${FUNCNAME[0]} [$ex_wikidata_p] [$lingua_paginae] [$lingua_divisioni] [$objectivum_archivum]"
+  # return 0
+
+  # set -x
+  printf "%s\n" "$ex_wikidata_p" | "${ROOTDIR}/999999999/0/1603_3_12.py" \
+    --actionem-sparql --de=P --query \
+    --lingua-divisioni="${lingua_divisioni}" \
+    --lingua-paginae="${lingua_paginae}" \
+    | "${ROOTDIR}/999999999/0/1603_3_12.py" --actionem-sparql --csv --hxltm \
+      >"$objectivum_archivum_temporarium"
+
+  frictionless validate "$objectivum_archivum_temporarium"
+  # set +x
+
+  # TODO, maybe update file_update_if_necessary to implement frictionless validate
+  file_update_if_necessary csv "$objectivum_archivum_temporarium" "$objectivum_archivum"
+}
+
+#######################################
+# Extract data from Wikidata based on items with respective Wikidata P.
+# Interlingual codes only.
+#
+# Globals:
+#   ROOTDIR
+#   VELOX  (if =1, ignore fonts)
+# Arguments:
+#   numerordinatio
+#   est_temporarium_fontem (default "1", from 99999/)
+#   est_temporarium_objectivumm (default "0", from real namespace)
+#   ex_wikidata_p
+#   cum_interlinguis
+# Outputs:
+#   File
+#######################################
+wikidata_p_ex_interlinguis() {
+  numerordinatio="$1"
+  est_temporarium_fontem="${2:-"1"}"
+  est_temporarium_objectivum="${3:-"0"}"
+  ex_wikidata_p="${4:-"P1585"}"
+  # P402,P1566,P1937,P6555,P8119
+  cum_interlinguis="${5:-""}"
+
+  _path=$(numerordinatio_neo_separatum "$numerordinatio" "/")
+  _nomen=$(numerordinatio_neo_separatum "$numerordinatio" "_")
+  _prefix=$(numerordinatio_neo_separatum "$numerordinatio" ":")
+
+  if [ "$est_temporarium_fontem" -eq "1" ]; then
+    _basim_fontem="${ROOTDIR}/999999"
+  else
+    _basim_fontem="${ROOTDIR}"
+  fi
+  if [ "$est_temporarium_objectivum" -eq "1" ]; then
+    _basim_objectivum="${ROOTDIR}/999999"
+  else
+    _basim_objectivum="${ROOTDIR}"
+  fi
+
+  # fontem_archivum="${_basim_fontem}/$_path/$_nomen.$est_objectivum_linguam.codex.adoc"
+  objectivum_archivum="${_basim_objectivum}/$_path/$_nomen~wikip~0.tm.hxl.csv"
+  objectivum_archivum_temporarium="${ROOTDIR}/999999/0/$_nomen~wikip~0.tm.hxl.csv"
+
+  echo "${FUNCNAME[0]} [$objectivum_archivum]"
+  # return 0
+
+  printf "%s\n" "$ex_wikidata_p" | "${ROOTDIR}/999999999/0/1603_3_12.py" \
+    --actionem-sparql --de=P --query --ex-interlinguis \
+    --cum-interlinguis="$cum_interlinguis" |
+    "${ROOTDIR}/999999999/0/1603_3_12.py" --actionem-sparql --csv --hxltm \
+      >"$objectivum_archivum_temporarium"
+
+  frictionless validate "$objectivum_archivum_temporarium"
+
+  # TODO, maybe update file_update_if_necessary to implement frictionless validate
+  file_update_if_necessary csv "$objectivum_archivum_temporarium" "$objectivum_archivum"
+}
+
+#######################################
+# Extract data from Wikidata based on items with respective Wikidata P.
+# wikidata_p_ex_interlinguis + wikidata_p_ex_linguis
+#
+# Globals:
+#   ROOTDIR
+# Arguments:
+#   numerordinatio
+#   est_temporarium_fontem (default "1", from 99999/)
+#   est_temporarium_objectivumm (default "0", from real namespace)
+#   ex_wikidata_p
+#   lingua_paginae
+#   lingua_divisioni
+# Outputs:
+#   File
+#######################################
+wikidata_p_ex_totalibus() {
+  numerordinatio="$1"
+  est_temporarium_fontem="${2:-"1"}"
+  est_temporarium_objectivum="${3:-"0"}"
+  ex_wikidata_p="${4:-"P1585"}"
+  # P402,P1566,P1937,P6555,P8119
+  cum_interlinguis="${5:-""}"
+
+  # @TODO make inferece from how many concepts source file would have
+  _lingua_divisioni="20"
+
+  _path=$(numerordinatio_neo_separatum "$numerordinatio" "/")
+  _nomen=$(numerordinatio_neo_separatum "$numerordinatio" "_")
+  _prefix=$(numerordinatio_neo_separatum "$numerordinatio" ":")
+
+  if [ "$est_temporarium_fontem" -eq "1" ]; then
+    _basim_fontem="${ROOTDIR}/999999"
+  else
+    _basim_fontem="${ROOTDIR}"
+  fi
+  if [ "$est_temporarium_objectivum" -eq "1" ]; then
+    _basim_objectivum="${ROOTDIR}/999999"
+  else
+    _basim_objectivum="${ROOTDIR}"
+  fi
+
+  fontem_archivum="${_basim_objectivum}/$_path/$_nomen~wikip~0.tm.hxl.csv"
+  objectivum_archivum="${_basim_objectivum}/$_path/$_nomen.no11.tm.hxl.csv"
+  # objectivum_archivum_temporarium="${ROOTDIR}/999999/0/$_nomen~wikiq~${lingua_paginae}~${lingua_divisioni}.tm.hxl.csv"
+
+  echo "${FUNCNAME[0]} <<TODO>> [$objectivum_archivum]"
+  # return 0
+
+  # printf "%s\n" "$ex_wikidata_p" | "${ROOTDIR}/999999999/0/1603_3_12.py" \
+  #   --actionem-sparql --de=P --query --ex-interlinguis \
+  #   --cum-interlinguis="$cum_interlinguis" |
+  #   "${ROOTDIR}/999999999/0/1603_3_12.py" --actionem-sparql --csv --hxltm \
+  #     >"$objectivum_archivum_temporarium"
+
+  # frictionless validate "$objectivum_archivum_temporarium"
+
+  # # TODO, maybe update file_update_if_necessary to implement frictionless validate
+  # file_update_if_necessary csv "$objectivum_archivum_temporarium" "$objectivum_archivum"
 }
 
 ################################################################################
