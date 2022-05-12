@@ -67,7 +67,7 @@ ROOTDIR="$(pwd)"
 #### Manual action, TEST locally, one per time, START --------------------------
 # Download entire XLSX to local temp
 file_download_1603_xlsx "1"
-actiones_completis_locali "1603_1_1"
+# actiones_completis_locali "1603_1_1"
 # actiones_completis_locali "1603_1_7"
 # actiones_completis_locali "1603_1_51"
 # actiones_completis_locali "1603_1_99"
@@ -86,12 +86,12 @@ actiones_completis_locali "1603_1_1"
 # actiones_completis_publicis "1603_25_1"
 # actiones_completis_publicis "1603_99_123"
 # actiones_completis_publicis "1603_1_8000"
-actiones_completis_locali "1679_1_1"
+# actiones_completis_locali "1679_1_1"
 # deploy_0_9_markdown
 
 ## Full drill (remote, randon publish few at time)
-# opus_temporibus_cdn
-# deploy_0_9_markdown
+opus_temporibus_cdn
+deploy_0_9_markdown
 
 # temp_validate_librario "locale"
 # temp_validate_librario "cdn"

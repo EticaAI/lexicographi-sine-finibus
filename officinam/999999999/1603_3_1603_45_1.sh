@@ -31,7 +31,7 @@ ROOTDIR="$(pwd)"
 . "$ROOTDIR"/999999999/999999999.lib.sh
 
 
-# printf "Q1065\nQ82151\n" | ./999999999/0/1603_3_12.py --actionem-sparql --query | ./999999999/0/1603_3_12.py --actionem-sparql --csv
+# printf "Q1065\nQ82151\n" | ./999999999/0/1603_3_12.py --actionem-sparql-q --query | ./999999999/0/1603_3_12.py --actionem-sparql-q --csv
 
 # FORCE_REDOWNLOAD_REM="1603_1_51"
 # file_download_if_necessary "$DATA_1603_1_51" "1603_1_51" "csv" "tm.hxl.csv" "hxltmcli" "1"

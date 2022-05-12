@@ -321,8 +321,8 @@ page.save('Replacing "foo" with "bar"')  # Saves the page
 #             if self.pyargs.wikidata_link:
 #                 if stdin.isatty():
 #                     print("ERROR. Please pipe data in. \nExample:\n"
-#                           "  cat data.txt | {0} --actionem-sparql --query | {0} --actionem-sparql --wikidata-link\n"
-#                           "  printf \"Q1065\\nQ82151\\n\" | {0} --actionem-sparql --query | {0} --actionem-sparql --wikidata-link"
+#                           "  cat data.txt | {0} --actionem-sparql-q --query | {0} --actionem-sparql-q --wikidata-link\n"
+#                           "  printf \"Q1065\\nQ82151\\n\" | {0} --actionem-sparql-q --query | {0} --actionem-sparql-q --wikidata-link"
 #                           "".format(__file__))
 #                     return self.EXIT_ERROR
 
@@ -340,8 +340,8 @@ page.save('Replacing "foo" with "bar"')  # Saves the page
 #             if self.pyargs.tsv or self.pyargs.csv:
 #                 if stdin.isatty():
 #                     print("ERROR. Please pipe data in. \nExample:\n"
-#                           "  cat data.txt | {0} --actionem-sparql --query | {0} --actionem-sparql --tsv\n"
-#                           "  printf \"Q1065\\nQ82151\\n\" | {0} --actionem-sparql --query | {0} --actionem-sparql --tsv"
+#                           "  cat data.txt | {0} --actionem-sparql-q --query | {0} --actionem-sparql-q --tsv\n"
+#                           "  printf \"Q1065\\nQ82151\\n\" | {0} --actionem-sparql-q --query | {0} --actionem-sparql-q --tsv"
 #                           "".format(__file__))
 #                     return self.EXIT_ERROR
 

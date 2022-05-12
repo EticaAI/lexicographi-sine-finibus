@@ -32,14 +32,14 @@
 
 #    ./999999999/0/1603_3_12.py
 #    NUMERORDINATIO_BASIM="/external/ndata" ./999999999/0/1603_3_12.py
-#    printf "Q1065\nQ82151\n" | ./999999999/0/1603_3_12.py --actionem-sparql --query
-#    printf "Q1065\nQ82151\n" | ./999999999/0/1603_3_12.py --actionem-sparql --query | ./999999999/0/1603_3_12.py --actionem-sparql --wikidata-link
-#    printf "Q1065\nQ82151\n" | ./999999999/0/1603_3_12.py --actionem-sparql --query | ./999999999/0/1603_3_12.py --actionem-sparql --tsv > 999999/0/test.tsv
-#    printf "Q1065\nQ82151\n" | ./999999999/0/1603_3_12.py --actionem-sparql --query | ./999999999/0/1603_3_12.py --actionem-sparql --csv > 999999/0/test.csv
-#    printf "Q1065\nQ82151\n" | ./999999999/0/1603_3_12.py --actionem-sparql --query | ./999999999/0/1603_3_12.py --actionem-sparql --csv --hxltm
+#    printf "Q1065\nQ82151\n" | ./999999999/0/1603_3_12.py --actionem-sparql-q --query
+#    printf "Q1065\nQ82151\n" | ./999999999/0/1603_3_12.py --actionem-sparql-q --query | ./999999999/0/1603_3_12.py --actionem-sparql-q --wikidata-link
+#    printf "Q1065\nQ82151\n" | ./999999999/0/1603_3_12.py --actionem-sparql-q --query | ./999999999/0/1603_3_12.py --actionem-sparql-q --tsv > 999999/0/test.tsv
+#    printf "Q1065\nQ82151\n" | ./999999999/0/1603_3_12.py --actionem-sparql-q --query | ./999999999/0/1603_3_12.py --actionem-sparql-q --csv > 999999/0/test.csv
+#    printf "Q1065\nQ82151\n" | ./999999999/0/1603_3_12.py --actionem-sparql-q --query | ./999999999/0/1603_3_12.py --actionem-sparql-q --csv --hxltm
 
 # 1603_25_1 query
-# printf "Q3409626\nQ41055\nQ3321315\nQ160695\nQ9645\nQ9597\nQ713102\nQ133279\n" | ./999999999/0/1603_3_12.py --actionem-sparql --query
+# printf "Q3409626\nQ41055\nQ3321315\nQ160695\nQ9645\nQ9597\nQ713102\nQ133279\n" | ./999999999/0/1603_3_12.py --actionem-sparql-q --query
 
 
 # SELECT ?pic (STRAFTER(STR(?item), "entity/") AS ?item__conceptum__codicem) ?item__rem__i_lat__is_latn
@@ -81,8 +81,22 @@ NUMERORDINATIO_BASIM = os.getenv('NUMERORDINATIO_BASIM', os.getcwd())
 NUMERORDINATIO_DEFALLO = int(os.getenv('NUMERORDINATIO_DEFALLO', '60'))  # �
 NUMERORDINATIO_MISSING = "�"
 DESCRIPTION = """
-1603_3_12.py is (...)
+Wikidata related query building and execution
 """
+
+__EPILOGUM__ = """
+------------------------------------------------------------------------------
+                            EXEMPLŌRUM GRATIĀ
+------------------------------------------------------------------------------
+    printf "Q1065\\nQ82151\\n" | {0} --actionem-sparql-q --query
+
+    printf "Q1065\\nQ82151\\n" | {0} --actionem-sparql-q --query \
+{0} --actionem-sparql-q --wikidata-link
+
+------------------------------------------------------------------------------
+                            EXEMPLŌRUM GRATIĀ
+------------------------------------------------------------------------------
+""".format(__file__)
 
 # In Python2, sys.stdin is a byte stream; in Python3, it's a text stream
 STDIN = sys.stdin.buffer
@@ -365,7 +379,14 @@ class CLI_2600:
         self.EXIT_SYNTAX = 2
 
     def make_args(self, hxl_output=True):
-        parser = argparse.ArgumentParser(description=DESCRIPTION)
+        # parser = argparse.ArgumentParser(description=DESCRIPTION)
+        parser = argparse.ArgumentParser(
+            prog="1603_3_12",
+            description=DESCRIPTION,
+            formatter_class=argparse.RawDescriptionHelpFormatter,
+            epilog=__EPILOGUM__
+        )
+
 
         # https://en.wikipedia.org/wiki/Code_word
         # https://en.wikipedia.org/wiki/Coded_set
@@ -402,11 +423,11 @@ class CLI_2600:
             "(DEFAULT USE) SPARQL query")
 
         neo_codex.add_argument(
-            '--actionem-sparql',
+            '--actionem-sparql-q',
             help='Define mode to operate with generation of SPARQL ' +
             'queries',
             metavar='',
-            dest='actionem_sparql',
+            dest='actionem_sparql_q',
             const=True,
             nargs='?'
         )
@@ -524,7 +545,7 @@ class CLI_2600:
         cs1603_3_12.est_lingua_paginae(
             args.lingua_paginae)
 
-        if self.pyargs.actionem_sparql:
+        if self.pyargs.actionem_sparql_q:
             # print('oi')
 
             if self.pyargs.query:
@@ -548,8 +569,8 @@ class CLI_2600:
             if self.pyargs.wikidata_link:
                 if stdin.isatty():
                     print("ERROR. Please pipe data in. \nExample:\n"
-                          "  cat data.txt | {0} --actionem-sparql --query | {0} --actionem-sparql --wikidata-link\n"
-                          "  printf \"Q1065\\nQ82151\\n\" | {0} --actionem-sparql --query | {0} --actionem-sparql --wikidata-link"
+                          "  cat data.txt | {0} --actionem-sparql-q --query | {0} --actionem-sparql-q --wikidata-link\n"
+                          "  printf \"Q1065\\nQ82151\\n\" | {0} --actionem-sparql-q --query | {0} --actionem-sparql-q --wikidata-link"
                           "".format(__file__))
                     return self.EXIT_ERROR
 
@@ -567,8 +588,8 @@ class CLI_2600:
             if self.pyargs.tsv or self.pyargs.csv:
                 if stdin.isatty():
                     print("ERROR. Please pipe data in. \nExample:\n"
-                          "  cat data.txt | {0} --actionem-sparql --query | {0} --actionem-sparql --tsv\n"
-                          "  printf \"Q1065\\nQ82151\\n\" | {0} --actionem-sparql --query | {0} --actionem-sparql --tsv"
+                          "  cat data.txt | {0} --actionem-sparql-q --query | {0} --actionem-sparql-q --tsv\n"
+                          "  printf \"Q1065\\nQ82151\\n\" | {0} --actionem-sparql-q --query | {0} --actionem-sparql-q --tsv"
                           "".format(__file__))
                     return self.EXIT_ERROR
 
