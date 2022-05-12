@@ -64,9 +64,9 @@ ROOTDIR="$(pwd)"
 
 #### tests _____________________________________________________________________
 
-echo "--actionem-sparql --de=P --query --ex-interlinguis"
+echo "--actionem-sparql --de=P --query --ex-interlinguis --cum-interlinguis=P402,P1566,P1937,P6555,P8119"
 printf "P1585\n" | ./999999999/0/1603_3_12.py \
-  --actionem-sparql --de=P --query --ex-interlinguis \
+  --actionem-sparql --de=P --query --ex-interlinguis --cum-interlinguis=P402,P1566,P1937,P6555,P8119 \
   | ./999999999/0/1603_3_12.py --actionem-sparql --csv --hxltm \
   > 999999/0/P1585.tm.hxl.csv
 

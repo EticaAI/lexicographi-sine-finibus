@@ -300,41 +300,12 @@ class CS1603z3z12:
         self.ex_interlinguis = statum
 
     def est_wikidata_p_cum_interlinguis(self, cum_interlinguis: list = None):
-        # print('oiaa', cum_interlinguis)
         if cum_interlinguis and len(cum_interlinguis):
-            # print('oi3')
             for item in cum_interlinguis:
                 self.cum_interlinguis.append(item.upper().replace('P', ''))
-            # self.cum_interlinguis = cum_interlinguis
-            self.cum_interlinguis = sorted(self.cum_interlinguis)
-        # print('oi a', self.cum_interlinguis)
+            self.cum_interlinguis = sorted(self.cum_interlinguis, key=int)
+
         return self
-
-#     def query(self):
-#         term = """# https://en.wikiversity.org/wiki/Research_in_programming_Wikidata/Countries#List_of_countries
-# # https://w.wiki/4ij4
-# SELECT ?item ?item__eng_latn ?item__rus_cyrl
-# WHERE
-# {
-#   ?item wdt:P31 wd:Q6256. # instance country
-#   OPTIONAL {
-#     ?item rdfs:label ?item__eng_latn filter (lang(?item__eng_latn) = "en").
-#     ?item rdfs:label ?item__rus_cyrl filter (lang(?item__rus_cyrl) = "ru").
-#   }
-# }
-#         """
-#         return term
-
-
-# SELECT ?item ?item_rem__eng_latn ?item_rem__rus_cyrl
-# WHERE
-# {
-#   VALUES ?item { wd:Q1065 wd:Q82151 wd:Q125761 wd:Q7809 }
-#   OPTIONAL {
-#     ?item rdfs:label ?item_rem__eng_latn filter (lang(?item_rem__eng_latn) = "en").
-#     ?item rdfs:label ?item_rem__rus_cyrl filter (lang(?item_rem__rus_cyrl) = "ru").
-#   }
-# }
 
     def query_q(self):
         langpair_full = self._query_linguam()
@@ -346,10 +317,7 @@ class CS1603z3z12:
         # select = ['(?item AS ?item__conceptum__codicem)']
         select = [
             '(STRAFTER(STR(?item), "entity/") AS ?item__conceptum__codicem)']
-        # select = [
-        #     '(STRAFTER(STR(?item), "entity/") AS ?item__conceptum__codicem)',
-        #     '(STRAFTER(STR(?item), "entity/") AS ?item__rem__i_qcc__is_zxxx__ix_wikiq)'
-        # ]
+
         filter_otional = []
         for pair in self.D1613_1_51_langpair:
             select.append('?' + pair[1])
@@ -479,23 +447,29 @@ ORDER BY ASC (?id_numeric)
             '(STRAFTER(STR(?item), "entity/") AS '
             '?item__rem__i_qcc__is_zxxx__ix_wikiq)'
         ]
+        group_by = [
+            '?wikidata_p_value',
+            '?item'
+        ]
         filter_otional = []
         # print('oiii',  self.cum_interlinguis)
         # cum_interlinguis = []
         for item in self.cum_interlinguis:
             # print('item')
-            select.append('?item__rem__i_qcc__is_zxxx__ix_wikip{0}'.format(
+            # (GROUP_CONCAT(?subdivisionLabel; separator = ", ") as ?subdivisionLabels)
+            # select.append('?item__rem__i_qcc__is_zxxx__ix_wikip{0}'.format(
+            select.append('(GROUP_CONCAT(DISTINCT ?p{0}_values; separator = "|") AS ?item__rem__i_qcc__is_zxxx__ix_wikip{0})'.format(
                 item
             ))
             # OPTIONAL { ?item wdt:P6555 ?item__rem__i_qcc__is_zxxx__ix_wikip6555 . }
             filter_otional.append(
                 'OPTIONAL { ?item wdt:P' + item +
-                ' ?item__rem__i_qcc__is_zxxx__ix_wikip' + item + ' . }'
+                ' ?p' + item + '_values . }'
             )
         filter_optional_done = ['  ' + x for x in filter_otional]
 
         term = """
-SELECT {select} WHERE {{
+SELECT DISTINCT {select} WHERE {{
   {{
     SELECT DISTINCT ?item WHERE {{
       ?item p:{wikidata_p} ?statement0.
@@ -505,11 +479,13 @@ SELECT {select} WHERE {{
   ?item wdt:{wikidata_p} ?wikidata_p_value .
 {optional_filters}
 }}
+GROUP BY {group_by}
 ORDER BY ASC (?wikidata_p_value)
         """.format(
             wikidata_p=_pid,
             qitems=" ".join(qid),
             select=" ".join(select),
+            group_by=" ".join(group_by),
             optional_filters="\n".join(filter_optional_done),
         )
 
