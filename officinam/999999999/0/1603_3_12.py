@@ -78,6 +78,10 @@ __EPILOGUM__ = """
 
     printf "Q1065\\nQ82151\\n" | {0} --actionem-sparql --query \
 --lingua-divisioni=5 --lingua-paginae=1 \
+| {0} --actionem-sparql --tsv --ex-http-methodo=GET --cum-somno=0
+
+    printf "Q1065\\nQ82151\\n" | {0} --actionem-sparql --query \
+--lingua-divisioni=5 --lingua-paginae=1 \
 | {0} --actionem-sparql --tsv
 
     printf "Q1065\\nQ82151\\n" | {0} --actionem-sparql --query \
@@ -679,18 +683,58 @@ class CLI_2600:
             nargs='?'
         )
 
-        parser.add_argument(
-            '--verbose',
-            help='Verbose output',
-            metavar='verbose',
+        # cum (+ablativus), https://en.wiktionary.org/wiki/cum#Latin
+        # somnō, m, s, ablativus, https://en.wiktionary.org/wiki/somnus#Latin
+        neo_codex.add_argument(
+            '--cum-somno',
+            help='Sleep in seconds. Defaults to "3".'
+            'Disable with "0"',
+            metavar='cum_somno',
+            default="3",
             nargs='?'
         )
-        if hxl_output:
-            parser.add_argument(
-                'outfile',
-                help='File to write (if omitted, use standard output).',
-                nargs='?'
-            )
+
+        # ex (+ ablativus) https://en.wiktionary.org/wiki/ex#Latin
+        # http, https://en.wiktionary.org/wiki/HTTP#English
+        # methodō, f, s, ablativus, https://en.wiktionary.org/wiki/methodus
+        neo_codex.add_argument(
+            '--ex-http-methodo',
+            help='HTTP method for SPARQL query execution '
+            '(NEEDS FIX: GET request have some bugs)',
+            dest='ex_http_methodo',
+            nargs='?',
+            choices=['POST', 'GET'],
+            default='POST'
+        )
+
+        # - optimization https://en.wiktionary.org/wiki/optimization
+        #   - optimize (1844) Back-formation from optimist.
+        #     https://en.wiktionary.org/wiki/optimize#English
+        #      - optimist From French optimiste, from Latin optimus (“best”).
+        #        https://en.wiktionary.org/wiki/optimist#English
+        #        - optimum, n, s, Nominativus,
+        #          https://en.wiktionary.org/wiki/optimus#Latin
+        neo_codex.add_argument(
+            '--optimum',
+            help='Undocumented optimizations. '
+            'Avoid heavy queries and try to off-load responsability '
+            '(like sorting) to client-side operations)',
+            metavar='optimum',
+            nargs='?'
+        )
+
+        # neo_codex.add_argument(
+        #     '--verbose',
+        #     help='Verbose output',
+        #     metavar='verbose',
+        #     nargs='?'
+        # )
+        # if hxl_output:
+        #     parser.add_argument(
+        #         'outfile',
+        #         help='File to write (if omitted, use standard output).',
+        #         nargs='?'
+        #     )
 
         # print('oioioi', parser)
         return parser.parse_args()
@@ -800,10 +844,22 @@ class CLI_2600:
 
                 payload_query = "".join(full_query)
                 # Lets put an sleep, 3 seconds, just in case
-                sleep(3)
-                r = requests.post(sparql_backend, headers=headers, data={
-                    'query': payload_query
-                })
+
+                # cum_somno = int(self.pyargs.cum_somno)
+                if int(self.pyargs.cum_somno) > 0:
+                    sleep(int(self.pyargs.cum_somno))
+
+                if self.pyargs.ex_http_methodo == 'POST':
+                    r = requests.post(sparql_backend, headers=headers, data={
+                        'query': payload_query
+                    })
+                elif self.pyargs.ex_http_methodo == 'GET':
+                    r = requests.get(sparql_backend, headers=headers, data={
+                        'query': payload_query
+                    })
+
+                # print(r.request.headers)
+                # raise NotImplementedError('test')
 
                 # @TODO: --tsv --hxltm is know to be bugged (not sure if
                 #        Wikidata result already skip values)
