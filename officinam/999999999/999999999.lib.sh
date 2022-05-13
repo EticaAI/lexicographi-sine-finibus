@@ -1916,7 +1916,7 @@ wikidata_p_ex_linguis() {
     | "${ROOTDIR}/999999999/0/1603_3_12.py" --actionem-sparql --csv --hxltm \
       >"$objectivum_archivum_temporarium"
 
-  frictionless validate "$objectivum_archivum_temporarium"
+  frictionless validate "$objectivum_archivum_temporarium" || true
   # set +x
 
   # TODO, maybe update file_update_if_necessary to implement frictionless validate
@@ -1975,7 +1975,7 @@ wikidata_p_ex_interlinguis() {
     "${ROOTDIR}/999999999/0/1603_3_12.py" --actionem-sparql --csv --hxltm \
       >"$objectivum_archivum_temporarium"
 
-  frictionless validate "$objectivum_archivum_temporarium"
+  frictionless validate "$objectivum_archivum_temporarium" || true
 
   # TODO, maybe update file_update_if_necessary to implement frictionless validate
   file_update_if_necessary csv "$objectivum_archivum_temporarium" "$objectivum_archivum"

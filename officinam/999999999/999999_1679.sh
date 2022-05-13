@@ -64,13 +64,28 @@ ROOTDIR="$(pwd)"
 
 #### tests _____________________________________________________________________
 
-wikidata_p_ex_interlinguis "1679_45_16_76_2" "1" "1" "P1585" "P402,P1566,P1937,P6555,P8119"
+# TODO: deal with timeouts. Some links
+#       - https://phabricator.wikimedia.org/T179879
+#       - https://phabricator.wikimedia.org/T166139
+#       - https://github.com/blazegraph/database/wiki/QueryHints
 
-wikidata_p_ex_linguis "1679_45_16_76_2" "1" "1" "P1585" "1" "20"
+# wikidata_p_ex_interlinguis "1679_45_16_76_2" "1" "1" "P1585" "P402,P1566,P1937,P6555,P8119"
 
-wikidata_p_ex_totalibus "1679_45_16_76_2" "1" "1" "P1585" "P402,P1566,P1937,P6555,P8119"
+# sleep 5
+# wikidata_p_ex_linguis "1679_45_16_76_2" "1" "1" "P1585" "1" "30"
 
-exit 1
+# sleep 5
+# wikidata_p_ex_linguis "1679_45_16_76_2" "1" "1" "P1585" "2" "30"
+
+# sleep 5
+# wikidata_p_ex_linguis "1679_45_16_76_2" "1" "1" "P1585" "3" "30"
+
+# sleep 5
+# wikidata_p_ex_linguis "1679_45_16_76_2" "1" "1" "P1585" "4" "30"
+
+# wikidata_p_ex_totalibus "1679_45_16_76_2" "1" "1" "P1585" "P402,P1566,P1937,P6555,P8119"
+
+# exit 1
 
 
 echo "--actionem-sparql --de=P --query --ex-interlinguis --cum-interlinguis=P402,P1566,P1937,P6555,P8119"
@@ -135,3 +150,12 @@ sed -i '1d' "999999/0/1679_45_16_76_2.no11.hxl.csv"
 file_hotfix_duplicated_merge_key "999999/0/1679_45_16_76_2.no11.hxl.csv" '#item+rem+i_qcc+is_zxxx+ix_wikiq'
 
 # 999999/0/1679_45_16_76_2.no11.hxl.csv
+
+# @TODO eventualmente talvez anotar as propriedades de campos que tem aqui
+#       Cadastro Nacional de Endereços para Fins Estatísticos
+#       https://ftp.ibge.gov.br/Censos/Censo_Demografico_2010/Cadastro_Nacional_de_Enderecos_Fins_Estatisticos/
+
+# @TODO https://geoftp.ibge.gov.br/
+
+# @TODO https://geoftp.ibge.gov.br/organizacao_do_territorio/estrutura_territorial/divisao_territorial/2021/
+# @TODO https://geoftp.ibge.gov.br/cartas_e_mapas/bases_cartograficas_continuas/bc250/versao2021/geopackage/
