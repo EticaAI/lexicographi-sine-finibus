@@ -71,83 +71,83 @@ ROOTDIR="$(pwd)"
 
 # wikidata_p_ex_interlinguis "1679_45_16_76_2" "1" "1" "P1585" "P402,P1566,P1937,P6555,P8119"
 
-# sleep 5
-# wikidata_p_ex_linguis "1679_45_16_76_2" "1" "1" "P1585" "1" "30"
+# sleep 10
+# wikidata_p_ex_linguis "1679_45_16_76_2" "1" "1" "P1585" "1" "20"
+
+# sleep 10
+# wikidata_p_ex_linguis "1679_45_16_76_2" "1" "1" "P1585" "2" "20"
+
+# sleep 10
+# wikidata_p_ex_linguis "1679_45_16_76_2" "1" "1" "P1585" "3" "20"
+
+# sleep 10
+# wikidata_p_ex_linguis "1679_45_16_76_2" "1" "1" "P1585" "4" "20"
+
+wikidata_p_ex_totalibus "1679_45_16_76_2" "1" "1" "P1585" "P402,P1566,P1937,P6555,P8119"
+
+exit 1
+
+
+# echo "--actionem-sparql --de=P --query --ex-interlinguis --cum-interlinguis=P402,P1566,P1937,P6555,P8119"
+# printf "P1585\n" | ./999999999/0/1603_3_12.py \
+#   --actionem-sparql --de=P --query --ex-interlinguis --cum-interlinguis=P402,P1566,P1937,P6555,P8119 \
+#   | ./999999999/0/1603_3_12.py --actionem-sparql --csv --hxltm \
+#   > 999999/0/P1585.tm.hxl.csv
 
 # sleep 5
-# wikidata_p_ex_linguis "1679_45_16_76_2" "1" "1" "P1585" "2" "30"
+# echo "--actionem-sparql --de=P --query --lingua-divisioni=20 --lingua-paginae=1"
+# printf "P1585\n" | ./999999999/0/1603_3_12.py \
+#   --actionem-sparql --de=P --query --lingua-divisioni=20 --lingua-paginae=1 \
+#   | ./999999999/0/1603_3_12.py --actionem-sparql --csv --hxltm \
+#   > 999999/0/P1585.wikiq~1-20.hxl.csv
 
 # sleep 5
-# wikidata_p_ex_linguis "1679_45_16_76_2" "1" "1" "P1585" "3" "30"
+# echo "--actionem-sparql --de=P --query --lingua-divisioni=20 --lingua-paginae=2"
+# printf "P1585\n" | ./999999999/0/1603_3_12.py \
+#   --actionem-sparql --de=P --query --lingua-divisioni=20 --lingua-paginae=2 \
+#   | ./999999999/0/1603_3_12.py --actionem-sparql --csv --hxltm \
+#   > 999999/0/P1585.wikiq~2-20.hxl.csv
 
 # sleep 5
-# wikidata_p_ex_linguis "1679_45_16_76_2" "1" "1" "P1585" "4" "30"
+# echo "--actionem-sparql --de=P --query --lingua-divisioni=20 --lingua-paginae=3"
+# printf "P1585\n" | ./999999999/0/1603_3_12.py \
+#   --actionem-sparql --de=P --query --lingua-divisioni=20 --lingua-paginae=3 \
+#   | ./999999999/0/1603_3_12.py --actionem-sparql --csv --hxltm \
+#   > 999999/0/P1585.wikiq~3-20.hxl.csv
 
-# wikidata_p_ex_totalibus "1679_45_16_76_2" "1" "1" "P1585" "P402,P1566,P1937,P6555,P8119"
+# echo "hxlmerge..."
+# hxlmerge --keys='#item+conceptum+codicem' \
+#   --tags='#item+rem' \
+#   --merge="999999/0/P1585.wikiq~2-20.hxl.csv" \
+#   "999999/0/P1585.wikiq~1-20.hxl.csv" \
+#   >"999999/0/P1585.wikiq~1+2-20.hxl.csv"
 
-# exit 1
+# sed -i '1d' "999999/0/P1585.wikiq~1+2-20.hxl.csv"
 
+# hxlmerge --keys='#item+conceptum+codicem' \
+#   --tags='#item+rem' \
+#   --merge="999999/0/P1585.wikiq~3-20.hxl.csv" \
+#   "999999/0/P1585.wikiq~1+2-20.hxl.csv" \
+#   >"999999/0/P1585.wikiq~1+2+3-20.hxl.csv"
 
-echo "--actionem-sparql --de=P --query --ex-interlinguis --cum-interlinguis=P402,P1566,P1937,P6555,P8119"
-printf "P1585\n" | ./999999999/0/1603_3_12.py \
-  --actionem-sparql --de=P --query --ex-interlinguis --cum-interlinguis=P402,P1566,P1937,P6555,P8119 \
-  | ./999999999/0/1603_3_12.py --actionem-sparql --csv --hxltm \
-  > 999999/0/P1585.tm.hxl.csv
+# sed -i '1d' "999999/0/P1585.wikiq~1+2+3-20.hxl.csv"
 
-sleep 5
-echo "--actionem-sparql --de=P --query --lingua-divisioni=20 --lingua-paginae=1"
-printf "P1585\n" | ./999999999/0/1603_3_12.py \
-  --actionem-sparql --de=P --query --lingua-divisioni=20 --lingua-paginae=1 \
-  | ./999999999/0/1603_3_12.py --actionem-sparql --csv --hxltm \
-  > 999999/0/P1585.wikiq~1-20.hxl.csv
+# hxlrename \
+#   --rename='item+conceptum+codicem:#item+rem+i_qcc+is_zxxx+ix_wikiq' \
+#   "999999/0/P1585.wikiq~1+2+3-20.hxl.csv" \
+#   >"999999/0/P1585.wikiq~1+2+3-20~TEMP.hxl.csv"
 
-sleep 5
-echo "--actionem-sparql --de=P --query --lingua-divisioni=20 --lingua-paginae=2"
-printf "P1585\n" | ./999999999/0/1603_3_12.py \
-  --actionem-sparql --de=P --query --lingua-divisioni=20 --lingua-paginae=2 \
-  | ./999999999/0/1603_3_12.py --actionem-sparql --csv --hxltm \
-  > 999999/0/P1585.wikiq~2-20.hxl.csv
+# sed -i '1d' "999999/0/P1585.wikiq~1+2+3-20~TEMP.hxl.csv"
 
-sleep 5
-echo "--actionem-sparql --de=P --query --lingua-divisioni=20 --lingua-paginae=3"
-printf "P1585\n" | ./999999999/0/1603_3_12.py \
-  --actionem-sparql --de=P --query --lingua-divisioni=20 --lingua-paginae=3 \
-  | ./999999999/0/1603_3_12.py --actionem-sparql --csv --hxltm \
-  > 999999/0/P1585.wikiq~3-20.hxl.csv
+# hxlmerge --keys='#item+rem+i_qcc+is_zxxx+ix_wikiq' \
+#   --tags='#item+rem' \
+#   --merge="999999/0/P1585.wikiq~1+2+3-20~TEMP.hxl.csv" \
+#   "999999/0/P1585.tm.hxl.csv" \
+#   >"999999/0/1679_45_16_76_2.no11.hxl.csv"
 
-echo "hxlmerge..."
-hxlmerge --keys='#item+conceptum+codicem' \
-  --tags='#item+rem' \
-  --merge="999999/0/P1585.wikiq~2-20.hxl.csv" \
-  "999999/0/P1585.wikiq~1-20.hxl.csv" \
-  >"999999/0/P1585.wikiq~1+2-20.hxl.csv"
+# sed -i '1d' "999999/0/1679_45_16_76_2.no11.hxl.csv"
 
-sed -i '1d' "999999/0/P1585.wikiq~1+2-20.hxl.csv"
-
-hxlmerge --keys='#item+conceptum+codicem' \
-  --tags='#item+rem' \
-  --merge="999999/0/P1585.wikiq~3-20.hxl.csv" \
-  "999999/0/P1585.wikiq~1+2-20.hxl.csv" \
-  >"999999/0/P1585.wikiq~1+2+3-20.hxl.csv"
-
-sed -i '1d' "999999/0/P1585.wikiq~1+2+3-20.hxl.csv"
-
-hxlrename \
-  --rename='item+conceptum+codicem:#item+rem+i_qcc+is_zxxx+ix_wikiq' \
-  "999999/0/P1585.wikiq~1+2+3-20.hxl.csv" \
-  >"999999/0/P1585.wikiq~1+2+3-20~TEMP.hxl.csv"
-
-sed -i '1d' "999999/0/P1585.wikiq~1+2+3-20~TEMP.hxl.csv"
-
-hxlmerge --keys='#item+rem+i_qcc+is_zxxx+ix_wikiq' \
-  --tags='#item+rem' \
-  --merge="999999/0/P1585.wikiq~1+2+3-20~TEMP.hxl.csv" \
-  "999999/0/P1585.tm.hxl.csv" \
-  >"999999/0/1679_45_16_76_2.no11.hxl.csv"
-
-sed -i '1d' "999999/0/1679_45_16_76_2.no11.hxl.csv"
-
-file_hotfix_duplicated_merge_key "999999/0/1679_45_16_76_2.no11.hxl.csv" '#item+rem+i_qcc+is_zxxx+ix_wikiq'
+# file_hotfix_duplicated_merge_key "999999/0/1679_45_16_76_2.no11.hxl.csv" '#item+rem+i_qcc+is_zxxx+ix_wikiq'
 
 # 999999/0/1679_45_16_76_2.no11.hxl.csv
 

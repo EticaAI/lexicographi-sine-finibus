@@ -1916,7 +1916,8 @@ wikidata_p_ex_linguis() {
     | "${ROOTDIR}/999999999/0/1603_3_12.py" --actionem-sparql --csv --hxltm \
       >"$objectivum_archivum_temporarium"
 
-  frictionless validate "$objectivum_archivum_temporarium" || true
+  # frictionless validate "$objectivum_archivum_temporarium" || true
+  frictionless validate "$objectivum_archivum_temporarium"
   # set +x
 
   # TODO, maybe update file_update_if_necessary to implement frictionless validate
@@ -2028,18 +2029,41 @@ wikidata_p_ex_totalibus() {
   # objectivum_archivum_temporarium="${ROOTDIR}/999999/0/$_nomen~wikiq~${lingua_paginae}~${lingua_divisioni}.tm.hxl.csv"
 
   echo "${FUNCNAME[0]} <<TODO>> [$objectivum_archivum]"
-  # return 0
+  # _lingua_divisioni
+  # https://www.shellcheck.net/wiki/SC2051
+  for i in {1..19}
+  do
+    echo "Number: $i"
+    sleep 10
+    wikidata_p_ex_linguis "1679_45_16_76_2" "1" "1" "P1585" "$i" "20"
+  done
 
-  # printf "%s\n" "$ex_wikidata_p" | "${ROOTDIR}/999999999/0/1603_3_12.py" \
-  #   --actionem-sparql --de=P --query --ex-interlinguis \
-  #   --cum-interlinguis="$cum_interlinguis" |
-  #   "${ROOTDIR}/999999999/0/1603_3_12.py" --actionem-sparql --csv --hxltm \
-  #     >"$objectivum_archivum_temporarium"
+  for i in {1..19}; do
+    echo "Number: $i"
+    i2=$((i + 1))
+    fontem_1="${_basim_objectivum}/$_path/$_nomen~wikiq~$i.tm.hxl.csv"
+    fontem_2="${_basim_objectivum}/$_path/$_nomen~wikiq~$i2.tm.hxl.csv"
+    objectivum_archivum="${_basim_objectivum}/$_path/$_nomen~wikiq.tm.hxl.csv"
+    objectivum_archivum_temporarium="${ROOTDIR}/999999/0/$_nomen~wikiq~TEMP.tm.hxl.csv"
+    # objectivum_archivum="$3"
+    tempfunc_merge_wikiq_files "$fontem_1" "$fontem_2" "$objectivum_archivum_temporarium"
+  done
+}
 
-  # frictionless validate "$objectivum_archivum_temporarium"
+tempfunc_merge_wikiq_files() {
+  fontem_1="$1"
+  fontem_2="$2"
+  objectivum_archivum="$3"
 
-  # # TODO, maybe update file_update_if_necessary to implement frictionless validate
-  # file_update_if_necessary csv "$objectivum_archivum_temporarium" "$objectivum_archivum"
+  echo "hxlmerge..."
+  hxlmerge --keys='#item+conceptum+codicem' \
+    --tags='#item+rem' \
+    --merge="$fontem_2" \
+    "$fontem_1" \
+    >"$objectivum_archivum"
+
+  sed -i '1d' "$objectivum_archivum"
+  file_hotfix_duplicated_merge_key "$objectivum_archivum" '#item+rem+i_qcc+is_zxxx+ix_wikiq'
 }
 
 ################################################################################

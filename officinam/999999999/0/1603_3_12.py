@@ -429,9 +429,9 @@ SELECT {select} WHERE {{
     }}
   }}
 {langfilter}
-  bind(xsd:integer(strafter(str(?item), 'Q')) as ?id_numeric) .
+  # bind(xsd:integer(strafter(str(?item), 'Q')) as ?id_numeric) .
 }}
-ORDER BY ASC (?id_numeric)
+# ORDER BY ASC (?id_numeric)
         """.format(
             wikidata_p=_pid,
             qitems=" ".join(qid),
@@ -485,7 +485,8 @@ SELECT DISTINCT {select} WHERE {{
 {optional_filters}
 }}
 GROUP BY {group_by}
-ORDER BY ASC (?wikidata_p_value)
+# ORDER BY ASC (?wikidata_p_value)
+ORDER BY ASC (?item__conceptum__codicem)
         """.format(
             wikidata_p=_pid,
             qitems=" ".join(qid),
