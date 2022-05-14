@@ -159,3 +159,26 @@ exit 1
 
 # @TODO https://geoftp.ibge.gov.br/organizacao_do_territorio/estrutura_territorial/divisao_territorial/2021/
 # @TODO https://geoftp.ibge.gov.br/cartas_e_mapas/bases_cartograficas_continuas/bc250/versao2021/geopackage/
+
+# https://github.com/conjecto/docker-blazegraph
+# docker run --name some-blazegraph -d conjecto/blazegraph:2.1.6
+# https://github.com/lyrasis/docker-blazegraph
+
+# docker run --name blazegraph -d -p 8889:8080 lyrasis/blazegraph:2.1.5
+# docker logs -f blazegraph
+# http://localhost:8889/bigdata/
+
+# https://wiki.uib.no/info216/index.php/Lab:_SPARQL_Programming
+
+# See https://github.com/blazegraph/database/wiki/Quick_Start
+wget https://raw.githubusercontent.com/blazegraph/blazegraph-samples/53f615248f33f767d2b259472d84f19452d39aa5/sample-sesame-embedded/src/main/resources/data.n3 -o /tmp/data.n3
+xdg-open http://localhost:8889/bigdata/
+# Run
+#    load <file:///tmp/data.n3>
+
+
+# https://github.com/apache/jena/blob/main/jena-fuseki2/jena-fuseki-docker/README.md
+# https://www.youtube.com/watch?v=5-UfFV5XmTI
+# https://jena.apache.org/documentation/io/
+# https://github.com/stain/jena-docker
+# https://ontola.io/blog/rdf-serialization-formats/
