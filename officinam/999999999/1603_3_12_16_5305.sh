@@ -30,6 +30,8 @@ ROOTDIR="$(pwd)"
 # shellcheck source=999999999.lib.sh
 . "$ROOTDIR"/999999999/999999999.lib.sh
 
+# Recommended use the lastest from https://jena.apache.org/download/
+SPARQL_ENDPOINT_JENA_VERSION="4.5.0"
 
 # @TODO eventualmente talvez anotar as propriedades de campos que tem aqui
 #       Cadastro Nacional de Endereços para Fins Estatísticos
@@ -61,3 +63,88 @@ ROOTDIR="$(pwd)"
 # https://jena.apache.org/documentation/io/
 # https://github.com/stain/jena-docker
 # https://ontola.io/blog/rdf-serialization-formats/
+
+#######################################
+# Download Apache JENA to 999999999/0/1686799/
+#
+# Globals:
+#   ROOTDIR
+#   SPARQL_ENDPOINT_JENA_VERSION
+# Arguments:
+#   numerordinatio
+# Outputs:
+#   Convert files
+#######################################
+p5305_sparql_endpoint_jena_install() {
+  # numerordinatio="$1"
+  iri="https://dlcdn.apache.org/jena/binaries/apache-jena-${SPARQL_ENDPOINT_JENA_VERSION}.tar.gz"
+
+  fontem_archivum_temporarium="${ROOTDIR}/999999/0/apache-jena.tar.gz"
+  targz_subdir="apache-jena-${SPARQL_ENDPOINT_JENA_VERSION}"
+  objectivum_archivum="${ROOTDIR}/999999999/0/1686799/apache-jena"
+
+  echo "${FUNCNAME[0]} ... [$SPARQL_ENDPOINT_JENA_VERSION] [$iri]"
+
+  if [ ! -f "${fontem_archivum_temporarium}" ]; then
+    set -x
+    curl --compressed --silent --show-error \
+      -get "$iri" \
+      --output "$fontem_archivum_temporarium"
+    set +x
+  else
+    echo "Already cached at [${fontem_archivum_temporarium}]"
+  fi
+
+  set -x
+  tar -C "${objectivum_archivum}" \
+    -zxf "${fontem_archivum_temporarium}" \
+    "${targz_subdir}" \
+    --strip-components=2
+  set +x
+  # @TODO: remove cached downloaded file
+}
+
+#######################################
+# Download Apache JENA fuseki to 999999999/0/1686799/
+#
+# Globals:
+#   ROOTDIR
+#   SPARQL_ENDPOINT_JENA_VERSION
+# Arguments:
+#   numerordinatio
+# Outputs:
+#   Convert files
+#######################################
+p5305_sparql_endpoint_jena_fuseki_install() {
+  # numerordinatio="$1"
+  # https://dlcdn.apache.org/jena/binaries/apache-jena-fuseki-4.5.0.tar.gz
+  iri="https://dlcdn.apache.org/jena/binaries/apache-jena-fuseki-${SPARQL_ENDPOINT_JENA_VERSION}.tar.gz"
+  echo "${FUNCNAME[0]} ... [$SPARQL_ENDPOINT_JENA_VERSION] [$iri]"
+
+  fontem_archivum_temporarium="${ROOTDIR}/999999/0/apache-jena-fuseki.tar.gz"
+  targz_subdir="apache-jena-fuseki-${SPARQL_ENDPOINT_JENA_VERSION}"
+  objectivum_archivum="${ROOTDIR}/999999999/0/1686799/apache-jena-fuseki"
+
+  if [ ! -f "${fontem_archivum_temporarium}" ]; then
+    set -x
+    curl --compressed --silent --show-error \
+      -get "$iri" \
+      --output "$fontem_archivum_temporarium"
+    set +x
+  else
+    echo "Already cached at [${fontem_archivum_temporarium}]"
+  fi
+
+  set -x
+  tar -C "${objectivum_archivum}" \
+    -zxf "${fontem_archivum_temporarium}" \
+    "${targz_subdir}" \
+    --strip-components=2
+  set +x
+  # @TODO: remove cached downloaded file
+}
+
+#### Apache Jena, install ______________________________________________________
+# Uncomment these.
+# p5305_sparql_endpoint_jena_install
+# p5305_sparql_endpoint_jena_fuseki_install
