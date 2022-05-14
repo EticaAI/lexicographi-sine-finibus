@@ -85,6 +85,18 @@ ROOTDIR="$(pwd)"
 
 wikidata_p_ex_totalibus "1679_45_16_76_2" "1" "1" "P1585" "P402,P1566,P1937,P6555,P8119"
 
+# @see https://servicodados.ibge.gov.br/api/docs/localidades
+# @see https://github.com/search?o=desc&q=ibge&s=stars&type=Repositories
+# @see CNAE
+#      - https://servicodados.ibge.gov.br/api/docs/CNAE?versao=2#api-_
+#      - https://cnae.ibge.gov.br/images/concla/documentacao/CNAE20_Introducao.pdf
+# @see https://sidra.ibge.gov.br/home/pnadct/brasil
+# @see https://servicodados.ibge.gov.br/api/docs
+# @see - https://servicodados.ibge.gov.br/api/docs/produtos?versao=1
+#        - https://servicodados.ibge.gov.br/api/v1/produtos/estatisticas
+#        - https://servicodados.ibge.gov.br/api/v1/produtos/geociencias
+#        - https://biblioteca.ibge.gov.br/visualizacao/livros/liv100600.pdf
+
 exit 1
 
 

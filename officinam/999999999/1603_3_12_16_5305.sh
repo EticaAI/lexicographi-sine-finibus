@@ -34,7 +34,8 @@ ROOTDIR="$(pwd)"
 SPARQL_ENDPOINT_JENA_VERSION="4.5.0"
 
 # @see https://jena.apache.org/documentation/tools/index.html
-JENA_HOME="$ROOTDIR/999999999/0/1686799/apache-jena"
+JENA_HOME="${ROOTDIR}/999999999/0/1686799/apache-jena"
+export FUSEKI_BASE="${ROOTDIR}/999999999/0/1686799/apache-jena-workspace"
 export PATH=$PATH:$JENA_HOME/bin
 
 # @TODO eventualmente talvez anotar as propriedades de campos que tem aqui
@@ -109,6 +110,65 @@ p5305_sparql_endpoint_jena_install() {
 }
 
 #######################################
+# Download Apache JENA to /opt/apache-jena (requires folder already created)
+# Example
+#     sudo mkdir /opt/apache-jena
+#     sudo chown $USER:$USER /opt/apache-jena
+#
+# Globals:
+#   ROOTDIR
+#   SPARQL_ENDPOINT_JENA_VERSION
+# Arguments:
+#   numerordinatio
+# Outputs:
+#   Convert files
+#######################################
+p5305_sparql_endpoint_jena_install_system_opt() {
+  # numerordinatio="$1"
+  iri="https://dlcdn.apache.org/jena/binaries/apache-jena-${SPARQL_ENDPOINT_JENA_VERSION}.tar.gz"
+
+  fontem_archivum_temporarium="${ROOTDIR}/999999/0/apache-jena.tar.gz"
+  targz_subdir="apache-jena-${SPARQL_ENDPOINT_JENA_VERSION}"
+  # objectivum_archivum="${ROOTDIR}/999999999/0/1686799/apache-jena"
+  objectivum_archivum="/opt/apache-jena"
+
+  echo "${FUNCNAME[0]} ... [$SPARQL_ENDPOINT_JENA_VERSION] [$iri]"
+
+  if [ ! -f "${fontem_archivum_temporarium}" ]; then
+    set -x
+    curl --compressed --silent --show-error \
+      -get "$iri" \
+      --output "$fontem_archivum_temporarium"
+    set +x
+  else
+    echo "Already cached at [${fontem_archivum_temporarium}]"
+  fi
+
+  set -x
+  tar -C "${objectivum_archivum}" \
+    -zxf "${fontem_archivum_temporarium}" \
+    "${targz_subdir}" \
+    --strip-components=1
+  set +x
+
+  echo "--- IF REQUIRED TO ADD TO PATH ---"
+  # Do it only if sparql --version already not enabled
+  # vim ~/.bash_profile
+  echo ""
+  echo "    vim ~/.bash_profile"
+  echo "    #    JENA_HOME=/opt/apache-jena"
+  echo "    #    PATH=/opt/apache-jena/bin:\$PATH"
+  echo "    source ~/.bash_profile"
+  echo "    # test:"
+  echo "    sparql --version"
+  echo ""
+  echo "--- REQUIRES ADD TO YOUR PATH ---"
+
+  # @TODO: remove cached downloaded file
+}
+
+
+#######################################
 # Download Apache JENA fuseki to 999999999/0/1686799/
 #
 # Globals:
@@ -144,12 +204,74 @@ p5305_sparql_endpoint_jena_fuseki_install() {
     -zxf "${fontem_archivum_temporarium}" \
     "${targz_subdir}" \
     --strip-components=1
-
-  # cd "${objectivum_archivum}"
-  # tar -zxf "${fontem_archivum_temporarium}" "${targz_subdir}"
-  # cd "${ROOTDIR}"
   set +x
   # @TODO: remove cached downloaded file
+}
+
+
+#######################################
+
+# Download Apache JENA Fuseki to /opt/apache-jena. Requires folder already
+# created like:
+#     sudo mkdir /opt/apache-jena-fuseki
+#     sudo chown $USER:$USER /opt/apache-jena-fuseki
+#
+# Globals:
+#   ROOTDIR
+#   SPARQL_ENDPOINT_JENA_VERSION
+# Arguments:
+#   numerordinatio
+# Outputs:
+#   Convert files
+#######################################
+p5305_sparql_endpoint_jena_fuseki_install_system_opt() {
+  # numerordinatio="$1"
+  # https://dlcdn.apache.org/jena/binaries/apache-jena-fuseki-4.5.0.tar.gz
+  iri="https://dlcdn.apache.org/jena/binaries/apache-jena-fuseki-${SPARQL_ENDPOINT_JENA_VERSION}.tar.gz"
+  echo "${FUNCNAME[0]} ... [$SPARQL_ENDPOINT_JENA_VERSION] [$iri]"
+
+  fontem_archivum_temporarium="${ROOTDIR}/999999/0/apache-jena-fuseki.tar.gz"
+  targz_subdir="apache-jena-fuseki-${SPARQL_ENDPOINT_JENA_VERSION}"
+  # objectivum_archivum="${ROOTDIR}/999999999/0/1686799/apache-jena-fuseki"
+  objectivum_archivum="/opt/apache-jena-fuseki"
+  objectivum_workdir="${ROOTDIR}/999999999/0/1686799/apache-jena-workspace"
+
+  if [ ! -f "${fontem_archivum_temporarium}" ]; then
+    set -x
+    curl --compressed --silent --show-error \
+      -get "$iri" \
+      --output "$fontem_archivum_temporarium"
+    set +x
+  else
+    echo "Already cached at [${fontem_archivum_temporarium}]"
+  fi
+
+  set -x
+  tar -C "${objectivum_archivum}" \
+    -zxf "${fontem_archivum_temporarium}" \
+    "${targz_subdir}" \
+    --strip-components=1
+  set +x
+  # @TODO: remove cached downloaded file
+
+  # echo "--- IF REQUIRED TO ADD TO PATH ---"
+  # echo ""
+  # echo "   # Do it only if sparql --version already not enabled"
+  # echo "    vim ~/.bash_profile"
+  # echo "    #    JENA_HOME=/opt/apache-jena"
+  # echo "    #    PATH=/opt/apache-jena-fuseki/bin:\$PATH"
+  # echo "    source ~/.bash_profile"
+  # echo "    # test:"
+  # echo "    sparql --version"
+  # echo ""
+  # echo "--- REQUIRES ADD TO YOUR PATH ---"
+  echo "--- SEE ALSO ---"
+  echo ""
+  echo "    cd $objectivum_workdir"
+  echo "    /opt/apache-jena-fuseki/fuseki-server"
+  echo "    # web interface at http://localhost:3030/#/"
+  echo ""
+  echo "--- SEE ALSO ---"
 }
 
 #######################################
@@ -166,37 +288,23 @@ p5305_sparql_endpoint_jena_fuseki_install() {
 p5305_sparql_endpoint_jena_fuseki_start() {
 
   fontem_archivum="${ROOTDIR}/999999999/0/1686799/apache-jena-fuseki"
-  targz_subdir="apache-jena-fuseki-${SPARQL_ENDPOINT_JENA_VERSION}"
+  # objectivum_archivum_workspace="${ROOTDIR}/999999999/0/1686799/apache-jena-workspace"
+  #targz_subdir="apache-jena-fuseki-${SPARQL_ENDPOINT_JENA_VERSION}"
   objectivum_archivum_basi="${ROOTDIR}/999999999/0/1686799/apache-jena-fuseki"
   objectivum_archivum_bin="${objectivum_archivum_basi}/fuseki-server"
   # officinam/999999999/0/1686799/apache-jena-fuseki/fuseki-server
   objectivum_archivum="${ROOTDIR}/999999999/0/1686799/apache-jena-fuseki"
+  objectivum_archivum_web="http://localhost:3030/#/"
 
+  echo "${FUNCNAME[0]} ... [$SPARQL_ENDPOINT_JENA_VERSION] [$objectivum_archivum_web]"
 
-  echo "${FUNCNAME[0]} ... [$SPARQL_ENDPOINT_JENA_VERSION] [$iri]"
-
+  # cd "$objectivum_archivum_workspace"
   # Starts at http://localhost:3030/#/
   # @TODO: change home directory
   "${objectivum_archivum_bin}"
 
   sparql --version
 
-  # if [ ! -f "${fontem_archivum_temporarium}" ]; then
-  #   set -x
-  #   curl --compressed --silent --show-error \
-  #     -get "$iri" \
-  #     --output "$fontem_archivum_temporarium"
-  #   set +x
-  # else
-  #   echo "Already cached at [${fontem_archivum_temporarium}]"
-  # fi
-
-  # set -x
-  # tar -C "${objectivum_archivum}" \
-  #   -zxf "${fontem_archivum_temporarium}" \
-  #   "${targz_subdir}" \
-  #   --strip-components=2
-  # set +x
   # @TODO: remove cached downloaded file
 }
 
@@ -207,17 +315,21 @@ p5305_sparql_endpoint_jena_fuseki_start() {
 #
 #     sudo apt install default-jre
 
-#### Apache Jena, install ______________________________________________________
-# Uncomment these.
+#### Apache Jena, install ______________________________________________________/workspace/bin/apache-jena
+# Uncomment these. (local dir)
 # p5305_sparql_endpoint_jena_install
 # p5305_sparql_endpoint_jena_fuseki_install
 
+p5305_sparql_endpoint_jena_install_system_opt
+p5305_sparql_endpoint_jena_fuseki_install_system_opt
 
 #### Other commends (move or remove later) _____________________________________
 # https://www.wikidata.org/wiki/Wikidata:Identifier_migration
 # https://www.wikidata.org/wiki/Help:Authority_control
 
-p5305_sparql_endpoint_jena_fuseki_start
+# p5305_sparql_endpoint_jena_fuseki_start
 
-
+# ln -s /workspace/git/EticaAI/multilingual-lexicography-automation/officinam/999999999/0/1686799/apache-jena/bin /workspace/bin/apache-jena
+# vim ~/.bash_profile:
+#     PATH="/workspace/bin/apache-jena:$PATH"
 # @TODO https://www.digitalocean.com/community/tutorials/how-to-install-java-with-apt-on-ubuntu-20-04-pt
