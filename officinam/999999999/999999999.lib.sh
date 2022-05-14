@@ -1145,8 +1145,8 @@ file_translate_csv_de_numerordinatio_q() {
     --actionem-sparql \
     --lingua-divisioni=5 \
     --lingua-paginae=1 \
-    --query <"$objectivum_archivum_temporarium_b_u" |
-    ./999999999/0/1603_3_12.py --actionem-sparql --csv --hxltm \
+    --query --optimum <"$objectivum_archivum_temporarium_b_u" |
+    ./999999999/0/1603_3_12.py --actionem-sparql --csv --hxltm --optimum \
       >"$objectivum_archivum_temporarium_b_u_wiki_1_5"
 
   echo "2/5"
@@ -1154,8 +1154,8 @@ file_translate_csv_de_numerordinatio_q() {
     --actionem-sparql \
     --lingua-divisioni=5 \
     --lingua-paginae=2 \
-    --query <"$objectivum_archivum_temporarium_b_u" |
-    ./999999999/0/1603_3_12.py --actionem-sparql --csv --hxltm \
+    --query --optimum <"$objectivum_archivum_temporarium_b_u" |
+    ./999999999/0/1603_3_12.py --actionem-sparql --csv --hxltm --optimum \
       >"$objectivum_archivum_temporarium_b_u_wiki_2_5"
 
   echo "3/5"
@@ -1163,8 +1163,8 @@ file_translate_csv_de_numerordinatio_q() {
     --actionem-sparql \
     --lingua-divisioni=5 \
     --lingua-paginae=3 \
-    --query <"$objectivum_archivum_temporarium_b_u" |
-    ./999999999/0/1603_3_12.py --actionem-sparql --csv --hxltm \
+    --query --optimum <"$objectivum_archivum_temporarium_b_u" |
+    ./999999999/0/1603_3_12.py --actionem-sparql --csv --hxltm --optimum \
       >"$objectivum_archivum_temporarium_b_u_wiki_3_5"
 
   echo "4/5"
@@ -1172,8 +1172,8 @@ file_translate_csv_de_numerordinatio_q() {
     --actionem-sparql \
     --lingua-divisioni=5 \
     --lingua-paginae=4 \
-    --query <"$objectivum_archivum_temporarium_b_u" |
-    ./999999999/0/1603_3_12.py --actionem-sparql --csv --hxltm \
+    --query --optimum <"$objectivum_archivum_temporarium_b_u" |
+    ./999999999/0/1603_3_12.py --actionem-sparql --csv --hxltm --optimum \
       >"$objectivum_archivum_temporarium_b_u_wiki_4_5"
 
   echo "5/5"
@@ -1181,8 +1181,8 @@ file_translate_csv_de_numerordinatio_q() {
     --actionem-sparql \
     --lingua-divisioni=5 \
     --lingua-paginae=5 \
-    --query <"$objectivum_archivum_temporarium_b_u" |
-    ./999999999/0/1603_3_12.py --actionem-sparql --csv --hxltm \
+    --query --optimum <"$objectivum_archivum_temporarium_b_u" |
+    ./999999999/0/1603_3_12.py --actionem-sparql --csv --hxltm --optimum \
       >"$objectivum_archivum_temporarium_b_u_wiki_5_5"
 
   # Merging now...
@@ -1912,8 +1912,8 @@ wikidata_p_ex_linguis() {
   printf "%s\n" "$ex_wikidata_p" | "${ROOTDIR}/999999999/0/1603_3_12.py" \
     --actionem-sparql --de=P --query \
     --lingua-divisioni="${lingua_divisioni}" \
-    --lingua-paginae="${lingua_paginae}" \
-    | "${ROOTDIR}/999999999/0/1603_3_12.py" --actionem-sparql --csv --hxltm \
+    --lingua-paginae="${lingua_paginae}" --optimum |
+    "${ROOTDIR}/999999999/0/1603_3_12.py" --actionem-sparql --csv --hxltm --optimum \
       >"$objectivum_archivum_temporarium"
 
   # frictionless validate "$objectivum_archivum_temporarium" || true
@@ -1973,8 +1973,8 @@ wikidata_p_ex_interlinguis() {
 
   printf "%s\n" "$ex_wikidata_p" | "${ROOTDIR}/999999999/0/1603_3_12.py" \
     --actionem-sparql --de=P --query --ex-interlinguis \
-    --cum-interlinguis="$cum_interlinguis" |
-    "${ROOTDIR}/999999999/0/1603_3_12.py" --actionem-sparql --csv --hxltm \
+    --cum-interlinguis="$cum_interlinguis" --optimum |
+    "${ROOTDIR}/999999999/0/1603_3_12.py" --actionem-sparql --csv --hxltm --optimum \
       >"$objectivum_archivum_temporarium"
 
   frictionless validate "$objectivum_archivum_temporarium" || true
@@ -2041,11 +2041,11 @@ wikidata_p_ex_totalibus() {
   ## Lingual ...................................................................
   # _lingua_divisioni
   # https://www.shellcheck.net/wiki/SC2051
-  for i in {1..19}
-  do
+  for i in {1..19}; do
     echo "Number: $i"
     sleep 10
     wikidata_p_ex_linguis "1679_45_16_76_2" "1" "1" "P1585" "$i" "20"
+    # @TODO: implement at least one retry if result have error
   done
 
   fontem_1="${_basim_objectivum}/$_path/$_nomen~wikiq~1~$_lingua_divisioni.tm.hxl.csv"
