@@ -33,6 +33,10 @@ ROOTDIR="$(pwd)"
 # Recommended use the lastest from https://jena.apache.org/download/
 SPARQL_ENDPOINT_JENA_VERSION="4.5.0"
 
+# @see https://jena.apache.org/documentation/tools/index.html
+JENA_HOME="$ROOTDIR/999999999/0/1686799/apache-jena"
+export PATH=$PATH:$JENA_HOME/bin
+
 # @TODO eventualmente talvez anotar as propriedades de campos que tem aqui
 #       Cadastro Nacional de Endereços para Fins Estatísticos
 #       https://ftp.ibge.gov.br/Censos/Censo_Demografico_2010/Cadastro_Nacional_de_Enderecos_Fins_Estatisticos/
@@ -99,7 +103,7 @@ p5305_sparql_endpoint_jena_install() {
   tar -C "${objectivum_archivum}" \
     -zxf "${fontem_archivum_temporarium}" \
     "${targz_subdir}" \
-    --strip-components=2
+    --strip-components=1
   set +x
   # @TODO: remove cached downloaded file
 }
@@ -139,12 +143,81 @@ p5305_sparql_endpoint_jena_fuseki_install() {
   tar -C "${objectivum_archivum}" \
     -zxf "${fontem_archivum_temporarium}" \
     "${targz_subdir}" \
-    --strip-components=2
+    --strip-components=1
+
+  # cd "${objectivum_archivum}"
+  # tar -zxf "${fontem_archivum_temporarium}" "${targz_subdir}"
+  # cd "${ROOTDIR}"
   set +x
   # @TODO: remove cached downloaded file
 }
+
+#######################################
+# Download Apache JENA fuseki to 999999999/0/1686799/
+#
+# Globals:
+#   ROOTDIR
+#   SPARQL_ENDPOINT_JENA_VERSION
+# Arguments:
+#   numerordinatio
+# Outputs:
+#   Convert files
+#######################################
+p5305_sparql_endpoint_jena_fuseki_start() {
+
+  fontem_archivum="${ROOTDIR}/999999999/0/1686799/apache-jena-fuseki"
+  targz_subdir="apache-jena-fuseki-${SPARQL_ENDPOINT_JENA_VERSION}"
+  objectivum_archivum_basi="${ROOTDIR}/999999999/0/1686799/apache-jena-fuseki"
+  objectivum_archivum_bin="${objectivum_archivum_basi}/fuseki-server"
+  # officinam/999999999/0/1686799/apache-jena-fuseki/fuseki-server
+  objectivum_archivum="${ROOTDIR}/999999999/0/1686799/apache-jena-fuseki"
+
+
+  echo "${FUNCNAME[0]} ... [$SPARQL_ENDPOINT_JENA_VERSION] [$iri]"
+
+  # Starts at http://localhost:3030/#/
+  # @TODO: change home directory
+  "${objectivum_archivum_bin}"
+
+  sparql --version
+
+  # if [ ! -f "${fontem_archivum_temporarium}" ]; then
+  #   set -x
+  #   curl --compressed --silent --show-error \
+  #     -get "$iri" \
+  #     --output "$fontem_archivum_temporarium"
+  #   set +x
+  # else
+  #   echo "Already cached at [${fontem_archivum_temporarium}]"
+  # fi
+
+  # set -x
+  # tar -C "${objectivum_archivum}" \
+  #   -zxf "${fontem_archivum_temporarium}" \
+  #   "${targz_subdir}" \
+  #   --strip-components=2
+  # set +x
+  # @TODO: remove cached downloaded file
+}
+
+#### Java dependencies _________________________________________________________
+# - https://jena.apache.org/download/index.cgi
+#   - "Jena4 requires Java 11."
+# - https://www.digitalocean.com/community/tutorials/how-to-install-java-with-apt-on-ubuntu-20-04-pt
+#
+#     sudo apt install default-jre
 
 #### Apache Jena, install ______________________________________________________
 # Uncomment these.
 # p5305_sparql_endpoint_jena_install
 # p5305_sparql_endpoint_jena_fuseki_install
+
+
+#### Other commends (move or remove later) _____________________________________
+# https://www.wikidata.org/wiki/Wikidata:Identifier_migration
+# https://www.wikidata.org/wiki/Help:Authority_control
+
+p5305_sparql_endpoint_jena_fuseki_start
+
+
+# @TODO https://www.digitalocean.com/community/tutorials/how-to-install-java-with-apt-on-ubuntu-20-04-pt
