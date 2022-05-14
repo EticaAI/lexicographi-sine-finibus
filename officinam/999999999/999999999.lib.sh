@@ -163,7 +163,7 @@ file_update_if_necessary() {
 
     # if [ "$fontem_archivum_hash" != "$objectivum_archivum_hash" ]; then
     if [[ "$fontem_archivum_hash" != "$objectivum_archivum_hash" ]]; then
-      echo "Not equal. Temporary will replace target file [$fontem_archivum_hash] --> [$objectivum_archivum_hash]"
+      echo "Not equal. Temporary will replace target file [$fontem_archivum] --> [$objectivum_archivum]"
       # sha256sum "$objectivum_archivum"
       # sha256sum "$fontem_archivum"
       rm "$objectivum_archivum"
@@ -1964,7 +1964,8 @@ wikidata_p_ex_interlinguis() {
   fi
 
   # fontem_archivum="${_basim_fontem}/$_path/$_nomen.$est_objectivum_linguam.codex.adoc"
-  objectivum_archivum="${_basim_objectivum}/$_path/$_nomen~wikip~0.tm.hxl.csv"
+  # objectivum_archivum="${_basim_objectivum}/$_path/$_nomen~wikip~0.tm.hxl.csv"
+  objectivum_archivum="${_basim_objectivum}/$_path/$_nomen.no1.tm.hxl.csv"
   objectivum_archivum_temporarium="${ROOTDIR}/999999/0/$_nomen~wikip~0.tm.hxl.csv"
 
   echo "${FUNCNAME[0]} [$objectivum_archivum]"
@@ -2025,10 +2026,19 @@ wikidata_p_ex_totalibus() {
   fi
 
   fontem_archivum="${_basim_objectivum}/$_path/$_nomen~wikip~0.tm.hxl.csv"
-  objectivum_archivum="${_basim_objectivum}/$_path/$_nomen.no11.tm.hxl.csv"
+  objectivum_archivum_no1="${_basim_objectivum}/$_path/$_nomen.no1.tm.hxl.csv"
+  objectivum_archivum_no11="${_basim_objectivum}/$_path/$_nomen.no11.tm.hxl.csv"
   # objectivum_archivum_temporarium="${ROOTDIR}/999999/0/$_nomen~wikiq~${lingua_paginae}~${lingua_divisioni}.tm.hxl.csv"
+  objectivum_archivum_q_temporarium="${ROOTDIR}/999999/0/$_nomen~wikiq~TEMP.tm.hxl.csv"
+  objectivum_archivum_q_temporarium_cache="${ROOTDIR}/999999/0/$_nomen~wikiq~TEMP~2.tm.hxl.csv"
+  objectivum_archivum_temporarium_no11="${ROOTDIR}/999999/0/$_nomen.no11.tm.hxl.csv"
 
-  echo "${FUNCNAME[0]} <<TODO>> [$objectivum_archivum]"
+  echo "${FUNCNAME[0]} <<TODO>> [$objectivum_archivum_no11]"
+
+  ## Interlingual ..............................................................
+  wikidata_p_ex_interlinguis "1679_45_16_76_2" "1" "1" "P1585" "P402,P1566,P1937,P6555,P8119"
+  # exit 0
+  ## Lingual ...................................................................
   # _lingua_divisioni
   # https://www.shellcheck.net/wiki/SC2051
   for i in {1..19}
@@ -2038,16 +2048,53 @@ wikidata_p_ex_totalibus() {
     wikidata_p_ex_linguis "1679_45_16_76_2" "1" "1" "P1585" "$i" "20"
   done
 
-  for i in {1..19}; do
-    echo "Number: $i"
-    i2=$((i + 1))
-    fontem_1="${_basim_objectivum}/$_path/$_nomen~wikiq~$i.tm.hxl.csv"
-    fontem_2="${_basim_objectivum}/$_path/$_nomen~wikiq~$i2.tm.hxl.csv"
-    objectivum_archivum="${_basim_objectivum}/$_path/$_nomen~wikiq.tm.hxl.csv"
-    objectivum_archivum_temporarium="${ROOTDIR}/999999/0/$_nomen~wikiq~TEMP.tm.hxl.csv"
+  fontem_1="${_basim_objectivum}/$_path/$_nomen~wikiq~1~$_lingua_divisioni.tm.hxl.csv"
+  fontem_2="${_basim_objectivum}/$_path/$_nomen~wikiq~2~$_lingua_divisioni.tm.hxl.csv"
+  tempfunc_merge_wikiq_files "$fontem_1" "$fontem_2" "$objectivum_archivum_q_temporarium"
+  echo "aaa $objectivum_archivum_temporarium"
+
+  for i in {3..19}; do
+    echo "merge Number: $i"
+    # i2=$((i + 1))
+    # 1679_45_16_76_2~wikiq~1~20.tm.hxl.csv
+    # fontem_1="${_basim_objectivum}/$_path/$_nomen~wikiq~$i~$_lingua_divisioni.tm.hxl.csv"
+    fontem_2="${_basim_objectivum}/$_path/$_nomen~wikiq~$i~$_lingua_divisioni.tm.hxl.csv"
+    # objectivum_archivum="${_basim_objectivum}/$_path/$_nomen~wikiq.tm.hxl.csv"
+    objectivum_archivum_q_temporarium="${ROOTDIR}/999999/0/$_nomen~wikiq~TEMP.tm.hxl.csv"
     # objectivum_archivum="$3"
-    tempfunc_merge_wikiq_files "$fontem_1" "$fontem_2" "$objectivum_archivum_temporarium"
+    tempfunc_merge_wikiq_files "$objectivum_archivum_q_temporarium" "$fontem_2" "$objectivum_archivum_q_temporarium_cache"
+
+    frictionless validate "$objectivum_archivum_q_temporarium_cache" || true
+
+    # TODO, maybe update file_update_if_necessary to implement frictionless validate
+    file_update_if_necessary csv "$objectivum_archivum_q_temporarium_cache" "$objectivum_archivum_q_temporarium"
   done
+
+  hxlrename \
+    --rename='item+conceptum+codicem:#item+rem+i_qcc+is_zxxx+ix_wikiq' \
+    "$objectivum_archivum_q_temporarium" \
+    >"$objectivum_archivum_q_temporarium_cache"
+
+  hxlmerge --keys='#item+rem+i_qcc+is_zxxx+ix_wikiq' \
+    --tags='#item+rem' \
+    --merge="$objectivum_archivum_q_temporarium_cache" \
+    "$objectivum_archivum_no1" \
+    >"$objectivum_archivum_temporarium_no11"
+
+  sed -i '1d' "${objectivum_archivum_temporarium_no11}"
+
+  file_hotfix_duplicated_merge_key "${objectivum_archivum_temporarium_no11}" '#item+rem+i_qcc+is_zxxx+ix_wikiq'
+
+  file_update_if_necessary csv "$objectivum_archivum_temporarium_no11" "$objectivum_archivum_no11"
+
+  # _temp_no11_pub="${ROOTDIR}/$_path/$_nomen.no11.tm.hxl.csv"
+  # cp "$objectivum_archivum_no11" "$_temp_no11_pub"
+  # file_convert_rdf_skos_ttl_de_numerordinatio11 "$numerordinatio"
+  # file_convert_tmx_de_numerordinatio11 "$numerordinatio"
+  # file_convert_tbx_de_numerordinatio11 "$numerordinatio"
+
+  return 0
+
 }
 
 tempfunc_merge_wikiq_files() {
@@ -2056,11 +2103,14 @@ tempfunc_merge_wikiq_files() {
   objectivum_archivum="$3"
 
   echo "hxlmerge..."
+  echo "${FUNCNAME[0]} [$fontem_1] + [$fontem_2] --> [$objectivum_archivum]"
+  # set -x
   hxlmerge --keys='#item+conceptum+codicem' \
     --tags='#item+rem' \
     --merge="$fontem_2" \
     "$fontem_1" \
     >"$objectivum_archivum"
+  # set +x
 
   sed -i '1d' "$objectivum_archivum"
   file_hotfix_duplicated_merge_key "$objectivum_archivum" '#item+rem+i_qcc+is_zxxx+ix_wikiq'
