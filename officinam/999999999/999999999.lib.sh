@@ -1916,9 +1916,42 @@ wikidata_p_ex_linguis() {
     "${ROOTDIR}/999999999/0/1603_3_12.py" --actionem-sparql --csv --hxltm --optimum \
       >"$objectivum_archivum_temporarium"
 
-  # frictionless validate "$objectivum_archivum_temporarium" || true
-  frictionless validate "$objectivum_archivum_temporarium"
-  # set +x
+
+  VALIDATE_EXIT_CODE=0
+  frictionless validate "$objectivum_archivum_temporarium" || :
+  VALIDATE_EXIT_CODE=$?
+
+  if [ ! "$VALIDATE_EXIT_CODE" -eq 0 ] || [ ! -s "$objectivum_archivum_temporarium" ]; then
+    echo "Failed. trying again in 15s [$objectivum_archivum_temporarium]"
+    sleep 15
+    printf "%s\n" "$ex_wikidata_p" | "${ROOTDIR}/999999999/0/1603_3_12.py" \
+      --actionem-sparql --de=P --query \
+      --lingua-divisioni="${lingua_divisioni}" \
+      --lingua-paginae="${lingua_paginae}" --optimum |
+      "${ROOTDIR}/999999999/0/1603_3_12.py" --actionem-sparql --csv --hxltm --optimum \
+        >"$objectivum_archivum_temporarium"
+  fi
+
+  frictionless validate "$objectivum_archivum_temporarium" || :
+  VALIDATE_EXIT_CODE=$?
+
+  if [ ! "$VALIDATE_EXIT_CODE" -eq 0 ] || [ ! -s "$objectivum_archivum_temporarium" ]; then
+    echo "Failed AGAIN. trying again in 30s [$objectivum_archivum_temporarium]"
+    sleep 30
+    printf "%s\n" "$ex_wikidata_p" | "${ROOTDIR}/999999999/0/1603_3_12.py" \
+      --actionem-sparql --de=P --query \
+      --lingua-divisioni="${lingua_divisioni}" \
+      --lingua-paginae="${lingua_paginae}" --optimum |
+      "${ROOTDIR}/999999999/0/1603_3_12.py" --actionem-sparql --csv --hxltm --optimum \
+        >"$objectivum_archivum_temporarium"
+  fi
+
+  frictionless validate "$objectivum_archivum_temporarium" || :
+  VALIDATE_EXIT_CODE=$?
+  if [ ! "$VALIDATE_EXIT_CODE" -eq 0 ] || [ ! -s "$objectivum_archivum_temporarium" ]; then
+    echo "Giving up on [$objectivum_archivum_temporarium]. Sorry."
+    return 1
+  fi
 
   # TODO, maybe update file_update_if_necessary to implement frictionless validate
   file_update_if_necessary csv "$objectivum_archivum_temporarium" "$objectivum_archivum"
@@ -2036,7 +2069,7 @@ wikidata_p_ex_totalibus() {
   echo "${FUNCNAME[0]} <<TODO>> [$objectivum_archivum_no11]"
 
   ## Interlingual ..............................................................
-  wikidata_p_ex_interlinguis "1679_45_16_76_2" "1" "1" "P1585" "P402,P1566,P1937,P6555,P8119"
+  wikidata_p_ex_interlinguis "$numerordinatio" "1" "1" "$ex_wikidata_p" "$cum_interlinguis"
   # exit 0
   ## Lingual ...................................................................
   # _lingua_divisioni
@@ -2044,16 +2077,15 @@ wikidata_p_ex_totalibus() {
   for i in {1..19}; do
     echo "Number: $i"
     sleep 10
-    wikidata_p_ex_linguis "1679_45_16_76_2" "1" "1" "P1585" "$i" "20"
-    # @TODO: implement at least one retry if result have error
+    wikidata_p_ex_linguis "$numerordinatio" "1" "1" "$ex_wikidata_p" "$i" "20"
   done
 
   fontem_1="${_basim_objectivum}/$_path/$_nomen~wikiq~1~$_lingua_divisioni.tm.hxl.csv"
   fontem_2="${_basim_objectivum}/$_path/$_nomen~wikiq~2~$_lingua_divisioni.tm.hxl.csv"
   tempfunc_merge_wikiq_files "$fontem_1" "$fontem_2" "$objectivum_archivum_q_temporarium"
-  echo "aaa $objectivum_archivum_temporarium"
+  # echo "aaa $objectivum_archivum_temporarium"
 
-  for i in {3..19}; do
+  for i in {1..19}; do
     echo "merge Number: $i"
     # i2=$((i + 1))
     # 1679_45_16_76_2~wikiq~1~20.tm.hxl.csv
@@ -2064,7 +2096,7 @@ wikidata_p_ex_totalibus() {
     # objectivum_archivum="$3"
     tempfunc_merge_wikiq_files "$objectivum_archivum_q_temporarium" "$fontem_2" "$objectivum_archivum_q_temporarium_cache"
 
-    frictionless validate "$objectivum_archivum_q_temporarium_cache" || true
+    #frictionless validate "$objectivum_archivum_q_temporarium_cache"
 
     # TODO, maybe update file_update_if_necessary to implement frictionless validate
     file_update_if_necessary csv "$objectivum_archivum_q_temporarium_cache" "$objectivum_archivum_q_temporarium"
