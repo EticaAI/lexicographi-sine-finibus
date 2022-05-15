@@ -53,6 +53,13 @@ ROOTDIR="$(pwd)"
 
 #### Manual action, TEST locally, one per time, END ----------------------------
 
+wikidata_p_ex_interlinguis "1679_3_12_6204" "1" "1" "P6204" "P6204"
+exit 1
+
+# printf "P6204\n" | ./999999999/0/1603_3_12.py --actionem-sparql --de=P --query --ex-interlinguis --cum-interlinguis=P6204
+# printf "P6204\n" | ./999999999/0/1603_3_12.py --actionem-sparql --de=P --query --ex-interlinguis --cum-interlinguis=P6204 | ./999999999/0/1603_3_12.py --actionem-sparql --csv --hxltm
+# printf "P6204\n" | ./999999999/0/1603_3_12.py --actionem-sparql --de=P --query --ex-interlinguis --cum-interlinguis=P6204 | ./999999999/0/1603_3_12.py --actionem-sparql --csv --hxltm
+
 
 #### main ______________________________________________________________________
 file_download_1603_xlsx "1"
@@ -69,20 +76,20 @@ archivum_copiae "1679_45_16_76_2" "1603_45_16_76_2" "no11.tm.hxl.csv" "1" "0"
 # exit 0
 
 ### //Dicionários de bases de dados espaciais do Brasil//@por-Latn
-wikidata_p_ex_totalibus "1679_45_16_76_2" "1" "1" "P1585" "P402,P1566,P1937,P6555,P8119"
+wikidata_p_ex_totalibus "1679_45_16_76_2" "1" "1" "P1585" "P1585,P402,P1566,P1937,P6555,P8119"
 
 ### P4251 //número da legenda no TSE//@por-Latn
-wikidata_p_ex_interlinguis "1679_3_12_4251" "1" "1" "P4251" ""
+wikidata_p_ex_interlinguis "1679_3_12_4251" "1" "1" "P4251" "P4251"
 
 ### P6204 //Cadastro Nacional da Pessoa Jurídica//@por-Latn
-# wikidata_p_ex_interlinguis "1679_3_12_6204" "1" "1" "P6204" ""
+# wikidata_p_ex_interlinguis "1679_3_12_6204" "1" "1" "P6204" "P6204"
 #     ValueError: invalid literal for int() with base 10: '00.317.929/0001-49'
 
 ### P6555 //identificador de Unidade Eleitoral brasileira//@por-Latn
-wikidata_p_ex_interlinguis "1679_3_12_6555" "1" "1" "P6555" ""
+wikidata_p_ex_interlinguis "1679_3_12_6555" "1" "1" "P6555" "P6555"
 
 ### P9119 //Identificador LeXML Brasil//@por-Latn
-# wikidata_p_ex_interlinguis "1679_3_12_9119" "1" "1" "P9119" ""
+# wikidata_p_ex_interlinguis "1679_3_12_9119" "1" "1" "P9119" "P9119"
 #     ValueError: invalid literal for int() with base 10: 'urn:lex:br:advocacia.geral.uniao;procuradoria.geral.federal:portaria:2003-06-13;208'
 
 # @TODO criar funcao que "migre" resultado final arquivos selecionados; exemplo

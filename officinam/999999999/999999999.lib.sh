@@ -2079,11 +2079,13 @@ wikidata_p_ex_interlinguis() {
   echo "${FUNCNAME[0]} [$objectivum_archivum]"
   # return 0
 
+  set -x
   printf "%s\n" "$ex_wikidata_p" | "${ROOTDIR}/999999999/0/1603_3_12.py" \
     --actionem-sparql --de=P --query --ex-interlinguis \
     --cum-interlinguis="$cum_interlinguis" --optimum |
     "${ROOTDIR}/999999999/0/1603_3_12.py" --actionem-sparql --csv --hxltm --optimum \
       >"$objectivum_archivum_temporarium"
+  set +x
 
   VALIDATE_EXIT_CODE=0
   frictionless validate "$objectivum_archivum_temporarium" || VALIDATE_EXIT_CODE=$?
