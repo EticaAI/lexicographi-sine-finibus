@@ -3017,10 +3017,22 @@ actiones_completis_locali() {
     fi
   fi
 
-  neo_codex_copertae_de_numerordinatio "$numerordinatio" "0" "0"
-  neo_codex_de_numerordinatio "$numerordinatio" "0" "0"
-  neo_codex_de_numerordinatio_epub "$numerordinatio" "0" "0"
-  neo_codex_de_numerordinatio_pdf "$numerordinatio" "0" "0"
+  if [ -n "$(quaero__ix_n1603ia "$numerordinatio" "origo_per_automata" )" ]; then
+    neo_codex_copertae_de_numerordinatio "$numerordinatio" "0" "0"
+    neo_codex_de_numerordinatio "$numerordinatio" "0" "0"
+    neo_codex_de_numerordinatio_epub "$numerordinatio" "0" "0"
+    neo_codex_de_numerordinatio_pdf "$numerordinatio" "0" "0"
+  else
+    echo "@TODO: ebook documentation disabled for automated imports;"
+    echo "       we need to only document what contains without print"
+    echo "       item by item on the PDF (compile time and final size"
+    echo "       make it less useful)."
+  fi
+
+  # neo_codex_copertae_de_numerordinatio "$numerordinatio" "0" "0"
+  # neo_codex_de_numerordinatio "$numerordinatio" "0" "0"
+  # neo_codex_de_numerordinatio_epub "$numerordinatio" "0" "0"
+  # neo_codex_de_numerordinatio_pdf "$numerordinatio" "0" "0"
   temp_save_status "$numerordinatio" "locale"
 
 }
