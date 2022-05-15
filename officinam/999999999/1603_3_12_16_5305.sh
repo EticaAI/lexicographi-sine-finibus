@@ -38,6 +38,35 @@ JENA_HOME="${ROOTDIR}/999999999/0/1686799/apache-jena"
 export FUSEKI_BASE="${ROOTDIR}/999999999/0/1686799/apache-jena-workspace"
 export PATH=$PATH:$JENA_HOME/bin
 
+#### Hello world examples ______________________________________________________
+## Tutorials from
+## - https://jena.apache.org/tutorials/
+##   - https://jena.apache.org/tutorials/rdf_api_pt.html
+##   - https://jena.apache.org/tutorials/rdf_api_pt.html
+##   - https://jena.apache.org/tutorials/sparql_pt.html
+##   - https://jena.apache.org/documentation/query/manipulating_sparql_using_arq_pt.html
+
+## https://jena.apache.org/tutorials/sparql_query1_pt.html
+# curl https://jena.apache.org/tutorials/sparql_data/q1.rq --output 999999/0/q1.rq
+# curl https://jena.apache.org/tutorials/sparql_data/vc-db-1.rdf --output 999999/0/vc-db-1.rdf
+# sparql --data=999999/0/vc-db-1.rdf --query=999999/0/q1.rq
+
+# curl https://jena.apache.org/tutorials/sparql_data/q-bp4.rq --output 999999/0/q-bp4.rq
+# sparql --data=999999/0/vc-db-1.rdf --query=999999/0/q-bp4.rq
+
+# curl https://jena.apache.org/tutorials/sparql_data/q-f1.rq --output 999999/0/q-f1.rq
+# sparql --data=999999/0/vc-db-1.rdf --query=999999/0/q-f1.rq
+
+## See https://stackoverflow.com/questions/35471892/sparql-query-for-skosrelated-field
+# echo "prefix skos: <http://www.w3.org/2004/02/skos/core#>
+
+# SELECT ?narrower
+# WHERE {
+#     ?s skos:narrower ?narrower
+# }" > 999999/0/test-skos.rq
+# sparql --data=1603/63/101/1603_63_101.no11.skos.ttl --query=999999/0/test-skos.rq
+# #### ... _______________________________________________________________________
+
 # @TODO eventualmente talvez anotar as propriedades de campos que tem aqui
 #       Cadastro Nacional de Endereços para Fins Estatísticos
 #       https://ftp.ibge.gov.br/Censos/Censo_Demografico_2010/Cadastro_Nacional_de_Enderecos_Fins_Estatisticos/
@@ -275,7 +304,7 @@ p5305_sparql_endpoint_jena_fuseki_install_system_opt() {
 }
 
 #######################################
-# Download Apache JENA fuseki to 999999999/0/1686799/
+# Run Jena Fuseki (if downloaded to folder)
 #
 # Globals:
 #   ROOTDIR
@@ -288,15 +317,46 @@ p5305_sparql_endpoint_jena_fuseki_install_system_opt() {
 p5305_sparql_endpoint_jena_fuseki_start() {
 
   fontem_archivum="${ROOTDIR}/999999999/0/1686799/apache-jena-fuseki"
-  # objectivum_archivum_workspace="${ROOTDIR}/999999999/0/1686799/apache-jena-workspace"
-  #targz_subdir="apache-jena-fuseki-${SPARQL_ENDPOINT_JENA_VERSION}"
   objectivum_archivum_basi="${ROOTDIR}/999999999/0/1686799/apache-jena-fuseki"
   objectivum_archivum_bin="${objectivum_archivum_basi}/fuseki-server"
-  # officinam/999999999/0/1686799/apache-jena-fuseki/fuseki-server
   objectivum_archivum="${ROOTDIR}/999999999/0/1686799/apache-jena-fuseki"
   objectivum_archivum_web="http://localhost:3030/#/"
 
   echo "${FUNCNAME[0]} ... [$SPARQL_ENDPOINT_JENA_VERSION] [$objectivum_archivum_web]"
+
+  # cd "$objectivum_archivum_workspace"
+  # Starts at http://localhost:3030/#/
+  # @TODO: change home directory
+  "${objectivum_archivum_bin}"
+
+  sparql --version
+
+  # @TODO: remove cached downloaded file
+}
+
+#######################################
+# Run Jena Fuseki (if installed at /opt/apache-jena-fuseki/fuseki-server)
+#
+# Globals:
+#   ROOTDIR
+#   SPARQL_ENDPOINT_JENA_VERSION
+# Arguments:
+#   numerordinatio
+# Outputs:
+#   Convert files
+#######################################
+p5305_sparql_endpoint_jena_fuseki_start_system() {
+
+  # fontem_archivum="${ROOTDIR}/999999999/0/1686799/apache-jena-fuseki"
+  # objectivum_archivum_workspace="${ROOTDIR}/999999999/0/1686799/apache-jena-workspace"
+  #targz_subdir="apache-jena-fuseki-${SPARQL_ENDPOINT_JENA_VERSION}"
+  # objectivum_archivum_basi="${ROOTDIR}/999999999/0/1686799/apache-jena-fuseki"
+  objectivum_archivum_bin="/opt/apache-jena-fuseki/fuseki-server"
+  # officinam/999999999/0/1686799/apache-jena-fuseki/fuseki-server
+  objectivum_archivum="${ROOTDIR}/999999999/0/1686799/apache-jena-fuseki"
+  objectivum_archivum_web="http://localhost:3030/#/"
+
+  echo "${FUNCNAME[0]} ... [$SPARQL_ENDPOINT_JENA_VERSION] [$objectivum_archivum_bin] [$objectivum_archivum_web]"
 
   # cd "$objectivum_archivum_workspace"
   # Starts at http://localhost:3030/#/
@@ -315,13 +375,21 @@ p5305_sparql_endpoint_jena_fuseki_start() {
 #
 #     sudo apt install default-jre
 
-#### Apache Jena, install ______________________________________________________/workspace/bin/apache-jena
+#### Apache Jena, install ______________________________________________________
 # Uncomment these. (local dir)
 # p5305_sparql_endpoint_jena_install
 # p5305_sparql_endpoint_jena_fuseki_install
 
-p5305_sparql_endpoint_jena_install_system_opt
-p5305_sparql_endpoint_jena_fuseki_install_system_opt
+# p5305_sparql_endpoint_jena_install_system_opt
+# p5305_sparql_endpoint_jena_fuseki_install_system_opt
+
+#### Apache Jena, run ______________________________________________________
+## p5305_sparql_endpoint_jena_fuseki_start
+p5305_sparql_endpoint_jena_fuseki_start_system
+
+# touch 999999/0/hello-world-sparql-database.rdf
+# /opt/apache-jena/src-examples/data/eswc-2006-09-21.rdf
+
 
 #### Other commends (move or remove later) _____________________________________
 # https://www.wikidata.org/wiki/Wikidata:Identifier_migration
