@@ -80,6 +80,7 @@ archivum_unzip "999999/0/0/ftp.datasus.gov.br/cnes/CNESBRASIL.ZIP" "xmlCNES.xml"
 
 # ./999999999/0/999999999_10263485.py "999999/0/xmlCNES.xml" "999999/0/xmlCNES.tm.hxl.csv"
 ./999999999/0/999999999_10263485.py "999999/0/xmlCNES.xml" "999999/0/xmlCNES.tm.hxl.csv"
+./999999999/0/999999999_10263485.py --methodus=datasus-xmlcnae 999999/0/xmlCNES.xml > 999999/0/xmlCNES.csv
 
 exit 0
 #### Manual action, TEST locally, one per time, END ----------------------------

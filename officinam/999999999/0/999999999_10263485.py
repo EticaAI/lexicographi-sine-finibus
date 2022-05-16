@@ -41,7 +41,7 @@ Estabelecimentos de Saúde) do Brasil.
 Trivia:
 - Q10263485, https://www.wikidata.org/wiki/Q10263485
   - DATASUS
-  - "DATASUS é o departamento de informática do Sistema Único de Saúde do 
+  - "DATASUS é o departamento de informática do Sistema Único de Saúde do
      Brasil. É responsável, também, pelos sistemas e aplicativos necessários
      para registrar e processar as informações de saúde. Um exemplo
      é o Cadastro Nacional de Estabelecimentos de Saúde (CNES), (...)"
@@ -67,6 +67,27 @@ LIKELY_NUMERIC = [
     '#item+rem+i_qcc+is_zxxx+ix_n1603',
     '#item+rem+i_qcc+is_zxxx+ix_iso5218',
 ]
+# https://en.wiktionary.org/wiki/tabula#Latin
+XML_AD_CSV_TABULAE = {
+    'CO_UNIDADE': 'CO_UNIDADE',
+    'NO_FANTASIA': 'NO_FANTASIA',
+    'CO_MUNICIPIO_GESTOR': 'CO_MUNICIPIO_GESTOR',
+    'NU_CNPJ': 'NU_CNPJ',
+    'CO_CNES': 'CO_CNES',
+    'DT_ATUALIZACAO': 'DT_ATUALIZACAO',
+    'TP_UNIDADE': 'TP_UNIDADE',
+}
+
+CSV_AD_HXLTM_TABULAE = {
+    # @TODO: create wikiq
+    'CO_UNIDADE': '#item+rem+i_qcc+is_zxxx+ix_brcnae',
+    'NO_FANTASIA': '#meta+NO_FANTASIA',
+    'CO_MUNICIPIO_GESTOR': '#item+rem+i_qcc+is_zxxx+ix_wikip1585',
+    'NU_CNPJ': '#item+rem+i_qcc+is_zxxx+ix_wikip6204',
+    'CO_CNES': '#meta+CO_CNES',
+    'DT_ATUALIZACAO': '#meta+DT_ATUALIZACAO',
+    'TP_UNIDADE': '#meta+TP_UNIDADE',
+}
 
 # ./999999999/0/999999999_10263485.py 999999/0/1603_1_1--old.csv 999999/0/1603_1_1--new.csv
 
@@ -114,6 +135,24 @@ class Cli:
             default='datasus-xmlcnae'
         )
 
+        # objectīvum, n, s, nominativus,
+        #                       https://en.wiktionary.org/wiki/objectivus#Latin
+        # fōrmātō, n, s, dativus, https://en.wiktionary.org/wiki/formatus#Latin
+        parser.add_argument(
+            '--objectivum-formato',
+            help='Formato do arquivo exportado',
+            dest='objectivum_formato',
+            nargs='?',
+            choices=[
+                'csv',
+                'tsv',
+                'hxltm-csv',
+                'hxltm-tsv',
+            ],
+            # required=True
+            default='csv'
+        )
+
         # parser.add_argument(
         #     'outfile',
         #     help='Output file',
@@ -134,23 +173,24 @@ class Cli:
             #       "  cat data.txt | {0} --actionem-quod-sparql\n"
             #       "  printf \"Q1065\\nQ82151\\n\" | {0} --actionem-quod-sparql"
             #       "".format(__file__))
-            print('non stdin')
+            # print('non stdin')
             _infile = pyargs.infile
             # return self.EXIT_ERROR
         else:
-            print('est stdin')
+            # print('est stdin')
             _stdin = stdin
 
-        print(pyargs.methodus)
-        print(pyargs)
+        # print(pyargs.objectivum_formato)
+        # print(pyargs)
 
         if _stdin is not None:
             for line in sys.stdin:
-                print('oi')
+                # print('oi')
                 codicem = line.replace('\n', ' ').replace('\r', '')
 
         # hf = CliMain(self.pyargs.infile, self.pyargs.outfile)
-        climain = CliMain(infile=_infile, stdin=_stdin)
+        climain = CliMain(infile=_infile, stdin=_stdin,
+                          objectivum_formato=pyargs.objectivum_formato)
         if pyargs.methodus == 'datasus-xmlcnae':
             return climain.execute_ex_datasus_xmlcnae()
 
@@ -163,12 +203,14 @@ class CliMain:
     to have numeric values (and trigger weird bugs)
     """
 
-    def __init__(self, infile: str = None, stdin=None):
+    def __init__(self, infile: str = None, stdin=None,
+                 objectivum_formato: str = 'hxltm-csv'):
         """
         Constructs all the necessary attributes for the Cli object.
         """
         self.infile = infile
         self.stdin = stdin
+        self.objectivum_formato = objectivum_formato
 
         # self.outfile = outfile
         self.header = []
@@ -191,9 +233,14 @@ class CliMain:
         return row
 
     def execute_ex_datasus_xmlcnae(self):
-        print('@TODO copy logic from https://github.com/EticaAI/hxltm/blob/main/bin/hxltmdexml.py')
+        # print('@TODO copy logic from https://github.com/EticaAI/hxltm/blob/main/bin/hxltmdexml.py')
 
         _source = self.infile if self.infile is not None else self.stdin
+        delimiter = ','
+        if self.objectivum_formato in ['tsv', 'hxltm-tsv']:
+            delimiter = "\t"
+        objectivum = csv.writer(
+            sys.stdout, delimiter=delimiter, quoting=csv.QUOTE_MINIMAL)
 
         # self.iteratianem = XMLElementTree.iterparse(
         iteratianem = XMLElementTree.iterparse(
@@ -211,23 +258,37 @@ class CliMain:
         # print(item.text)
 
         # for event, elem in ET.iterparse(file_path, events=("start", "end")):
+
         caput = []
+        caput22 = []
+        caput_okay = False
         for event, elem in iteratianem:
-            if event == 'start':
-                # path.append(elem.tag)
-                pass
-            elif event == 'end':
+            # if event == 'start':
+            # path.append(elem.tag)
+            #     pass
+            # elif event == 'end':
+            # print(elem.tag)
+            # return 1
+            if event == 'end':
                 # print(elem)
+                if elem.tag.upper() != 'ROW':
+                    continue
                 if hasattr(elem, 'attrib'):
                     lineam = []
 
-                    for clavem in list(elem.attrib):
-                        if len(caput) == 0:
+                    for clavem, res in elem.attrib.items():
+                        if caput_okay is False:
                             caput.append(clavem)
-                        lineam.append(elem.attrib[clavem])
-                        # print(clavem, elem.attrib[clavem])
-                    # print(caput)
-                    print(lineam)
+                            # caput22.append(clavem)
+                        lineam.append(res)
+
+                    if caput_okay is False and len(caput) > 0:
+                        # if 'CO_CNES' in caput:
+                        caput_okay = True
+                        # print('OIOI', caput, caput22)
+                        objectivum.writerow(caput)
+                    if len(lineam) > 0:
+                        objectivum.writerow(lineam)
                 # process the tag
                 # if elem.tag == 'name':
                 #     if 'members' in path:
