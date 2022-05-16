@@ -62,15 +62,31 @@ ROOTDIR="$(pwd)"
 # shellcheck source=999999999.lib.sh
 . "$ROOTDIR"/999999999/999999999.lib.sh
 
-
 #### Manual action, TEST locally, one per time, START --------------------------
 # Download entire XLSX to local temp
 # file_download_1603_xlsx "1"
 # actiones_completis_locali "1679_1_1"
 
+# ./999999999/0/999999999_10263485.py --help
 
+# https://cnes.datasus.gov.br/pages/downloads/arquivosOutros.jsp
+# ftp://ftp.datasus.gov.br/cnes/CNESBRASIL.ZIP
+
+# wget --timestamping ftp://ftp.datasus.gov.br/cnes/CNESBRASIL.ZIP --output-document=999999/0/CNESBRASIL.ZIP
+
+archivum_speculo_ex_ftp "ftp://ftp.datasus.gov.br/cnes/CNESBRASIL.ZIP"
+
+exit 0
+
+if [ ! -d 999999/0/10263485 ]; then mkdir 999999/0/10263485; fi
+cd 999999/0/10263485
+wget --mirror ftp://ftp.datasus.gov.br/cnes/CNESBRASIL.ZIP
+
+# result:
+#  999999/0/10263485/ftp.datasus.gov.br/cnes/CNESBRASIL.ZIP
+
+exit 0
 #### Manual action, TEST locally, one per time, END ----------------------------
-
 
 #### main ______________________________________________________________________
 file_download_1603_xlsx "1"
@@ -89,14 +105,13 @@ actiones_completis_locali "1603_45_16_76_2"
 wikidata_p_ex_interlinguis "1679_3_12_4251" "1" "1" "P4251" "P4251" "0"
 
 ### P6204 //Cadastro Nacional da Pessoa Jurídica//@por-Latn
-wikidata_p_ex_interlinguis "1679_3_12_6204" "1" "1" "P6204" "P6204,P17,P131"  "1"
+wikidata_p_ex_interlinguis "1679_3_12_6204" "1" "1" "P6204" "P6204,P17,P131" "1"
 
 ### P6555 //identificador de Unidade Eleitoral brasileira//@por-Latn
 wikidata_p_ex_interlinguis "1679_3_12_6555" "1" "1" "P6555" "P6555,P131" "0"
 
 ### P9119 //Identificador LeXML Brasil//@por-Latn
 wikidata_p_ex_interlinguis "1679_3_12_9119" "1" "1" "P9119" "P9119,P1476" "1"
-
 
 # @see https://servicodados.ibge.gov.br/api/docs/localidades
 # @see https://github.com/search?o=desc&q=ibge&s=stars&type=Repositories
@@ -111,4 +126,3 @@ wikidata_p_ex_interlinguis "1679_3_12_9119" "1" "1" "P9119" "P9119,P1476" "1"
 #        - https://biblioteca.ibge.gov.br/visualizacao/livros/liv100600.pdf
 
 exit 0
-

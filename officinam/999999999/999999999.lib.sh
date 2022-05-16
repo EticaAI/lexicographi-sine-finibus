@@ -15,6 +15,7 @@
 #                 - s3cmd (https://github.com/s3tools/s3cmd)
 #                   - pip3 install s3cmd
 #                 - ssconvert (sudo apt install gnumeric)
+#                 - wget
 #
 #          BUGS:  ---
 #         NOTES:  ---
@@ -256,6 +257,39 @@ archivum_copiae() {
   fi
 
   return 0
+}
+
+#######################################
+# Mirror remote file from FTP to 999999/0/0/ with wget structure
+#
+# Globals:
+#   ROOTDIR
+# Arguments:
+#   archivum_fonti_ftp
+# Outputs:
+#   File(s) on disk
+#######################################
+archivum_speculo_ex_ftp() {
+  archivum_fonti_ftp="$1"
+
+  # archīvum, n, s, nominativus, https://en.wiktionary.org/wiki/archivum
+  # speculō, n, s, dativus, https://en.wiktionary.org/wiki/speculum#Latin
+  # fontī, m, s, dativus, https://en.wiktionary.org/wiki/fons#Latin
+
+  objectivum_basi="${ROOTDIR}/999999/0/0"
+  objectivum_archivum="${ROOTDIR}/999999/0/0/${archivum_fonti_ftp}"
+
+  echo "${FUNCNAME[0]} ... [$archivum_fonti_ftp] --> [$objectivum_archivum]"
+  # exit 0
+
+  if [ ! -d "${objectivum_basi}" ]; then
+    mkdir "${objectivum_basi}"
+  fi
+
+  # cd "${objectivum_basi}"
+  set -x
+  wget --directory-prefix "${objectivum_basi}" \
+    --mirror "$archivum_fonti_ftp"
 }
 
 #######################################
@@ -2182,7 +2216,7 @@ wikidata_p_ex_totalibus() {
   ## Lingual ...................................................................
   # TODO: implementet configurable _lingua_divisioni
   for i in {1..19}; do
-  # for i in {6..19}; do
+    # for i in {6..19}; do
     echo "Number: $i"
     sleep 10
     wikidata_p_ex_linguis "$numerordinatio" "1" "1" "$ex_wikidata_p" "$i" "20"
