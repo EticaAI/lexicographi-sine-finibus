@@ -1,0 +1,22 @@
+
+methodus:
+  ibge-un-adm2:
+    caput:
+      _:
+        hxltm: '#meta+{caput}'
+      municipio-id:
+      municipio-nome:
+      microrregiao-id:
+      microrregiao-nome:
+      mesorregiao-id:
+      mesorregiao-nome:
+      regiao-imediata-id:
+      regiao-imediata-nome:
+      regiao-intermediaria-id:
+      regiao-intermediaria-nome:
+      UF-id:
+      UF-sigla:
+      UF-nome:
+      regiao-id:
+      regiao-sigla:
+      regiao-nome:

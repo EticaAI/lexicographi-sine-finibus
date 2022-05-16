@@ -27,11 +27,16 @@ import sys
 import argparse
 import csv
 import re
+from pathlib import Path
+from os.path import exists
 
 import json
+import yaml
 import urllib.request
 
 STDIN = sys.stdin.buffer
+
+NOMEN = '999999999_268072'
 
 DESCRIPTION = """
 {0} Processamento de dados de referência do IBGE (Brasil).
@@ -58,8 +63,9 @@ __EPILOGUM__ = """
 
     {0} --methodus=ibge-un-adm2 --objectivum-formato=json-fonti-formoso \
 > 999999/0/ibge-un-adm2.json
+    cat 999999/0/ibge-un-adm2.json | {0} --objectivum-formato=csv \
+> 999999/0/ibge-un-adm2.csv
 
-@TODO: fazer funcionar com stream de JSON (não apenas por URI)
 ------------------------------------------------------------------------------
                             EXEMPLŌRUM GRATIĀ
 ------------------------------------------------------------------------------
@@ -93,10 +99,18 @@ CSV_AD_HXLTM_TABULAE = {
     'TP_UNIDADE': '#meta+TP_UNIDADE',
 }
 
+SYSTEMA_SARCINAE = str(Path(__file__).parent.resolve())
+PROGRAMMA_SARCINAE = str(Path().resolve())
+ARCHIVUM_CONFIGURATIONI_DEFALLO = [
+    SYSTEMA_SARCINAE + '/' + NOMEN + '.meta.yml',
+    PROGRAMMA_SARCINAE + '/' + NOMEN + '.meta.yml',
+]
 
+# https://servicodados.ibge.gov.br/api/v1/localidades/distritos?view=nivelado&oorderBy=municipio-id
+# https://servicodados.ibge.gov.br/api/v1/localidades/municipios?view=nivelado&orderBy=id
 METHODUS_FONTI = {
     'ibge-un-adm2': 'https://servicodados.ibge.gov.br/api' +
-    '/v1/localidades/distritos?view=nivelado&oorderBy=id'
+    '/v1/localidades/municipios?view=nivelado&orderBy=id'
 }
 
 # @TODO implementar malhas https://servicodados.ibge.gov.br/api/docs/malhas?versao=3
@@ -113,6 +127,25 @@ class Cli:
         """
         Constructs all the necessary attributes for the Cli object.
         """
+
+    def _quod_configuratio(self, archivum_configurationi: str = None):
+        archivae = ARCHIVUM_CONFIGURATIONI_DEFALLO
+        if archivum_configurationi is not None:
+            if not exists(archivum_configurationi):
+                raise FileNotFoundError(
+                    'archivum_configurationi {0}'.format(
+                        archivum_configurationi))
+            archivae.append(archivum_configurationi)
+
+        for item in archivae:
+            if exists(item):
+                with open(item, "r") as read_file:
+                    datum = yaml.safe_load(read_file)
+                    return datum
+
+        raise FileNotFoundError(
+            'archivum_configurationi {0}'.format(
+                str(archivae)))
 
     def make_args(self, hxl_output=True):
         # parser = argparse.ArgumentParser(description=DESCRIPTION)
@@ -146,7 +179,6 @@ class Cli:
             # required=True
             default='ibge-un-adm2'
         )
-        # https://servicodados.ibge.gov.br/api/v1/localidades/distritos?view=nivelado&oorderBy=id
 
         # objectīvum, n, s, nominativus,
         #                       https://en.wiktionary.org/wiki/objectivus#Latin
@@ -169,6 +201,17 @@ class Cli:
             default='csv'
         )
 
+        # archīvum, n, s, nominativus, https://en.wiktionary.org/wiki/archivum
+        # cōnfigūrātiōnī, f, s, dativus,
+        #                      https://en.wiktionary.org/wiki/configuratio#Latin
+        parser.add_argument(
+            '--archivum-configurationi',
+            help='Arquivo de configuração .meta.yml',
+            dest='archivum_configurationi',
+            nargs='?',
+            default=None
+        )
+
         # parser.add_argument(
         #     'outfile',
         #     help='Output file',
@@ -183,30 +226,24 @@ class Cli:
 
         _infile = None
         _stdin = None
+        configuratio = self._quod_configuratio(pyargs.archivum_configurationi)
 
         if stdin.isatty():
-            # print("ERROR. Please pipe data in. \nExample:\n"
-            #       "  cat data.txt | {0} --actionem-quod-sparql\n"
-            #       "  printf \"Q1065\\nQ82151\\n\" | {0} --actionem-quod-sparql"
-            #       "".format(__file__))
-            # print('non stdin')
             _infile = pyargs.infile
-            # return self.EXIT_ERROR
         else:
-            # print('est stdin')
             _stdin = stdin
 
-        # print(pyargs.objectivum_formato)
-        # print(pyargs)
+        json_fonti_texto = None
 
         if _stdin is not None:
+            json_fonti_texto = ''
             for line in sys.stdin:
-                # print('oi')
-                codicem = line.replace('\n', ' ').replace('\r', '')
+                json_fonti_texto += line
 
-        # hf = CliMain(self.pyargs.infile, self.pyargs.outfile)
-        climain = CliMain(infile=_infile, stdin=_stdin,
-                          objectivum_formato=pyargs.objectivum_formato)
+        climain = CliMain(
+            infile=_infile, stdin=_stdin,
+            objectivum_formato=pyargs.objectivum_formato,
+            configuratio=configuratio)
 
         if pyargs.objectivum_formato == 'url-fonti':
             print(METHODUS_FONTI[pyargs.methodus])
@@ -216,9 +253,14 @@ class Cli:
             return climain.json_fonti(METHODUS_FONTI[pyargs.methodus])
         if pyargs.objectivum_formato == 'json-fonti-formoso':
             return climain.json_fonti(METHODUS_FONTI[pyargs.methodus], True)
+        if pyargs.objectivum_formato == 'csv':
+            if json_fonti_texto is None:
+                json_fonti_texto = climain.json_fonti(
+                    METHODUS_FONTI[pyargs.methodus])
+            return climain.objectivum_formato_csv(json_fonti_texto)
 
-        if pyargs.methodus == 'ibge-un-adm2':
-            return climain.execute_ex_datasus_xmlcnae()
+        # if pyargs.methodus == 'ibge-un-adm2':
+        #     return climain.execute_ex_datasus_xmlcnae()
         # if pyargs.methodus == 'datasus-xmlcnae':
         #     return climain.execute_ex_datasus_xmlcnae()
 
@@ -231,121 +273,71 @@ class CliMain:
     to have numeric values (and trigger weird bugs)
     """
 
-    def __init__(self, infile: str = None, stdin=None,
-                 objectivum_formato: str = 'hxltm-csv'):
+    delimiter = ','
+
+    def __init__(
+            self, infile: str = None, stdin=None,
+            objectivum_formato: str = 'hxltm-csv', configuratio: dict = None):
         """
         Constructs all the necessary attributes for the Cli object.
         """
         self.infile = infile
         self.stdin = stdin
         self.objectivum_formato = objectivum_formato
+        self.configuratio = configuratio
+
+        # delimiter = ','
+        if self.objectivum_formato in ['tsv', 'hxltm-tsv']:
+            self.delimiter = "\t"
 
         # self.outfile = outfile
-        self.header = []
-        self.header_index_fix = []
+        # self.header = []
+        # self.header_index_fix = []
 
-    def json_fonti(self, uri: str, formosum: bool = False) -> str:
+    def json_fonti(
+            self, uri: str, formosum: bool = False, ex_texto: bool = False) -> str:
 
         data = urllib.request.urlopen(uri).read()
         output = json.loads(data)
+        # resultatum = output
         if formosum:
-            print(json.dumps(output,
-                             indent=2, ensure_ascii=False, sort_keys=False))
-            return Cli.EXIT_OK
+            output = json.dumps(output,
+                                indent=2, ensure_ascii=False, sort_keys=False)
+        if ex_texto:
+            return output
+
         print(output)
         return Cli.EXIT_OK
-        # return ''
 
-    def process_row(self, row: list) -> list:
-        if len(self.header) == 0:
-            if row[0].strip().startswith('#'):
-                self.header = row
-                for index, item in enumerate(self.header):
-                    item_norm = item.strip().replace(" ", "")
-                    for likely in LIKELY_NUMERIC:
-                        # print(item_norm, likely)
-                        if item_norm.startswith(likely):
-                            self.header_index_fix.append(index)
-                # print('oi header', self.header_index_fix, self.header)
-        else:
-            for index_fix in self.header_index_fix:
-                row[index_fix] = re.sub('\.0$', '', row[index_fix].strip())
-        return row
+    def objectivum_formato_csv(self, json_fonti_texto: str) -> str:
 
-    def execute_ex_datasus_xmlcnae(self):
-        # print('@TODO copy logic from https://github.com/EticaAI/hxltm/blob/main/bin/hxltmdexml.py')
-
-        _source = self.infile if self.infile is not None else self.stdin
-        delimiter = ','
-        if self.objectivum_formato in ['tsv', 'hxltm-tsv']:
-            delimiter = "\t"
         objectivum = csv.writer(
-            sys.stdout, delimiter=delimiter, quoting=csv.QUOTE_MINIMAL)
+            sys.stdout, delimiter=self.delimiter, quoting=csv.QUOTE_MINIMAL)
+        # caput = []
+        # caput_okay = False
+        datus_fonti = json.loads(json_fonti_texto)
 
-        # self.iteratianem = XMLElementTree.iterparse(
-        iteratianem = XMLElementTree.iterparse(
-            # source=self.fontem_archivum,
-            # source=self.infile,
-            source=_source,
-            events=('start', 'end')
-            # events=('end')
-        )
-
-        # print(iteratianem)
-
-        # for item in iteratianem:
-        # print(item)
-        # print(item.text)
-
-        # for event, elem in ET.iterparse(file_path, events=("start", "end")):
-
-        caput = []
-        caput22 = []
-        caput_okay = False
-        for event, elem in iteratianem:
-            # if event == 'start':
-            # path.append(elem.tag)
-            #     pass
-            # elif event == 'end':
-            # print(elem.tag)
-            # return 1
-            if event == 'end':
-                # print(elem)
-                if elem.tag.upper() != 'ROW':
-                    continue
-                if hasattr(elem, 'attrib'):
-                    lineam = []
-
-                    for clavem, res in elem.attrib.items():
-                        if caput_okay is False:
-                            caput.append(clavem)
-                            # caput22.append(clavem)
-                        lineam.append(res)
-
-                    if caput_okay is False and len(caput) > 0:
-                        # if 'CO_CNES' in caput:
-                        caput_okay = True
-                        # print('OIOI', caput, caput22)
-                        objectivum.writerow(caput)
-                    if len(lineam) > 0:
-                        objectivum.writerow(lineam)
-                # process the tag
-                # if elem.tag == 'name':
-                #     if 'members' in path:
-                #         print 'member'
-                #     else:
-                #         print 'nonmember'
-                # path.pop()
+        objectivum.writerow(datus_fonti[0].keys())
+        for item in datus_fonti:
+            objectivum.writerow(item.values())
 
         return Cli.EXIT_OK
-        with open(self.infile, newline='') as infilecsv:
-            with open(self.outfile, 'w', newline='') as outfilecsv:
-                spamreader = csv.reader(infilecsv)
-                spamwriter = csv.writer(outfilecsv)
-                for row in spamreader:
-                    # spamwriter.writerow(row)
-                    spamwriter.writerow(self.process_row(row))
-                    # self.data.append(row)
+
+    # def process_row(self, row: list) -> list:
+    #     if len(self.header) == 0:
+    #         if row[0].strip().startswith('#'):
+    #             self.header = row
+    #             for index, item in enumerate(self.header):
+    #                 item_norm = item.strip().replace(" ", "")
+    #                 for likely in LIKELY_NUMERIC:
+    #                     # print(item_norm, likely)
+    #                     if item_norm.startswith(likely):
+    #                         self.header_index_fix.append(index)
+    #             # print('oi header', self.header_index_fix, self.header)
+    #     else:
+    #         for index_fix in self.header_index_fix:
+    #             row[index_fix] = re.sub('\.0$', '', row[index_fix].strip())
+    #     return row
 
     def execute(self):
         with open(self.infile, newline='') as infilecsv:

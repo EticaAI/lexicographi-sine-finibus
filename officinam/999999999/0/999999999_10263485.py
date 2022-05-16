@@ -183,10 +183,10 @@ class Cli:
         # print(pyargs.objectivum_formato)
         # print(pyargs)
 
-        if _stdin is not None:
-            for line in sys.stdin:
-                # print('oi')
-                codicem = line.replace('\n', ' ').replace('\r', '')
+        # if _stdin is not None:
+        #     for line in sys.stdin:
+        #         # print('oi')
+        #         codicem = line.replace('\n', ' ').replace('\r', '')
 
         # hf = CliMain(self.pyargs.infile, self.pyargs.outfile)
         climain = CliMain(infile=_infile, stdin=_stdin,
@@ -260,15 +260,9 @@ class CliMain:
         # for event, elem in ET.iterparse(file_path, events=("start", "end")):
 
         caput = []
-        caput22 = []
+        # caput22 = []
         caput_okay = False
         for event, elem in iteratianem:
-            # if event == 'start':
-            # path.append(elem.tag)
-            #     pass
-            # elif event == 'end':
-            # print(elem.tag)
-            # return 1
             if event == 'end':
                 # print(elem)
                 if elem.tag.upper() != 'ROW':
@@ -289,23 +283,8 @@ class CliMain:
                         objectivum.writerow(caput)
                     if len(lineam) > 0:
                         objectivum.writerow(lineam)
-                # process the tag
-                # if elem.tag == 'name':
-                #     if 'members' in path:
-                #         print 'member'
-                #     else:
-                #         print 'nonmember'
-                # path.pop()
 
         return Cli.EXIT_OK
-        with open(self.infile, newline='') as infilecsv:
-            with open(self.outfile, 'w', newline='') as outfilecsv:
-                spamreader = csv.reader(infilecsv)
-                spamwriter = csv.writer(outfilecsv)
-                for row in spamreader:
-                    # spamwriter.writerow(row)
-                    spamwriter.writerow(self.process_row(row))
-                    # self.data.append(row)
 
     def execute(self):
         with open(self.infile, newline='') as infilecsv:
