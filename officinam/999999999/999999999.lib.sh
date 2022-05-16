@@ -16,6 +16,7 @@
 #                   - pip3 install s3cmd
 #                 - ssconvert (sudo apt install gnumeric)
 #                 - wget
+#                 - unzip
 #
 #          BUGS:  ---
 #         NOTES:  ---
@@ -277,9 +278,14 @@ archivum_speculo_ex_ftp() {
   # fontī, m, s, dativus, https://en.wiktionary.org/wiki/fons#Latin
 
   objectivum_basi="${ROOTDIR}/999999/0/0"
-  objectivum_archivum="${ROOTDIR}/999999/0/0/${archivum_fonti_ftp}"
+  objectivum_archivum="${ROOTDIR}/999999/0/0/${archivum_fonti_ftp/ftp:\/\//''}"
 
-  echo "${FUNCNAME[0]} ... [$archivum_fonti_ftp] --> [$objectivum_archivum]"
+  blue=$(tput setaf 4)
+  normal=$(tput sgr0)
+  printf "\t%40s\n" "${blue}${FUNCNAME[0]} [$archivum_fonti_ftp] \
+--> [$objectivum_archivum]${normal}"
+
+  # echo "${FUNCNAME[0]} ... [$archivum_fonti_ftp] --> [$objectivum_archivum]"
   # exit 0
 
   if [ ! -d "${objectivum_basi}" ]; then
@@ -287,9 +293,45 @@ archivum_speculo_ex_ftp() {
   fi
 
   # cd "${objectivum_basi}"
-  set -x
+  # set -x
   wget --directory-prefix "${objectivum_basi}" \
     --mirror "$archivum_fonti_ftp"
+}
+
+#######################################
+# Extract file from zip archive on disk to target path
+#
+# Globals:
+#   ROOTDIR
+# Arguments:
+#   archivum_fonti_ex_zip
+#   archivum_fonti_ad_zip
+#   archivum_objectivo
+# Outputs:
+#   File(s) on disk
+#######################################
+archivum_unzip() {
+  archivum_fonti_ex_zip="$1"
+  archivum_fonti_ad_zip="$2"
+  archivum_objectivo="$3"
+
+  # archīvum, n, s, nominativus, https://en.wiktionary.org/wiki/archivum
+  # fontī, m, s, dativus, https://en.wiktionary.org/wiki/fons#Latin
+  # objectīvō, n, s, dativus, https://en.wiktionary.org/wiki/fons#Latin
+
+  objectivum_basi="${ROOTDIR}/999999/0/0"
+  objectivum_archivum="${ROOTDIR}/999999/0/0/${archivum_fonti_ftp}"
+
+  blue=$(tput setaf 4)
+  normal=$(tput sgr0)
+  printf "\t%40s\n" "${blue}${FUNCNAME[0]} [${archivum_fonti_ex_zip}] \
+/ [${archivum_fonti_ad_zip}] --> [${archivum_objectivo}]${normal}"
+
+  # set -x
+  unzip -p "${archivum_fonti_ex_zip}" \
+    "${archivum_fonti_ad_zip}" \
+    >"${archivum_objectivo}"
+  # set +x
 }
 
 #######################################

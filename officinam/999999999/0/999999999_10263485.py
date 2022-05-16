@@ -28,6 +28,8 @@ import argparse
 import csv
 import re
 
+import xml.etree.ElementTree as XMLElementTree
+
 STDIN = sys.stdin.buffer
 
 DESCRIPTION = """
@@ -45,6 +47,20 @@ Trivia:
      é o Cadastro Nacional de Estabelecimentos de Saúde (CNES), (...)"
 """.format(__file__)
 
+__EPILOGUM__ = """
+------------------------------------------------------------------------------
+                            EXEMPLŌRUM GRATIĀ
+------------------------------------------------------------------------------
+    {0} --methodus=datasus-xmlcnae 999999/0/xmlCNES.xml
+    cat 999999/0/xmlCNES.xml | {0} --methodus=datasus-xmlcnae
+
+
+@TODO: fazer funcionar com stream de XML (não apenas por arquivo)
+------------------------------------------------------------------------------
+                            EXEMPLŌRUM GRATIĀ
+------------------------------------------------------------------------------
+""".format(__file__)
+
 LIKELY_NUMERIC = [
     '#item+conceptum+codicem',
     '#status+conceptum',
@@ -56,52 +72,105 @@ LIKELY_NUMERIC = [
 
 
 class Cli:
+
+    EXIT_OK = 0
+    EXIT_ERROR = 1
+    EXIT_SYNTAX = 2
+
     def __init__(self):
         """
         Constructs all the necessary attributes for the Cli object.
         """
 
     def make_args(self, hxl_output=True):
-        parser = argparse.ArgumentParser(description=DESCRIPTION)
+        # parser = argparse.ArgumentParser(description=DESCRIPTION)
+        parser = argparse.ArgumentParser(
+            prog="999999999_10263485",
+            description=DESCRIPTION,
+            formatter_class=argparse.RawDescriptionHelpFormatter,
+            epilog=__EPILOGUM__
+        )
 
         parser.add_argument(
             'infile',
             help='Input file',
             nargs='?'
         )
+
         parser.add_argument(
-            'outfile',
-            help='Output file',
-            nargs='?'
+            '--methodus',
+            help='Modo de operação.',
+            dest='methodus',
+            nargs='?',
+            choices=[
+                'datasus-xmlcnae',
+                # 'data-apothecae',
+                # 'hxltm-explanationi',
+                # 'opus-temporibus',
+                # 'status-quo',
+                # 'deprecatum-dictionaria-numerordinatio'
+            ],
+            # required=True
+            default='datasus-xmlcnae'
         )
+
+        # parser.add_argument(
+        #     'outfile',
+        #     help='Output file',
+        #     nargs='?'
+        # )
 
         return parser.parse_args()
 
     def execute_cli(self, pyargs, stdin=STDIN, stdout=sys.stdout,
                     stderr=sys.stderr):
-        self.pyargs = pyargs
+        # self.pyargs = pyargs
 
-        hf = HotfixCSV(self.pyargs.infile, self.pyargs.outfile)
-        hf.execute()
+        _infile = None
+        _stdin = None
 
-    # def output(self, output_collectiom):
-    #     for item in output_collectiom:
-    #         print(item)
+        if stdin.isatty():
+            # print("ERROR. Please pipe data in. \nExample:\n"
+            #       "  cat data.txt | {0} --actionem-quod-sparql\n"
+            #       "  printf \"Q1065\\nQ82151\\n\" | {0} --actionem-quod-sparql"
+            #       "".format(__file__))
+            print('non stdin')
+            _infile = pyargs.infile
+            # return self.EXIT_ERROR
+        else:
+            print('est stdin')
+            _stdin = stdin
 
-    #     return self.EXIT_OK
+        print(pyargs.methodus)
+        print(pyargs)
+
+        if _stdin is not None:
+            for line in sys.stdin:
+                print('oi')
+                codicem = line.replace('\n', ' ').replace('\r', '')
+
+        # hf = CliMain(self.pyargs.infile, self.pyargs.outfile)
+        climain = CliMain(infile=_infile, stdin=_stdin)
+        if pyargs.methodus == 'datasus-xmlcnae':
+            return climain.execute_ex_datasus_xmlcnae()
+
+        print('Unknow option.')
+        return self.EXIT_ERROR
 
 
-class HotfixCSV:
+class CliMain:
     """Remove .0 at the end of CSVs from data exported from XLSX and likely
     to have numeric values (and trigger weird bugs)
     """
 
-    def __init__(self, infile, outfile):
+    def __init__(self, infile: str = None, stdin=None):
         """
         Constructs all the necessary attributes for the Cli object.
         """
         self.infile = infile
-        self.outfile = outfile
+        self.stdin = stdin
+
+        # self.outfile = outfile
         self.header = []
         self.header_index_fix = []
 
@@ -120,6 +189,62 @@ class HotfixCSV:
             for index_fix in self.header_index_fix:
                 row[index_fix] = re.sub('\.0$', '', row[index_fix].strip())
         return row
+
+    def execute_ex_datasus_xmlcnae(self):
+        print('@TODO copy logic from https://github.com/EticaAI/hxltm/blob/main/bin/hxltmdexml.py')
+
+        _source = self.infile if self.infile is not None else self.stdin
+
+        # self.iteratianem = XMLElementTree.iterparse(
+        iteratianem = XMLElementTree.iterparse(
+            # source=self.fontem_archivum,
+            # source=self.infile,
+            source=_source,
+            events=('start', 'end')
+            # events=('end')
+        )
+
+        # print(iteratianem)
+
+        # for item in iteratianem:
+        # print(item)
+        # print(item.text)
+
+        # for event, elem in ET.iterparse(file_path, events=("start", "end")):
+        caput = []
+        for event, elem in iteratianem:
+            if event == 'start':
+                # path.append(elem.tag)
+                pass
+            elif event == 'end':
+                # print(elem)
+                if hasattr(elem, 'attrib'):
+                    lineam = []
+
+                    for clavem in list(elem.attrib):
+                        if len(caput) == 0:
+                            caput.append(clavem)
+                        lineam.append(elem.attrib[clavem])
+                        # print(clavem, elem.attrib[clavem])
+                    # print(caput)
+                    print(lineam)
+                # process the tag
+                # if elem.tag == 'name':
+                #     if 'members' in path:
+                #         print 'member'
+                #     else:
+                #         print 'nonmember'
+                # path.pop()
+
+        return Cli.EXIT_OK
+        with open(self.infile, newline='') as infilecsv:
+            with open(self.outfile, 'w', newline='') as outfilecsv:
+                spamreader = csv.reader(infilecsv)
+                spamwriter = csv.writer(outfilecsv)
+                for row in spamreader:
+                    # spamwriter.writerow(row)
+                    spamwriter.writerow(self.process_row(row))
+                    # self.data.append(row)
 
     def execute(self):
         with open(self.infile, newline='') as infilecsv:

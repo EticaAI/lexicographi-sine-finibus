@@ -74,16 +74,12 @@ ROOTDIR="$(pwd)"
 
 # wget --timestamping ftp://ftp.datasus.gov.br/cnes/CNESBRASIL.ZIP --output-document=999999/0/CNESBRASIL.ZIP
 
-archivum_speculo_ex_ftp "ftp://ftp.datasus.gov.br/cnes/CNESBRASIL.ZIP"
+# archivum_speculo_ex_ftp "ftp://ftp.datasus.gov.br/cnes/CNESBRASIL.ZIP"
 
-exit 0
+archivum_unzip "999999/0/0/ftp.datasus.gov.br/cnes/CNESBRASIL.ZIP" "xmlCNES.xml" "999999/0/xmlCNES.xml"
 
-if [ ! -d 999999/0/10263485 ]; then mkdir 999999/0/10263485; fi
-cd 999999/0/10263485
-wget --mirror ftp://ftp.datasus.gov.br/cnes/CNESBRASIL.ZIP
-
-# result:
-#  999999/0/10263485/ftp.datasus.gov.br/cnes/CNESBRASIL.ZIP
+# ./999999999/0/999999999_10263485.py "999999/0/xmlCNES.xml" "999999/0/xmlCNES.tm.hxl.csv"
+./999999999/0/999999999_10263485.py "999999/0/xmlCNES.xml" "999999/0/xmlCNES.tm.hxl.csv"
 
 exit 0
 #### Manual action, TEST locally, one per time, END ----------------------------
