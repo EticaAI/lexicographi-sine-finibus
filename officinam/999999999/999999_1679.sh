@@ -31,10 +31,24 @@ set -e
 # @TODO: considerar entrar nesses Wikidata projects
 #        - https://www.wikidata.org/wiki/Wikidata:WikiProject_Brazilian_Laws
 #        - https://meta.wikimedia.org/wiki/Wiki_Movement_Brazil_User_Group/pt-br
+#        - https://www.wikidata.org/wiki/Wikidata:WikiProject_Hospitals
 # @TODO: potenciais listas em breve
 #        - https://www.wikidata.org/wiki/Wikidata:WikiProject_Medicine/Hospitals_by_country/Brazil
 #        - https://pt.wikipedia.org/wiki/Lista_de_hospitais_universit%C3%A1rios
 #        - https://pt.wikipedia.org/wiki/Lista_de_hospitais_do_Cear%C3%A1
+#        - pontos de entrada
+#          - https://www.wikidata.org/wiki/Wikidata:WikiProject_Hospitals/Properties
+#          - https://www.wikidata.org/wiki/Wikidata:WikiProject_Companies/Properties
+#            - Caso de uso: nome fantasia e nome oficial de hospitais e afins
+#
+# @TODO:
+#        - ftp://ftp.datasus.gov.br/cnes
+#        - ftp://ftp.datasus.gov.br/cnes/Download/SCNES_DICIONARIO_DE_DADOS.ZIP
+#        - ftp://ftp.datasus.gov.br/cnes/BASE_DE_DADOS_CNES_202204.ZIP
+#          - tbEstabelecimento202204.csv
+#        - Ver também
+#          - https://wiki.saude.gov.br/cnes/index.php/Principais_Conceitos
+#        - https://cnes.datasus.gov.br/pages/downloads/arquivosOutros.jsp
 
 # ./999999999/0/1603_1.py --methodus='codex' --codex-de 1603_45_31 --codex-in-tabulam-json | jq
 # ./999999999/0/1603_1.py --methodus='codex' --codex-de 1603_45_31 --codex-in-tabulam-json > 1603/45/31/1603_45_31.mul-Latn.tab.json
