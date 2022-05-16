@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 # ==============================================================================
 #
-#          FILE:  999999999_10263485.py
+#          FILE:  999999999_268072.py
 #
-#         USAGE:  ./999999999/0/999999999_10263485.py
-#                 ./999999999/0/999999999_10263485.py --help
+#         USAGE:  ./999999999/0/999999999_268072.py
+#                 ./999999999/0/999999999_268072.py --help
 #
-#   DESCRIPTION:  RUn /999999999/0/999999999_10263485.py --help
+#   DESCRIPTION:  RUn /999999999/0/999999999_268072.py --help
 #
 #       OPTIONS:  ---
 #
@@ -19,7 +19,7 @@
 #       LICENSE:  Public Domain dedication or Zero-Clause BSD
 #                 SPDX-License-Identifier: Unlicense OR 0BSD
 #       VERSION:  v1.0.0
-#       CREATED:  2022-05-16 16:29 UTC based on hotfix0s.py
+#       CREATED:  2022-05-16 21:16 UTC based on 999999999_10263485.py
 #      REVISION:  ---
 # ==============================================================================
 
@@ -28,34 +28,38 @@ import argparse
 import csv
 import re
 
-import xml.etree.ElementTree as XMLElementTree
+import json
+import urllib.request
 
 STDIN = sys.stdin.buffer
 
 DESCRIPTION = """
-{0} Processamento de dados de referência do CNES (Cadastro Nacional de
-Estabelecimentos de Saúde) do Brasil.
+{0} Processamento de dados de referência do IBGE (Brasil).
 
 @see https://github.com/EticaAI/lexicographi-sine-finibus/issues/42
+@see https://servicodados.ibge.gov.br/api/docs
 
 Trivia:
-- Q10263485, https://www.wikidata.org/wiki/Q10263485
-  - DATASUS
-  - "DATASUS é o departamento de informática do Sistema Único de Saúde do
-     Brasil. É responsável, também, pelos sistemas e aplicativos necessários
-     para registrar e processar as informações de saúde. Um exemplo
-     é o Cadastro Nacional de Estabelecimentos de Saúde (CNES), (...)"
+- Q268072, https://www.wikidata.org/wiki/Q268072
+  - IBGE - Instituto Brasileiro de Geografia e Estatística
+  - "instituto público da administração federal brasileira criado em 1934
+     e instalado em 1936 com o nome de Instituto Nacional de Estatística (...)"
 """.format(__file__)
 
 __EPILOGUM__ = """
 ------------------------------------------------------------------------------
                             EXEMPLŌRUM GRATIĀ
 ------------------------------------------------------------------------------
-    {0} --methodus=datasus-xmlcnae 999999/0/xmlCNES.xml
-    cat 999999/0/xmlCNES.xml | {0} --methodus=datasus-xmlcnae
+    {0} --methodus=ibge-un-adm2 --objectivum-formato=url-fonti
 
+    {0} --methodus=ibge-un-adm2 --objectivum-formato=json-fonti
 
-@TODO: fazer funcionar com stream de XML (não apenas por arquivo)
+    {0} --methodus=ibge-un-adm2 --objectivum-formato=csv
+
+    {0} --methodus=ibge-un-adm2 --objectivum-formato=json-fonti-formoso \
+> 999999/0/ibge-un-adm2.json
+
+@TODO: fazer funcionar com stream de JSON (não apenas por URI)
 ------------------------------------------------------------------------------
                             EXEMPLŌRUM GRATIĀ
 ------------------------------------------------------------------------------
@@ -89,7 +93,14 @@ CSV_AD_HXLTM_TABULAE = {
     'TP_UNIDADE': '#meta+TP_UNIDADE',
 }
 
-# ./999999999/0/999999999_10263485.py 999999/0/1603_1_1--old.csv 999999/0/1603_1_1--new.csv
+
+METHODUS_FONTI = {
+    'ibge-un-adm2': 'https://servicodados.ibge.gov.br/api' +
+    '/v1/localidades/distritos?view=nivelado&oorderBy=id'
+}
+
+# @TODO implementar malhas https://servicodados.ibge.gov.br/api/docs/malhas?versao=3
+# ./999999999/0/999999999_268072.py 999999/0/1603_1_1--old.csv 999999/0/1603_1_1--new.csv
 
 
 class Cli:
@@ -106,7 +117,7 @@ class Cli:
     def make_args(self, hxl_output=True):
         # parser = argparse.ArgumentParser(description=DESCRIPTION)
         parser = argparse.ArgumentParser(
-            prog="999999999_10263485",
+            prog="999999999_268072",
             description=DESCRIPTION,
             formatter_class=argparse.RawDescriptionHelpFormatter,
             epilog=__EPILOGUM__
@@ -114,7 +125,8 @@ class Cli:
 
         parser.add_argument(
             'infile',
-            help='Arquivo de entrada',
+            help='Input file',
+            # required=False,
             nargs='?'
         )
 
@@ -124,7 +136,7 @@ class Cli:
             dest='methodus',
             nargs='?',
             choices=[
-                'datasus-xmlcnae',
+                'ibge-un-adm2',
                 # 'data-apothecae',
                 # 'hxltm-explanationi',
                 # 'opus-temporibus',
@@ -132,8 +144,9 @@ class Cli:
                 # 'deprecatum-dictionaria-numerordinatio'
             ],
             # required=True
-            default='datasus-xmlcnae'
+            default='ibge-un-adm2'
         )
+        # https://servicodados.ibge.gov.br/api/v1/localidades/distritos?view=nivelado&oorderBy=id
 
         # objectīvum, n, s, nominativus,
         #                       https://en.wiktionary.org/wiki/objectivus#Latin
@@ -144,6 +157,9 @@ class Cli:
             dest='objectivum_formato',
             nargs='?',
             choices=[
+                'url-fonti',
+                'json-fonti',
+                'json-fonti-formoso',
                 'csv',
                 'tsv',
                 'hxltm-csv',
@@ -191,8 +207,20 @@ class Cli:
         # hf = CliMain(self.pyargs.infile, self.pyargs.outfile)
         climain = CliMain(infile=_infile, stdin=_stdin,
                           objectivum_formato=pyargs.objectivum_formato)
-        if pyargs.methodus == 'datasus-xmlcnae':
+
+        if pyargs.objectivum_formato == 'url-fonti':
+            print(METHODUS_FONTI[pyargs.methodus])
+            return self.EXIT_OK
+
+        if pyargs.objectivum_formato == 'json-fonti':
+            return climain.json_fonti(METHODUS_FONTI[pyargs.methodus])
+        if pyargs.objectivum_formato == 'json-fonti-formoso':
+            return climain.json_fonti(METHODUS_FONTI[pyargs.methodus], True)
+
+        if pyargs.methodus == 'ibge-un-adm2':
             return climain.execute_ex_datasus_xmlcnae()
+        # if pyargs.methodus == 'datasus-xmlcnae':
+        #     return climain.execute_ex_datasus_xmlcnae()
 
         print('Unknow option.')
         return self.EXIT_ERROR
@@ -215,6 +243,18 @@ class CliMain:
         # self.outfile = outfile
         self.header = []
         self.header_index_fix = []
+
+    def json_fonti(self, uri: str, formosum: bool = False) -> str:
+
+        data = urllib.request.urlopen(uri).read()
+        output = json.loads(data)
+        if formosum:
+            print(json.dumps(output,
+                             indent=2, ensure_ascii=False, sort_keys=False))
+            return Cli.EXIT_OK
+        print(output)
+        return Cli.EXIT_OK
+        # return ''
 
     def process_row(self, row: list) -> list:
         if len(self.header) == 0:
