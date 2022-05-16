@@ -519,8 +519,18 @@ SELECT {select} WHERE {{
             # print('item')
             # (GROUP_CONCAT(?subdivisionLabel; separator = ", ") as ?subdivisionLabels)
             # select.append('?item__rem__i_qcc__is_zxxx__ix_wikip{0}'.format(
+
+            # @TODO maybe this will not work as expected if wikidata_entity_p
+            #       have more than one value, but this already is an exception
             if 'P' + item in self.wikidata_entity_p:
-                select.append('(GROUP_CONCAT(DISTINCT ?p{0}_values; separator = "|") AS ?item__rem__i_qcc__is_zxxx__ix_wikip{0})'.format(
+
+                # (GROUP_CONCAT(DISTINCT STRAFTER(STR(?p131_values), "entity/"); separator = "|") AS ?item__rem__i_qcc__is_zxxx__ix_wikip131)
+                # select.append(
+                #     '(STRAFTER(STR(?p{0}_values), "entity/") '
+                #     'AS ?item__rem__i_qcc__is_zxxx__ix_wikip{0})'.format(
+                #     item
+                # ))
+                select.append('(GROUP_CONCAT(DISTINCT STRAFTER(STR(?p{0}_values), "entity/"); separator = "|") AS ?item__rem__i_qcc__is_zxxx__ix_wikip{0})'.format(
                     item
                 ))
             else:
