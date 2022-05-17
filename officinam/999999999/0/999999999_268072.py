@@ -32,7 +32,8 @@ from os.path import exists
 
 import json
 import yaml
-import urllib.request
+# import urllib.request
+import requests
 
 STDIN = sys.stdin.buffer
 
@@ -55,7 +56,7 @@ __EPILOGUM__ = """
 ------------------------------------------------------------------------------
                             EXEMPLŌRUM GRATIĀ
 ------------------------------------------------------------------------------
-    {0} --methodus=ibge_un_adm2 --objectivum-formato=url-fonti
+    {0} --methodus=ibge_un_adm2 --objectivum-formato=uri_fonti
 
     {0} --methodus=ibge_un_adm2 --objectivum-formato=json_fonti
 
@@ -65,6 +66,10 @@ __EPILOGUM__ = """
 > 999999/0/ibge_un_adm2.json
     cat 999999/0/ibge_un_adm2.json | {0} --objectivum-formato=csv \
 > 999999/0/ibge_un_adm2.csv
+    cat 999999/0/ibge_un_adm2.json | {0} --objectivum-formato=hxl_csv \
+> 999999/0/ibge_un_adm2.hxl.csv
+    cat 999999/0/ibge_un_adm2.json | {0} --objectivum-formato=hxltm_csv \
+> 999999/0/ibge_un_adm2.tm.hxl.csv
 
 ------------------------------------------------------------------------------
                             EXEMPLŌRUM GRATIĀ
@@ -194,6 +199,8 @@ class Cli:
                 'json_fonti_formoso',
                 'csv',
                 'tsv',
+                'hxl_csv',
+                'hxl_tsv',
                 'hxltm_csv',
                 'hxltm_tsv',
             ],
@@ -256,17 +263,26 @@ class Cli:
 
         if pyargs.objectivum_formato == 'json_fonti':
             return climain.json_fonti(METHODUS_FONTI[pyargs.methodus])
+
         if pyargs.objectivum_formato == 'json_fonti_formoso':
-            return climain.json_fonti(METHODUS_FONTI[pyargs.methodus], True)
-        if pyargs.objectivum_formato == 'csv':
+            return climain.json_fonti(
+                METHODUS_FONTI[pyargs.methodus],
+                formosum=True,
+                # ex_texto=True
+            )
+
+        if pyargs.objectivum_formato in ['csv', 'tsv']:
             if json_fonti_texto is None:
                 json_fonti_texto = climain.json_fonti(
-                    METHODUS_FONTI[pyargs.methodus])
+                    METHODUS_FONTI[pyargs.methodus], ex_texto=True)
+            # print('json_fonti_texto', json_fonti_texto)
             return climain.objectivum_formato_csv(json_fonti_texto)
-        if pyargs.objectivum_formato == 'hxltm_csv':
+
+        if pyargs.objectivum_formato in [
+                'hxl_csv', 'hxltm_csv', 'hxl_tsv', 'hxltm_tsv']:
             if json_fonti_texto is None:
                 json_fonti_texto = climain.json_fonti(
-                    METHODUS_FONTI[pyargs.methodus])
+                    METHODUS_FONTI[pyargs.methodus], ex_texto=True)
             return climain.objectivum_formato_csv(json_fonti_texto)
 
         # if pyargs.methodus == 'ibge_un_adm2':
@@ -301,12 +317,16 @@ class CliMain:
         self.configuratio = configuratio
 
         # delimiter = ','
-        if self.objectivum_formato in ['tsv', 'hxltm-tsv']:
+        if self.objectivum_formato in ['tsv', 'hxltm_tsv', 'hxl_tsv']:
             self.delimiter = "\t"
 
+        methodus_ex_tabulae = configuratio['methodus'][self.methodus]
+
         self.tabula = TabulaAdHXLTM(
-            configuratio, methodus=self.methodus,
-            objectivum_formato=self.objectivum_formato)
+            methodus_ex_tabulae=methodus_ex_tabulae,
+            methodus=self.methodus,
+            objectivum_formato=self.objectivum_formato
+        )
 
         # self.outfile = outfile
         # self.header = []
@@ -315,14 +335,17 @@ class CliMain:
     def json_fonti(
             self, uri: str, formosum: bool = False, ex_texto: bool = False) -> str:
 
-        data = urllib.request.urlopen(uri).read()
-        output = json.loads(data)
+        # print('oooi', uri)
+        # data = urllib.request.urlopen(uri).read()
+        r = requests.get(uri)
+        # print('oooi2', data)
+        output = json.loads(r.text)
         # resultatum = output
         if formosum:
             output = json.dumps(output,
                                 indent=2, ensure_ascii=False, sort_keys=False)
         if ex_texto:
-            return output
+            return json.dumps(output)
 
         print(output)
         return Cli.EXIT_OK
@@ -340,7 +363,7 @@ class CliMain:
 
         # objectivum.writerow(datus_fonti[0].keys())
         objectivum.writerow(caput_translationi)
-        return Cli.EXIT_OK
+        # return Cli.EXIT_OK
         for item in datus_fonti:
             objectivum.writerow(item.values())
 
@@ -367,13 +390,15 @@ class TabulaAdHXLTM:
 
     """
     methodus_ex_tabulae: dict = {}
+    # methodus_ex_tabulae: dict = {}
     objectivum_formato: str = 'hxltm_csv'
     methodus: str = ''
 
     # _hxltm: '#meta+{caput}'
 
     #  '#meta+{{caput_clavi_normali}}'
-    _hxltm_hashtag__: str = '#meta+{{caput_clavi_normali}}'
+    _hxltm_hashtag_defallo: str = '#meta+{{caput_clavi_normali}}'
+    _hxl_hashtag_defallo: str = '#meta+{{caput_clavi_normali}}'
 
     def __init__(
         self,
@@ -402,10 +427,20 @@ class TabulaAdHXLTM:
         Returns:
             list: _description_
         """
-        hxltm_caput = map(self.clavis_normationi, caput)
-        if self.objectivum_formato.find('hxltm') > -1:
-            pass
-        return hxltm_caput
+
+        # if self.objectivum_formato.find('hxltm') > -1:
+        #     # neo_caput = map(self.clavis_ad_hxl, caput, 'hxltm')
+        #     # neo_caput = map(self.clavis_ad_hxl, caput, 'hxltm')
+        #     neo_caput = map(self.clavis_ad_hxl, caput)
+        #     # neo_caput = map(self.clavis_ad_hxl, caput)
+        # if self.objectivum_formato.find('hxl') > -1:
+        #     # neo_caput = map(self.clavis_ad_hxl, caput, 'hxl')
+        #     neo_caput = map(self.clavis_ad_hxl, caput)
+        if self.objectivum_formato.find('hxl') > -1:
+            neo_caput = map(self.clavis_ad_hxl, caput)
+        else:
+            neo_caput = map(self.clavis_normationi, caput)
+        return neo_caput
 
     def clavis_normationi(self, clavis: str) -> str:
         """clāvis nōrmātiōnī
@@ -426,8 +461,9 @@ class TabulaAdHXLTM:
 
         return clavis_normali
 
-    def clavis_ad_hxltm(self, clavis: str) -> str:
-        """clāvis nōrmātiōnī
+    # def clavis_ad_hxl(self, clavis: str, classis: str = 'hxltm') -> str:
+    def clavis_ad_hxl(self, clavis: str) -> str:
+        """clavis_ad_hxltm
 
         - clāvis, f, s, normativus, https://en.wiktionary.org/wiki/clavis#Latin
         - nōrmātiōnī, f, s, dativus, https://en.wiktionary.org/wiki/normatio
@@ -439,12 +475,34 @@ class TabulaAdHXLTM:
             str:
         """
         clavis_normationi = self.clavis_normationi(clavis)
+
         if not clavis or len(clavis) == 0:
             return ''
-        hxl_hashtag = clavis.strip().lower()\
-            .replace(' ', '_').replace('-', '_')
+        # print(classis)
+        # neo_caput = 'hxl_hashtag'
+        # forma = self._hxl_hashtag_defallo
+        # if classis == 'hxltm' or not classis:
+        if self.objectivum_formato.find('hxltm') > -1:
+            neo_caput = 'hxltm_hashtag'
+            forma = self._hxltm_hashtag_defallo
+        # elif classis == 'hxl':
+        elif self.objectivum_formato.find('hxl') > -1:
+            neo_caput = 'hxl_hashtag'
+            forma = self._hxl_hashtag_defallo
+
+        if clavis_normationi in self.methodus_ex_tabulae['caput'].keys():
+            if self.methodus_ex_tabulae['caput'][clavis_normationi] and \
+                neo_caput in self.methodus_ex_tabulae['caput'][clavis_normationi] and \
+                    self.methodus_ex_tabulae['caput'][clavis_normationi][neo_caput]:
+                forma = self.methodus_ex_tabulae['caput'][clavis_normationi][neo_caput]
+
+        hxl_hashtag = forma.replace(
+            '{{caput_clavi_normali}}', clavis_normationi)
 
         return hxl_hashtag
+
+    # def clavis_ad_hxl(self, clavis: str) -> str:
+    #     pass
 
 
 if __name__ == "__main__":
