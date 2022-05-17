@@ -31,6 +31,7 @@ from pathlib import Path
 from os.path import exists
 
 import json
+from typing import Type
 import yaml
 # import urllib.request
 import requests
@@ -70,55 +71,31 @@ __EPILOGUM__ = """
     cat 999999/0/ibge_un_adm2.json | {0} --objectivum-formato=hxltm_csv \
 > 999999/0/ibge_un_adm2.tm.hxl.csv
 
-    cat 999999/0/ibge_un_adm2.tm.hxl.csv | {0} --objectivum-formato=hxltm_csv \
-> 999999/0/ibge_un_adm2.tm.hxl.csv
+    cat 999999/0/ibge_un_adm2.tm.hxl.csv | \
+{0} --objectivum-formato=application/x-turtle \
+--archivum-configurationi-ex-fonti=999999999/0/999999999_268072.meta.yml \
+--praefixum-configurationi-ex-fonti=methodus,ibge_un_adm2 \
+> 999999/0/ibge_un_adm2.no1.skos.ttl
 
 ------------------------------------------------------------------------------
                             EXEMPLŌRUM GRATIĀ
 ------------------------------------------------------------------------------
 """.format(__file__)
 
-# LIKELY_NUMERIC = [
-#     '#item+conceptum+codicem',
-#     '#status+conceptum',
-#     '#item+rem+i_qcc+is_zxxx+ix_n1603',
-#     '#item+rem+i_qcc+is_zxxx+ix_iso5218',
-# ]
-# https://en.wiktionary.org/wiki/tabula#Latin
-# XML_AD_CSV_TABULAE = {
-#     'CO_UNIDADE': 'CO_UNIDADE',
-#     'NO_FANTASIA': 'NO_FANTASIA',
-#     'CO_MUNICIPIO_GESTOR': 'CO_MUNICIPIO_GESTOR',
-#     'NU_CNPJ': 'NU_CNPJ',
-#     'CO_CNES': 'CO_CNES',
-#     'DT_ATUALIZACAO': 'DT_ATUALIZACAO',
-#     'TP_UNIDADE': 'TP_UNIDADE',
-# }
-
-# CSV_AD_HXLTM_TABULAE = {
-#     # @TODO: create wikiq
-#     'CO_UNIDADE': '#item+rem+i_qcc+is_zxxx+ix_brcnae',
-#     'NO_FANTASIA': '#meta+NO_FANTASIA',
-#     'CO_MUNICIPIO_GESTOR': '#item+rem+i_qcc+is_zxxx+ix_wikip1585',
-#     'NU_CNPJ': '#item+rem+i_qcc+is_zxxx+ix_wikip6204',
-#     'CO_CNES': '#meta+CO_CNES',
-#     'DT_ATUALIZACAO': '#meta+DT_ATUALIZACAO',
-#     'TP_UNIDADE': '#meta+TP_UNIDADE',
-# }
 
 SYSTEMA_SARCINAE = str(Path(__file__).parent.resolve())
 PROGRAMMA_SARCINAE = str(Path().resolve())
-ARCHIVUM_CONFIGURATIONI_DEFALLO = [
-    SYSTEMA_SARCINAE + '/' + NOMEN + '.meta.yml',
-    PROGRAMMA_SARCINAE + '/' + NOMEN + '.meta.yml',
-]
+# ARCHIVUM_CONFIGURATIONI_DEFALLO = [
+#     SYSTEMA_SARCINAE + '/' + NOMEN + '.meta.yml',
+#     PROGRAMMA_SARCINAE + '/' + NOMEN + '.meta.yml',
+# ]
 
 # https://servicodados.ibge.gov.br/api/v1/localidades/distritos?view=nivelado&oorderBy=municipio-id
 # https://servicodados.ibge.gov.br/api/v1/localidades/municipios?view=nivelado&orderBy=id
-METHODUS_FONTI = {
-    'ibge_un_adm2': 'https://servicodados.ibge.gov.br/api' +
-    '/v1/localidades/municipios?view=nivelado&orderBy=id'
-}
+# METHODUS_FONTI = {
+#     'ibge_un_adm2': 'https://servicodados.ibge.gov.br/api' +
+#     '/v1/localidades/municipios?view=nivelado&orderBy=id'
+# }
 
 # @TODO implementar malhas https://servicodados.ibge.gov.br/api/docs/malhas?versao=3
 # ./999999999/0/999999999_54872.py 999999/0/1603_1_1--old.csv 999999/0/1603_1_1--new.csv
@@ -151,22 +128,22 @@ class Cli:
             nargs='?'
         )
 
-        parser.add_argument(
-            '--methodus',
-            help='Modo de operação.',
-            dest='methodus',
-            nargs='?',
-            choices=[
-                'ibge_un_adm2',
-                # 'data-apothecae',
-                # 'hxltm-explanationi',
-                # 'opus-temporibus',
-                # 'status-quo',
-                # 'deprecatum-dictionaria-numerordinatio'
-            ],
-            # required=True
-            default='ibge_un_adm2'
-        )
+        # parser.add_argument(
+        #     '--methodus',
+        #     help='Modo de operação.',
+        #     dest='methodus',
+        #     nargs='?',
+        #     choices=[
+        #         'ibge_un_adm2',
+        #         # 'data-apothecae',
+        #         # 'hxltm-explanationi',
+        #         # 'opus-temporibus',
+        #         # 'status-quo',
+        #         # 'deprecatum-dictionaria-numerordinatio'
+        #     ],
+        #     # required=True
+        #     default='ibge_un_adm2'
+        # )
 
         # objectīvum, n, s, nominativus,
         #                       https://en.wiktionary.org/wiki/objectivus#Latin
@@ -201,22 +178,28 @@ class Cli:
         # archīvum, n, s, nominativus, https://en.wiktionary.org/wiki/archivum
         # cōnfigūrātiōnī, f, s, dativus,
         #                      https://en.wiktionary.org/wiki/configuratio#Latin
-        parser.add_argument(
-            '--archivum-configurationi',
-            help='Arquivo de configuração .meta.yml',
-            dest='archivum_configurationi',
-            nargs='?',
-            default=None
-        )
-        # archīvum, n, s, nominativus, https://en.wiktionary.org/wiki/archivum
-        # cōnfigūrātiōnī, f, s, dativus,
-        #                      https://en.wiktionary.org/wiki/configuratio#Latin
         # ex
         # fontī, m, s, dativus, https://en.wiktionary.org/wiki/fons#Latin
         parser.add_argument(
             '--archivum-configurationi-ex-fonti',
             help='Arquivo de configuração .meta.yml da fonte de dados',
             dest='archivum_configurationi',
+            nargs='?',
+            required=True,
+            default=None
+        )
+
+        # praefīxum	, n, s, nominativus,
+        #                         https://en.wiktionary.org/wiki/praefixus#Latin
+        # cōnfigūrātiōnī, f, s, dativus,
+        #                      https://en.wiktionary.org/wiki/configuratio#Latin
+        # ex
+        # fontī, m, s, dativus, https://en.wiktionary.org/wiki/fons#Latin
+        parser.add_argument(
+            '--praefixum-configurationi-ex-fonti',
+            help='Prefixo (separado por vírgula) que contém os metadados que'
+            'ajudam a entender como HXLTM deveria ser serializado para RDF',
+            dest='praefixum_configurationi',
             nargs='?',
             default=None
         )
@@ -235,7 +218,8 @@ class Cli:
 
         _infile = None
         _stdin = None
-        configuratio = self.quod_configuratio(pyargs.archivum_configurationi)
+        configuratio = self.quod_configuratio(
+            pyargs.archivum_configurationi, pyargs.praefixum_configurationi)
 
         if stdin.isatty():
             _infile = pyargs.infile
@@ -259,43 +243,47 @@ class Cli:
             pyargs=pyargs,
             configuratio=configuratio)
 
-        if pyargs.objectivum_formato == 'uri_fonti':
-            print(METHODUS_FONTI[pyargs.methodus])
+        if pyargs.objectivum_formato == 'application/x-turtle':
+            # print(METHODUS_FONTI[pyargs.methodus])
+            climain.actio()
             return self.EXIT_OK
 
-        if pyargs.objectivum_formato == 'json_fonti':
-            return climain.json_fonti(METHODUS_FONTI[pyargs.methodus])
+        # if pyargs.objectivum_formato == 'uri_fonti':
+        #     print(METHODUS_FONTI[pyargs.methodus])
+        #     return self.EXIT_OK
 
-        if pyargs.objectivum_formato == 'json_fonti_formoso':
-            return climain.json_fonti(
-                METHODUS_FONTI[pyargs.methodus],
-                formosum=True,
-                # ex_texto=True
-            )
+        # if pyargs.objectivum_formato == 'json_fonti':
+        #     return climain.json_fonti(METHODUS_FONTI[pyargs.methodus])
 
-        if pyargs.objectivum_formato in ['csv', 'tsv']:
-            if json_fonti_texto is None:
-                json_fonti_texto = climain.json_fonti(
-                    METHODUS_FONTI[pyargs.methodus], ex_texto=True)
-            # print('json_fonti_texto', json_fonti_texto)
-            return climain.objectivum_formato_csv(json_fonti_texto)
+        # if pyargs.objectivum_formato == 'json_fonti_formoso':
+        #     return climain.json_fonti(
+        #         METHODUS_FONTI[pyargs.methodus],
+        #         formosum=True,
+        #         # ex_texto=True
+        #     )
 
-        if pyargs.objectivum_formato in [
-                'hxl_csv', 'hxltm_csv', 'hxl_tsv', 'hxltm_tsv']:
-            if json_fonti_texto is None:
-                json_fonti_texto = climain.json_fonti(
-                    METHODUS_FONTI[pyargs.methodus], ex_texto=True)
-            return climain.objectivum_formato_csv(json_fonti_texto)
+        # if pyargs.objectivum_formato in ['csv', 'tsv']:
+        #     if json_fonti_texto is None:
+        #         json_fonti_texto = climain.json_fonti(
+        #             METHODUS_FONTI[pyargs.methodus], ex_texto=True)
+        #     # print('json_fonti_texto', json_fonti_texto)
+        #     return climain.objectivum_formato_csv(json_fonti_texto)
 
-        # if pyargs.methodus == 'ibge_un_adm2':
-        #     return climain.execute_ex_datasus_xmlcnae()
-        # if pyargs.methodus == 'datasus-xmlcnae':
-        #     return climain.execute_ex_datasus_xmlcnae()
+        # if pyargs.objectivum_formato in [
+        #         'hxl_csv', 'hxltm_csv', 'hxl_tsv', 'hxltm_tsv']:
+        #     if json_fonti_texto is None:
+        #         json_fonti_texto = climain.json_fonti(
+        #             METHODUS_FONTI[pyargs.methodus], ex_texto=True)
+        #     return climain.objectivum_formato_csv(json_fonti_texto)
 
         print('Unknow option.')
         return self.EXIT_ERROR
 
-    def quod_configuratio(self, archivum_configurationi: str = None) -> dict:
+    def quod_configuratio(
+        self,
+        archivum_configurationi: str = None,
+        praefixum_configurationi: str = None
+    ) -> dict:
         """quod_configuratio
 
         Args:
@@ -304,23 +292,28 @@ class Cli:
         Returns:
             (dict):
         """
-        archivae = ARCHIVUM_CONFIGURATIONI_DEFALLO
-        if archivum_configurationi is not None:
-            if not exists(archivum_configurationi):
-                raise FileNotFoundError(
-                    'archivum_configurationi {0}'.format(
-                        archivum_configurationi))
-            archivae.append(archivum_configurationi)
+        praefixum = []
+        if praefixum_configurationi:
+            praefixum = praefixum_configurationi.split(',')
 
-        for item in archivae:
-            if exists(item):
-                with open(item, "r") as read_file:
-                    datum = yaml.safe_load(read_file)
-                    return datum
+        if exists(archivum_configurationi):
+            with open(archivum_configurationi, "r") as read_file:
+                datum = yaml.safe_load(read_file)
+                while len(praefixum) > 0:
+                    ad_hoc = praefixum.pop(0)
+                    if ad_hoc in datum:
+                        datum = datum[ad_hoc]
+                    else:
+                        raise ValueError('{0} [{1}]: [{2}?]'.format(
+                            archivum_configurationi,
+                            praefixum_configurationi,
+                            ad_hoc,
+                        ))
+                return datum
 
         raise FileNotFoundError(
             'archivum_configurationi {0}'.format(
-                str(archivae)))
+                str(archivum_configurationi)))
 
 
 class CliMain:
@@ -330,6 +323,9 @@ class CliMain:
 
     delimiter = ','
 
+    hxltm_ad_rdf: Type['HXLTMAdRDFSimplicis'] = None
+    pyargs: dict = None
+
     def __init__(
             self, infile: str = None, stdin=None,
             pyargs: dict = None, configuratio: dict = None):
@@ -338,62 +334,73 @@ class CliMain:
         """
         self.infile = infile
         self.stdin = stdin
+        self.pyargs = pyargs
         self.objectivum_formato = pyargs.objectivum_formato
-        self.methodus = pyargs.methodus
+        # self.methodus = pyargs.methodus
         self.configuratio = configuratio
 
         # delimiter = ','
         if self.objectivum_formato in ['tsv', 'hxltm_tsv', 'hxl_tsv']:
             self.delimiter = "\t"
+        print('oi HXLTMAdRDFSimplicis')
+        self.hxltm_ad_rdf = HXLTMAdRDFSimplicis(configuratio, pyargs.objectivum_formato)
 
-        methodus_ex_tabulae = configuratio['methodus'][self.methodus]
+        # methodus_ex_tabulae = configuratio['methodus'][self.methodus]
 
-        self.tabula = TabulaAdHXLTM(
-            methodus_ex_tabulae=methodus_ex_tabulae,
-            methodus=self.methodus,
-            objectivum_formato=self.objectivum_formato
-        )
+        # self.tabula = TabulaAdHXLTM(
+        #     methodus_ex_tabulae=methodus_ex_tabulae,
+        #     methodus=self.methodus,
+        #     objectivum_formato=self.objectivum_formato
+        # )
 
         # self.outfile = outfile
         # self.header = []
         # self.header_index_fix = []
 
-    def json_fonti(
-            self, uri: str, formosum: bool = False, ex_texto: bool = False) -> str:
+    def actio(self):
+        # āctiō, f, s, nominativus, https://en.wiktionary.org/wiki/actio#Latin
+        if self.pyargs.objectivum_formato == 'application/x-turtle':
+            self.hxltm_ad_rdf.resultatum_ad_turtle()
+            print('oi actio')
+            return Cli.EXIT_OK
+        print('failed')
 
-        # print('oooi', uri)
-        # data = urllib.request.urlopen(uri).read()
-        r = requests.get(uri)
-        # print('oooi2', data)
-        output = json.loads(r.text)
-        # resultatum = output
-        if formosum:
-            output = json.dumps(output,
-                                indent=2, ensure_ascii=False, sort_keys=False)
-        if ex_texto:
-            return json.dumps(output)
+    # def json_fonti(
+    #         self, uri: str, formosum: bool = False, ex_texto: bool = False) -> str:
 
-        print(output)
-        return Cli.EXIT_OK
+    #     # print('oooi', uri)
+    #     # data = urllib.request.urlopen(uri).read()
+    #     r = requests.get(uri)
+    #     # print('oooi2', data)
+    #     output = json.loads(r.text)
+    #     # resultatum = output
+    #     if formosum:
+    #         output = json.dumps(output,
+    #                             indent=2, ensure_ascii=False, sort_keys=False)
+    #     if ex_texto:
+    #         return json.dumps(output)
 
-    def objectivum_formato_csv(self, json_fonti_texto: str) -> str:
+    #     print(output)
+    #     return Cli.EXIT_OK
 
-        objectivum = csv.writer(
-            sys.stdout, delimiter=self.delimiter, quoting=csv.QUOTE_MINIMAL)
-        # caput = []
-        # caput_okay = False
-        datus_fonti = json.loads(json_fonti_texto)
+    # def objectivum_formato_csv(self, json_fonti_texto: str) -> str:
 
-        caput_translationi = \
-            self.tabula.caput_translationi(datus_fonti[0].keys())
+    #     objectivum = csv.writer(
+    #         sys.stdout, delimiter=self.delimiter, quoting=csv.QUOTE_MINIMAL)
+    #     # caput = []
+    #     # caput_okay = False
+    #     datus_fonti = json.loads(json_fonti_texto)
 
-        # objectivum.writerow(datus_fonti[0].keys())
-        objectivum.writerow(caput_translationi)
-        # return Cli.EXIT_OK
-        for item in datus_fonti:
-            objectivum.writerow(item.values())
+    #     caput_translationi = \
+    #         self.tabula.caput_translationi(datus_fonti[0].keys())
 
-        return Cli.EXIT_OK
+    #     # objectivum.writerow(datus_fonti[0].keys())
+    #     objectivum.writerow(caput_translationi)
+    #     # return Cli.EXIT_OK
+    #     for item in datus_fonti:
+    #         objectivum.writerow(item.values())
+
+    #     return Cli.EXIT_OK
 
     # def execute(self):
     #     with open(self.infile, newline='') as infilecsv:
@@ -406,6 +413,52 @@ class CliMain:
     #                 # self.data.append(row)
 
 
+class HXLTMAdRDFSimplicis:
+    """HXLTM ad RDF
+
+    - ad (+ accusativus),https://en.wiktionary.org/wiki/ad#Latin
+    - HXLTM, https://hxltm.etica.ai/
+    - RDF, ...
+    - simplicis, m/f/n, s, Gen., https://en.wiktionary.org/wiki/simplex#Latin
+
+    """
+    # fōns, m, s, nominativus, https://en.wiktionary.org/wiki/fons#Latin
+    fons_configurationi: dict = {}
+    # methodus_ex_tabulae: dict = {}
+    objectivum_formato: str = 'application/x-turtle'
+    # methodus: str = ''
+
+    # _hxltm: '#meta+{caput}'
+
+    #  '#meta+{{caput_clavi_normali}}'
+    # _hxltm_hashtag_defallo: str = '#meta+{{caput_clavi_normali}}'
+    # _hxl_hashtag_defallo: str = '#meta+{{caput_clavi_normali}}'
+
+    def __init__(
+        self,
+        fons_configurationi: dict,
+        objectivum_formato: str,
+        # methodus: str,
+    ):
+        """__init__ _summary_
+
+        Args:
+            methodus_ex_tabulae (dict):
+        """
+        self.fons_configurationi = fons_configurationi
+        self.objectivum_formato = objectivum_formato
+        # self.methodus = methodus
+
+    # resultātum, n, s, nominativus, https://en.wiktionary.org/wiki/resultatum
+    def resultatum_ad_ntriples(self):
+        pass
+
+    # resultātum, n, s, nominativus, https://en.wiktionary.org/wiki/resultatum
+    def resultatum_ad_turtle(self):
+        print('TODO')
+
+
+# @TODO remove TabulaAdHXLTM from this file
 class TabulaAdHXLTM:
     """Tabula ad HXLTM
 
