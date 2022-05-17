@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 # ==============================================================================
 #
-#          FILE:  999999999_268072.py
+#          FILE:  999999999_54872.py
 #
-#         USAGE:  ./999999999/0/999999999_268072.py
-#                 ./999999999/0/999999999_268072.py --help
+#         USAGE:  ./999999999/0/999999999_54872.py
+#                 ./999999999/0/999999999_54872.py --help
 #
-#   DESCRIPTION:  RUN /999999999/0/999999999_268072.py --help
+#   DESCRIPTION:  RUN /999999999/0/999999999_54872.py --help
 #
 #       OPTIONS:  ---
 #
@@ -19,7 +19,7 @@
 #       LICENSE:  Public Domain dedication or Zero-Clause BSD
 #                 SPDX-License-Identifier: Unlicense OR 0BSD
 #       VERSION:  v1.0.0
-#       CREATED:  2022-05-16 21:16 UTC based on 999999999_10263485.py
+#       CREATED:  2022-05-17 18:48 UTC based on 999999999_10263485.py
 #      REVISION:  ---
 # ==============================================================================
 
@@ -37,19 +37,17 @@ import requests
 
 STDIN = sys.stdin.buffer
 
-NOMEN = '999999999_268072'
+NOMEN = '999999999_54872'
 
 DESCRIPTION = """
 {0} Processamento de dados de referência do IBGE (Brasil).
 
 @see https://github.com/EticaAI/lexicographi-sine-finibus/issues/42
-@see https://servicodados.ibge.gov.br/api/docs
 
 Trivia:
-- Q268072, https://www.wikidata.org/wiki/Q268072
-  - IBGE - Instituto Brasileiro de Geografia e Estatística
-  - "instituto público da administração federal brasileira criado em 1934
-     e instalado em 1936 com o nome de Instituto Nacional de Estatística (...)"
+- Q54872, https://www.wikidata.org/wiki/Q54872
+  - Resource Description Framework
+  - "formal language for describing data models (...)"
 """.format(__file__)
 
 __EPILOGUM__ = """
@@ -119,7 +117,7 @@ METHODUS_FONTI = {
 }
 
 # @TODO implementar malhas https://servicodados.ibge.gov.br/api/docs/malhas?versao=3
-# ./999999999/0/999999999_268072.py 999999/0/1603_1_1--old.csv 999999/0/1603_1_1--new.csv
+# ./999999999/0/999999999_54872.py 999999/0/1603_1_1--old.csv 999999/0/1603_1_1--new.csv
 
 
 class Cli:
@@ -163,7 +161,7 @@ class Cli:
     def make_args(self, hxl_output=True):
         # parser = argparse.ArgumentParser(description=DESCRIPTION)
         parser = argparse.ArgumentParser(
-            prog="999999999_268072",
+            prog="999999999_54872",
             description=DESCRIPTION,
             formatter_class=argparse.RawDescriptionHelpFormatter,
             epilog=__EPILOGUM__

@@ -67,14 +67,9 @@ ROOTDIR="$(pwd)"
 # file_download_1603_xlsx "1"
 # actiones_completis_locali "1679_1_1"
 
-# ./999999999/0/999999999_10263485.py --help
 
-# https://cnes.datasus.gov.br/pages/downloads/arquivosOutros.jsp
-# ftp://ftp.datasus.gov.br/cnes/CNESBRASIL.ZIP
-
-# wget --timestamping ftp://ftp.datasus.gov.br/cnes/CNESBRASIL.ZIP --output-document=999999/0/CNESBRASIL.ZIP
-
-# archivum_speculo_ex_ftp "ftp://ftp.datasus.gov.br/cnes/CNESBRASIL.ZIP"
+actiones_completis_locali "1603_45_49"
+exit 0
 
 archivum_unzip "999999/0/0/ftp.datasus.gov.br/cnes/CNESBRASIL.ZIP" "xmlCNES.xml" "999999/0/xmlCNES.xml"
 
@@ -92,6 +87,11 @@ sed -i '1d' "999999/1603/63/49/76/1603_63_49_76.no1.tm.hxl.csv"
 
 archivum_copiae "1603_63_49_76" "1603_63_49_76" "no1.tm.hxl.csv" "1" "0"
 
+file_download_1603_xlsx "1"
+actiones_completis_locali "1603_1_1"
+
+# The SKOS generation need optimization. Over 14min. Obviously not optimized
+actiones_completis_locali "1603_63_49_76"
 
 exit 0
 #### Manual action, TEST locally, one per time, END ----------------------------

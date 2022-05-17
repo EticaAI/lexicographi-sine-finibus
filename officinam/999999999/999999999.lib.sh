@@ -3086,7 +3086,7 @@ actiones_completis_locali() {
     file_convert_tbx_de_numerordinatio11 "$numerordinatio"
   else
     # echo "noop"
-    if [ -z "$(quaero__ix_n1603ia "$numerordinatio" "ontologia")" ]; then
+    if [ -z "$(quaero__ix_n1603ia "$numerordinatio" "origo_per_automata")" ]; then
       file_convert_rdf_skos_ttl_de_numerordinatio11 "$numerordinatio"
       file_convert_tmx_de_numerordinatio11 "$numerordinatio"
       file_convert_tbx_de_numerordinatio11 "$numerordinatio"
@@ -3109,7 +3109,7 @@ actiones_completis_locali() {
   # neo_codex_de_numerordinatio "$numerordinatio" "0" "0"
   # neo_codex_de_numerordinatio_epub "$numerordinatio" "0" "0"
   # neo_codex_de_numerordinatio_pdf "$numerordinatio" "0" "0"
-  temp_save_status "$numerordinatio" "locale"
+  # temp_save_status "$numerordinatio" "locale"
 
 }
 
