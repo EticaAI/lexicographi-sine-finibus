@@ -55,16 +55,16 @@ __EPILOGUM__ = """
 ------------------------------------------------------------------------------
                             EXEMPLŌRUM GRATIĀ
 ------------------------------------------------------------------------------
-    {0} --methodus=ibge-un-adm2 --objectivum-formato=url-fonti
+    {0} --methodus=ibge_un_adm2 --objectivum-formato=url-fonti
 
-    {0} --methodus=ibge-un-adm2 --objectivum-formato=json-fonti
+    {0} --methodus=ibge_un_adm2 --objectivum-formato=json_fonti
 
-    {0} --methodus=ibge-un-adm2 --objectivum-formato=csv
+    {0} --methodus=ibge_un_adm2 --objectivum-formato=csv
 
-    {0} --methodus=ibge-un-adm2 --objectivum-formato=json-fonti-formoso \
-> 999999/0/ibge-un-adm2.json
-    cat 999999/0/ibge-un-adm2.json | {0} --objectivum-formato=csv \
-> 999999/0/ibge-un-adm2.csv
+    {0} --methodus=ibge_un_adm2 --objectivum-formato=json_fonti_formoso \
+> 999999/0/ibge_un_adm2.json
+    cat 999999/0/ibge_un_adm2.json | {0} --objectivum-formato=csv \
+> 999999/0/ibge_un_adm2.csv
 
 ------------------------------------------------------------------------------
                             EXEMPLŌRUM GRATIĀ
@@ -78,26 +78,26 @@ LIKELY_NUMERIC = [
     '#item+rem+i_qcc+is_zxxx+ix_iso5218',
 ]
 # https://en.wiktionary.org/wiki/tabula#Latin
-XML_AD_CSV_TABULAE = {
-    'CO_UNIDADE': 'CO_UNIDADE',
-    'NO_FANTASIA': 'NO_FANTASIA',
-    'CO_MUNICIPIO_GESTOR': 'CO_MUNICIPIO_GESTOR',
-    'NU_CNPJ': 'NU_CNPJ',
-    'CO_CNES': 'CO_CNES',
-    'DT_ATUALIZACAO': 'DT_ATUALIZACAO',
-    'TP_UNIDADE': 'TP_UNIDADE',
-}
+# XML_AD_CSV_TABULAE = {
+#     'CO_UNIDADE': 'CO_UNIDADE',
+#     'NO_FANTASIA': 'NO_FANTASIA',
+#     'CO_MUNICIPIO_GESTOR': 'CO_MUNICIPIO_GESTOR',
+#     'NU_CNPJ': 'NU_CNPJ',
+#     'CO_CNES': 'CO_CNES',
+#     'DT_ATUALIZACAO': 'DT_ATUALIZACAO',
+#     'TP_UNIDADE': 'TP_UNIDADE',
+# }
 
-CSV_AD_HXLTM_TABULAE = {
-    # @TODO: create wikiq
-    'CO_UNIDADE': '#item+rem+i_qcc+is_zxxx+ix_brcnae',
-    'NO_FANTASIA': '#meta+NO_FANTASIA',
-    'CO_MUNICIPIO_GESTOR': '#item+rem+i_qcc+is_zxxx+ix_wikip1585',
-    'NU_CNPJ': '#item+rem+i_qcc+is_zxxx+ix_wikip6204',
-    'CO_CNES': '#meta+CO_CNES',
-    'DT_ATUALIZACAO': '#meta+DT_ATUALIZACAO',
-    'TP_UNIDADE': '#meta+TP_UNIDADE',
-}
+# CSV_AD_HXLTM_TABULAE = {
+#     # @TODO: create wikiq
+#     'CO_UNIDADE': '#item+rem+i_qcc+is_zxxx+ix_brcnae',
+#     'NO_FANTASIA': '#meta+NO_FANTASIA',
+#     'CO_MUNICIPIO_GESTOR': '#item+rem+i_qcc+is_zxxx+ix_wikip1585',
+#     'NU_CNPJ': '#item+rem+i_qcc+is_zxxx+ix_wikip6204',
+#     'CO_CNES': '#meta+CO_CNES',
+#     'DT_ATUALIZACAO': '#meta+DT_ATUALIZACAO',
+#     'TP_UNIDADE': '#meta+TP_UNIDADE',
+# }
 
 SYSTEMA_SARCINAE = str(Path(__file__).parent.resolve())
 PROGRAMMA_SARCINAE = str(Path().resolve())
@@ -109,7 +109,7 @@ ARCHIVUM_CONFIGURATIONI_DEFALLO = [
 # https://servicodados.ibge.gov.br/api/v1/localidades/distritos?view=nivelado&oorderBy=municipio-id
 # https://servicodados.ibge.gov.br/api/v1/localidades/municipios?view=nivelado&orderBy=id
 METHODUS_FONTI = {
-    'ibge-un-adm2': 'https://servicodados.ibge.gov.br/api' +
+    'ibge_un_adm2': 'https://servicodados.ibge.gov.br/api' +
     '/v1/localidades/municipios?view=nivelado&orderBy=id'
 }
 
@@ -169,7 +169,7 @@ class Cli:
             dest='methodus',
             nargs='?',
             choices=[
-                'ibge-un-adm2',
+                'ibge_un_adm2',
                 # 'data-apothecae',
                 # 'hxltm-explanationi',
                 # 'opus-temporibus',
@@ -177,7 +177,7 @@ class Cli:
                 # 'deprecatum-dictionaria-numerordinatio'
             ],
             # required=True
-            default='ibge-un-adm2'
+            default='ibge_un_adm2'
         )
 
         # objectīvum, n, s, nominativus,
@@ -189,13 +189,13 @@ class Cli:
             dest='objectivum_formato',
             nargs='?',
             choices=[
-                'url-fonti',
-                'json-fonti',
-                'json-fonti-formoso',
+                'uri_fonti',
+                'json_fonti',
+                'json_fonti_formoso',
                 'csv',
                 'tsv',
-                'hxltm-csv',
-                'hxltm-tsv',
+                'hxltm_csv',
+                'hxltm_tsv',
             ],
             # required=True
             default='csv'
@@ -240,26 +240,36 @@ class Cli:
             for line in sys.stdin:
                 json_fonti_texto += line
 
+        # climain = CliMain(
+        #     infile=_infile, stdin=_stdin,
+        #     objectivum_formato=pyargs.objectivum_formato,
+        #     methodus=pyargs.objectivum_formato,
+        #     configuratio=configuratio)
         climain = CliMain(
             infile=_infile, stdin=_stdin,
-            objectivum_formato=pyargs.objectivum_formato,
+            pyargs=pyargs,
             configuratio=configuratio)
 
-        if pyargs.objectivum_formato == 'url-fonti':
+        if pyargs.objectivum_formato == 'uri_fonti':
             print(METHODUS_FONTI[pyargs.methodus])
             return self.EXIT_OK
 
-        if pyargs.objectivum_formato == 'json-fonti':
+        if pyargs.objectivum_formato == 'json_fonti':
             return climain.json_fonti(METHODUS_FONTI[pyargs.methodus])
-        if pyargs.objectivum_formato == 'json-fonti-formoso':
+        if pyargs.objectivum_formato == 'json_fonti_formoso':
             return climain.json_fonti(METHODUS_FONTI[pyargs.methodus], True)
         if pyargs.objectivum_formato == 'csv':
             if json_fonti_texto is None:
                 json_fonti_texto = climain.json_fonti(
                     METHODUS_FONTI[pyargs.methodus])
             return climain.objectivum_formato_csv(json_fonti_texto)
+        if pyargs.objectivum_formato == 'hxltm_csv':
+            if json_fonti_texto is None:
+                json_fonti_texto = climain.json_fonti(
+                    METHODUS_FONTI[pyargs.methodus])
+            return climain.objectivum_formato_csv(json_fonti_texto)
 
-        # if pyargs.methodus == 'ibge-un-adm2':
+        # if pyargs.methodus == 'ibge_un_adm2':
         #     return climain.execute_ex_datasus_xmlcnae()
         # if pyargs.methodus == 'datasus-xmlcnae':
         #     return climain.execute_ex_datasus_xmlcnae()
@@ -275,20 +285,28 @@ class CliMain:
 
     delimiter = ','
 
+    # def __init__(
+    #         self, infile: str = None, stdin=None,
+    #         objectivum_formato: str = 'hxltm_csv', configuratio: dict = None):
     def __init__(
             self, infile: str = None, stdin=None,
-            objectivum_formato: str = 'hxltm-csv', configuratio: dict = None):
+            pyargs: dict = None, configuratio: dict = None):
         """
         Constructs all the necessary attributes for the Cli object.
         """
         self.infile = infile
         self.stdin = stdin
-        self.objectivum_formato = objectivum_formato
+        self.objectivum_formato = pyargs.objectivum_formato
+        self.methodus = pyargs.methodus
         self.configuratio = configuratio
 
         # delimiter = ','
         if self.objectivum_formato in ['tsv', 'hxltm-tsv']:
             self.delimiter = "\t"
+
+        self.tabula = TabulaAdHXLTM(
+            configuratio, methodus=self.methodus,
+            objectivum_formato=self.objectivum_formato)
 
         # self.outfile = outfile
         # self.header = []
@@ -317,37 +335,116 @@ class CliMain:
         # caput_okay = False
         datus_fonti = json.loads(json_fonti_texto)
 
-        objectivum.writerow(datus_fonti[0].keys())
+        caput_translationi = \
+            self.tabula.caput_translationi(datus_fonti[0].keys())
+
+        # objectivum.writerow(datus_fonti[0].keys())
+        objectivum.writerow(caput_translationi)
+        return Cli.EXIT_OK
         for item in datus_fonti:
             objectivum.writerow(item.values())
 
         return Cli.EXIT_OK
 
-    # def process_row(self, row: list) -> list:
-    #     if len(self.header) == 0:
-    #         if row[0].strip().startswith('#'):
-    #             self.header = row
-    #             for index, item in enumerate(self.header):
-    #                 item_norm = item.strip().replace(" ", "")
-    #                 for likely in LIKELY_NUMERIC:
-    #                     # print(item_norm, likely)
-    #                     if item_norm.startswith(likely):
-    #                         self.header_index_fix.append(index)
-    #             # print('oi header', self.header_index_fix, self.header)
-    #     else:
-    #         for index_fix in self.header_index_fix:
-    #             row[index_fix] = re.sub('\.0$', '', row[index_fix].strip())
-    #     return row
+    # def execute(self):
+    #     with open(self.infile, newline='') as infilecsv:
+    #         with open(self.outfile, 'w', newline='') as outfilecsv:
+    #             spamreader = csv.reader(infilecsv)
+    #             spamwriter = csv.writer(outfilecsv)
+    #             for row in spamreader:
+    #                 # spamwriter.writerow(row)
+    #                 spamwriter.writerow(self.process_row(row))
+    #                 # self.data.append(row)
 
-    def execute(self):
-        with open(self.infile, newline='') as infilecsv:
-            with open(self.outfile, 'w', newline='') as outfilecsv:
-                spamreader = csv.reader(infilecsv)
-                spamwriter = csv.writer(outfilecsv)
-                for row in spamreader:
-                    # spamwriter.writerow(row)
-                    spamwriter.writerow(self.process_row(row))
-                    # self.data.append(row)
+
+class TabulaAdHXLTM:
+    """Tabula ad HXLTM
+
+    - tabula, f, s, nominativus, https://en.wiktionary.org/wiki/tabula
+    - ad (+ accusativus),https://en.wiktionary.org/wiki/ad#Latin
+    - ex (+ ablativus)
+    - HXLTM, https://hxltm.etica.ai/
+
+    """
+    methodus_ex_tabulae: dict = {}
+    objectivum_formato: str = 'hxltm_csv'
+    methodus: str = ''
+
+    # _hxltm: '#meta+{caput}'
+
+    #  '#meta+{{caput_clavi_normali}}'
+    _hxltm_hashtag__: str = '#meta+{{caput_clavi_normali}}'
+
+    def __init__(
+        self,
+        methodus_ex_tabulae: dict,
+        objectivum_formato: str,
+        methodus: str,
+    ):
+        """__init__ _summary_
+
+        Args:
+            methodus_ex_tabulae (dict):
+        """
+        self.methodus_ex_tabulae = methodus_ex_tabulae
+        self.objectivum_formato = objectivum_formato
+        self.methodus = methodus
+
+    def caput_translationi(self, caput: list) -> list:
+        """Caput trānslātiōnī
+
+        - trānslātiōnī, f, s, dativus, https://en.wiktionary.org/wiki/translatio
+        - caput, n, s, nominativus, https://en.wiktionary.org/wiki/caput#Latin
+
+        Args:
+            caput (list): _description_
+
+        Returns:
+            list: _description_
+        """
+        hxltm_caput = map(self.clavis_normationi, caput)
+        if self.objectivum_formato.find('hxltm') > -1:
+            pass
+        return hxltm_caput
+
+    def clavis_normationi(self, clavis: str) -> str:
+        """clāvis nōrmātiōnī
+
+        - clāvis, f, s, normativus, https://en.wiktionary.org/wiki/clavis#Latin
+        - nōrmātiōnī, f, s, dativus, https://en.wiktionary.org/wiki/normatio
+
+        Args:
+            clavis (str):
+
+        Returns:
+            str:
+        """
+        if not clavis or len(clavis) == 0:
+            return ''
+        clavis_normali = clavis.strip().lower()\
+            .replace(' ', '_').replace('-', '_')
+
+        return clavis_normali
+
+    def clavis_ad_hxltm(self, clavis: str) -> str:
+        """clāvis nōrmātiōnī
+
+        - clāvis, f, s, normativus, https://en.wiktionary.org/wiki/clavis#Latin
+        - nōrmātiōnī, f, s, dativus, https://en.wiktionary.org/wiki/normatio
+
+        Args:
+            clavis (str):
+
+        Returns:
+            str:
+        """
+        clavis_normationi = self.clavis_normationi(clavis)
+        if not clavis or len(clavis) == 0:
+            return ''
+        hxl_hashtag = clavis.strip().lower()\
+            .replace(' ', '_').replace('-', '_')
+
+        return hxl_hashtag
 
 
 if __name__ == "__main__":

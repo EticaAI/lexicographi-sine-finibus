@@ -1,22 +1,22 @@
 
 methodus:
-  ibge-un-adm2:
+  ibge_un_adm2:
     caput:
-      _:
-        hxltm: '#meta+{caput}'
-      municipio-id:
-      municipio-nome:
-      microrregiao-id:
-      microrregiao-nome:
-      mesorregiao-id:
-      mesorregiao-nome:
-      regiao-imediata-id:
-      regiao-imediata-nome:
-      regiao-intermediaria-id:
-      regiao-intermediaria-nome:
-      UF-id:
-      UF-sigla:
-      UF-nome:
-      regiao-id:
-      regiao-sigla:
-      regiao-nome:
+      _�_:
+        hxltm_hashtag: '#meta+{{caput_clavi_normali}}'
+      municipio_id:
+      municipio_nome:
+      microrregiao_id:
+      microrregiao_nome:
+      mesorregiao_id:
+      mesorregiao_nome:
+      regiao_imediata_id:
+      regiao_imediata_nome:
+      regiao_intermediaria_id:
+      regiao_intermediaria_nome:
+      uf_id:
+      uf_sigla:
+      uf_nome:
+      regiao_id:
+      regiao_sigla:
+      regiao_nome:
