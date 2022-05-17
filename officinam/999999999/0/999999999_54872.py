@@ -44,6 +44,10 @@ DESCRIPTION = """
 {0} Conversor de HXLTM para formatos RDF (alternativa ao uso de 1603_1_1.py, \
 que envolve processamento muito mais intenso para datasets enormes)
 
+AVISO: versão atual ainda envolve carregar todos os dados para memória. \
+       Considere fornecer tabela HXLTM de entrada que já não contenha \
+       informações que pretende que estejam no arquivo gerado.
+
 @see https://github.com/EticaAI/lexicographi-sine-finibus/issues/42
 
 Trivia:
@@ -56,26 +60,18 @@ __EPILOGUM__ = """
 ------------------------------------------------------------------------------
                             EXEMPLŌRUM GRATIĀ
 ------------------------------------------------------------------------------
-    {0} --methodus=ibge_un_adm2 --objectivum-formato=uri_fonti
-
-    {0} --methodus=ibge_un_adm2 --objectivum-formato=json_fonti
-
-    {0} --methodus=ibge_un_adm2 --objectivum-formato=csv
-
-    {0} --methodus=ibge_un_adm2 --objectivum-formato=json_fonti_formoso \
-> 999999/0/ibge_un_adm2.json
-    cat 999999/0/ibge_un_adm2.json | {0} --objectivum-formato=csv \
-> 999999/0/ibge_un_adm2.csv
-    cat 999999/0/ibge_un_adm2.json | {0} --objectivum-formato=hxl_csv \
-> 999999/0/ibge_un_adm2.hxl.csv
-    cat 999999/0/ibge_un_adm2.json | {0} --objectivum-formato=hxltm_csv \
-> 999999/0/ibge_un_adm2.tm.hxl.csv
 
     cat 999999/0/ibge_un_adm2.tm.hxl.csv | \
 {0} --objectivum-formato=application/x-turtle \
 --archivum-configurationi-ex-fonti=999999999/0/999999999_268072.meta.yml \
 --praefixum-configurationi-ex-fonti=methodus,ibge_un_adm2 \
 > 999999/0/ibge_un_adm2.no1.skos.ttl
+
+    cat 999999/0/ibge_un_adm2.tm.hxl.csv | \
+{0} --objectivum-formato=application/n-triples \
+--archivum-configurationi-ex-fonti=999999999/0/999999999_268072.meta.yml \
+--praefixum-configurationi-ex-fonti=methodus,ibge_un_adm2 \
+> 999999/0/ibge_un_adm2.no1.n3
 
 ------------------------------------------------------------------------------
                             EXEMPLŌRUM GRATIĀ
@@ -244,9 +240,11 @@ class Cli:
             configuratio=configuratio)
 
         if pyargs.objectivum_formato == 'application/x-turtle':
-            # print(METHODUS_FONTI[pyargs.methodus])
-            climain.actio()
-            return self.EXIT_OK
+            return climain.actio()
+            # return self.EXIT_OK
+        if pyargs.objectivum_formato == 'application/n-triples':
+            return climain.actio()
+            # return self.EXIT_OK
 
         # if pyargs.objectivum_formato == 'uri_fonti':
         #     print(METHODUS_FONTI[pyargs.methodus])
@@ -342,8 +340,9 @@ class CliMain:
         # delimiter = ','
         if self.objectivum_formato in ['tsv', 'hxltm_tsv', 'hxl_tsv']:
             self.delimiter = "\t"
-        print('oi HXLTMAdRDFSimplicis')
-        self.hxltm_ad_rdf = HXLTMAdRDFSimplicis(configuratio, pyargs.objectivum_formato)
+        # print('oi HXLTMAdRDFSimplicis')
+        self.hxltm_ad_rdf = HXLTMAdRDFSimplicis(
+            configuratio, pyargs.objectivum_formato)
 
         # methodus_ex_tabulae = configuratio['methodus'][self.methodus]
 
@@ -360,57 +359,12 @@ class CliMain:
     def actio(self):
         # āctiō, f, s, nominativus, https://en.wiktionary.org/wiki/actio#Latin
         if self.pyargs.objectivum_formato == 'application/x-turtle':
-            self.hxltm_ad_rdf.resultatum_ad_turtle()
-            print('oi actio')
-            return Cli.EXIT_OK
-        print('failed')
-
-    # def json_fonti(
-    #         self, uri: str, formosum: bool = False, ex_texto: bool = False) -> str:
-
-    #     # print('oooi', uri)
-    #     # data = urllib.request.urlopen(uri).read()
-    #     r = requests.get(uri)
-    #     # print('oooi2', data)
-    #     output = json.loads(r.text)
-    #     # resultatum = output
-    #     if formosum:
-    #         output = json.dumps(output,
-    #                             indent=2, ensure_ascii=False, sort_keys=False)
-    #     if ex_texto:
-    #         return json.dumps(output)
-
-    #     print(output)
-    #     return Cli.EXIT_OK
-
-    # def objectivum_formato_csv(self, json_fonti_texto: str) -> str:
-
-    #     objectivum = csv.writer(
-    #         sys.stdout, delimiter=self.delimiter, quoting=csv.QUOTE_MINIMAL)
-    #     # caput = []
-    #     # caput_okay = False
-    #     datus_fonti = json.loads(json_fonti_texto)
-
-    #     caput_translationi = \
-    #         self.tabula.caput_translationi(datus_fonti[0].keys())
-
-    #     # objectivum.writerow(datus_fonti[0].keys())
-    #     objectivum.writerow(caput_translationi)
-    #     # return Cli.EXIT_OK
-    #     for item in datus_fonti:
-    #         objectivum.writerow(item.values())
-
-    #     return Cli.EXIT_OK
-
-    # def execute(self):
-    #     with open(self.infile, newline='') as infilecsv:
-    #         with open(self.outfile, 'w', newline='') as outfilecsv:
-    #             spamreader = csv.reader(infilecsv)
-    #             spamwriter = csv.writer(outfilecsv)
-    #             for row in spamreader:
-    #                 # spamwriter.writerow(row)
-    #                 spamwriter.writerow(self.process_row(row))
-    #                 # self.data.append(row)
+            return self.hxltm_ad_rdf.resultatum_ad_turtle()
+        if self.pyargs.objectivum_formato == 'application/n-triples':
+            return self.hxltm_ad_rdf.resultatum_ad_ntriples()
+            # print('oi actio')
+            # numerordinatio_neo_separatum
+        # print('failed')
 
 
 class HXLTMAdRDFSimplicis:
@@ -451,11 +405,21 @@ class HXLTMAdRDFSimplicis:
 
     # resultātum, n, s, nominativus, https://en.wiktionary.org/wiki/resultatum
     def resultatum_ad_ntriples(self):
-        pass
+        print('# TODO HXLTMAdRDFSimplicis.resultatum_ad_ntriples')
+        print('# ' + str(self.fons_configurationi))
+        return Cli.EXIT_OK
 
     # resultātum, n, s, nominativus, https://en.wiktionary.org/wiki/resultatum
     def resultatum_ad_turtle(self):
-        print('TODO')
+        print('# [{0}]'.format(
+            self.fons_configurationi['numerordinatio']['numerordinatio_praefixo']
+        ))
+        print('@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .')
+        print('@prefix skos: <http://www.w3.org/2004/02/skos/core#> .')
+        print('')
+        print('# TODO HXLTMAdRDFSimplicis.resultatum_ad_turtle')
+        print('# ' + str(self.fons_configurationi))
+        return Cli.EXIT_OK
 
 
 # @TODO remove TabulaAdHXLTM from this file
@@ -582,6 +546,25 @@ class TabulaAdHXLTM:
 
     # def clavis_ad_hxl(self, clavis: str) -> str:
     #     pass
+
+
+def numerordinatio_neo_separatum(
+        numerordinatio: str, separatum: str = "_") -> str:
+    resultatum = ''
+    resultatum = numerordinatio.replace('_', separatum)
+    resultatum = resultatum.replace('/', separatum)
+    resultatum = resultatum.replace(':', separatum)
+    # TODO: add more as need
+    return resultatum
+
+
+def hxltm_carricato(
+        archivum_trivio: str = None, est_stdin: bool = False) -> list:
+    caput = []
+    datum = []
+    # - carricātō, n, s, dativus, https://en.wiktionary.org/wiki/carricatus#Latin
+    #   - verbum: https://en.wiktionary.org/wiki/carricatus#Latin
+    return caput, datum
 
 
 if __name__ == "__main__":

@@ -19,7 +19,7 @@ methodus:
     #   "regiao-sigla": "SE",
     #   "regiao-nome": "Sudeste"
     # }
-    caput:
+    res: &ibge_un_adm2_res
       _�_:
         csv_header: "{{caput_clavi}}"
         hxl_hashtag: "#meta+{{caput_clavi_normali}}"
@@ -53,3 +53,7 @@ methodus:
       regiao_id:
       regiao_sigla:
       regiao_nome:
+    # https://numerordinatio.etica.ai/
+    caput: *ibge_un_adm2_res
+    numerordinatio:
+      numerordinatio_praefixo: 1603:45:16:76:2

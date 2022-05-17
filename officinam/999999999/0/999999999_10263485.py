@@ -49,7 +49,12 @@ DESCRIPTION = """
 {0} Processamento de dados de referência do CNES (Cadastro Nacional de
 Estabelecimentos de Saúde) do Brasil.
 
-@see https://github.com/EticaAI/lexicographi-sine-finibus/issues/42
+@see - https://github.com/EticaAI/lexicographi-sine-finibus/issues/42
+     - wiki.saude.gov.br/cnes/index.php/Categoria:Contexto_Hist%C3%B3rico
+       - "(...) O CNES possui atualmente quase 300 mil estabelecimentos de
+         saúde cadastrados (CNES, jul/2015), dos quais mais de 2/3 não
+         atendem ao SUS, sendo que mais de 150 mil são consultórios ou
+         pequenas clínicas privadas. (...)"
 
 Trivia:
 - Q10263485, https://www.wikidata.org/wiki/Q10263485
