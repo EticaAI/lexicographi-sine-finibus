@@ -27,10 +27,23 @@ import sys
 import argparse
 import csv
 import re
+from pathlib import Path
+from os.path import exists
+
+from functools import reduce
+from typing import (
+    Any,
+    Dict,
+    List,
+)
+
+import yaml
 
 import xml.etree.ElementTree as XMLElementTree
 
 STDIN = sys.stdin.buffer
+
+NOMEN = '999999999_10263485'
 
 DESCRIPTION = """
 {0} Processamento de dados de referência do CNES (Cadastro Nacional de
@@ -51,9 +64,17 @@ __EPILOGUM__ = """
 ------------------------------------------------------------------------------
                             EXEMPLŌRUM GRATIĀ
 ------------------------------------------------------------------------------
-    {0} --methodus=datasus-xmlcnae 999999/0/xmlCNES.xml
-    cat 999999/0/xmlCNES.xml | {0} --methodus=datasus-xmlcnae
+    {0} --methodus=datasus_xmlcnae 999999/0/xmlCNES.xml
+    cat 999999/0/xmlCNES.xml | {0} --methodus=datasus_xmlcnae
 
+    {0} --methodus=datasus_xmlcnae 999999/0/xmlCNES.xml \
+--objectivum-formato=csv > 999999/0/xmlCNES.csv
+
+    {0} --methodus=datasus_xmlcnae 999999/0/xmlCNES.xml \
+--objectivum-formato=hxl_csv > 999999/0/xmlCNES.hxl.csv
+
+    {0} --methodus=datasus_xmlcnae 999999/0/xmlCNES.xml \
+--objectivum-formato=hxltm_csv > 999999/0/xmlCNES.tm.hxl.csv
 
 @TODO: fazer funcionar com stream de XML (não apenas por arquivo)
 ------------------------------------------------------------------------------
@@ -89,6 +110,13 @@ CSV_AD_HXLTM_TABULAE = {
     'TP_UNIDADE': '#meta+TP_UNIDADE',
 }
 
+SYSTEMA_SARCINAE = str(Path(__file__).parent.resolve())
+PROGRAMMA_SARCINAE = str(Path().resolve())
+ARCHIVUM_CONFIGURATIONI_DEFALLO = [
+    SYSTEMA_SARCINAE + '/' + NOMEN + '.meta.yml',
+    PROGRAMMA_SARCINAE + '/' + NOMEN + '.meta.yml',
+]
+
 # ./999999999/0/999999999_10263485.py 999999/0/1603_1_1--old.csv 999999/0/1603_1_1--new.csv
 
 
@@ -102,6 +130,29 @@ class Cli:
         """
         Constructs all the necessary attributes for the Cli object.
         """
+
+    def _quod_configuratio(self, archivum_configurationi: str = None) -> dict:
+        """_quod_configuratio
+
+        Args:
+            archivum_configurationi (str, optional):
+
+        Returns:
+            (dict):
+        """
+        archivae = ARCHIVUM_CONFIGURATIONI_DEFALLO
+        if archivum_configurationi is not None:
+            if not exists(archivum_configurationi):
+                raise FileNotFoundError(
+                    'archivum_configurationi {0}'.format(
+                        archivum_configurationi))
+            archivae.append(archivum_configurationi)
+
+        for item in archivae:
+            if exists(item):
+                with open(item, "r") as read_file:
+                    datum = yaml.safe_load(read_file)
+                    return datum
 
     def make_args(self, hxl_output=True):
         # parser = argparse.ArgumentParser(description=DESCRIPTION)
@@ -124,7 +175,7 @@ class Cli:
             dest='methodus',
             nargs='?',
             choices=[
-                'datasus-xmlcnae',
+                'datasus_xmlcnae',
                 # 'data-apothecae',
                 # 'hxltm-explanationi',
                 # 'opus-temporibus',
@@ -132,7 +183,7 @@ class Cli:
                 # 'deprecatum-dictionaria-numerordinatio'
             ],
             # required=True
-            default='datasus-xmlcnae'
+            default='datasus_xmlcnae'
         )
 
         # objectīvum, n, s, nominativus,
@@ -146,11 +197,24 @@ class Cli:
             choices=[
                 'csv',
                 'tsv',
-                'hxltm-csv',
-                'hxltm-tsv',
+                'hxl_csv',
+                'hxl_tsv',
+                'hxltm_csv',
+                'hxltm_tsv',
             ],
             # required=True
             default='csv'
+        )
+
+        # archīvum, n, s, nominativus, https://en.wiktionary.org/wiki/archivum
+        # cōnfigūrātiōnī, f, s, dativus,
+        #                      https://en.wiktionary.org/wiki/configuratio#Latin
+        parser.add_argument(
+            '--archivum-configurationi',
+            help='Arquivo de configuração .meta.yml',
+            dest='archivum_configurationi',
+            nargs='?',
+            default=None
         )
 
         # parser.add_argument(
@@ -167,6 +231,8 @@ class Cli:
 
         _infile = None
         _stdin = None
+
+        configuratio = self._quod_configuratio(pyargs.archivum_configurationi)
 
         if stdin.isatty():
             # print("ERROR. Please pipe data in. \nExample:\n"
@@ -189,9 +255,12 @@ class Cli:
         #         codicem = line.replace('\n', ' ').replace('\r', '')
 
         # hf = CliMain(self.pyargs.infile, self.pyargs.outfile)
-        climain = CliMain(infile=_infile, stdin=_stdin,
-                          objectivum_formato=pyargs.objectivum_formato)
-        if pyargs.methodus == 'datasus-xmlcnae':
+        climain = CliMain(
+            infile=_infile, stdin=_stdin,
+            pyargs=pyargs,
+            configuratio=configuratio
+        )
+        if pyargs.methodus == 'datasus_xmlcnae':
             return climain.execute_ex_datasus_xmlcnae()
 
         print('Unknow option.')
@@ -202,19 +271,44 @@ class CliMain:
     """Remove .0 at the end of CSVs from data exported from XLSX and likely
     to have numeric values (and trigger weird bugs)
     """
+    delimiter = ','
 
-    def __init__(self, infile: str = None, stdin=None,
-                 objectivum_formato: str = 'hxltm-csv'):
+    # def __init__(self, infile: str = None, stdin=None,
+    #              objectivum_formato: str = 'hxltm-csv'):
+    #     """
+    #     Constructs all the necessary attributes for the Cli object.
+    #     """
+    #     self.infile = infile
+    #     self.stdin = stdin
+    #     self.objectivum_formato = objectivum_formato
+
+    #     # self.outfile = outfile
+    #     self.header = []
+    #     self.header_index_fix = []
+
+    def __init__(
+            self, infile: str = None, stdin=None,
+            pyargs: dict = None, configuratio: dict = None):
         """
         Constructs all the necessary attributes for the Cli object.
         """
         self.infile = infile
         self.stdin = stdin
-        self.objectivum_formato = objectivum_formato
+        self.objectivum_formato = pyargs.objectivum_formato
+        self.methodus = pyargs.methodus
+        self.configuratio = configuratio
 
-        # self.outfile = outfile
-        self.header = []
-        self.header_index_fix = []
+        # delimiter = ','
+        if self.objectivum_formato in ['tsv', 'hxltm_tsv', 'hxl_tsv']:
+            self.delimiter = "\t"
+
+        methodus_ex_tabulae = configuratio['methodus'][self.methodus]
+
+        self.tabula = TabulaAdHXLTM(
+            methodus_ex_tabulae=methodus_ex_tabulae,
+            methodus=self.methodus,
+            objectivum_formato=self.objectivum_formato
+        )
 
     def process_row(self, row: list) -> list:
         if len(self.header) == 0:
@@ -237,7 +331,7 @@ class CliMain:
 
         _source = self.infile if self.infile is not None else self.stdin
         delimiter = ','
-        if self.objectivum_formato in ['tsv', 'hxltm-tsv']:
+        if self.objectivum_formato in ['tsv', 'hxltm_tsv']:
             delimiter = "\t"
         objectivum = csv.writer(
             sys.stdout, delimiter=delimiter, quoting=csv.QUOTE_MINIMAL)
@@ -251,16 +345,7 @@ class CliMain:
             # events=('end')
         )
 
-        # print(iteratianem)
-
-        # for item in iteratianem:
-        # print(item)
-        # print(item.text)
-
-        # for event, elem in ET.iterparse(file_path, events=("start", "end")):
-
         caput = []
-        # caput22 = []
         caput_okay = False
         for event, elem in iteratianem:
             if event == 'end':
@@ -271,16 +356,26 @@ class CliMain:
                     lineam = []
 
                     for clavem, res in elem.attrib.items():
+                        # print("{0}={1}".format(clavem, res))
                         if caput_okay is False:
                             caput.append(clavem)
                             # caput22.append(clavem)
                         lineam.append(res)
+                    # print('')
 
                     if caput_okay is False and len(caput) > 0:
                         # if 'CO_CNES' in caput:
                         caput_okay = True
                         # print('OIOI', caput, caput22)
-                        objectivum.writerow(caput)
+                        if self.objectivum_formato.find('hxl') > -1:
+                            objectivum.writerow(
+                                self.tabula.caput_translationi(caput))
+                        else:
+                            objectivum.writerow(caput)
+                        # caput_translationi = \
+                        #     self.tabula.caput_translationi(caput)
+                        # objectivum.writerow(caput_translationi)
+                        # objectivum.writerow(caput)
                     if len(lineam) > 0:
                         objectivum.writerow(lineam)
 
@@ -295,6 +390,157 @@ class CliMain:
                     # spamwriter.writerow(row)
                     spamwriter.writerow(self.process_row(row))
                     # self.data.append(row)
+
+
+def de_dotted(self, dotted_key: str,  # pylint: disable=invalid-name
+              default: Any = None, fontem: dict = None) -> Any:
+    """
+    Trivia: dē, https://en.wiktionary.org/wiki/de#Latin
+    Examples:
+        >>> exemplum = {'a': {'a2': 123}, 'b': 456}
+        >>> otlg = HXLTMOntologia(exemplum)
+        >>> otlg.de('a.a2', fontem=exemplum)
+        123
+    Args:
+        dotted_key (str): Dotted key notation
+        default ([Any], optional): Value if not found. Defaults to None.
+        fontem (dict): An nested object to search
+    Returns:
+        [Any]: Return the result. Defaults to default
+    """
+    if fontem is None:
+        fontem = self.crudum
+
+    keys = dotted_key.split('.')
+    return reduce(
+        lambda d, key: d.get(
+            key) if d else default, keys, fontem
+    )
+
+
+class TabulaAdHXLTM:
+    """Tabula ad HXLTM
+
+    - tabula, f, s, nominativus, https://en.wiktionary.org/wiki/tabula
+    - ad (+ accusativus),https://en.wiktionary.org/wiki/ad#Latin
+    - ex (+ ablativus)
+    - HXLTM, https://hxltm.etica.ai/
+
+    """
+    methodus_ex_tabulae: dict = {}
+    # methodus_ex_tabulae: dict = {}
+    objectivum_formato: str = 'hxltm_csv'
+    methodus: str = ''
+
+    # _hxltm: '#meta+{caput}'
+
+    #  '#meta+{{caput_clavi_normali}}'
+    _hxltm_hashtag_defallo: str = '#meta+{{caput_clavi_normali}}'
+    _hxl_hashtag_defallo: str = '#meta+{{caput_clavi_normali}}'
+
+    def __init__(
+        self,
+        methodus_ex_tabulae: dict,
+        objectivum_formato: str,
+        methodus: str,
+    ):
+        """__init__ _summary_
+
+        Args:
+            methodus_ex_tabulae (dict):
+        """
+        self.methodus_ex_tabulae = methodus_ex_tabulae
+        self.objectivum_formato = objectivum_formato
+        self.methodus = methodus
+
+    def caput_translationi(self, caput: list) -> list:
+        """Caput trānslātiōnī
+
+        - trānslātiōnī, f, s, dativus, https://en.wiktionary.org/wiki/translatio
+        - caput, n, s, nominativus, https://en.wiktionary.org/wiki/caput#Latin
+
+        Args:
+            caput (list): _description_
+
+        Returns:
+            list: _description_
+        """
+
+        # if self.objectivum_formato.find('hxltm') > -1:
+        #     # neo_caput = map(self.clavis_ad_hxl, caput, 'hxltm')
+        #     # neo_caput = map(self.clavis_ad_hxl, caput, 'hxltm')
+        #     neo_caput = map(self.clavis_ad_hxl, caput)
+        #     # neo_caput = map(self.clavis_ad_hxl, caput)
+        # if self.objectivum_formato.find('hxl') > -1:
+        #     # neo_caput = map(self.clavis_ad_hxl, caput, 'hxl')
+        #     neo_caput = map(self.clavis_ad_hxl, caput)
+        if self.objectivum_formato.find('hxl') > -1:
+            neo_caput = map(self.clavis_ad_hxl, caput)
+        else:
+            neo_caput = map(self.clavis_normationi, caput)
+        return neo_caput
+
+    def clavis_normationi(self, clavis: str) -> str:
+        """clāvis nōrmātiōnī
+
+        - clāvis, f, s, normativus, https://en.wiktionary.org/wiki/clavis#Latin
+        - nōrmātiōnī, f, s, dativus, https://en.wiktionary.org/wiki/normatio
+
+        Args:
+            clavis (str):
+
+        Returns:
+            str:
+        """
+        if not clavis or len(clavis) == 0:
+            return ''
+        clavis_normali = clavis.strip().lower()\
+            .replace(' ', '_').replace('-', '_')
+
+        return clavis_normali
+
+    # def clavis_ad_hxl(self, clavis: str, classis: str = 'hxltm') -> str:
+    def clavis_ad_hxl(self, clavis: str) -> str:
+        """clavis_ad_hxltm
+
+        - clāvis, f, s, normativus, https://en.wiktionary.org/wiki/clavis#Latin
+        - nōrmātiōnī, f, s, dativus, https://en.wiktionary.org/wiki/normatio
+
+        Args:
+            clavis (str):
+
+        Returns:
+            str:
+        """
+        # @TODO: generalize this block with 999999999_268072.py
+
+        # clavis_normationi = self.clavis_normationi(clavis)
+        clavis_normationi = clavis
+
+        if not clavis or len(clavis) == 0:
+            return ''
+
+        if self.objectivum_formato.find('hxltm') > -1:
+            neo_caput = 'hxltm_hashtag'
+            forma = self._hxltm_hashtag_defallo
+        # elif classis == 'hxl':
+        elif self.objectivum_formato.find('hxl') > -1:
+            neo_caput = 'hxl_hashtag'
+            forma = self._hxl_hashtag_defallo
+
+        if clavis_normationi in self.methodus_ex_tabulae['caput'].keys():
+            if self.methodus_ex_tabulae['caput'][clavis_normationi] and \
+                neo_caput in self.methodus_ex_tabulae['caput'][clavis_normationi] and \
+                    self.methodus_ex_tabulae['caput'][clavis_normationi][neo_caput]:
+                forma = self.methodus_ex_tabulae['caput'][clavis_normationi][neo_caput]
+
+        hxl_hashtag = forma.replace(
+            '{{caput_clavi}}', clavis)
+
+        hxl_hashtag = forma.replace(
+            '{{caput_clavi_normali}}', self.clavis_normationi(clavis))
+
+        return hxl_hashtag
 
 
 if __name__ == "__main__":

@@ -26,7 +26,7 @@
 import sys
 import argparse
 import csv
-import re
+# import re
 from pathlib import Path
 from os.path import exists
 
@@ -76,12 +76,12 @@ __EPILOGUM__ = """
 ------------------------------------------------------------------------------
 """.format(__file__)
 
-LIKELY_NUMERIC = [
-    '#item+conceptum+codicem',
-    '#status+conceptum',
-    '#item+rem+i_qcc+is_zxxx+ix_n1603',
-    '#item+rem+i_qcc+is_zxxx+ix_iso5218',
-]
+# LIKELY_NUMERIC = [
+#     '#item+conceptum+codicem',
+#     '#status+conceptum',
+#     '#item+rem+i_qcc+is_zxxx+ix_n1603',
+#     '#item+rem+i_qcc+is_zxxx+ix_iso5218',
+# ]
 # https://en.wiktionary.org/wiki/tabula#Latin
 # XML_AD_CSV_TABULAE = {
 #     'CO_UNIDADE': 'CO_UNIDADE',
@@ -133,7 +133,15 @@ class Cli:
         Constructs all the necessary attributes for the Cli object.
         """
 
-    def _quod_configuratio(self, archivum_configurationi: str = None):
+    def _quod_configuratio(self, archivum_configurationi: str = None) -> dict:
+        """_quod_configuratio
+
+        Args:
+            archivum_configurationi (str, optional):
+
+        Returns:
+            (dict):
+        """
         archivae = ARCHIVUM_CONFIGURATIONI_DEFALLO
         if archivum_configurationi is not None:
             if not exists(archivum_configurationi):
@@ -301,9 +309,6 @@ class CliMain:
 
     delimiter = ','
 
-    # def __init__(
-    #         self, infile: str = None, stdin=None,
-    #         objectivum_formato: str = 'hxltm_csv', configuratio: dict = None):
     def __init__(
             self, infile: str = None, stdin=None,
             pyargs: dict = None, configuratio: dict = None):

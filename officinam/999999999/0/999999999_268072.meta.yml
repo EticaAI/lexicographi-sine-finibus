@@ -1,18 +1,39 @@
-
 methodus:
   ibge_un_adm2:
+    # Exemplo
+    # {
+    #   "municipio-id": "3106200",
+    #   "municipio-nome": "Belo Horizonte",
+    #   "microrregiao-id": 31030,
+    #   "microrregiao-nome": "Belo Horizonte",
+    #   "mesorregiao-id": 3107,
+    #   "mesorregiao-nome": "Metropolitana de Belo Horizonte",
+    #   "regiao-imediata-id": 310001,
+    #   "regiao-imediata-nome": "Belo Horizonte",
+    #   "regiao-intermediaria-id": 3101,
+    #   "regiao-intermediaria-nome": "Belo Horizonte",
+    #   "UF-id": 31,
+    #   "UF-sigla": "MG",
+    #   "UF-nome": "Minas Gerais",
+    #   "regiao-id": 3,
+    #   "regiao-sigla": "SE",
+    #   "regiao-nome": "Sudeste"
+    # }
     caput:
       _�_:
-        hxl_hashtag: '#meta+{{caput_clavi_normali}}'
-        hxltm_hashtag: '#meta+{{caput_clavi_normali}}'
+        csv_header: "{{caput_clavi}}"
+        hxl_hashtag: "#meta+{{caput_clavi_normali}}"
+        hxltm_hashtag: "#meta+{{caput_clavi_normali}}"
       municipio_id:
-        hxl_hashtag: '#adm2+code+v_pcode'
-        hxl_res: 'BR{{municipio_id}}'
-        hxltm_hashtag: '#item+rem+i_qcc+is_zxxx+ix_wikip1585'
+        ex_tabulae: [municipio_id]
+        hxl_hashtag: "#adm2+code+v_pcode"
+        hxl_res: "BR{{municipio_id}}"
+        hxltm_hashtag: "#item+rem+i_qcc+is_zxxx+ix_wikip1585"
       municipio_nome:
-        hxl_hashtag: '#adm2+code+name'
+        ex_tabulae: [municipio_nome]
+        hxl_hashtag: "#adm2+code+name"
         # P1448: nome oficial do sujeito em sua língua oficial
-        hxltm_hashtag: '#item+rem+i_qcc+is_zxxx+ix_wikip1448'
+        hxltm_hashtag: "#item+rem+i_qcc+is_zxxx+ix_wikip1448"
       microrregiao_id:
       microrregiao_nome:
       mesorregiao_id:
@@ -22,11 +43,13 @@ methodus:
       regiao_intermediaria_id:
       regiao_intermediaria_nome:
       uf_id:
-        hxl_hashtag: '#adm1+code+v_pcode'
-        hxl_res: 'BR{{uf_id}}'
+        ex_tabulae: [uf_id]
+        hxl_hashtag: "#adm1+code+v_pcode"
+        hxl_res: "BR{{uf_id}}"
       uf_sigla:
       uf_nome:
-        hxl_hashtag: '#adm2+name'
+        ex_tabulae: [uf_nome]
+        hxl_hashtag: "#adm2+name"
       regiao_id:
       regiao_sigla:
       regiao_nome:
