@@ -56,4 +56,4 @@ methodus:
     # https://numerordinatio.etica.ai/
     caput: *ibge_un_adm2_res
     numerordinatio:
-      numerordinatio_praefixo: 1603:45:16:76:2
+      praefixo: 1603:45:16:76:2

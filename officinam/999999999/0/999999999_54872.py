@@ -62,6 +62,12 @@ __EPILOGUM__ = """
 ------------------------------------------------------------------------------
 
     cat 999999/0/ibge_un_adm2.tm.hxl.csv | \
+{0} --objectivum-formato=text/csv \
+--archivum-configurationi-ex-fonti=999999999/0/999999999_268072.meta.yml \
+--praefixum-configurationi-ex-fonti=methodus,ibge_un_adm2 \
+> 999999/0/ibge_un_adm2.no1.tm.hxl.csv
+
+    cat 999999/0/ibge_un_adm2.tm.hxl.csv | \
 {0} --objectivum-formato=application/x-turtle \
 --archivum-configurationi-ex-fonti=999999999/0/999999999_268072.meta.yml \
 --praefixum-configurationi-ex-fonti=methodus,ibge_un_adm2 \
@@ -154,6 +160,7 @@ class Cli:
             dest='objectivum_formato',
             nargs='?',
             choices=[
+                'text/csv',
                 # https://www.w3.org/TR/turtle/
                 'application/x-turtle',
                 # https://www.w3.org/TR/n-triples/
@@ -165,6 +172,9 @@ class Cli:
                 # #    /json-lines-mime-type
                 # #  - https://github.com/wardi/jsonlines/issues/9
                 # #  - https://bugzilla.mozilla.org/show_bug.cgi?id=1603986
+                # #  - https://stackoverflow.com/questions/41609586
+                # #    /loading-wikidata-dump
+                # #    - Uses '.ndjson' as extension
                 # 'application/x-ndjson',
             ],
             # required=True
@@ -212,33 +222,25 @@ class Cli:
                     stderr=sys.stderr):
         # self.pyargs = pyargs
 
-        _infile = None
-        _stdin = None
+        # _infile = None
+        # _stdin = None
         configuratio = self.quod_configuratio(
             pyargs.archivum_configurationi, pyargs.praefixum_configurationi)
 
         if stdin.isatty():
             _infile = pyargs.infile
+            _stdin = False
         else:
-            _stdin = stdin
+            _infile = None
+            _stdin = True
 
-        json_fonti_texto = None
-
-        if _stdin is not None:
-            json_fonti_texto = ''
-            for line in sys.stdin:
-                json_fonti_texto += line
-
-        # climain = CliMain(
-        #     infile=_infile, stdin=_stdin,
-        #     objectivum_formato=pyargs.objectivum_formato,
-        #     methodus=pyargs.objectivum_formato,
-        #     configuratio=configuratio)
         climain = CliMain(
             infile=_infile, stdin=_stdin,
             pyargs=pyargs,
             configuratio=configuratio)
 
+        if pyargs.objectivum_formato == 'text/csv':
+            return climain.actio()
         if pyargs.objectivum_formato == 'application/x-turtle':
             return climain.actio()
             # return self.EXIT_OK
@@ -325,7 +327,7 @@ class CliMain:
     pyargs: dict = None
 
     def __init__(
-            self, infile: str = None, stdin=None,
+            self, infile: str = None, stdin: bool = None,
             pyargs: dict = None, configuratio: dict = None):
         """
         Constructs all the necessary attributes for the Cli object.
@@ -337,12 +339,14 @@ class CliMain:
         # self.methodus = pyargs.methodus
         self.configuratio = configuratio
 
+        caput, datum = hxltm_carricato(infile, stdin)
+
         # delimiter = ','
         if self.objectivum_formato in ['tsv', 'hxltm_tsv', 'hxl_tsv']:
             self.delimiter = "\t"
         # print('oi HXLTMAdRDFSimplicis')
         self.hxltm_ad_rdf = HXLTMAdRDFSimplicis(
-            configuratio, pyargs.objectivum_formato)
+            configuratio, pyargs.objectivum_formato, caput, datum)
 
         # methodus_ex_tabulae = configuratio['methodus'][self.methodus]
 
@@ -358,6 +362,8 @@ class CliMain:
 
     def actio(self):
         # āctiō, f, s, nominativus, https://en.wiktionary.org/wiki/actio#Latin
+        if self.pyargs.objectivum_formato == 'text/csv':
+            return self.hxltm_ad_rdf.resultatum_ad_csv()
         if self.pyargs.objectivum_formato == 'application/x-turtle':
             return self.hxltm_ad_rdf.resultatum_ad_turtle()
         if self.pyargs.objectivum_formato == 'application/n-triples':
@@ -382,6 +388,10 @@ class HXLTMAdRDFSimplicis:
     objectivum_formato: str = 'application/x-turtle'
     # methodus: str = ''
 
+    caput: list = []
+    data: list = []
+    praefixo: str = ''
+
     # _hxltm: '#meta+{caput}'
 
     #  '#meta+{{caput_clavi_normali}}'
@@ -392,6 +402,8 @@ class HXLTMAdRDFSimplicis:
         self,
         fons_configurationi: dict,
         objectivum_formato: str,
+        caput: list = None,
+        data: list = None
         # methodus: str,
     ):
         """__init__ _summary_
@@ -401,25 +413,70 @@ class HXLTMAdRDFSimplicis:
         """
         self.fons_configurationi = fons_configurationi
         self.objectivum_formato = objectivum_formato
+        self.caput = caput
+        self.data = data
         # self.methodus = methodus
+
+        self.praefixo = numerordinatio_neo_separatum(
+            self.fons_configurationi['numerordinatio']['praefixo'], ':')
+
+    def resultatum_ad_csv(self):
+        """resultatum ad csv text/csv
+
+        Returns:
+            (int): status code
+        """
+        _writer = csv.writer(sys.stdout)
+        _writer.writerow(self.caput)
+        _writer.writerows(self.data)
+        return Cli.EXIT_OK
 
     # resultātum, n, s, nominativus, https://en.wiktionary.org/wiki/resultatum
     def resultatum_ad_ntriples(self):
+        """resultatum ad n triples application/n-triples
+
+        Returns:
+            (int): status code
+        """
         print('# TODO HXLTMAdRDFSimplicis.resultatum_ad_ntriples')
         print('# ' + str(self.fons_configurationi))
+
         return Cli.EXIT_OK
 
     # resultātum, n, s, nominativus, https://en.wiktionary.org/wiki/resultatum
     def resultatum_ad_turtle(self):
-        print('# [{0}]'.format(
-            self.fons_configurationi['numerordinatio']['numerordinatio_praefixo']
-        ))
+        """resultatum ad n turtle application/x-turtle
+
+        Returns:
+            (int): status code
+        """
+        print('# [{0}]'.format(self.praefixo))
         print('@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .')
         print('@prefix skos: <http://www.w3.org/2004/02/skos/core#> .')
         print('')
         print('# TODO HXLTMAdRDFSimplicis.resultatum_ad_turtle')
         print('# ' + str(self.fons_configurationi))
+
+        for linea in self.data:
+            _codex_locali = self.quod(
+                linea, '#item+rem+i_qcc+is_zxxx+ix_wikip1585')
+            print('<{0}:{1}> a skos:Concept ;'.format(
+                self.praefixo,
+                _codex_locali
+            ))
+            print('  skos:prefLabel "{0}:{1}"@mul-Zyyy-x-n1603 .'.format(
+                self.praefixo,
+                _codex_locali
+            ))
+            print('')
+
         return Cli.EXIT_OK
+
+    def quod(self, lineam: list, caput_item: str) -> str:
+        if caput_item in self.caput:
+            index = self.caput.index(caput_item)
+            return lineam[index]
+        return ''
 
 
 # @TODO remove TabulaAdHXLTM from this file
@@ -562,6 +619,31 @@ def hxltm_carricato(
         archivum_trivio: str = None, est_stdin: bool = False) -> list:
     caput = []
     datum = []
+
+    # print('hxltm_carricato', archivum_trivio, est_stdin)
+    # return 'a', 'b'
+    if est_stdin:
+        for linea in sys.stdin:
+            if len(caput) == 0:
+                caput = linea
+            else:
+                datum.append(linea)
+        return caput, datum
+    # else:
+    #     fons = archivum_trivio
+
+    with open(archivum_trivio, 'r') as _fons:
+        _csv_reader = csv.reader(_fons)
+        for linea in _csv_reader:
+            if len(caput) == 0:
+                caput = linea
+            else:
+                datum.append(linea)
+            # print(row)
+
+    # for line in fons:
+    #     print(line)
+        # json_fonti_texto += line
     # - carricātō, n, s, dativus, https://en.wiktionary.org/wiki/carricatus#Latin
     #   - verbum: https://en.wiktionary.org/wiki/carricatus#Latin
     return caput, datum
