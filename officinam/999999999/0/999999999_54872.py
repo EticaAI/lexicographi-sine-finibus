@@ -40,7 +40,8 @@ STDIN = sys.stdin.buffer
 NOMEN = '999999999_54872'
 
 DESCRIPTION = """
-{0} Processamento de dados de referência do IBGE (Brasil).
+{0} Conversor de HXLTM para formatos RDF (alternativa ao uso de 1603_1_1.py, \
+que envolve processamento muito mais intenso para datasets enormes)
 
 @see https://github.com/EticaAI/lexicographi-sine-finibus/issues/42
 
@@ -67,6 +68,9 @@ __EPILOGUM__ = """
     cat 999999/0/ibge_un_adm2.json | {0} --objectivum-formato=hxl_csv \
 > 999999/0/ibge_un_adm2.hxl.csv
     cat 999999/0/ibge_un_adm2.json | {0} --objectivum-formato=hxltm_csv \
+> 999999/0/ibge_un_adm2.tm.hxl.csv
+
+    cat 999999/0/ibge_un_adm2.tm.hxl.csv | {0} --objectivum-formato=hxltm_csv \
 > 999999/0/ibge_un_adm2.tm.hxl.csv
 
 ------------------------------------------------------------------------------
@@ -131,33 +135,6 @@ class Cli:
         Constructs all the necessary attributes for the Cli object.
         """
 
-    def _quod_configuratio(self, archivum_configurationi: str = None) -> dict:
-        """_quod_configuratio
-
-        Args:
-            archivum_configurationi (str, optional):
-
-        Returns:
-            (dict):
-        """
-        archivae = ARCHIVUM_CONFIGURATIONI_DEFALLO
-        if archivum_configurationi is not None:
-            if not exists(archivum_configurationi):
-                raise FileNotFoundError(
-                    'archivum_configurationi {0}'.format(
-                        archivum_configurationi))
-            archivae.append(archivum_configurationi)
-
-        for item in archivae:
-            if exists(item):
-                with open(item, "r") as read_file:
-                    datum = yaml.safe_load(read_file)
-                    return datum
-
-        raise FileNotFoundError(
-            'archivum_configurationi {0}'.format(
-                str(archivae)))
-
     def make_args(self, hxl_output=True):
         # parser = argparse.ArgumentParser(description=DESCRIPTION)
         parser = argparse.ArgumentParser(
@@ -194,24 +171,31 @@ class Cli:
         # objectīvum, n, s, nominativus,
         #                       https://en.wiktionary.org/wiki/objectivus#Latin
         # fōrmātō, n, s, dativus, https://en.wiktionary.org/wiki/formatus#Latin
+        # @see about formats and discussion
+        # - https://github.com/semantalytics/awesome-semantic-web#serialization
+        # - https://ontola.io/blog/rdf-serialization-formats/
+        # - doc.wikimedia.org/Wikibase/master/php/md_docs_topics_json.html
         parser.add_argument(
             '--objectivum-formato',
             help='Formato do arquivo exportado',
             dest='objectivum_formato',
             nargs='?',
             choices=[
-                'uri_fonti',
-                'json_fonti',
-                'json_fonti_formoso',
-                'csv',
-                'tsv',
-                'hxl_csv',
-                'hxl_tsv',
-                'hxltm_csv',
-                'hxltm_tsv',
+                # https://www.w3.org/TR/turtle/
+                'application/x-turtle',
+                # https://www.w3.org/TR/n-triples/
+                'application/n-triples',
+                # # http://ndjson.org/
+                # # https://github.com/ontola/hextuples
+                # # mimetype???
+                # #  - https://stackoverflow.com/questions/51690624
+                # #    /json-lines-mime-type
+                # #  - https://github.com/wardi/jsonlines/issues/9
+                # #  - https://bugzilla.mozilla.org/show_bug.cgi?id=1603986
+                # 'application/x-ndjson',
             ],
             # required=True
-            default='csv'
+            default='application/x-turtle'
         )
 
         # archīvum, n, s, nominativus, https://en.wiktionary.org/wiki/archivum
@@ -220,6 +204,18 @@ class Cli:
         parser.add_argument(
             '--archivum-configurationi',
             help='Arquivo de configuração .meta.yml',
+            dest='archivum_configurationi',
+            nargs='?',
+            default=None
+        )
+        # archīvum, n, s, nominativus, https://en.wiktionary.org/wiki/archivum
+        # cōnfigūrātiōnī, f, s, dativus,
+        #                      https://en.wiktionary.org/wiki/configuratio#Latin
+        # ex
+        # fontī, m, s, dativus, https://en.wiktionary.org/wiki/fons#Latin
+        parser.add_argument(
+            '--archivum-configurationi-ex-fonti',
+            help='Arquivo de configuração .meta.yml da fonte de dados',
             dest='archivum_configurationi',
             nargs='?',
             default=None
@@ -239,7 +235,7 @@ class Cli:
 
         _infile = None
         _stdin = None
-        configuratio = self._quod_configuratio(pyargs.archivum_configurationi)
+        configuratio = self.quod_configuratio(pyargs.archivum_configurationi)
 
         if stdin.isatty():
             _infile = pyargs.infile
@@ -298,6 +294,33 @@ class Cli:
 
         print('Unknow option.')
         return self.EXIT_ERROR
+
+    def quod_configuratio(self, archivum_configurationi: str = None) -> dict:
+        """quod_configuratio
+
+        Args:
+            archivum_configurationi (str, optional):
+
+        Returns:
+            (dict):
+        """
+        archivae = ARCHIVUM_CONFIGURATIONI_DEFALLO
+        if archivum_configurationi is not None:
+            if not exists(archivum_configurationi):
+                raise FileNotFoundError(
+                    'archivum_configurationi {0}'.format(
+                        archivum_configurationi))
+            archivae.append(archivum_configurationi)
+
+        for item in archivae:
+            if exists(item):
+                with open(item, "r") as read_file:
+                    datum = yaml.safe_load(read_file)
+                    return datum
+
+        raise FileNotFoundError(
+            'archivum_configurationi {0}'.format(
+                str(archivae)))
 
 
 class CliMain:
