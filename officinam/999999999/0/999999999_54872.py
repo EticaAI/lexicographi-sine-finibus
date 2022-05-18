@@ -30,11 +30,11 @@ import csv
 from pathlib import Path
 from os.path import exists
 
-import json
+# import json
 from typing import Type
 import yaml
 # import urllib.request
-import requests
+# import requests
 
 STDIN = sys.stdin.buffer
 
@@ -402,7 +402,7 @@ class HXLTMAdRDFSimplicis:
     # ex (+ ablative), https://en.wiktionary.org/wiki/ex#Latin
     # locālī, n, s, dativus, https://en.wiktionary.org/wiki/localis#Latin
     # identitas_locali_ex_hxl_hashtag: str = '#item+conceptum+codicem'
-    identitas_locali_index: int = 0
+    identitas_locali_index: int = -1
 
     def __init__(
         self,
@@ -432,11 +432,16 @@ class HXLTMAdRDFSimplicis:
         if 'identitas_locali_ex_hxl_hashtag' in \
                 self.fons_configurationi['numerordinatio']:
             _test = self.fons_configurationi['numerordinatio']['identitas_locali_ex_hxl_hashtag']
+            # print("{0}".format(_test))
+            # print("{0}".format(self.caput))
             for item in _test:
                 if item in self.caput:
-                    self.identitas_locali_ex_hxl_hashtag = item
+                    # self.identitas_locali_ex_hxl_hashtag = item
                     self.identitas_locali_index = self.caput.index(item)
                     break
+            if self.identitas_locali_index == -1:
+                raise ValueError("HXLTMAdRDFSimplicis [{0}] ?? <{1}>".format(
+                    _test, self.caput))
 
     def resultatum_ad_csv(self):
         """resultatum ad csv text/csv
@@ -488,7 +493,8 @@ class HXLTMAdRDFSimplicis:
         #        /codex-simplex-ontologiae/ontologia.yml
 
         for linea in self.data:
-            # print('# {0}'.format(linea))
+            print('# {0}'.format(linea))
+            print('# {0}'.format(self.identitas_locali_index))
             # _codex_locali = self.quod(
             #     linea, '#item+rem+i_qcc+is_zxxx+ix_wikip1585')
             _codex_locali = str(int(linea[self.identitas_locali_index]))
@@ -676,7 +682,11 @@ def hxltm_carricato(
     if est_stdin:
         for linea in sys.stdin:
             if len(caput) == 0:
-                caput = linea
+                # caput = linea
+                # _reader_caput = csv.reader(linea)
+                _gambi = [linea, linea]
+                _reader_caput = csv.reader(_gambi)
+                caput = next(_reader_caput)
             else:
                 _data.append(linea)
         _reader = csv.reader(_data)
@@ -688,7 +698,11 @@ def hxltm_carricato(
         _csv_reader = csv.reader(_fons)
         for linea in _csv_reader:
             if len(caput) == 0:
-                caput = linea
+                # caput = linea
+                # _reader_caput = csv.reader(linea)
+                _gambi = [linea, linea]
+                _reader_caput = csv.reader(_gambi)
+                caput = next(_reader_caput)
             else:
                 _data.append(linea)
             # print(row)

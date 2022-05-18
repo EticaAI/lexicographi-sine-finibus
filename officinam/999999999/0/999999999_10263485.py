@@ -291,6 +291,7 @@ class CliMain:
     #     self.header = []
     #     self.header_index_fix = []
 
+
     def __init__(
             self, infile: str = None, stdin=None,
             pyargs: dict = None, configuratio: dict = None):
@@ -301,13 +302,15 @@ class CliMain:
         self.stdin = stdin
         self.objectivum_formato = pyargs.objectivum_formato
         self.methodus = pyargs.methodus
-        self.configuratio = configuratio
+        # self.configuratio = configuratio
 
         # delimiter = ','
         if self.objectivum_formato in ['tsv', 'hxltm_tsv', 'hxl_tsv']:
             self.delimiter = "\t"
 
         methodus_ex_tabulae = configuratio['methodus'][self.methodus]
+
+        self.configuratio = methodus_ex_tabulae
 
         self.tabula = TabulaAdHXLTM(
             methodus_ex_tabulae=methodus_ex_tabulae,
@@ -350,8 +353,19 @@ class CliMain:
             # events=('end')
         )
 
-        caput = []
-        caput_okay = False
+        caput = self.configuratio['__de_xml_ad_csv']
+
+        _to_int = []
+        if '__de_xml_ad_csv__cast_int' in self.configuratio:
+            _to_int = self.configuratio['__de_xml_ad_csv__cast_int']
+
+        if self.objectivum_formato in ['tsv', 'csv']:
+            objectivum.writerow(caput)
+        else:
+            objectivum.writerow(
+                self.tabula.caput_translationi(caput))
+        # caput = []
+        # caput_okay = False
         for event, elem in iteratianem:
             if event == 'end':
                 # print(elem)
@@ -360,29 +374,15 @@ class CliMain:
                 if hasattr(elem, 'attrib'):
                     lineam = []
 
-                    for clavem, res in elem.attrib.items():
-                        # print("{0}={1}".format(clavem, res))
-                        if caput_okay is False:
-                            caput.append(clavem)
-                            # caput22.append(clavem)
-                        lineam.append(res)
-                    # print('')
-
-                    if caput_okay is False and len(caput) > 0:
-                        # if 'CO_CNES' in caput:
-                        caput_okay = True
-                        # print('OIOI', caput, caput22)
-                        if self.objectivum_formato.find('hxl') > -1:
-                            objectivum.writerow(
-                                self.tabula.caput_translationi(caput))
+                    for item in caput:
+                        if item in elem.attrib:
+                            _res = elem.attrib[item]
+                            if len(_to_int) > 0 and item in _to_int:
+                                _res = int(_res)
+                            lineam.append(_res)
                         else:
-                            objectivum.writerow(caput)
-                        # caput_translationi = \
-                        #     self.tabula.caput_translationi(caput)
-                        # objectivum.writerow(caput_translationi)
-                        # objectivum.writerow(caput)
-                    if len(lineam) > 0:
-                        objectivum.writerow(lineam)
+                            lineam.append('')
+                    objectivum.writerow(lineam)
 
         return Cli.EXIT_OK
 

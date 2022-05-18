@@ -68,8 +68,8 @@ ROOTDIR="$(pwd)"
 # actiones_completis_locali "1679_1_1"
 
 
-actiones_completis_locali "1603_45_49"
-exit 0
+# actiones_completis_locali "1603_45_49"
+# exit 0
 
 archivum_unzip "999999/0/0/ftp.datasus.gov.br/cnes/CNESBRASIL.ZIP" "xmlCNES.xml" "999999/0/xmlCNES.xml"
 
@@ -86,6 +86,8 @@ hxlcut --exclude="#meta" "999999/1603/63/49/76/1603_63_49_76.tm.hxl.csv" | hxlcu
 sed -i '1d' "999999/1603/63/49/76/1603_63_49_76.no1.tm.hxl.csv"
 
 archivum_copiae "1603_63_49_76" "1603_63_49_76" "no1.tm.hxl.csv" "1" "0"
+
+# exit 1
 
 file_download_1603_xlsx "1"
 actiones_completis_locali "1603_1_1"
