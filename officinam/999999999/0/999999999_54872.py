@@ -37,6 +37,12 @@ import yaml
 # import urllib.request
 # import requests
 
+# l999999999_0 = __import__('999999999_0')
+from L999999999_0 import (
+    hxltm_carricato,
+    qhxl_hxlhashtag_2_bcp47
+)
+
 STDIN = sys.stdin.buffer
 
 NOMEN = '999999999_54872'
@@ -85,6 +91,8 @@ __EPILOGUM__ = """
 ------------------------------------------------------------------------------
 """.format(__file__)
 
+# autopep8 --list-fixes ./999999999/0/999999999_54872.py
+# pylint --disable=W0511,C0103,C0116 ./999999999/0/999999999_54872.py
 
 SYSTEMA_SARCINAE = str(Path(__file__).parent.resolve())
 PROGRAMMA_SARCINAE = str(Path().resolve())
@@ -95,15 +103,14 @@ PROGRAMMA_SARCINAE = str(Path().resolve())
 
 VENANDUM_INSECTUM = bool(os.getenv('VENANDUM_INSECTUM', ''))
 
-# https://servicodados.ibge.gov.br/api/v1/localidades/distritos?view=nivelado&oorderBy=municipio-id
-# https://servicodados.ibge.gov.br/api/v1/localidades/municipios?view=nivelado&orderBy=id
+# - https://servicodados.ibge.gov.br/api/v1/localidades
+#   /distritos?view=nivelado&oorderBy=municipio-id
+# - https://servicodados.ibge.gov.br/api/v1/localidades
+#   /municipios?view=nivelado&orderBy=id
 # METHODUS_FONTI = {
 #     'ibge_un_adm2': 'https://servicodados.ibge.gov.br/api' +
 #     '/v1/localidades/municipios?view=nivelado&orderBy=id'
 # }
-
-# @TODO implementar malhas https://servicodados.ibge.gov.br/api/docs/malhas?versao=3
-# ./999999999/0/999999999_54872.py 999999/0/1603_1_1--old.csv 999999/0/1603_1_1--new.csv
 
 
 class Cli:
@@ -112,7 +119,7 @@ class Cli:
     EXIT_ERROR = 1
     EXIT_SYNTAX = 2
 
-    venandum_insectum: bool = False
+    venandum_insectum: bool = False  # noqa: E701
 
     def __init__(self):
         """
@@ -345,12 +352,12 @@ class CliMain:
 
     hxltm_ad_rdf: Type['HXLTMAdRDFSimplicis'] = None
     pyargs: dict = None
-    venandum_insectum: bool = False
+    venandum_insectum: bool = False  # noqa
 
     def __init__(
             self, infile: str = None, stdin: bool = None,
             pyargs: dict = None, configuratio: dict = None,
-            venandum_insectum: bool = False
+            venandum_insectum: bool = False  # noqa
     ):
         """
         Constructs all the necessary attributes for the Cli object.
@@ -429,7 +436,7 @@ class HXLTMAdRDFSimplicis:
     # locālī, n, s, dativus, https://en.wiktionary.org/wiki/localis#Latin
     # identitas_locali_ex_hxl_hashtag: str = '#item+conceptum+codicem'
     identitas_locali_index: int = -1
-    venandum_insectum: bool = False
+    venandum_insectum: bool = False  # noqa
     _hxltm_linguae_index: list = []
     _hxltm_linguae_info: dict = {}
     _hxltm_meta_index: list = []
@@ -450,7 +457,7 @@ class HXLTMAdRDFSimplicis:
         objectivum_formato: str,
         caput: list = None,
         data: list = None,
-        venandum_insectum: bool = False
+        venandum_insectum: bool = False  # noqa
     ):
         """__init__ _summary_
 
@@ -796,98 +803,6 @@ def numerordinatio_progenitori(
     if len(_parts) == 0:
         return "0"
     return separatum.join(_parts)
-
-
-def hxltm_carricato(
-        archivum_trivio: str = None, est_stdin: bool = False) -> list:
-    caput = []
-    _data = []
-    # data = []
-
-    # print('hxltm_carricato', archivum_trivio, est_stdin)
-    # return 'a', 'b'
-    if est_stdin:
-        for linea in sys.stdin:
-            if len(caput) == 0:
-                # caput = linea
-                # _reader_caput = csv.reader(linea)
-                _gambi = [linea, linea]
-                _reader_caput = csv.reader(_gambi)
-                caput = next(_reader_caput)
-            else:
-                _data.append(linea)
-        _reader = csv.reader(_data)
-        return caput, list(_reader)
-    # else:
-    #     fons = archivum_trivio
-
-    with open(archivum_trivio, 'r') as _fons:
-        _csv_reader = csv.reader(_fons)
-        for linea in _csv_reader:
-            if len(caput) == 0:
-                # caput = linea
-                # _reader_caput = csv.reader(linea)
-                _gambi = [linea, linea]
-                _reader_caput = csv.reader(_gambi)
-                caput = next(_reader_caput)
-            else:
-                _data.append(linea)
-            # print(row)
-
-    # for line in fons:
-    #     print(line)
-        # json_fonti_texto += line
-    # - carricātō, n, s, dativus, https://en.wiktionary.org/wiki/carricatus#Latin
-    #   - verbum: https://en.wiktionary.org/wiki/carricatus#Latin
-    _reader = csv.reader(_data)
-    return caput, list(_reader)
-
-
-def qhxl_hxlhashtag_2_bcp47(hxlhashtag: str) -> str:
-    """qhxl_hxlhashtag_2_bcp47
-
-    (try) to convert full HXL hashtag to BCP47
-
-    Args:
-        hxlatt (str):
-
-    Returns:
-        str:
-    """
-    # needs simplification
-    if not hxlhashtag:
-        return None
-    if hxlhashtag.find('i_') == -1 or hxlhashtag.find('is_') == -1:
-        return None
-    hxlhashtag_parts = hxlhashtag.split('+')
-    # langattrs = []
-    _bcp_lang = ''
-    _bcp_stript = ''
-    _bcp_extension = []
-    for item in hxlhashtag_parts:
-        if item.startswith('i_'):
-            _bcp_lang = item.replace('i_', '')
-        if item.startswith('is_'):
-            _bcp_stript = item.replace('is_', '')
-        if item.startswith('ix_'):
-            _bcp_extension.append(item.replace('ix_', ''))
-        # if not item.startswith(('i_', 'is_', 'ix_')):
-        #     continue
-        # langattrs.append(item)
-
-    if not _bcp_lang or not _bcp_stript:
-        return False
-
-    bcp47_simplici = "{0}-{1}".format(
-        _bcp_lang.lower(), _bcp_stript.capitalize())
-    if len(_bcp_extension) > 0:
-        _bcp_extension = sorted(_bcp_extension)
-        bcp47_simplici = "{0}-x-{1}".format(
-            bcp47_simplici,
-            '-'.join(_bcp_extension)
-        )
-
-    return bcp47_simplici
 
 
 if __name__ == "__main__":
