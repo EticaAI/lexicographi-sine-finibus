@@ -98,9 +98,9 @@ methodus:
       # ex (+ ablative), https://en.wiktionary.org/wiki/ex#Latin
       # locālī, n, s, dativus, https://en.wiktionary.org/wiki/localis#Latin
       identitas_locali_ex_hxl_hashtag:
-        - '#item+conceptum+codicem'
-        - '#item+rem+i_qcc+is_zxxx+ix_v76vcnes'
-        - '#loc+facility+code+v_76_cnes'
+        - "#item+conceptum+codicem"
+        - "#item+rem+i_qcc+is_zxxx+ix_v76vcnes"
+        - "#loc+facility+code+v_76_cnes"
 
       # https://www.wikidata.org/wiki/Property:P131
       # Veja https://www.wikidata.org/wiki/Wikidata:List_of_properties/pt-br
@@ -111,10 +111,13 @@ methodus:
       # @TODO mover isso para outro lugar (precisa ser generalizado)
       __skos_mapping:
         1:
-          hxltm: '#item+rem+i_qcc+is_zxxx+ix_wikip1585'
+          hxltm: "#item+rem+i_qcc+is_zxxx+ix_wikip1585"
           # Brazilian municipality code (P1585)
-          predicate: '<http://www.wikidata.org/prop/P1585>'
+          predicate: "<http://www.wikidata.org/prop/P1585>"
         2:
-          hxltm: '#meta+rem+i_qcc+is_zxxx+ix_wikip6204'
+          hxltm: "#meta+rem+i_qcc+is_zxxx+ix_wikip6204"
           # CNPJ (P6204)
-          predicate: '<http://www.wikidata.org/prop/P6204>'
+          predicate: "<http://www.wikidata.org/prop/P6204>"
+      skos:related:
+        1:
+          hxltm: '#item+rem+i_qcc+is_zxxx+ix_wikip1585'

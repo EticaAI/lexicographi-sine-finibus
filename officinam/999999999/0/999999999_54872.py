@@ -403,6 +403,8 @@ class HXLTMAdRDFSimplicis:
     # locālī, n, s, dativus, https://en.wiktionary.org/wiki/localis#Latin
     # identitas_locali_ex_hxl_hashtag: str = '#item+conceptum+codicem'
     identitas_locali_index: int = -1
+    _hxltm_linguae_index: list = []
+    _hxltm_linguae_info: dict = {}
     _hxltm_meta_index: list = []
     _hxltm_meta_info: dict = {}
     _hxltm_unlabeled_index: list = []
@@ -440,6 +442,8 @@ class HXLTMAdRDFSimplicis:
         self._post_init()
 
     def _post_init(self):
+        # @TODO esse desgambiarrizar esse _post_init
+
         if 'identitas_locali_ex_hxl_hashtag' in \
                 self.fons_configurationi['numerordinatio']:
             _test = self.fons_configurationi['numerordinatio']['identitas_locali_ex_hxl_hashtag']
@@ -453,18 +457,47 @@ class HXLTMAdRDFSimplicis:
             if self.identitas_locali_index == -1:
                 raise ValueError("HXLTMAdRDFSimplicis [{0}] ?? <{1}>".format(
                     _test, self.caput))
-        for item in self.caput:
+
+        for _index, item in enumerate(self.caput):
+            attrs = item.replace('#item+rem', '')
+            bcp47_simplici = qhxl_hxlhashtag_2_bcp47(attrs)
+            # lingua = bcp47_langtag(bcp47_simplici, [
+            #     # 'Language-Tag',
+            #     'Language-Tag_normalized',
+            #     'language'
+            # ], strictum=False)
+            # bcp47_langtag
+
             if item not in self._hxltm_labeled:
-                _index = self.caput.index(item)
+                # _index = self.caput.index(item)
                 if item.startswith('#meta'):
                     self._hxltm_meta_index.append(_index)
                     self._hxltm_meta_info[_index] = {
-                        'hxltm_hashtag': item
+                        'hxltm_hashtag': item,
+                        'bcp47': bcp47_simplici
                     }
                     continue
                 self._hxltm_unlabeled_index.append(_index)
                 self._hxltm_unlabeled_info[_index] = {
-                    'hxltm_hashtag': item
+                    'hxltm_hashtag': item,
+                    'bcp47': bcp47_simplici
+                }
+
+            # Language tags only
+            if not item.startswith('#item+rem'):
+                continue
+            # attrs = item.replace('#item+rem', '')
+            # hxlattslinguae = qhxl_attr_2_bcp47(attrs)
+            # lingua = bcp47_langtag(hxlattslinguae, [
+            #     # 'Language-Tag',
+            #     'Language-Tag_normalized',
+            #     'language'
+            # ], strictum=False)
+            if bcp47_simplici and not bcp47_simplici.startswith(('qcc', 'zxx')):
+                self._hxltm_linguae_index.append(_index)
+                self._hxltm_linguae_info[_index] = {
+                    'hxltm_hashtag': item,
+                    'bcp47': bcp47_simplici
                 }
 
     def resultatum_ad_csv(self):
@@ -505,6 +538,7 @@ class HXLTMAdRDFSimplicis:
         print('# fons_configurationi ' + str(self.fons_configurationi))
         print('# _hxltm_unlabeled_info ' + str(self._hxltm_unlabeled_info))
         print('# _hxltm_meta_info ' + str(self._hxltm_meta_info))
+        print('# _hxltm_linguae_info ' + str(self._hxltm_linguae_info))
         print('')
         print('# @TODO adicionar mais prefixos de '
               'https://www.wikidata.org/wiki/EntitySchema:E49')
@@ -531,17 +565,42 @@ class HXLTMAdRDFSimplicis:
                 self.praefixo,
                 _codex_locali
             ))
-            print('  skos:prefLabel "{0}:{1}"@mul-Zyyy-x-n1603 .'.format(
+            # print('  skos:prefLabel "{0}:{1}"@mul-Zyyy-x-n1603 .'.format(
+            print('  skos:prefLabel "{0}:{1}"@mul-Zyyy-x-n1603 ;'.format(
                 self.praefixo,
                 _codex_locali
             ))
+            _skos_related = []
+            _skos_related_raw = []
             for _index, item in enumerate(linea):
-                if len(item) and _index in self._hxltm_unlabeled_index:
-                    print('  # {0} [{1}]'.format(
-                        self._hxltm_unlabeled_info[_index]['hxltm_hashtag'], item))
+                if item and _index in self._hxltm_unlabeled_index and \
+                        self._hxltm_unlabeled_info[_index]['bcp47']:
+                    _skos_related_raw.append('"{0}"@{1}'.format(
+                        item.replace('"', '\\"'),
+                        self._hxltm_unlabeled_info[_index]['bcp47']
+                    ))
+                    # pass
+
+            # @TODO add other related
+            _skos_related = _skos_related_raw
+            # linguae = self._quod_linguae(res)
+            if len(_skos_related) > 0:
+                print("  skos:related\n    {0} .".format(
+                    " ,\n    ".join(_skos_related_raw)
+                ))
+            for _index, item in enumerate(linea):
+                # if len(item) and _index in self._hxltm_unlabeled_index:
+                #     print('  # {0} [{1}]'.format(
+                #         self._hxltm_unlabeled_info[_index]['hxltm_hashtag'], item))
                 if len(item) and _index in self._hxltm_meta_index:
-                    print('  ## {0} [{1}]'.format(
+                    print('  # verbose: {0} [{1}]'.format(
                         self._hxltm_meta_info[_index]['hxltm_hashtag'], item))
+
+            # linguae = self._quod_linguae(res)
+            # if len(linguae) > 0:
+            #     print("  skos:prefLabel\n    {0} .".format(
+            #         " ,\n    ".join(linguae)
+            #     ))
 
             print('')
 
@@ -751,6 +810,53 @@ def hxltm_carricato(
     #   - verbum: https://en.wiktionary.org/wiki/carricatus#Latin
     _reader = csv.reader(_data)
     return caput, list(_reader)
+
+
+def qhxl_hxlhashtag_2_bcp47(hxlhashtag: str) -> str:
+    """qhxl_hxlhashtag_2_bcp47
+
+    (try) to convert full HXL hashtag to BCP47
+
+    Args:
+        hxlatt (str):
+
+    Returns:
+        str:
+    """
+    # needs simplification
+    if not hxlhashtag:
+        return None
+    if hxlhashtag.find('i_') == -1 or hxlhashtag.find('is_') == -1:
+        return None
+    hxlhashtag_parts = hxlhashtag.split('+')
+    # langattrs = []
+    _bcp_lang = ''
+    _bcp_stript = ''
+    _bcp_extension = []
+    for item in hxlhashtag_parts:
+        if item.startswith('i_'):
+            _bcp_lang = item.replace('i_', '')
+        if item.startswith('is_'):
+            _bcp_stript = item.replace('is_', '')
+        if item.startswith('ix_'):
+            _bcp_extension.append(item.replace('ix_', ''))
+        # if not item.startswith(('i_', 'is_', 'ix_')):
+        #     continue
+        # langattrs.append(item)
+
+    if not _bcp_lang or not _bcp_stript:
+        return False
+
+    bcp47_simplici = "{0}-{1}".format(
+        _bcp_lang.lower(), _bcp_stript.capitalize())
+    if len(_bcp_extension) > 0:
+        _bcp_extension = sorted(_bcp_extension)
+        bcp47_simplici = "{0}-x-{1}".format(
+            bcp47_simplici,
+            '-'.join(_bcp_extension)
+        )
+
+    return bcp47_simplici
 
 
 if __name__ == "__main__":
