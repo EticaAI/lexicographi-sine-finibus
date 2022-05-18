@@ -24,6 +24,7 @@
 # ==============================================================================
 
 import sys
+import os
 import argparse
 import csv
 # import re
@@ -92,6 +93,8 @@ PROGRAMMA_SARCINAE = str(Path().resolve())
 #     PROGRAMMA_SARCINAE + '/' + NOMEN + '.meta.yml',
 # ]
 
+VENANDUM_INSECTUM = bool(os.getenv('VENANDUM_INSECTUM', ''))
+
 # https://servicodados.ibge.gov.br/api/v1/localidades/distritos?view=nivelado&oorderBy=municipio-id
 # https://servicodados.ibge.gov.br/api/v1/localidades/municipios?view=nivelado&orderBy=id
 # METHODUS_FONTI = {
@@ -108,6 +111,8 @@ class Cli:
     EXIT_OK = 0
     EXIT_ERROR = 1
     EXIT_SYNTAX = 2
+
+    venandum_insectum: bool = False
 
     def __init__(self):
         """
@@ -210,6 +215,17 @@ class Cli:
             default=None
         )
 
+        parser.add_argument(
+            # '--venandum-insectum-est, --debug',
+            '--venandum-insectum-est', '--debug',
+            help='Habilitar depuração? Informações adicionais',
+            metavar="venandum_insectum",
+            dest="venandum_insectum",
+            action='store_const',
+            const=True,
+            default=False
+        )
+
         # parser.add_argument(
         #     'outfile',
         #     help='Output file',
@@ -226,6 +242,8 @@ class Cli:
         # _stdin = None
         configuratio = self.quod_configuratio(
             pyargs.archivum_configurationi, pyargs.praefixum_configurationi)
+        if pyargs.venandum_insectum or VENANDUM_INSECTUM:
+            self.venandum_insectum = True
 
         if stdin.isatty():
             _infile = pyargs.infile
@@ -237,7 +255,9 @@ class Cli:
         climain = CliMain(
             infile=_infile, stdin=_stdin,
             pyargs=pyargs,
-            configuratio=configuratio)
+            configuratio=configuratio,
+            venandum_insectum=self.venandum_insectum
+        )
 
         if pyargs.objectivum_formato == 'text/csv':
             return climain.actio()
@@ -325,10 +345,13 @@ class CliMain:
 
     hxltm_ad_rdf: Type['HXLTMAdRDFSimplicis'] = None
     pyargs: dict = None
+    venandum_insectum: bool = False
 
     def __init__(
             self, infile: str = None, stdin: bool = None,
-            pyargs: dict = None, configuratio: dict = None):
+            pyargs: dict = None, configuratio: dict = None,
+            venandum_insectum: bool = False
+    ):
         """
         Constructs all the necessary attributes for the Cli object.
         """
@@ -338,6 +361,7 @@ class CliMain:
         self.objectivum_formato = pyargs.objectivum_formato
         # self.methodus = pyargs.methodus
         self.configuratio = configuratio
+        self.venandum_insectum = venandum_insectum
 
         caput, datum = hxltm_carricato(infile, stdin)
 
@@ -346,7 +370,9 @@ class CliMain:
             self.delimiter = "\t"
         # print('oi HXLTMAdRDFSimplicis')
         self.hxltm_ad_rdf = HXLTMAdRDFSimplicis(
-            configuratio, pyargs.objectivum_formato, caput, datum)
+            configuratio, pyargs.objectivum_formato, caput, datum,
+            venandum_insectum=self.venandum_insectum
+        )
 
         # methodus_ex_tabulae = configuratio['methodus'][self.methodus]
 
@@ -403,6 +429,7 @@ class HXLTMAdRDFSimplicis:
     # locālī, n, s, dativus, https://en.wiktionary.org/wiki/localis#Latin
     # identitas_locali_ex_hxl_hashtag: str = '#item+conceptum+codicem'
     identitas_locali_index: int = -1
+    venandum_insectum: bool = False
     _hxltm_linguae_index: list = []
     _hxltm_linguae_info: dict = {}
     _hxltm_meta_index: list = []
@@ -422,8 +449,8 @@ class HXLTMAdRDFSimplicis:
         fons_configurationi: dict,
         objectivum_formato: str,
         caput: list = None,
-        data: list = None
-        # methodus: str,
+        data: list = None,
+        venandum_insectum: bool = False
     ):
         """__init__ _summary_
 
@@ -432,6 +459,7 @@ class HXLTMAdRDFSimplicis:
         """
         self.fons_configurationi = fons_configurationi
         self.objectivum_formato = objectivum_formato
+        self.venandum_insectum = venandum_insectum
         self.caput = caput
         self.data = data
         # self.methodus = methodus
@@ -534,15 +562,16 @@ class HXLTMAdRDFSimplicis:
         print('@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .')
         print('@prefix skos: <http://www.w3.org/2004/02/skos/core#> .')
         print('')
-        print('# @TODO melhorar HXLTMAdRDFSimplicis.resultatum_ad_turtle')
-        print('# fons_configurationi ' + str(self.fons_configurationi))
-        print('# _hxltm_unlabeled_info ' + str(self._hxltm_unlabeled_info))
-        print('# _hxltm_meta_info ' + str(self._hxltm_meta_info))
-        print('# _hxltm_linguae_info ' + str(self._hxltm_linguae_info))
-        print('')
-        print('# @TODO adicionar mais prefixos de '
-              'https://www.wikidata.org/wiki/EntitySchema:E49')
-        print('')
+        if self.venandum_insectum:
+            print('# @TODO melhorar HXLTMAdRDFSimplicis.resultatum_ad_turtle')
+            print('# fons_configurationi ' + str(self.fons_configurationi))
+            print('# _hxltm_unlabeled_info ' + str(self._hxltm_unlabeled_info))
+            print('# _hxltm_meta_info ' + str(self._hxltm_meta_info))
+            print('# _hxltm_linguae_info ' + str(self._hxltm_linguae_info))
+            print('')
+            print('# @TODO adicionar mais prefixos de '
+                  'https://www.wikidata.org/wiki/EntitySchema:E49')
+            print('')
         # print('<urn:1603:63:101> a skos:ConceptScheme ;')
         # print('  skos:prefLabel "1603:63:101"@mul-Zyyy-x-n1603 .')
         print("<urn:{0}> a skos:ConceptScheme ; \n"
@@ -592,9 +621,11 @@ class HXLTMAdRDFSimplicis:
                 # if len(item) and _index in self._hxltm_unlabeled_index:
                 #     print('  # {0} [{1}]'.format(
                 #         self._hxltm_unlabeled_info[_index]['hxltm_hashtag'], item))
-                if len(item) and _index in self._hxltm_meta_index:
-                    print('  # verbose: {0} [{1}]'.format(
-                        self._hxltm_meta_info[_index]['hxltm_hashtag'], item))
+                if self.venandum_insectum:
+                    if len(item) and _index in self._hxltm_meta_index:
+                        print('  # verbose: {0} [{1}]'.format(
+                            self._hxltm_meta_info[_index]['hxltm_hashtag'],
+                            item))
 
             # linguae = self._quod_linguae(res)
             # if len(linguae) > 0:
