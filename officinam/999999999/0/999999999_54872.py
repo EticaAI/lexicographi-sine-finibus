@@ -403,6 +403,17 @@ class HXLTMAdRDFSimplicis:
     # locālī, n, s, dativus, https://en.wiktionary.org/wiki/localis#Latin
     # identitas_locali_ex_hxl_hashtag: str = '#item+conceptum+codicem'
     identitas_locali_index: int = -1
+    _hxltm_meta_index: list = []
+    _hxltm_meta_info: dict = {}
+    _hxltm_unlabeled_index: list = []
+    _hxltm_unlabeled_info: dict = {}
+    _hxltm_labeled = [
+        '#item+conceptum+numerordinatio',
+        '#item+conceptum+codicem',
+        '#status+conceptum+codicem',
+        '#status+conceptum+definitionem',
+        '#item+rem+i_qcc+is_zxxx+ix_codexfacto',
+    ]
 
     def __init__(
         self,
@@ -442,6 +453,19 @@ class HXLTMAdRDFSimplicis:
             if self.identitas_locali_index == -1:
                 raise ValueError("HXLTMAdRDFSimplicis [{0}] ?? <{1}>".format(
                     _test, self.caput))
+        for item in self.caput:
+            if item not in self._hxltm_labeled:
+                _index = self.caput.index(item)
+                if item.startswith('#meta'):
+                    self._hxltm_meta_index.append(_index)
+                    self._hxltm_meta_info[_index] = {
+                        'hxltm_hashtag': item
+                    }
+                    continue
+                self._hxltm_unlabeled_index.append(_index)
+                self._hxltm_unlabeled_info[_index] = {
+                    'hxltm_hashtag': item
+                }
 
     def resultatum_ad_csv(self):
         """resultatum ad csv text/csv
@@ -477,8 +501,13 @@ class HXLTMAdRDFSimplicis:
         print('@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .')
         print('@prefix skos: <http://www.w3.org/2004/02/skos/core#> .')
         print('')
-        print('# TODO HXLTMAdRDFSimplicis.resultatum_ad_turtle')
-        print('# ' + str(self.fons_configurationi))
+        print('# @TODO melhorar HXLTMAdRDFSimplicis.resultatum_ad_turtle')
+        print('# fons_configurationi ' + str(self.fons_configurationi))
+        print('# _hxltm_unlabeled_info ' + str(self._hxltm_unlabeled_info))
+        print('# _hxltm_meta_info ' + str(self._hxltm_meta_info))
+        print('')
+        print('# @TODO adicionar mais prefixos de '
+              'https://www.wikidata.org/wiki/EntitySchema:E49')
         print('')
         # print('<urn:1603:63:101> a skos:ConceptScheme ;')
         # print('  skos:prefLabel "1603:63:101"@mul-Zyyy-x-n1603 .')
@@ -493,8 +522,8 @@ class HXLTMAdRDFSimplicis:
         #        /codex-simplex-ontologiae/ontologia.yml
 
         for linea in self.data:
-            print('# {0}'.format(linea))
-            print('# {0}'.format(self.identitas_locali_index))
+            # print('# {0}'.format(linea))
+            # print('# {0}'.format(self.identitas_locali_index))
             # _codex_locali = self.quod(
             #     linea, '#item+rem+i_qcc+is_zxxx+ix_wikip1585')
             _codex_locali = str(int(linea[self.identitas_locali_index]))
@@ -506,6 +535,14 @@ class HXLTMAdRDFSimplicis:
                 self.praefixo,
                 _codex_locali
             ))
+            for _index, item in enumerate(linea):
+                if len(item) and _index in self._hxltm_unlabeled_index:
+                    print('  # {0} [{1}]'.format(
+                        self._hxltm_unlabeled_info[_index]['hxltm_hashtag'], item))
+                if len(item) and _index in self._hxltm_meta_index:
+                    print('  ## {0} [{1}]'.format(
+                        self._hxltm_meta_info[_index]['hxltm_hashtag'], item))
+
             print('')
 
         return Cli.EXIT_OK
