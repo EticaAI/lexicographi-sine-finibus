@@ -30,11 +30,25 @@
 """
 
 import csv
+import re
 import sys
+from typing import Type
 
 from openpyxl import load_workbook
 
 # pylint --disable=W0511,C0103,C0116 ./999999999/0/L999999999_0.py
+
+
+def csv_imprimendo(data: list, caput: list = None, delimiter: str = ',',
+                   archivum_trivio: str = None):
+    if archivum_trivio:
+        raise NotImplementedError('{0}'.format(archivum_trivio))
+    # imprimendō, v, s, dativus, https://en.wiktionary.org/wiki/impressus#Latin
+
+    _writer = csv.writer(sys.stdout, delimiter=delimiter)
+    if caput:
+        _writer.writerow(caput)
+    _writer.writerows(data)
 
 
 def hxltm_carricato(
@@ -143,19 +157,6 @@ def qhxl_hxlhashtag_2_bcp47(hxlhashtag: str) -> str:
     return bcp47_simplici
 
 
-def xlsx_meta(archivum_trivio: str = None) -> dict:
-    # from openpyxl import load_workbook
-    workbook = load_workbook(archivum_trivio, read_only=True)
-    resultatum = {
-        '_': workbook,
-        'sheetnames': workbook.sheetnames
-    }
-    # resultatum = wb2
-    # print(wb2.keys())
-    workbook.close()
-    return resultatum
-
-
 class XLSXSimplici:
     """Read-only wrapper for XLSX files
 
@@ -165,6 +166,7 @@ class XLSXSimplici:
 
     archivum_trivio: str = ''
     workbook: None
+    sheet_active: str = None
 
     def __init__(self, archivum_trivio: str) -> None:
         """__init__
@@ -175,7 +177,20 @@ class XLSXSimplici:
         # from openpyxl import load_workbook
         self.archivum_trivio = archivum_trivio
         self.workbook = load_workbook(archivum_trivio, read_only=True)
+        self.sheet_active = None
         # pass
+
+    def de(self, worksheet_reference: str = None) -> bool:
+        if isinstance(worksheet_reference, str) and \
+                len(worksheet_reference) == 1:
+            meta = self.meta()
+            if worksheet_reference in meta['sheet_cod_ab']:
+                self.sheet_active = meta['sheet_cod_ab'][worksheet_reference]
+                return True
+        if worksheet_reference in self.workbook:
+            self.sheet_active = worksheet_reference
+            return True
+        return False
 
     def meta(self) -> dict:
         """meta
@@ -184,9 +199,23 @@ class XLSXSimplici:
             dict: _description_
         """
         resultatum = {
-            '_': self.workbook,
-            'sheetnames': self.workbook.sheetnames
+            # '_': self.workbook,
+            'sheetnames': self.workbook.sheetnames,
+            'sheet': {},
+            'sheet_active': {},
+            'sheet_cod_ab': {}
         }
+        for item in self.workbook.sheetnames:
+            resultatum['sheet'][item] = {
+                # '__': self.workbook[item],
+                # 'max_col': self.workbook[item].max_col
+                'max_column': self.workbook[item].max_column,
+                'max_row': self.workbook[item].max_row
+            }
+            _item_num = re.sub('[^0-9]', '', item)
+            if len(_item_num) == 1:
+                #_likely_ab = _item_num
+                resultatum['sheet_cod_ab'][_item_num] = item
         # resultatum = wb2
         # print(wb2.keys())
         # workbook.close()
@@ -197,3 +226,21 @@ class XLSXSimplici:
         """
         # https://en.wiktionary.org/wiki/finis#Latin
         self.workbook.close()
+
+    def imprimere(self, formatum: str = 'csv') -> list:
+        """imprimere /print/@eng-Latn
+
+        Trivia:
+        - imprimere, v, s, (), https://en.wiktionary.org/wiki/imprimo#Latin
+        - fōrmātum, s, n, nominativus, https://en.wiktionary.org/wiki/formatus
+
+        Args:
+            formatum (str, optional): output format. Defaults to 'csv'.
+
+        Returns:
+            [list]:
+        """
+        caput = []
+        data = []
+
+        return caput, data

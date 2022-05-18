@@ -22,6 +22,7 @@
 #      REVISION:  ---
 # ==============================================================================
 
+import json
 import sys
 import os
 import argparse
@@ -40,7 +41,8 @@ import yaml
 from L999999999_0 import (
     hxltm_carricato,
     qhxl_hxlhashtag_2_bcp47,
-    xlsx_meta
+    XLSXSimplici
+    # xlsx_meta
 )
 
 STDIN = sys.stdin.buffer
@@ -56,6 +58,8 @@ DESCRIPTION = """
 /geodata-preparation-manual/p-code-guidelines
      - https://docs.google.com/viewer?a=v&pid=sites&srcid=\
 ZGVmYXVsdGRvbWFpbnxvY2hhaW13aWtpfGd4Ojc4YTljNmEwNmM3MjkwNWU
+       - Note: on this one, Country level P-Codes start from 1, not 0.
+         Today adm0 represent the level
      - https://mtoolbox.unocha.org
 
 Trivia:
@@ -65,6 +69,9 @@ Trivia:
   - Q56061, https://www.wikidata.org/wiki/Q56061
     - /administrative territorial entity/@eng-Latn
     - //divisio administrativa//@lat-Latn
+
+Maybe for later
+- https://www.unsalb.org/data
 """.format(__file__)
 
 __EPILOGUM__ = """
@@ -92,6 +99,7 @@ __EPILOGUM__ = """
 
 
    {0} --methodus=xlsx_metadata 999999/1603/45/16/xlsx/ago.xlsx
+   {0} --methodus=xlsx_ad_csv --ordines=2 999999/1603/45/16/xlsx/ago.xlsx
 
     cat 999999/1603/45/16/csv/AGO_2.csv | \
 {0} --objectivum-formato=text/csv
@@ -163,6 +171,7 @@ class Cli:
                 'pcode_ex_xlsx',
                 'pcode_ex_csv',
                 'xlsx_metadata',
+                'xlsx_ad_csv',
             ],
             # required=True
             default='pcode_ex_csv'
@@ -306,7 +315,26 @@ class Cli:
             _stdin = True
 
         if pyargs.methodus == 'xlsx_metadata':
-            print(xlsx_meta(_infile))
+            xlsx = XLSXSimplici(_infile)
+
+            print(json.dumps(xlsx.meta()))
+            xlsx.finis()
+            return self.EXIT_OK
+
+        if pyargs.methodus == 'xlsx_ad_csv':
+            xlsx = XLSXSimplici(_infile)
+            if not pyargs.ordines or \
+                not xlsx.de(pyargs.ordines[0]):
+                raise ValueError(
+                    '--methodus [{0}] --ordines [{1}] [{2}] <{3}>'.format(
+                    pyargs.methodus,
+                    pyargs.ordines,
+                    _infile,
+                    xlsx.meta(),
+                ))
+
+            print(json.dumps(xlsx.meta()))
+            xlsx.finis()
             return self.EXIT_OK
 
         climain = CliMain(
