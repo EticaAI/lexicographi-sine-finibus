@@ -14,6 +14,7 @@
 #       OPTIONS:  ---
 #
 #  REQUIREMENTS:  - python3
+#                   - pip install openpyxl
 #          BUGS:  ---
 #         NOTES:  ---
 #       AUTHORS:  Emerson Rocha <rocha[at]ieee.org>
@@ -25,9 +26,15 @@
 #       CREATED:  2022-05-18 19:52 UTC based on 999999999_10263485.py
 #      REVISION:  ---
 # ==============================================================================
+"""Common library for 999999999_*.py cli scripts
+"""
 
 import csv
 import sys
+
+from openpyxl import load_workbook
+
+# pylint --disable=W0511,C0103,C0116 ./999999999/0/L999999999_0.py
 
 
 def hxltm_carricato(
@@ -134,3 +141,59 @@ def qhxl_hxlhashtag_2_bcp47(hxlhashtag: str) -> str:
         )
 
     return bcp47_simplici
+
+
+def xlsx_meta(archivum_trivio: str = None) -> dict:
+    # from openpyxl import load_workbook
+    workbook = load_workbook(archivum_trivio, read_only=True)
+    resultatum = {
+        '_': workbook,
+        'sheetnames': workbook.sheetnames
+    }
+    # resultatum = wb2
+    # print(wb2.keys())
+    workbook.close()
+    return resultatum
+
+
+class XLSXSimplici:
+    """Read-only wrapper for XLSX files
+
+    - XLSX http://officeopenxml.com/anatomyofOOXML-xlsx.php
+    - simplicī, m/f/n, s, dativus, https://en.wiktionary.org/wiki/simplex#Latin
+    """
+
+    archivum_trivio: str = ''
+    workbook: None
+
+    def __init__(self, archivum_trivio: str) -> None:
+        """__init__
+
+        Args:
+            archivum_trivio (str):
+        """
+        # from openpyxl import load_workbook
+        self.archivum_trivio = archivum_trivio
+        self.workbook = load_workbook(archivum_trivio, read_only=True)
+        # pass
+
+    def meta(self) -> dict:
+        """meta
+
+        Returns:
+            dict: _description_
+        """
+        resultatum = {
+            '_': self.workbook,
+            'sheetnames': self.workbook.sheetnames
+        }
+        # resultatum = wb2
+        # print(wb2.keys())
+        # workbook.close()
+        return resultatum
+
+    def finis(self) -> None:
+        """finis Close XLSX file immediately to save memory
+        """
+        # https://en.wiktionary.org/wiki/finis#Latin
+        self.workbook.close()

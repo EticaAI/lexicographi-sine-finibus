@@ -39,7 +39,8 @@ import yaml
 # l999999999_0 = __import__('999999999_0')
 from L999999999_0 import (
     hxltm_carricato,
-    qhxl_hxlhashtag_2_bcp47
+    qhxl_hxlhashtag_2_bcp47,
+    xlsx_meta
 )
 
 STDIN = sys.stdin.buffer
@@ -90,9 +91,11 @@ __EPILOGUM__ = """
 > 999999/0/ibge_un_adm2.no1.n3
 
 
+   {0} --methodus=xlsx_metadata 999999/1603/45/16/xlsx/ago.xlsx
 
     cat 999999/1603/45/16/csv/AGO_2.csv | \
 {0} --objectivum-formato=text/csv
+
 
 ------------------------------------------------------------------------------
                             EXEMPLŌRUM GRATIĀ
@@ -159,6 +162,7 @@ class Cli:
             choices=[
                 'pcode_ex_xlsx',
                 'pcode_ex_csv',
+                'xlsx_metadata',
             ],
             # required=True
             default='pcode_ex_csv'
@@ -296,8 +300,14 @@ class Cli:
             _infile = pyargs.infile
             _stdin = False
         else:
+            if pyargs.methodus.find('xlsx') > -1:
+                raise ValueError('stdin not implemented for XLSX input')
             _infile = None
             _stdin = True
+
+        if pyargs.methodus == 'xlsx_metadata':
+            print(xlsx_meta(_infile))
+            return self.EXIT_OK
 
         climain = CliMain(
             infile=_infile, stdin=_stdin,
