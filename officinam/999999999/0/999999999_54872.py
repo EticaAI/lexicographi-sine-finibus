@@ -398,6 +398,12 @@ class HXLTMAdRDFSimplicis:
     # _hxltm_hashtag_defallo: str = '#meta+{{caput_clavi_normali}}'
     # _hxl_hashtag_defallo: str = '#meta+{{caput_clavi_normali}}'
 
+    # identitās, f, s, nom., https://en.wiktionary.org/wiki/identitas#Latin
+    # ex (+ ablative), https://en.wiktionary.org/wiki/ex#Latin
+    # locālī, n, s, dativus, https://en.wiktionary.org/wiki/localis#Latin
+    # identitas_locali_ex_hxl_hashtag: str = '#item+conceptum+codicem'
+    identitas_locali_index: int = 0
+
     def __init__(
         self,
         fons_configurationi: dict,
@@ -419,6 +425,18 @@ class HXLTMAdRDFSimplicis:
 
         self.praefixo = numerordinatio_neo_separatum(
             self.fons_configurationi['numerordinatio']['praefixo'], ':')
+
+        self._post_init()
+
+    def _post_init(self):
+        if 'identitas_locali_ex_hxl_hashtag' in \
+                self.fons_configurationi['numerordinatio']:
+            _test = self.fons_configurationi['numerordinatio']['identitas_locali_ex_hxl_hashtag']
+            for item in _test:
+                if item in self.caput:
+                    self.identitas_locali_ex_hxl_hashtag = item
+                    self.identitas_locali_index = self.caput.index(item)
+                    break
 
     def resultatum_ad_csv(self):
         """resultatum ad csv text/csv
@@ -456,11 +474,25 @@ class HXLTMAdRDFSimplicis:
         print('')
         print('# TODO HXLTMAdRDFSimplicis.resultatum_ad_turtle')
         print('# ' + str(self.fons_configurationi))
+        print('')
+        # print('<urn:1603:63:101> a skos:ConceptScheme ;')
+        # print('  skos:prefLabel "1603:63:101"@mul-Zyyy-x-n1603 .')
+        print("<urn:{0}> a skos:ConceptScheme ; \n"
+              "  skos:prefLabel \"{0}\"@mul-Zyyy-x-n1603 .".format(
+                  self.praefixo))
+        print('  # @TODO skos:hasTopConcept')
+        print('')
+
+        # @TODO: implementar qhx-Latn (HXLStandard), refs
+        #        https://github.com/EticaAI/hxltm/blob/main/docs
+        #        /codex-simplex-ontologiae/ontologia.yml
 
         for linea in self.data:
-            _codex_locali = self.quod(
-                linea, '#item+rem+i_qcc+is_zxxx+ix_wikip1585')
-            print('<{0}:{1}> a skos:Concept ;'.format(
+            # print('# {0}'.format(linea))
+            # _codex_locali = self.quod(
+            #     linea, '#item+rem+i_qcc+is_zxxx+ix_wikip1585')
+            _codex_locali = str(int(linea[self.identitas_locali_index]))
+            print('<urn:{0}:{1}> a skos:Concept ;'.format(
                 self.praefixo,
                 _codex_locali
             ))
@@ -472,10 +504,12 @@ class HXLTMAdRDFSimplicis:
 
         return Cli.EXIT_OK
 
-    def quod(self, lineam: list, caput_item: str) -> str:
+    def quod(self, linea: list, caput_item: str) -> str:
         if caput_item in self.caput:
             index = self.caput.index(caput_item)
-            return lineam[index]
+            # print('## {0}'.format(linea))
+            # print('## {0}'.format(linea[index]))
+            return linea[index]
         return ''
 
 
@@ -615,10 +649,27 @@ def numerordinatio_neo_separatum(
     return resultatum
 
 
+def numerordinatio_ordo(numerordinatio: str) -> int:
+    normale = numerordinatio_neo_separatum(numerordinatio, '_')
+    return (normale.count('_') + 1)
+
+
+def numerordinatio_progenitori(
+        numerordinatio: str, separatum: str = "_") -> int:
+    # prōgenitōrī, s, m, dativus, https://en.wiktionary.org/wiki/progenitor
+    normale = numerordinatio_neo_separatum(numerordinatio, separatum)
+    _parts = normale.split(separatum)
+    _parts = _parts[:-1]
+    if len(_parts) == 0:
+        return "0"
+    return separatum.join(_parts)
+
+
 def hxltm_carricato(
         archivum_trivio: str = None, est_stdin: bool = False) -> list:
     caput = []
-    datum = []
+    _data = []
+    # data = []
 
     # print('hxltm_carricato', archivum_trivio, est_stdin)
     # return 'a', 'b'
@@ -627,8 +678,9 @@ def hxltm_carricato(
             if len(caput) == 0:
                 caput = linea
             else:
-                datum.append(linea)
-        return caput, datum
+                _data.append(linea)
+        _reader = csv.reader(_data)
+        return caput, list(_reader)
     # else:
     #     fons = archivum_trivio
 
@@ -638,7 +690,7 @@ def hxltm_carricato(
             if len(caput) == 0:
                 caput = linea
             else:
-                datum.append(linea)
+                _data.append(linea)
             # print(row)
 
     # for line in fons:
@@ -646,7 +698,8 @@ def hxltm_carricato(
         # json_fonti_texto += line
     # - carricātō, n, s, dativus, https://en.wiktionary.org/wiki/carricatus#Latin
     #   - verbum: https://en.wiktionary.org/wiki/carricatus#Latin
-    return caput, datum
+    _reader = csv.reader(_data)
+    return caput, list(_reader)
 
 
 if __name__ == "__main__":

@@ -9,7 +9,7 @@ methodus:
     # DT_ATUALIZACAO=20220325
     # TP_UNIDADE=05
 
-    caput:
+    res: &datasus_xmlcnae
       _�_:
         csv_header: "{{caput_clavi}}"
         hxl_hashtag: "#meta+{{caput_clavi_normali}}"
@@ -31,7 +31,6 @@ methodus:
       NU_CNPJ:
         ex_tabulae: [NU_CNPJ]
         hxl_hashtag: "#loc+facility+code+v_76_cnes"
-        # hxltm_hashtag: "#item+rem+i_qcc+is_zxxx+ix_wikip6204"
         hxltm_hashtag: "#meta+rem+i_qcc+is_zxxx+ix_wikip6204"
       CO_CNES:
         ex_tabulae: [CO_CNES]
@@ -41,3 +40,14 @@ methodus:
         ex_tabulae: [DT_ATUALIZACAO]
         hxl_hashtag: "#date"
       TP_UNIDADE:
+    caput: *datasus_xmlcnae
+    numerordinatio:
+      praefixo: 1603:63:49:76
+
+      # identitās, f, s, nom., https://en.wiktionary.org/wiki/identitas#Latin
+      # ex (+ ablative), https://en.wiktionary.org/wiki/ex#Latin
+      # locālī, n, s, dativus, https://en.wiktionary.org/wiki/localis#Latin
+      identitas_locali_ex_hxl_hashtag:
+        - '#item+conceptum+codicem'
+        - '#item+rem+i_qcc+is_zxxx+ix_v76vcnes'
+        - '#loc+facility+code+v_76_cnes'

@@ -57,3 +57,11 @@ methodus:
     caput: *ibge_un_adm2_res
     numerordinatio:
       praefixo: 1603:45:16:76:2
+
+      # identitās, f, s, nom., https://en.wiktionary.org/wiki/identitas#Latin
+      # ex (+ ablative), https://en.wiktionary.org/wiki/ex#Latin
+      # locālī, n, s, dativus, https://en.wiktionary.org/wiki/localis#Latin
+      identitas_locali_ex_hxl_hashtag:
+        - '#item+conceptum+codicem'
+        - '#adm2+code+v_pcode'
+        - '#item+rem+i_qcc+is_zxxx+ix_wikip1585'
