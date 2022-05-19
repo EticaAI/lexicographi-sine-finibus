@@ -195,6 +195,17 @@ class Cli:
         #       - https://en.wiktionary.org/wiki/administro#Latin
         # - https://en.wiktionary.org/wiki/ordo#Latin
         parser.add_argument(
+            '--ex-metadatis',
+            help='For operations related with metadata (nested object) '
+            'this option can be used to filter result. Mostly used to '
+            'help with scripts',
+            dest='ex_metadatis',
+            nargs='?',
+            # required=True
+            default=None
+        )
+
+        parser.add_argument(
             '--ordines',
             help='ōrdinēs. (literal latin: methodical arrangement, '
             'order; plural). Use to specify explicit administrative '
@@ -341,7 +352,21 @@ class Cli:
         if pyargs.methodus == 'xlsx_metadata':
             # xlsx = XLSXSimplici(_infile)
 
-            print(json.dumps(xlsx.meta()))
+            if pyargs.ex_metadatis:
+                # @TODO: maybe implement a jq-like selector.
+                ex_metadatis = pyargs.ex_metadatis.replace('.','')
+                xlsx_meta = xlsx.meta()
+                if ex_metadatis in xlsx_meta:
+                    for item in xlsx_meta[ex_metadatis]:
+                        print(str(item))
+                    pass
+                else:
+                    raise ValueError('{0} not found in {1}'.format(
+                        pyargs.ex_metadatis,
+                        xlsx_meta
+                    ))
+            else:
+                print(json.dumps(xlsx.meta()))
             xlsx.finis()
             return self.EXIT_OK
 

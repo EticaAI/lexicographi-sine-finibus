@@ -1659,7 +1659,8 @@ class XLSXSimplici:
             'sheetnames': self.workbook.sheetnames,
             'sheet': {},
             'sheet_active': {},
-            'sheet_cod_ab': {}
+            'sheet_cod_ab': {},
+            'cod_ab_level': [],
         }
         for item in self.workbook.sheetnames:
             resultatum['sheet'][item] = {
@@ -1672,6 +1673,9 @@ class XLSXSimplici:
             if len(_item_num) == 1:
                 #_likely_ab = _item_num
                 resultatum['sheet_cod_ab'][_item_num] = item
+                resultatum['cod_ab_level'].append(int(_item_num))
+            if len(resultatum['cod_ab_level']) > 0:
+                resultatum['cod_ab_level'] = sorted(resultatum['cod_ab_level'])
         # resultatum = wb2
         # print(wb2.keys())
         # workbook.close()
