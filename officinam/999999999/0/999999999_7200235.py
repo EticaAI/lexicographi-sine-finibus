@@ -39,6 +39,7 @@ import yaml
 
 # l999999999_0 = __import__('999999999_0')
 from L999999999_0 import (
+    csv_imprimendo,
     hxltm_carricato,
     qhxl_hxlhashtag_2_bcp47,
     XLSXSimplici
@@ -268,10 +269,20 @@ class Cli:
             default=None
         )
 
+        # silentium, n, s, nominativus, en.wiktionary.org/wiki/silentium#Latin
+        parser.add_argument(
+            '--silentium',
+            help='Instead of exception with error message, output nothing',
+            metavar="silentium",
+            dest="silentium",
+            action='store_const',
+            const=True,
+            default=False
+        )
         parser.add_argument(
             # '--venandum-insectum-est, --debug',
             '--venandum-insectum-est', '--debug',
-            help='Habilitar depuração? Informações adicionais',
+            help='Enable debug? Show extra informations',
             metavar="venandum_insectum",
             dest="venandum_insectum",
             action='store_const',
@@ -324,16 +335,41 @@ class Cli:
         if pyargs.methodus == 'xlsx_ad_csv':
             xlsx = XLSXSimplici(_infile)
             if not pyargs.ordines or \
-                not xlsx.de(pyargs.ordines[0]):
-                raise ValueError(
-                    '--methodus [{0}] --ordines [{1}] [{2}] <{3}>'.format(
-                    pyargs.methodus,
-                    pyargs.ordines,
-                    _infile,
-                    xlsx.meta(),
-                ))
+                    not xlsx.de(pyargs.ordines[0]):
 
-            print(json.dumps(xlsx.meta()))
+                if pyargs.silentium:
+                    return self.EXIT_OK
+                caput = ['#status+error', '#meta+item', '#meta+value']
+                data = [
+                    ['ERROR', '--methodus', pyargs.methodus],
+                    ['ERROR', '--ordines', str(pyargs.ordines)],
+                    ['ERROR', 'input', _infile],
+                    ['ERROR', 'xlsx.meta', xlsx.meta()],
+                ]
+                # data = [[
+                #     'ERROR',
+                #     '--methodus [{0}] --ordines [{1}] [{2}] <{3}>'.format(
+                #         pyargs.methodus,
+                #         pyargs.ordines,
+                #         _infile,
+                #         xlsx.meta(),
+                #     )
+                # ]]
+                csv_imprimendo(data, caput)
+                return self.EXIT_ERROR
+                # raise ValueError(
+                #     '--methodus [{0}] --ordines [{1}] [{2}] <{3}>'.format(
+                #         pyargs.methodus,
+                #         pyargs.ordines,
+                #         _infile,
+                #         xlsx.meta(),
+                #     ))
+            xlsx.praeparatio()
+            data, caput = xlsx.imprimere()
+            # print(type(caput), caput)
+            # print(type(data), data)
+            csv_imprimendo(data, caput)
+
             xlsx.finis()
             return self.EXIT_OK
 

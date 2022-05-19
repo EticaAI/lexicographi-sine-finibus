@@ -32,15 +32,19 @@
 import csv
 import re
 import sys
+import datetime
 from typing import Type
 
-from openpyxl import load_workbook
+from openpyxl import (
+    load_workbook
+)
 
 # pylint --disable=W0511,C0103,C0116 ./999999999/0/L999999999_0.py
 
 
-def csv_imprimendo(data: list, caput: list = None, delimiter: str = ',',
-                   archivum_trivio: str = None):
+def csv_imprimendo(
+        data: list, caput: list = None, delimiter: str = ',',
+        archivum_trivio: str = None):
     if archivum_trivio:
         raise NotImplementedError('{0}'.format(archivum_trivio))
     # imprimendō, v, s, dativus, https://en.wiktionary.org/wiki/impressus#Latin
@@ -166,7 +170,13 @@ class XLSXSimplici:
 
     archivum_trivio: str = ''
     workbook: None
-    sheet_active: str = None
+    active: str = None
+    active_col_start: int = 0
+    active_col_end: int = 1
+    active_col_ignore: list = []  # Example: headers without text
+    active_row_start: int = 0
+    active_row_end: int = 1
+    _formatum: str = 'csv'
 
     def __init__(self, archivum_trivio: str) -> None:
         """__init__
@@ -176,7 +186,12 @@ class XLSXSimplici:
         """
         # from openpyxl import load_workbook
         self.archivum_trivio = archivum_trivio
-        self.workbook = load_workbook(archivum_trivio, read_only=True)
+        self.workbook = load_workbook(
+            archivum_trivio, data_only=True, read_only=True)
+        # self.workbook = load_workbook(
+        #     archivum_trivio, data_only=True)
+
+        self.workbook.iso_dates = True
         self.sheet_active = None
         # pass
 
@@ -185,10 +200,10 @@ class XLSXSimplici:
                 len(worksheet_reference) == 1:
             meta = self.meta()
             if worksheet_reference in meta['sheet_cod_ab']:
-                self.sheet_active = meta['sheet_cod_ab'][worksheet_reference]
+                self.active = meta['sheet_cod_ab'][worksheet_reference]
                 return True
         if worksheet_reference in self.workbook:
-            self.sheet_active = worksheet_reference
+            self.active = worksheet_reference
             return True
         return False
 
@@ -227,7 +242,7 @@ class XLSXSimplici:
         # https://en.wiktionary.org/wiki/finis#Latin
         self.workbook.close()
 
-    def imprimere(self, formatum: str = 'csv') -> list:
+    def imprimere(self, formatum: str = None) -> list:
         """imprimere /print/@eng-Latn
 
         Trivia:
@@ -238,9 +253,56 @@ class XLSXSimplici:
             formatum (str, optional): output format. Defaults to 'csv'.
 
         Returns:
-            [list]:
+            [list]: data, caput
         """
         caput = []
         data = []
+        if formatum:
+            self._formatum = formatum
 
-        return caput, data
+        fons = self.workbook[self.active]
+
+        for row_index, row in enumerate(fons.rows):
+            if row_index >= self.active_row_start and \
+                    row_index <= self.active_row_end:
+                linea = []
+                for col_index in range(
+                        self.active_col_start, self.active_col_end -1):
+                    textum = row[col_index].value
+
+                    if textum:
+                        if isinstance(textum, datetime.datetime):
+                            textum = str(textum).replace(' 00:00:00', '')
+                        linea.append(textum)
+                    else:
+                        linea.append('')
+
+                if len(caput) == 0:
+                    caput = linea
+                else:
+                    data.append(linea)
+            # a_dict[row[0].value+','+row[1].value].append(str(row[2].value))
+
+        return data, caput 
+
+    def praeparatio(self):
+        """praeparātiō
+
+        Trivia:
+        - praeparātiō, s, f, Nom., https://en.wiktionary.org/wiki/praeparatio
+        """
+
+        self.active_col_end = self.workbook[self.active].max_column
+        self.active_row_end = self.workbook[self.active].max_row
+
+        fons = self.workbook[self.active]
+
+        for row_index, row in enumerate(fons.rows):
+            # TODO: discover where it starts
+            pass
+
+        # for index_cols in fons.rows
+
+        # @TODO: calculate if HXL, if have more columns than ideal, etc
+
+        return True
