@@ -65,6 +65,7 @@ bootstrap_999999_1603_45_16_fetch_data() {
 
 #######################################
 # Convert the XLSXs to intermediate formats on 999999/1603/45/16
+# DEPRECATED use bootstrap_999999_1603_45_16_neo
 #
 # Globals:
 #   ROOTDIR
@@ -72,6 +73,8 @@ bootstrap_999999_1603_45_16_fetch_data() {
 #   None
 #######################################
 bootstrap_999999_1603_45_16() {
+
+  # DEPRECATED use bootstrap_999999_1603_45_16_neo
   # @see https://github.com/wireservice/csvkit/issues/1112
   # export PYTHONWARNINGS="ignore"
   # PYTHONWARNINGS="ignore"
@@ -166,7 +169,8 @@ bootstrap_999999_1603_45_16_neo() {
 
     file_xlsx_sheets=""
     file_xlsx_sheets_new=""
-    echo "TODO [$ISO3166p1a3_original] [$ISO3166p1a3] [$UNm49]"
+    echo ""
+    echo "${file_path}"
     # return 0
     # # ./999999999/0/999999999_7200235.py --methodus=xlsx_metadata --ex-metadatis=.cod_ab_level 999999/1603/45/16/xlsx/ago.xlsx
     fontem_archivum="${file_path}"
@@ -410,6 +414,8 @@ deploy_1603_45_16_global_admX_unicum() {
 # bootstrap_999999_1603_45_16_fetch_data
 # bootstrap_999999_1603_45_16
 
+curl https://data.humdata.org/api/3/action/package_search?q=vocab_Topics=common+operational+dataset+-+cod | jq > 999999/0/hdx-cod.search.json
+
 bootstrap_999999_1603_45_16_neo
 exit 1
 
@@ -482,3 +488,30 @@ deploy_1603_45_16_global_admX_unicum
 # @see https://docs.google.com/spreadsheets/d/1NjSI2LaS3SqbgYc0HdD8oIb7lofGtiHgoKKATCpwVdY/edit#gid=1088874596
 
 set +x
+
+# pip3 install ckanapi
+# ckanapi
+
+# ckanapi action group_list -r https://data.humdata.org/
+
+# ckanapi --remote=https://data.humdata.org/ action group_list
+
+# SITE_URL=https://data.humdata.org/ ckanapi action group_list
+
+# https://data.humdata.org/api/action/package_search?facet.field=[%22tags%22]&facet.limit=10&rows=0
+
+# https://data.humdata.org/api/action/package_search?facet.field=[%22tags%22]&facet.limit=10&rows=0
+
+# ckanapi -r https://data.humdata.org/ action package_search facet.field='["tags"]' facet.limit=10 rows=0
+
+# ckanapi -r https://data.humdata.org/ action package_search facet.field='["tags"]' facet.limit=10 rows=0
+
+
+# ckanapi -r https://data.humdata.org/ action package_search fq='tags:bra'
+
+# ckanapi -r https://data.humdata.org/ action package_search facet.field:'["organization"]' rows:0
+
+## This one somwwhat return what we need
+# https://data.humdata.org/api/3/action/package_search?q=vocab_Topics=common+operational+dataset+-+cod
+
+
