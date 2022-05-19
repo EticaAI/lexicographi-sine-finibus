@@ -48,7 +48,7 @@ from openpyxl import (
     load_workbook
 )
 
-# pylint --disable=W0511,C0103,C0116 ./999999999/0/L999999999_0.py
+# pylint --disable=W0511,C0103,C0302,C0116 ./999999999/0/L999999999_0.py
 
 # SYSTEMA_SARCINAE = str(Path(__file__).parent.resolve())
 # PROGRAMMA_SARCINAE = str(Path().resolve())
@@ -472,6 +472,90 @@ def bcp47_langtag(
     return result
 
 
+class CodAbTabulae:
+    """CodAbTabulae simple wrapper to work with raw P-Code/COD-AB tabular data
+
+    - COD:
+      - https://cod.unocha.org/
+      - https://emergency.unhcr.org/entry/50306/common-operational-datasets-
+        cods-and-fundamental-operational-datasets-fods
+    - tabulae, f, s, dat./gen/, https://en.wiktionary.org/wiki/tabula
+    - simplicī, m/f/n, s, dativus, https://en.wiktionary.org/wiki/simplex#Latin
+    """
+    caput: List[str] = None
+    data: List[list] = None
+
+    # https://en.wiktionary.org/wiki/originalis#Latin
+
+    _caput_originali: List[str] = None
+    # objectīvō, n, dativus, https://en.wiktionary.org/wiki/dictionarium#Latin
+    # objectīvō, n, dativus, https://en.wiktionary.org/wiki/objectivus#Latin
+    # objectīvō_dictiōnāriō: str = None
+
+    def __init__(
+        self,
+        caput: list,
+        data: list = None
+    ):
+        """__init__"""
+        self.caput = caput
+        self.data = data
+
+    def imprimere(self) -> list:
+        """imprimere /print/@eng-Latn
+
+        Trivia:
+        - imprimere, v, s, (), https://en.wiktionary.org/wiki/imprimo#Latin
+        - fōrmātum, s, n, nominativus, https://en.wiktionary.org/wiki/formatus
+
+        Args:
+            formatum (str, optional): output format. Defaults to 'csv'.
+
+        Returns:
+            [list]: data, caput
+        """
+        # pylint: disable=chained-comparison
+        caput = []
+        data = []
+        # if formatum:
+        #     self._formatum = formatum
+
+        # if formatum is None or formatum == 'csv':
+
+        caput = self.caput
+        data = self.data
+
+        return caput, data
+
+    def praeparatio(self, formatum: str = None):
+        """praeparātiō
+
+        Trivia:
+        - praeparātiō, s, f, Nom., https://en.wiktionary.org/wiki/praeparatio
+        """
+
+        # @TODO refactor from bash scripts
+        #       - un_pcode_csvheader_administrative_level
+        if formatum is None or formatum == 'hxl':
+            pass
+
+        return self
+
+
+# def cod_caput_ad_hxl_hastag(caput: list) -> list:
+#     """cod_caput_ad_hxl_hastag
+#     Convert a raw CSV header to HXL hashtags
+
+#     Args:
+#         caput (list):
+
+#     Returns:
+#         list:
+#     """
+#     # un_pcode_csvheader_administrative_level
+#     return caput
+
+
 def configuratio(
         archivum_configurationi: List[str] = None,
         strictum: bool = True
@@ -504,9 +588,8 @@ def configuratio(
     return None
 
 
-def csv_imprimendo(
-        data: list, caput: list = None, delimiter: str = ',',
-        archivum_trivio: str = None):
+def csv_imprimendo(caput: list = None, data: list = None, delimiter: str = ',',
+                   archivum_trivio: str = None):
     if archivum_trivio:
         raise NotImplementedError('{0}'.format(archivum_trivio))
     # imprimendō, v, s, dativus, https://en.wiktionary.org/wiki/impressus#Latin
@@ -516,9 +599,12 @@ def csv_imprimendo(
         _writer.writerow(caput)
     _writer.writerows(data)
 
+    # print(type(data), data)
+    # print(type(data), caput)
+
 
 class DictionariaLinguarum:
-    """DictionariaLinguarum ...
+    """DictionariaLinguarum 1603_1_51
     """
 
     def __init__(self, fontem_archivum: str = None):
@@ -713,6 +799,9 @@ class DictionariaLinguarum:
 
 
 class DictionariaInterlinguarum:
+    """DictionariaInterlinguarum 1603_1_7
+    """
+
     def __init__(self, fontem_archivum: str = None):
         if fontem_archivum:
             self.D1613_1_7_fontem = fontem_archivum
@@ -740,8 +829,8 @@ class DictionariaInterlinguarum:
 
     def formatum_nomen(
             self, clavem: str,
-            objectivum_linguam: str = None,
-            auxilium_linguam: list = None) -> str:
+            _objectivum_linguam: str = None,
+            _auxilium_linguam: list = None) -> str:
         # fōrmātum, f, s, (Nominative) https://en.wiktionary.org/wiki/formatus
 
         meta_langs = [
@@ -758,10 +847,16 @@ class DictionariaInterlinguarum:
 
         return terminum if terminum else ix_clavem
 
+    # def formatum_res_facto(
+    #         self, res: dict, clavem: str,
+    #         _objectivum_linguam: str = None,
+    #         _auxilium_linguam: list = None
+    # ) -> str:
+    @staticmethod
     def formatum_res_facto(
-            self, res: dict, clavem: str,
-            objectivum_linguam: str = None,
-            auxilium_linguam: list = None
+            res: dict, clavem: str,
+            _objectivum_linguam: str = None,
+            _auxilium_linguam: list = None
     ) -> str:
         # fōrmātum, f, s, (Nominative) https://en.wiktionary.org/wiki/formatus
         # TODO: this still need improvement
@@ -783,7 +878,7 @@ class DictionariaInterlinguarum:
             [list]:
         """
         resultatum = []
-        resultatum_corpus = []
+        # resultatum_corpus = []
         resultatum_corpus_totale = 0
         resultatum_corpus_obj = []
         linguam_clavem = []
@@ -893,7 +988,7 @@ class DictionariaInterlinguarum:
                 )
         # resultatum_corpus.append(linguam_clavem)
         # resultatum_corpus.append(len(linguam_clavem))
-        for clavem, lineam in self.dictionaria.items():
+        for _clavem, lineam in self.dictionaria.items():
 
             if len(linguam_clavem) > 0:
                 if lineam['#item+rem+i_qcc+is_zxxx+ix_hxlix'] not in \
@@ -911,12 +1006,12 @@ class DictionariaInterlinguarum:
             # ix_wikiq = lineam['#item+rem+i_qcc+is_zxxx+ix_wikiq+ix_linguam']
             # ix_wikiq = ''
             ix_wikip = ''
-            if len(ix_wikip):
+            if len(ix_wikip) > 0:
                 ix_wikip = \
                     "https://www.wikidata.org/wiki/Property:{0}[{0}]".format(
                         ix_wikip)
 
-            if len(ix_iso639p3a3):
+            if len(ix_iso639p3a3) > 0:
                 ix_iso639p3a3 = \
                     "https://iso639-3.sil.org/code/{0}[{0}]".format(
                         ix_iso639p3a3)
@@ -1177,7 +1272,8 @@ def qhxl_attr_2_bcp47(hxlatt: str) -> str:
     resultatum = resultatum.replace('+ix_', '-x-')
 
     return resultatum
-    
+
+
 def qhxl_bcp47_2_hxlattr(bcp47: str) -> str:
     """qhxl_bcp47_2_hxlattr
 
@@ -1206,9 +1302,8 @@ def qhxl_bcp47_2_hxlattr(bcp47: str) -> str:
     return resultatum
 
 
-
-
 def res_interlingualibus_formata(rem: dict, query) -> str:
+    # pylint: disable=too-many-return-statements
 
     if not rem[query]:
         return ''
@@ -1367,7 +1462,8 @@ class XLSXSimplici:
                     data.append(linea)
             # a_dict[row[0].value+','+row[1].value].append(str(row[2].value))
 
-        return data, caput
+        # return data, caput
+        return caput, data
 
     def praeparatio(self):
         """praeparātiō

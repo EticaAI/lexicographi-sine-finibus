@@ -21,6 +21,11 @@
 #       CREATED:  2022-05-17 18:48 UTC based on 999999999_10263485.py
 #      REVISION:  ---
 # ==============================================================================
+# - https://github.com/hxl-team/HXL-Vocab/blob/master/Tools/static/hxl.ttl
+# - https://github.com/hxl-team/HXL-Vocab/blob/master/Tools/static
+#   /humanitarianProfileSection.dot.png
+# - https://github.com/hxl-team/HXL-Vocab/blob/master/Tools/static
+#   /hxl-geolocation-standard-draft.pdf
 
 import json
 import sys
@@ -39,6 +44,7 @@ import yaml
 
 # l999999999_0 = __import__('999999999_0')
 from L999999999_0 import (
+    CodAbTabulae,
     csv_imprimendo,
     hxltm_carricato,
     qhxl_hxlhashtag_2_bcp47,
@@ -62,6 +68,7 @@ ZGVmYXVsdGRvbWFpbnxvY2hhaW13aWtpfGd4Ojc4YTljNmEwNmM3MjkwNWU
        - Note: on this one, Country level P-Codes start from 1, not 0.
          Today adm0 represent the level
      - https://mtoolbox.unocha.org
+     - https://github.com/hxl-team/HXL-Vocab/blob/master/Tools/hxl.ttl
 
 Trivia:
 - Q7200235, https://www.wikidata.org/wiki/Q7200235
@@ -173,6 +180,7 @@ class Cli:
                 'pcode_ex_csv',
                 'xlsx_metadata',
                 'xlsx_ad_csv',
+                'xlsx_ad_hxl',
                 'xlsx_ad_hxltm',
             ],
             # required=True
@@ -326,7 +334,6 @@ class Cli:
             _infile = None
             _stdin = True
 
-
         if pyargs.methodus.startswith('xlsx'):
             xlsx = XLSXSimplici(_infile)
 
@@ -337,7 +344,7 @@ class Cli:
             xlsx.finis()
             return self.EXIT_OK
 
-        if pyargs.methodus in ['xlsx_ad_csv', 'xlsx_ad_hxltm']:
+        if pyargs.methodus in ['xlsx_ad_csv', 'xlsx_ad_hxltm', 'xlsx_ad_hxl']:
             if not pyargs.ordines or \
                     not xlsx.de(pyargs.ordines[0]):
 
@@ -351,25 +358,31 @@ class Cli:
                     ['ERROR', 'xlsx.meta', xlsx.meta()],
                 ]
 
-                csv_imprimendo(data, caput)
+                csv_imprimendo(caput, data)
                 return self.EXIT_ERROR
 
         if pyargs.methodus == 'xlsx_ad_csv':
             xlsx.praeparatio()
-            data, caput = xlsx.imprimere()
-            # print(type(caput), caput)
-            # print(type(data), data)
-            csv_imprimendo(data, caput)
+            caput, data = xlsx.imprimere()
+            csv_imprimendo(caput, data)
 
             xlsx.finis()
             return self.EXIT_OK
 
-        if pyargs.methodus == 'xlsx_ad_hxltm':
+        if pyargs.methodus in ['xlsx_ad_hxltm', 'xlsx_ad_hxl']:
+            schema = 'hxl'
+            if pyargs.methodus == 'xlsx_ad_hxltm':
+                schema = 'hxltm'
+
             xlsx.praeparatio()
-            data, caput = xlsx.imprimere()
-            # print(type(caput), caput)
+            caput, data = xlsx.imprimere()
+
+            codt = CodAbTabulae(caput=caput, data=data)
+            caput, data = codt.praeparatio(schema).imprimere()
+            print(type(caput), caput)
             # print(type(data), data)
-            csv_imprimendo(data, caput)
+            raise NotImplementedError('test test')
+            csv_imprimendo(caput, data)
 
             print()
             print('@TODO not implemented yet')
