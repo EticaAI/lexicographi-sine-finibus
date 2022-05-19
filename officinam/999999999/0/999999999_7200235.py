@@ -288,6 +288,7 @@ class Cli:
             const=True,
             default=False
         )
+
         parser.add_argument(
             # '--venandum-insectum-est, --debug',
             '--venandum-insectum-est', '--debug',
@@ -379,13 +380,13 @@ class Cli:
 
             codt = CodAbTabulae(caput=caput, data=data)
             caput, data = codt.praeparatio(schema).imprimere()
-            print(type(caput), caput)
+            # print(type(caput), caput)
             # print(type(data), data)
-            raise NotImplementedError('test test')
+            # raise NotImplementedError('test test')
             csv_imprimendo(caput, data)
 
-            print()
-            print('@TODO not implemented yet')
+            # print()
+            # print('@TODO not implemented yet')
 
             xlsx.finis()
             return self.EXIT_OK

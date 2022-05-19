@@ -481,6 +481,18 @@ class CodAbTabulae:
         cods-and-fundamental-operational-datasets-fods
     - tabulae, f, s, dat./gen/, https://en.wiktionary.org/wiki/tabula
     - simplicī, m/f/n, s, dativus, https://en.wiktionary.org/wiki/simplex#Latin
+
+    @TODO:
+    - Check strategies to encode geo data in plain text.
+      - https://giswiki.hsr.ch/GeoCSV
+      -  https://github.com/hxl-team/HXL-Vocab/blob/master/Tools/static
+         /hxl-geolocation-standard-draft.pdf
+        - HXL circa 2012 already was using RDF to map information
+      - https://www.ogc.org/standards/geosparql
+      - https://github.com/hxl-team/HXL-Vocab/blob/master/Tools/static/hxl.ttl
+    - SPARQL, Geo, etc
+      - http://www.geosparql.org/
+
     """
     caput_originali: List[str] = None
     caput_hxl: List[str] = None
@@ -568,7 +580,7 @@ class CodAbTabulae:
                 self.caput_hxltm.append(
                     self.quod_hxltm_de_hxl_rei(res))
         # else:
-        print('teste??', self.caput_hxltm)
+        # print('teste??', self.caput_hxltm)
 
         # self.caput_hxltm = self.caput_hxl
         # pass
@@ -705,7 +717,7 @@ class CodAbTabulae:
         Returns:
             str:
         """
-        lingua = ''
+        # lingua = ''
 
         if not hxlhashtag or len(hxlhashtag) == 0 or \
                 not hxlhashtag.startswith('#'):
@@ -714,8 +726,32 @@ class CodAbTabulae:
         bcp47_rei = qhxl_hxlhashtag_2_bcp47(hxlhashtag, True)
         # raise ValueError('oi1 {0} {1}'.format(hxlhashtag, bcp47_rei))
         # hxlhashtag = '#x_todo+' + hxlhashtag.replace('#', '')
-        if bcp47_rei:
-            hxlhashtag = '#x_todo+' + bcp47_rei
+        if bcp47_rei and len(bcp47_rei) < 9:  # < 'zzz-Zzzz'
+            _bcp47_rei_copia = bcp47_rei
+            if bcp47_rei == 'ua':
+                # Ukrainian ISO 639-2 is 'uk', not 'ua' (code of the country)
+                # https://iso639-3.sil.org/code/ukr
+                bcp47_rei = 'uk'
+
+            res1603_1_51 = self.dictionaria_linguarum.quod(
+                bcp47_rei, abecedarium_incognito=True)
+            if res1603_1_51 and \
+                    '#item+rem+i_qcc+is_zxxx+ix_hxla' in res1603_1_51:
+                ix_hxla = res1603_1_51['#item+rem+i_qcc+is_zxxx+ix_hxla']
+                if ix_hxla:
+                    hxlhashtag = hxlhashtag.replace(
+                        '+i_{0}'.format(_bcp47_rei_copia), ix_hxla)
+
+        if hxlhashtag.startswith('#country'):
+            hxlhashtag_parts = hxlhashtag.split('+')
+            if 'v_iso2' in hxlhashtag_parts:
+                hxlhashtag_parts[hxlhashtag_parts.index(
+                    'v_iso2')] = 'v_iso3166p1a2'
+                hxlhashtag = '+'.join(hxlhashtag_parts)
+            if 'v_iso3' in hxlhashtag_parts:
+                hxlhashtag_parts[hxlhashtag_parts.index(
+                    'v_iso2')] = 'v_iso3166p1a3'
+                hxlhashtag = '+'.join(hxlhashtag_parts)
 
         return hxlhashtag
 
@@ -1009,10 +1045,11 @@ class DictionariaLinguarum:
                     continue
                 # print('linguam', terminum, item, linguam[item], linguam)
                 # print('')
-                if terminum.find(linguam[item]) > -1:
+                # if terminum.find(linguam[item]) > -1:
+                if terminum == linguam[item]:
                     # return linguam[factum]
-                    return linguam
                     # raise ValueError([terminum, linguam])
+                    return linguam
 
         return None
 
