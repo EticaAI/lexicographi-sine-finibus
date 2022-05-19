@@ -363,6 +363,8 @@ deploy_1603_45_16_global_admX 3
 
 deploy_1603_45_16_global_admX_unicum
 
+# time ./999999999/0/999999999_7200235.py --methodus=xlsx_ad_hxl --ordines=3 999999/1603/45/16/xlsx/ukr.xls
+
 ### From XLSX, end -------------------------------------------------------------
 
 ### From CODV2API, start -------------------------------------------------------

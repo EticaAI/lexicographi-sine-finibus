@@ -486,6 +486,7 @@ class CodAbTabulae:
     caput_hxl: List[str] = None
     caput_hxltm: List[str] = None
     data: List[list] = None
+    dictionaria_linguarum: Type['DictionariaLinguarum'] = None
 
     # https://en.wiktionary.org/wiki/originalis#Latin
 
@@ -529,7 +530,10 @@ class CodAbTabulae:
         data = self.data
         if self._objectivo_dictionario == 'hxl':
             caput = self.caput_hxl
+        if self._objectivo_dictionario == 'hxltm':
+            caput = self.caput_hxltm
 
+        # @TODO potentially re-arrange the order of columns on the result
         return caput, data
 
     def praeparatio(self, formatum: str = None):
@@ -542,19 +546,50 @@ class CodAbTabulae:
         self._objectivo_dictionario = formatum
 
         self.caput_hxl = []
-        for res in self.caput_originali:
-            self.caput_hxl.append(self.quod_caput_rei_ad_hxl(res))
+        for index, res in enumerate(self.caput_originali):
+            column = []
+            if res and len(res) > 0 and not res.startswith('#') and \
+                    len(self.data) > 0:
+                for l_index, linea in enumerate(self.data):
+                    if l_index > 500:
+                        break
+                    column.append(linea[index])
+
+            self.caput_hxl.append(self.quod_hxl_de_caput_rei(res, column))
 
         # @TODO refactor from bash scripts
         #       - un_pcode_csvheader_administrative_level
         if formatum is None or formatum == 'hxltm':
-            # need convert language
-            pass
+            self.caput_hxltm = []
+
+            self.dictionaria_linguarum = DictionariaLinguarum()
+
+            for index, res in enumerate(self.caput_hxl):
+                self.caput_hxltm.append(
+                    self.quod_hxltm_de_hxl_rei(res))
+        # else:
+        print('teste??', self.caput_hxltm)
+
+        # self.caput_hxltm = self.caput_hxl
+        # pass
 
         return self
 
     @staticmethod
-    def quod_res_iso_orini(column: list = None) -> str:
+    def quod_columna_alphabeto_orini(column: list = None) -> str:
+        """quod_columna_alphabeto_orini
+
+       For a list of values, the non empty ones which have letters, if
+       the number of letters are consistent, how many? Used to know
+       if data columns could be labeled, as example, as ISO 3661-2 or
+       ISO 3661-3.
+
+        Args:
+            column (list, optional):. Defaults to None.
+
+        Returns:
+            str: _description_
+        """
         ordo = None
         _ordo = set()
         if column and len(column) > 0:
@@ -563,20 +598,22 @@ class CodAbTabulae:
                 if alpha and len(alpha) > 1:
                     _ordo.add(len(alpha))
             if len(_ordo) == 1:
-                ordo = _ordo[0]
+                ordo = _ordo.pop()
         return ordo
 
     @staticmethod
-    def quod_caput_rei_ad_hxl(res: str, column: list = None) -> str:
-        """quod_caput_rei_ad_hxl
+    def quod_hxl_de_caput_rei(res: str, data_exemplis: list = None) -> str:
+        """quod_hxl_de_caput_rei
 
         Args:
             res (str):
+            data_exemplis (list):
 
         Returns:
             str:
         """
-        if res.startswith('#'):
+        res_originale = res
+        if not res or len(res) == 0 or res.startswith('#'):
             # pipelining hxl again? let's not change it.
             return res
 
@@ -613,13 +650,17 @@ class CodAbTabulae:
                 praefīxum = '#country'
             else:
                 praefīxum = '#adm{0}'.format(geo_ōrdinī)
-            # use case: ukr.xlsx
-            #   admin2Name_en	admin2Name_ua	admin2Name_ru	admin2Pcode
-            #   admin2ClassCode	admin2ClassType	admin2PoliticalType
-            #   admin2pcode2016	admin1ClassType	admin1ClassCode
+
             if res.find('pcode') > -1:
-                suffīxum = '+code+v_pcode'
-                # ordo_codici = self.quod_res_iso_orini(column)
+                if geo_ōrdinī == '0':
+                    ordo_codici = CodAbTabulae.quod_columna_alphabeto_orini(
+                        data_exemplis)
+                    if ordo_codici and ordo_codici in [2, 3]:
+                        suffīxum = '+code+v_iso{0}'.format(ordo_codici)
+                    else:
+                        suffīxum = '+code'
+                else:
+                    suffīxum = '+code+v_pcode'
 
             elif res.find('code') > -1:
                 suffīxum = '+code'
@@ -635,8 +676,48 @@ class CodAbTabulae:
                     _temp = res.split('_')
                     if len(_temp) == 2:
                         lingua = '+i_' + _temp[1]
-        # @TODO: ukr have more complex semantics. Will need to be ajusted later
+
+        if len(praefīxum) == 0:
+            # Something not planned was tagged. Labeling as Meta.
+            praefīxum = '#meta'
+
+        # use case: ukr.xlsx
+        #   admin2Name_en	admin2Name_ua	admin2Name_ru	admin2Pcode
+        #   admin2ClassCode	admin2ClassType	admin2PoliticalType
+        #   admin2pcode2016	admin1ClassType	admin1ClassCode
+        if len(praefīxum) > 0 and praefīxum != '#date' and len(suffīxum) == 0:
+            splitted = re.sub(
+                '([A-Z][a-z]+)', r' \1',
+                re.sub('([A-Z]+)', r' \1', res_originale)).split()
+            praefīxum = '#meta'
+            for _item in splitted:
+                suffīxum = suffīxum + '+' + _item.lower()
+
+            # Something weird happened
         return '{0}{1}{2}'.format(praefīxum, suffīxum, lingua)
+
+    def quod_hxltm_de_hxl_rei(self, hxlhashtag: str) -> str:
+        """quod_hxl_de_caput_rei
+
+        Args:
+            res (str):
+
+        Returns:
+            str:
+        """
+        lingua = ''
+
+        if not hxlhashtag or len(hxlhashtag) == 0 or \
+                not hxlhashtag.startswith('#'):
+            return ''
+
+        bcp47_rei = qhxl_hxlhashtag_2_bcp47(hxlhashtag, True)
+        # raise ValueError('oi1 {0} {1}'.format(hxlhashtag, bcp47_rei))
+        # hxlhashtag = '#x_todo+' + hxlhashtag.replace('#', '')
+        if bcp47_rei:
+            hxlhashtag = '#x_todo+' + bcp47_rei
+
+        return hxlhashtag
 
 # def cod_caput_ad_hxl_hastag(caput: list) -> list:
 #     """cod_caput_ad_hxl_hastag
@@ -865,16 +946,58 @@ class DictionariaLinguarum:
 
         return resultatum
 
-    def quod(self, terminum: str,
-             #  factum: str = '#item+rem+i_lat+is_latn',
-             clavem: str = None):
-        clavem_defallo = [
+    def quod(
+        self,
+        terminum: str,
+        #  factum: str = '#item+rem+i_lat+is_latn',
+        # clavem: str = None
+        # clavem: str = None,
+        abecedarium_incognito=False,
+        _data_exemplis: list = None
+    ) -> dict:
+        """quod_
+
+        Search 1603_1_51 full from a raw term, like:
+          - '+i_rus+is_cyrl'
+          - '__i_rus__is_cyrl'
+          - 'rus-Cyrl'
+
+        Trivia:
+        - abecedārium, n, s, nom., en.wiktionary.org/wiki/incognitus#Latin
+        - incognitō, n, s, dat. https://en.wiktionary.org/wiki/incognitus#Latin
+
+        Args:
+            terminum (str): _description_
+            clavem (str, optional): _description_. Defaults to None.
+
+        Returns:
+            dict: _description_
+        """
+        _clavem = [
             '#item+rem+i_qcc+is_zxxx+ix_hxla',
             # '#item+rem+i_qcc+is_zxxx+ix_hxla',
-            '#item+rem+i_qcc+is_zxxx+ix_csvsffxm'
+            '#item+rem+i_qcc+is_zxxx+ix_csvsffxm',
+            '#item+rem+i_qcc+is_zxxx+ix_uid'
         ]
-        _clavem = clavem_defallo if clavem is None else [clavem]
+        if abecedarium_incognito:
+            _clavem.extend([
+                # Glottocode Langoid
+                '#item+rem+i_qcc+is_zxxx+ix_glottocode',
+                # Wikidata QID; language
+                '#item+rem+i_qcc+is_zxxx+ix_wikiq+ix_linguam',
+                # ISO 639-3 (lang alpha 3)
+                '#item+rem+i_qcc+is_zxxx+ix_iso639p3a3',
+                # ISO 639-2 or ISO 639-3 (used on Wikidata/Wikipedia)
+                '#item+rem+i_qcc+is_zxxx+ix_wikilngm',
+            ])
+        # _clavem = clavem_defallo if clavem is None else [clavem]
         # _clavem = clavem_defallo
+
+        if _data_exemplis and len(_data_exemplis) > 0:
+            raise NotImplementedError(
+                '_data_exemplis [{0}] [[@TODO check Unicode range '
+                'to infer script]]'.format(
+                    _data_exemplis))
 
         # print(self.dictionaria_codex.items())
         # raise ValueError('b')
@@ -1290,13 +1413,14 @@ def hxltm_carricato(
     return caput, list(_reader)
 
 
-def qhxl_hxlhashtag_2_bcp47(hxlhashtag: str) -> str:
+def qhxl_hxlhashtag_2_bcp47(hxlhashtag: str, hxlstd11_compat: bool = False) -> str:
     """qhxl_hxlhashtag_2_bcp47
 
     (try) to convert full HXL hashtag to BCP47
 
     Args:
-        hxlatt (str):
+        hxlhashtag (str):
+        hxlstd11_compat (bool):
 
     Returns:
         str:
@@ -1304,10 +1428,14 @@ def qhxl_hxlhashtag_2_bcp47(hxlhashtag: str) -> str:
     # needs simplification
     if not hxlhashtag:
         return None
-    if hxlhashtag.find('i_') == -1 or hxlhashtag.find('is_') == -1:
+    if hxlhashtag.find('i_') == -1:
         return None
+    if hxlhashtag.find('is_') == -1 and not hxlstd11_compat:
+        return None
+
     hxlhashtag_parts = hxlhashtag.split('+')
     # langattrs = []
+    # print('hxlhashtag_parts', hxlhashtag_parts)
     _bcp_lang = ''
     _bcp_stript = ''
     _bcp_extension = []
@@ -1322,8 +1450,10 @@ def qhxl_hxlhashtag_2_bcp47(hxlhashtag: str) -> str:
         #     continue
         # langattrs.append(item)
 
-    if not _bcp_lang or not _bcp_stript:
+    if not _bcp_lang:
         return False
+    if not _bcp_stript and hxlstd11_compat:
+        return _bcp_lang
 
     bcp47_simplici = "{0}-{1}".format(
         _bcp_lang.lower(), _bcp_stript.capitalize())
