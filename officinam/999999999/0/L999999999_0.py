@@ -482,15 +482,18 @@ class CodAbTabulae:
     - tabulae, f, s, dat./gen/, https://en.wiktionary.org/wiki/tabula
     - simplicī, m/f/n, s, dativus, https://en.wiktionary.org/wiki/simplex#Latin
     """
-    caput: List[str] = None
+    caput_originali: List[str] = None
+    caput_hxl: List[str] = None
+    caput_hxltm: List[str] = None
     data: List[list] = None
 
     # https://en.wiktionary.org/wiki/originalis#Latin
 
-    _caput_originali: List[str] = None
+    # caput_originali: List[str] = None
+    # _caput_hxl: List[str] = None
     # objectīvō, n, dativus, https://en.wiktionary.org/wiki/dictionarium#Latin
     # objectīvō, n, dativus, https://en.wiktionary.org/wiki/objectivus#Latin
-    # objectīvō_dictiōnāriō: str = None
+    _objectivo_dictionario: str = None
 
     def __init__(
         self,
@@ -498,7 +501,7 @@ class CodAbTabulae:
         data: list = None
     ):
         """__init__"""
-        self.caput = caput
+        self.caput_originali = caput
         self.data = data
 
     def imprimere(self) -> list:
@@ -515,15 +518,17 @@ class CodAbTabulae:
             [list]: data, caput
         """
         # pylint: disable=chained-comparison
-        caput = []
-        data = []
+        # caput = []
+        # data = []
         # if formatum:
         #     self._formatum = formatum
 
         # if formatum is None or formatum == 'csv':
 
-        caput = self.caput
+        caput = self.caput_originali
         data = self.data
+        if self._objectivo_dictionario == 'hxl':
+            caput = self.caput_hxl
 
         return caput, data
 
@@ -534,13 +539,104 @@ class CodAbTabulae:
         - praeparātiō, s, f, Nom., https://en.wiktionary.org/wiki/praeparatio
         """
 
+        self._objectivo_dictionario = formatum
+
+        self.caput_hxl = []
+        for res in self.caput_originali:
+            self.caput_hxl.append(self.quod_caput_rei_ad_hxl(res))
+
         # @TODO refactor from bash scripts
         #       - un_pcode_csvheader_administrative_level
-        if formatum is None or formatum == 'hxl':
+        if formatum is None or formatum == 'hxltm':
+            # need convert language
             pass
 
         return self
 
+    @staticmethod
+    def quod_res_iso_orini(column: list = None) -> str:
+        ordo = None
+        _ordo = set()
+        if column and len(column) > 0:
+            for item in column:
+                alpha = re.sub('[0-9]', '', item)
+                if alpha and len(alpha) > 1:
+                    _ordo.add(len(alpha))
+            if len(_ordo) == 1:
+                ordo = _ordo[0]
+        return ordo
+
+    @staticmethod
+    def quod_caput_rei_ad_hxl(res: str, column: list = None) -> str:
+        """quod_caput_rei_ad_hxl
+
+        Args:
+            res (str):
+
+        Returns:
+            str:
+        """
+        if res.startswith('#'):
+            # pipelining hxl again? let's not change it.
+            return res
+
+        # @see https://data.humdata.org/tools/hxl-example/
+        praefīxum = ''
+        suffīxum = ''
+        # ōrdō  = ''
+        lingua = ''
+        # iso = ''
+        res = res.lower()
+        numerus = re.sub('[^0-9]', '', res)
+        geo_ōrdinī = ''
+        nomen_ōrdinī = ''
+        if len(numerus) == 2:
+            geo_ōrdinī = numerus[0]
+            nomen_ōrdinī = numerus[1]
+        if len(numerus) == 1:
+            geo_ōrdinī = numerus
+
+        if len(numerus) > 2:
+            # Something weird like admin2pcode2016. Better human review
+            return ''
+
+        if res in ['date', 'validon', 'validto']:
+            praefīxum = '#date'
+            if res == 'date':
+                suffīxum = '+start'
+            if res == 'validon':  # validOn
+                suffīxum = '+updated'
+            if res == 'validto':  # validTo
+                suffīxum = '+end'
+        elif res.startswith('adm') and len(geo_ōrdinī) == 1:
+            if geo_ōrdinī == '0':
+                praefīxum = '#country'
+            else:
+                praefīxum = '#adm{0}'.format(geo_ōrdinī)
+            # use case: ukr.xlsx
+            #   admin2Name_en	admin2Name_ua	admin2Name_ru	admin2Pcode
+            #   admin2ClassCode	admin2ClassType	admin2PoliticalType
+            #   admin2pcode2016	admin1ClassType	admin1ClassCode
+            if res.find('pcode') > -1:
+                suffīxum = '+code+v_pcode'
+                # ordo_codici = self.quod_res_iso_orini(column)
+
+            elif res.find('code') > -1:
+                suffīxum = '+code'
+
+            elif res.find('name') > -1:
+                if res.find('nameref') > -1 or res.find('nameref') > -1:
+                    suffīxum = '+name+preferred'
+                if res.find('altname') > -1:
+                    suffīxum = '+name+alt{0}'.format(nomen_ōrdinī)
+                else:
+                    suffīxum = '+name'
+                if res.find('_') > -1:
+                    _temp = res.split('_')
+                    if len(_temp) == 2:
+                        lingua = '+i_' + _temp[1]
+        # @TODO: ukr have more complex semantics. Will need to be ajusted later
+        return '{0}{1}{2}'.format(praefīxum, suffīxum, lingua)
 
 # def cod_caput_ad_hxl_hastag(caput: list) -> list:
 #     """cod_caput_ad_hxl_hastag
@@ -1446,7 +1542,7 @@ class XLSXSimplici:
                     row_index <= self.active_row_end:
                 linea = []
                 for col_index in range(
-                        self.active_col_start, self.active_col_end - 1):
+                        self.active_col_start, self.active_col_end):
                     textum = row[col_index].value
 
                     if textum:
