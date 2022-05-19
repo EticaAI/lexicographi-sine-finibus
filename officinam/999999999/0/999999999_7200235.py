@@ -173,6 +173,7 @@ class Cli:
                 'pcode_ex_csv',
                 'xlsx_metadata',
                 'xlsx_ad_csv',
+                'xlsx_ad_hxltm',
             ],
             # required=True
             default='pcode_ex_csv'
@@ -325,15 +326,18 @@ class Cli:
             _infile = None
             _stdin = True
 
-        if pyargs.methodus == 'xlsx_metadata':
+
+        if pyargs.methodus.startswith('xlsx'):
             xlsx = XLSXSimplici(_infile)
+
+        if pyargs.methodus == 'xlsx_metadata':
+            # xlsx = XLSXSimplici(_infile)
 
             print(json.dumps(xlsx.meta()))
             xlsx.finis()
             return self.EXIT_OK
 
-        if pyargs.methodus == 'xlsx_ad_csv':
-            xlsx = XLSXSimplici(_infile)
+        if pyargs.methodus in ['xlsx_ad_csv', 'xlsx_ad_hxltm']:
             if not pyargs.ordines or \
                     not xlsx.de(pyargs.ordines[0]):
 
@@ -346,29 +350,29 @@ class Cli:
                     ['ERROR', 'input', _infile],
                     ['ERROR', 'xlsx.meta', xlsx.meta()],
                 ]
-                # data = [[
-                #     'ERROR',
-                #     '--methodus [{0}] --ordines [{1}] [{2}] <{3}>'.format(
-                #         pyargs.methodus,
-                #         pyargs.ordines,
-                #         _infile,
-                #         xlsx.meta(),
-                #     )
-                # ]]
+
                 csv_imprimendo(data, caput)
                 return self.EXIT_ERROR
-                # raise ValueError(
-                #     '--methodus [{0}] --ordines [{1}] [{2}] <{3}>'.format(
-                #         pyargs.methodus,
-                #         pyargs.ordines,
-                #         _infile,
-                #         xlsx.meta(),
-                #     ))
+
+        if pyargs.methodus == 'xlsx_ad_csv':
             xlsx.praeparatio()
             data, caput = xlsx.imprimere()
             # print(type(caput), caput)
             # print(type(data), data)
             csv_imprimendo(data, caput)
+
+            xlsx.finis()
+            return self.EXIT_OK
+
+        if pyargs.methodus == 'xlsx_ad_hxltm':
+            xlsx.praeparatio()
+            data, caput = xlsx.imprimere()
+            # print(type(caput), caput)
+            # print(type(data), data)
+            csv_imprimendo(data, caput)
+
+            print()
+            print('@TODO not implemented yet')
 
             xlsx.finis()
             return self.EXIT_OK
