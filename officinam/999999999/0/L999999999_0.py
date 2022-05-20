@@ -1392,6 +1392,72 @@ def descriptio_tabulae_de_lingua(
     return paginae
 
 
+# https://docs.python.org/3/library/operator.html
+# https://en.wiktionary.org/wiki/opus#Latin
+HXLTM_OPERA_2 = {
+    '==': lambda a1, b2: a1 == b2,
+    '!=': lambda a1, b2: a1 != b2,
+    '>': lambda a1, b2: a1 > b2,
+    '<': lambda a1, b2: a1 < b2,
+    '>=': lambda a1, b2: a1 >= b2,
+    '<=': lambda a1, b2: a1 <= b2,
+}
+
+HXLTM_OPERA_1 = {
+    '(lower|LOWER)\((?<a1>(.*))\)': lambda a1: str(a1).lower(),
+    '(upper|UPPER)\((?<a1>(.*))\)': lambda a1: str(a1).upper(),
+}
+
+
+
+
+def hxltm__quaestio_significatis_ii(quaestio: str, caput: list = None) -> dict:
+    # - quaestiō, f, s,  dativus, https://en.wiktionary.org/wiki/significatus
+    # - significātīs, m/f/n, s, dativus,
+    #     https://en.wiktionary.org/wiki/significatus
+    significātus = {
+        'opus': None,
+        'a1': '',
+        'a1_index': None,
+        'b2': '',
+        'b2_index': None,
+        '_datetime': False,
+    }
+
+    for item in HXLTM_OPERA_2.keys():
+        if quaestio.find(item) > -1:
+            significātus['opus'] = item
+            significātus['a1'], significātus['b2'] = quaestio.split(item)
+            break
+
+    if len(significātus['a1']) == 0 or len(significātus['b2']) == 0:
+        raise SyntaxError(
+            '<{0}>? a1 [{1}] b2 [{2}] caput <[{3}>]'.format(
+                quaestio,
+                significātus['a1'],
+                significātus['b2'],
+                caput
+            ))
+
+    if significātus['a1'].startswith('#'):
+        significātus['_datetime'] = significātus['a1'].startswith('#date')
+        if caput.index(significātus['a1']) > -1:
+            significātus['a1_index'] = caput.index(significātus['a1'])
+        else:
+            SyntaxError('{0} <{1}> <{2}>'.format(
+                significātus['a1'], quaestio, caput))
+
+    if significātus['b2'].startswith('#'):
+        significātus['_datetime'] = significātus['b2'].startswith('#date')
+        if caput.index(significātus['b2']) > -1:
+            significātus['b2_index'] = caput.index(significātus['b2'])
+        else:
+            SyntaxError('{0} <{1}> <{2}>'.format(
+                significātus['b2'], quaestio, caput))
+
+    return significātus
+
+
 def hxltm_carricato(
     archivum_trivio: str = None,
     est_stdin: bool = False
@@ -1532,80 +1598,36 @@ def hxltm_ex_selectis(
     Returns:
         Tuple[list, list]: _description_
     """
-    _op_list = ['==', '!=', '<', '>=', '>', '<=']
+    # _op_list = ['==', '!=', '<', '>=', '>', '<=']
+    _op_list = HXLTM_OPERA_2.keys()
     res_1 = ''
     res_1_isdate = False
     res_2 = ''
     res_2_isdate = False
     op = ''
     _data = []
-    for item in _op_list:
-        if quaestio.find(item) > -1:
-            op = item
-            res_1, res_2 = quaestio.split(item)
-            break
-    if len(op) == 0:
-        raise SyntaxError('hxltm_ex_selectis <{0}>? <[{1}]'.format(
-            quaestio,
-            caput
-        ))
 
-    # print('hxltm_ex_selectis <{0}> {1} <{2}>'.format(res_1, op, res_2))
-    # return False, False
-
-    if res_1.startswith('#'):
-        res_1_isdate = res_1.startswith('#date')
-        if caput.index(res_1) > -1:
-            res_1 = caput.index(res_1)
-            # print('oi foi res 1', type(res_1), isinstance(res_1, int))
-        else:
-            SyntaxError('{0} <{1}> <{2}>'.format(res_1, quaestio, caput))
-
-    if res_2.startswith('#'):
-        res_1_isdate = res_2.startswith('#date')
-        # res_2 = caput.index(res_2)
-        if caput.index(res_2) > -1:
-            res_2 = caput.index(res_1)
-        else:
-            SyntaxError('{0} <{1}> <{2}>'.format(res_2, quaestio, caput))
+    significātus = hxltm__quaestio_significatis_ii(quaestio, caput)
 
     for linea in data:
-        # _linea = []
+        a1 = significātus['a1']
+        b2 = significātus['b2']
 
-        _value_1 = res_1
-        if isinstance(res_1, int):
-            _value_1 = linea[res_1]
-            # print('oi foi res 1', type(res_1), isinstance(res_1, int))
-            # print('oi foi _value_1 1', _value_1)
-        _value_2 = res_2
-        if isinstance(res_2, int):
-            _value_2 = linea[res_2]
-            # print('oi foi _value_2 {0} (value1 {1}'.format(_value_2, _value_1))
+        if significātus['a1_index'] is not None:
+            a1 = linea[significātus['a1_index']]
+        if significātus['b2_index'] is not None:
+            b2 = linea[significātus['b2_index']]
 
-        # raise SyntaxError('{0} <{1}> <{2}>'.format(_value_1, _value_2, caput))
-        if res_1_isdate or res_2_isdate:
-            _value_1 = date.fromisoformat(_value_1)
-            _value_2 = date.fromisoformat(_value_2)
+        if significātus['_datetime'] is True:
+            a1 = date.fromisoformat(a1)
+            b2 = date.fromisoformat(b2)
 
-        # print('<{0}> {1} <{2}>'.format(_value_1, op, _value_2))
-        # print('<{0}> {1} <{2}>'.format(res_1_isdate, op, res_2_isdate))
-
-        if op == '==' and _value_1 == _value_2:
-            _data.append(linea)
-        elif op == '!=' and _value_1 != _value_2:
-            _data.append(linea)
-        elif op == '>' and _value_1 > _value_2:
-            _data.append(linea)
-        elif op == '<' and _value_1 < _value_2:
-            _data.append(linea)
-        elif op == '>=' and _value_1 >= _value_2:
-            _data.append(linea)
-        elif op == '<=' and _value_1 <= _value_2:
+        op_signifo = HXLTM_OPERA_2[significātus['opus']](a1, b2)
+        if op_signifo == True:
             _data.append(linea)
         # else:
         #     print('DEBUG: skip [<{0}> {1} <{2}>]'.format(
         #         _value_1, op, _value_2))
-
     return caput, _data
 
 
