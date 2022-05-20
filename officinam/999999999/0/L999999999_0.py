@@ -1453,9 +1453,47 @@ def hxltm_carricato(
     return caput, data
 
 
+def hxltm_cum_columnis(
+        caput: list, data: list, columnae: list) -> Tuple[list, list]:
+    """hxltm_ex_columnis add new columns (variables)
+
+    Trivia:
+      - cum (+ ablativus), https://en.wiktionary.org/wiki/cum#Latin
+      - columnīs, f, pl, ablativus, https://en.wiktionary.org/wiki/columna#Latin
+
+    Args:
+        caput (list): _description_
+        data (list): _description_
+        columnae (list): _description_
+
+    Returns:
+        Tuple[list, list]: _description_
+    """
+    # https://en.wiktionary.org/wiki/columna#Latin
+    index_columnae = []
+    _data = []
+    raise NotImplementedError
+    # print(caput, columnae)
+    for item in columnae:
+        index_columnae.append(caput.index(item))
+
+    for linea in data:
+        _linea = []
+        for index in index_columnae:
+            _linea.append(linea[index])
+        _data.append(_linea)
+
+    # _caput = columnae
+    return columnae, _data
+
+
 def hxltm_ex_columnis(
         caput: list, data: list, columnae: list) -> Tuple[list, list]:
     """hxltm_ex_columnis cut columns (variables)
+
+    Trivia:
+      - ex (+ ablativus), https://en.wiktionary.org/wiki/ex#Latin
+      - columnīs, f, pl, ablativus, https://en.wiktionary.org/wiki/columna#Latin
 
     Args:
         caput (list): _description_
@@ -1569,6 +1607,40 @@ def hxltm_ex_selectis(
         #         _value_1, op, _value_2))
 
     return caput, _data
+
+
+def hxltm_per_columnas(
+        caput: list, data: list, columnae: list) -> Tuple[list, list]:
+    """hxltm_per_columnas Apply filters to existing columns.
+
+    Trivia:
+      - per (+ accusative), https://en.wiktionary.org/wiki/per#Latin
+      - columnās, f, pl, accusativus, https://en.wiktionary.org/wiki/columna
+
+    Args:
+        caput (list): _description_
+        data (list): _description_
+        columnae (list): _description_
+
+    Returns:
+        Tuple[list, list]: _description_
+    """
+    # https://en.wiktionary.org/wiki/columna#Latin
+    index_columnae = []
+    _data = []
+    raise NotImplementedError
+    # print(caput, columnae)
+    for item in columnae:
+        index_columnae.append(caput.index(item))
+
+    for linea in data:
+        _linea = []
+        for index in index_columnae:
+            _linea.append(linea[index])
+        _data.append(_linea)
+
+    # _caput = columnae
+    return columnae, _data
 
 
 def qhxl_hxlhashtag_2_bcp47(hxlhashtag: str, hxlstd11_compat: bool = False) -> str:

@@ -48,8 +48,10 @@ from L999999999_0 import (
     csv_imprimendo,
     hxltm_carricato,
     NUMERORDINATIO_BASIM,
+    hxltm_cum_columnis,
     hxltm_ex_columnis,
     hxltm_ex_selectis,
+    hxltm_per_columnas,
     qhxl_hxlhashtag_2_bcp47,
     XLSXSimplici
     # xlsx_meta
@@ -92,11 +94,14 @@ __EPILOGUM__ = """
 
     {0} --methodus='cod_ab_index'
 
-    {0} --methodus='cod_ab_index' --ex-metadatis='#country+code+v_iso3'
+    {0} --methodus='cod_ab_index' --ex-columnis='#country+code+v_iso3'
 
-    {0} --methodus='cod_ab_index' --ex-metadatis='#country+code+v_iso3' \
+    {0} --methodus='cod_ab_index' --ex-columnis='#country+code+v_iso3' \
 --ex-selectis='#date+created<2010-01-01' \
 --ex-selectis='#date+updated>2020-01-01'
+
+    {0} --methodus='cod_ab_index' --ex-columnis='#country+code+v_iso3' \
+--per-columnas='LOWER(#country+code+v_iso3)'
 
    {0} --methodus=xlsx_metadata 999999/1603/45/16/xlsx/ago.xlsx
    {0} --methodus=xlsx_ad_csv --ordines=2 999999/1603/45/16/xlsx/ago.xlsx
@@ -182,6 +187,27 @@ class Cli:
             default='cod_ab_index'
         )
 
+        parser.add_argument(
+            '--ordines',
+            help='ōrdinēs. (literal latin: methodical arrangement, '
+            'order; plural). Use to specify explicit administrative '
+            'boundaries to work with. Comma separated.',
+            dest='ordines',
+            nargs='?',
+            # choices=[
+            #     'pcode_xlsx',
+            #     # 'pcode_xlsx_123456789',
+            #     # 'data-apothecae',
+            #     # 'hxltm-explanationi',
+            #     # 'opus-temporibus',
+            #     # 'status-quo',
+            #     # 'deprecatum-dictionaria-numerordinatio'
+            # ],
+            # required=True
+            type=lambda x: x.split(','),
+            default=None
+        )
+
         # - Related
         #   - Q56061, https://www.wikidata.org/wiki/Q56061
         #     - /administrative territorial entity/@eng-Latn
@@ -233,24 +259,25 @@ class Cli:
             default=None
         )
 
-        parser.add_argument(
-            '--ordines',
-            help='ōrdinēs. (literal latin: methodical arrangement, '
-            'order; plural). Use to specify explicit administrative '
-            'boundaries to work with. Comma separated.',
-            dest='ordines',
-            nargs='?',
-            # choices=[
-            #     'pcode_xlsx',
-            #     # 'pcode_xlsx_123456789',
-            #     # 'data-apothecae',
-            #     # 'hxltm-explanationi',
-            #     # 'opus-temporibus',
-            #     # 'status-quo',
-            #     # 'deprecatum-dictionaria-numerordinatio'
-            # ],
+        memoria_internalo.add_argument(
+            '--cum-columnis',
+            help='Add columns. '
+            'Mostly used to help with scripts',
+            dest='cum_columnis',
+            # nargs='?',
+            nargs='*',
             # required=True
-            type=lambda x: x.split(','),
+            default=None
+        )
+
+        memoria_internalo.add_argument(
+            '--per-columnas',
+            help='Apply filters to existing columns. '
+            'Mostly used to help with scripts',
+            dest='per_columnas',
+            # nargs='?',
+            nargs='*',
+            # required=True
             default=None
         )
 
@@ -382,6 +409,18 @@ class Cli:
                 # print('ex_selectis', ex_selectis)
                 for op in ex_selectis:
                     caput, data = hxltm_ex_selectis(caput, data, op)
+
+            if pyargs.cum_columnis:
+                cum_columnis = pyargs.cum_columnis
+                # print('ex_selectis', ex_selectis)
+                for op in cum_columnis:
+                    caput, data = hxltm_cum_columnis(caput, data, op)
+
+            if pyargs.per_columnas:
+                per_columnas = pyargs.per_columnas
+                # print('ex_selectis', ex_selectis)
+                for op in per_columnas:
+                    caput, data = hxltm_per_columnas(caput, data, op)
 
             # if pyargs.ex_metadatis:
             if pyargs.ex_columnis:
