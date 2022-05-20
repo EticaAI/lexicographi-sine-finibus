@@ -183,15 +183,15 @@ bootstrap_999999_1603_45_16_neo() {
 
       "${ROOTDIR}/999999999/0/999999999_7200235.py" \
         --methodus=xlsx_ad_csv \
-        --ordines="$cod_level" "$file_path" > "${objectivum_archivum_csv}"
+        --ordines="$cod_level" "$file_path" >"${objectivum_archivum_csv}"
 
       "${ROOTDIR}/999999999/0/999999999_7200235.py" \
         --methodus=xlsx_ad_hxl \
-        --ordines="$cod_level" "$file_path" > "${objectivum_archivum_hxl}"
+        --ordines="$cod_level" "$file_path" >"${objectivum_archivum_hxl}"
 
       "${ROOTDIR}/999999999/0/999999999_7200235.py" \
         --methodus=xlsx_ad_hxltm \
-        --ordines="$cod_level" "$file_path" > "${objectivum_archivum_hxltm}"
+        --ordines="$cod_level" "$file_path" >"${objectivum_archivum_hxltm}"
       # return 0
       # continue
     done
@@ -410,11 +410,70 @@ deploy_1603_45_16_global_admX_unicum() {
 }
 #### main ______________________________________________________________________
 
+__temp_fetch_external_indexes() {
+  USER_AGENT="EticaAI/lexicographi-sine-finibus/2022.05.19 (https://meta.wikimedia.org/wiki/User:EmericusPetro; rocha@ieee.org) 1603_45_16.sh/0.1"
+
+  echo "${FUNCNAME[0]} ..."
+
+  curl --user-agent "$USER_AGENT" \
+    "https://data.humdata.org/api/3/action/package_search?q=vocab_Topics=common+operational+dataset+-+cod" |
+    jq >"${ROOTDIR}/999999/1603/45/16/unocha-hdx-cod~cached.search.json"
+
+  curl --user-agent "$USER_AGENT" \
+    "https://data.fieldmaps.io/cod.csv" \
+    >"${ROOTDIR}/999999/1603/45/16/fieldmaps-cod~cached.csv"
+}
+
+__temp_preprocess_external_indexes() {
+  fontem_archivum="${ROOTDIR}/999999/1603/45/16/fieldmaps-cod~cached.csv"
+  objectivum_archivum_q_temporarium="${ROOTDIR}/999999/0/fieldmaps-cod.hxl.csv"
+  objectivum_archivum_q_temporarium_2="${ROOTDIR}/999999/0/fieldmaps-cod~2.hxl.csv"
+  objectivum_archivum="${ROOTDIR}/999999/0/1603_45_16.index.hxl.csv"
+
+  # id,iso_3,adm0_name,adm0_name1,src_lvl,src_date,src_update,src_name,src_name1,src_lic,src_url,e_gpkg,e_shp,e_xlsx,o_gpkg,o_shp,o_xlsx
+  hxlcaput_initial='#meta+id,#country+code+v_iso3,#country+name+ref,#country+name+alt,#meta+source+cod_ab_level,#date+created,#date+updated,#org+name+source,#org+name+contributor1,#meta+license,#item+source+type_ckan,#item+source+extended+type_gpkg,#item+source+extended+type_shp,#item+source+extended+type_xlsx,#item+source+type_gpkg,#item+source+type_shp,#item+source+type_xlsx'
+
+  # hxlcaput_final="#meta+id,#country+code+v_iso3,#meta+source+cod_ab_level,#country+name+ref,#country+name+alt,#date+created,#date+updated,#org+name+source,#org+name+contributor1,#org+name+contributor2,#meta+license,#item+source+type_ckan,#item+source+type_gpkg,#item+source+type_shp,#item+source+type_xlsx"
+
+  hxlcaput_final="#meta+id,#country+code+v_iso3,#meta+source+cod_ab_level,#country+name+ref,#country+name+alt,#date+created,#date+updated,#org+name+source,#org+name+contributor1,#org+name+contributor2,#meta+license,#item+source+type_ckan,#item+source+type_gpkg,#item+source+type_xlsx"
+
+
+  echo "${FUNCNAME[0]} ...[$objectivum_archivum]"
+
+  if [ -f "$objectivum_archivum_q_temporarium" ]; then
+    rm "$objectivum_archivum_q_temporarium"
+  fi
+  set -x
+  echo "$hxlcaput_initial" >"$objectivum_archivum_q_temporarium"
+  # cat "$fontem_archivum" | tail -n +2 "$objectivum_archivum_q_temporarium"
+  tail -n +2 "$fontem_archivum" >>"$objectivum_archivum_q_temporarium"
+
+  hxladd \
+    --spec="__#org+name+contributor2=Fieldmaps.io" \
+    "$objectivum_archivum_q_temporarium" | hxlcut --include="$hxlcaput_final" > "$objectivum_archivum_q_temporarium_2"
+
+  sed -i '1d' "${objectivum_archivum_q_temporarium_2}"
+
+  # hxladd \
+  #   --spec="__#org+name+contributor2=https://fieldmaps.io/" \
+  #   "$objectivum_archivum_q_temporarium" |
+  #   hxlcut \
+  #     --include="$hxlcaput_final" \
+  #     "$objectivum_archivum_q_temporarium_2"
+  #meta+id,#country+code+v_iso3,#country+name,#country+name+alt,#meta+source+level,#date+created,#date+updated,#org+name+source,#org+name+contributor1,#meta+license,#item+source,#item+source+extended+type_gpkg,#item+source+extended+type_shp,#item+source+extended+type_xlsx,#item+source+type_gpkg,#item+source+type_shp,#item+source+type_xlsx
+
+  set +x
+  # file_update_if_necessary csv "$objectivum_archivum_q_temporarium" "$objectivum_archivum"
+  # file_update_if_necessary csv "$objectivum_archivum_q_temporarium_2" "$objectivum_archivum"
+}
+
 ### From XLSX, start -----------------------------------------------------------
 # bootstrap_999999_1603_45_16_fetch_data
 # bootstrap_999999_1603_45_16
 
-curl https://data.humdata.org/api/3/action/package_search?q=vocab_Topics=common+operational+dataset+-+cod | jq > 999999/0/hdx-cod.search.json
+# __temp_fetch_external_indexes
+__temp_preprocess_external_indexes
+exit 1
 
 bootstrap_999999_1603_45_16_neo
 exit 1
@@ -506,12 +565,9 @@ set +x
 
 # ckanapi -r https://data.humdata.org/ action package_search facet.field='["tags"]' facet.limit=10 rows=0
 
-
 # ckanapi -r https://data.humdata.org/ action package_search fq='tags:bra'
 
 # ckanapi -r https://data.humdata.org/ action package_search facet.field:'["organization"]' rows:0
 
 ## This one somwwhat return what we need
 # https://data.humdata.org/api/3/action/package_search?q=vocab_Topics=common+operational+dataset+-+cod
-
-
