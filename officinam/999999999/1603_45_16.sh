@@ -428,7 +428,7 @@ __temp_preprocess_external_indexes() {
   fontem_archivum="${ROOTDIR}/999999/1603/45/16/fieldmaps-cod~cached.csv"
   objectivum_archivum_q_temporarium="${ROOTDIR}/999999/0/fieldmaps-cod.hxl.csv"
   objectivum_archivum_q_temporarium_2="${ROOTDIR}/999999/0/fieldmaps-cod~2.hxl.csv"
-  objectivum_archivum="${ROOTDIR}/999999/0/1603_45_16.index.hxl.csv"
+  objectivum_archivum="${ROOTDIR}/999999/1603/45/16/1603_45_16.index.hxl.csv"
 
   # id,iso_3,adm0_name,adm0_name1,src_lvl,src_date,src_update,src_name,src_name1,src_lic,src_url,e_gpkg,e_shp,e_xlsx,o_gpkg,o_shp,o_xlsx
   hxlcaput_initial='#meta+id,#country+code+v_iso3,#country+name+ref,#country+name+alt,#meta+source+cod_ab_level,#date+created,#date+updated,#org+name+source,#org+name+contributor1,#meta+license,#item+source+type_ckan,#item+source+extended+type_gpkg,#item+source+extended+type_shp,#item+source+extended+type_xlsx,#item+source+type_gpkg,#item+source+type_shp,#item+source+type_xlsx'
@@ -437,8 +437,9 @@ __temp_preprocess_external_indexes() {
 
   hxlcaput_final="#meta+id,#country+code+v_iso3,#meta+source+cod_ab_level,#country+name+ref,#country+name+alt,#date+created,#date+updated,#org+name+source,#org+name+contributor1,#org+name+contributor2,#meta+license,#item+source+type_ckan,#item+source+type_gpkg,#item+source+type_xlsx"
 
+  # hxlcaput_final="#item+source+type_xlsx!,#country+code+v_iso3!,#meta+id!,#meta+source+cod_ab_level!"
 
-  echo "${FUNCNAME[0]} ...[$objectivum_archivum]"
+  echo "${FUNCNAME[0]} ... [$fontem_archivum] --> [$objectivum_archivum]"
 
   if [ -f "$objectivum_archivum_q_temporarium" ]; then
     rm "$objectivum_archivum_q_temporarium"
@@ -450,9 +451,34 @@ __temp_preprocess_external_indexes() {
 
   hxladd \
     --spec="__#org+name+contributor2=Fieldmaps.io" \
-    "$objectivum_archivum_q_temporarium" | hxlcut --include="$hxlcaput_final" > "$objectivum_archivum_q_temporarium_2"
+    "$objectivum_archivum_q_temporarium" > "$objectivum_archivum_q_temporarium_2"
 
   sed -i '1d' "${objectivum_archivum_q_temporarium_2}"
+
+  csvcut --names "$objectivum_archivum_q_temporarium_2"
+
+  #   1: #meta+id
+  #   2: #country+code+v_iso3
+  #   3: #country+name+ref
+  #   4: #country+name+alt
+  #   5: #meta+source+cod_ab_level
+  #   6: #date+created
+  #   7: #date+updated
+  #   8: #org+name+source
+  #   9: #org+name+contributor1
+  # 10: #meta+license
+  # 11: #item+source+type_ckan
+  # 12: #item+source+extended+type_gpkg
+  # 13: #item+source+extended+type_shp
+  # 14: #item+source+extended+type_xlsx
+  # 15: #item+source+type_gpkg
+  # 16: #item+source+type_shp
+  # 17: #item+source+type_xlsx
+  # 18: #org+name+contributor2
+
+  csvcut --columns 1,2,5,6,7,17,15,11,18,9,8,10,3,4 "$objectivum_archivum_q_temporarium_2" > "$objectivum_archivum_q_temporarium"
+
+  # sed -i '1d' "${objectivum_archivum_q_temporarium_2}"
 
   # hxladd \
   #   --spec="__#org+name+contributor2=https://fieldmaps.io/" \
@@ -464,7 +490,7 @@ __temp_preprocess_external_indexes() {
 
   set +x
   # file_update_if_necessary csv "$objectivum_archivum_q_temporarium" "$objectivum_archivum"
-  # file_update_if_necessary csv "$objectivum_archivum_q_temporarium_2" "$objectivum_archivum"
+  file_update_if_necessary csv "$objectivum_archivum_q_temporarium" "$objectivum_archivum"
 }
 
 ### From XLSX, start -----------------------------------------------------------

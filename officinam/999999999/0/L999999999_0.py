@@ -39,6 +39,7 @@ import sys
 import datetime
 from typing import (
     List,
+    Tuple,
     Type,
     Union
 )
@@ -1412,9 +1413,9 @@ def hxltm_carricato(
         list: list of [caput, data], where data is array of lines
     """
     caput = []
-    _data = []
 
     if est_stdin:
+        _data = []
         for linea in sys.stdin:
             if len(caput) == 0:
                 # caput = linea
@@ -1428,26 +1429,91 @@ def hxltm_carricato(
         return caput, list(_reader)
     # else:
     #     fons = archivum_trivio
-
+    data = []
     with open(archivum_trivio, 'r') as _fons:
         _csv_reader = csv.reader(_fons)
         for linea in _csv_reader:
             if len(caput) == 0:
                 # caput = linea
                 # _reader_caput = csv.reader(linea)
-                _gambi = [linea, linea]
-                _reader_caput = csv.reader(_gambi)
-                caput = next(_reader_caput)
+                # _gambi = [linea, linea]
+                # _reader_caput = csv.reader(_gambi)
+                # caput = next(_reader_caput)
+                caput = linea
             else:
-                _data.append(linea)
+                data.append(linea)
             # print(row)
 
     # for line in fons:
     #     print(line)
         # json_fonti_texto += line
 
-    _reader = csv.reader(_data)
-    return caput, list(_reader)
+    # _reader = csv.reader(_data)
+    # return caput, list(_reader)
+    return caput, data
+
+
+def hxltm_ex_columnis(
+        caput: list, data: list, columnae: list) -> Tuple[list, list]:
+    """hxltm_ex_columnis cut columns (variables)
+
+    Args:
+        caput (list): _description_
+        data (list): _description_
+        columnae (list): _description_
+
+    Returns:
+        Tuple[list, list]: _description_
+    """
+    # https://en.wiktionary.org/wiki/columna#Latin
+    index_columnae = []
+    _data = []
+    print(caput, columnae)
+    for item in columnae:
+        index_columnae.append(caput.index(item))
+
+    for linea in data:
+        _linea = []
+        for index in index_columnae:
+            _linea.append(linea[index])
+        _data.append(_linea)
+
+    # _caput = columnae
+    return columnae, _data
+
+
+def hxltm_ex_selectis(
+        caput: list, data: list, quaestio: str) -> Tuple[list, list]:
+    """hxltm_ex_selectis select rows (lines of data)
+
+    Args:
+        caput (list): _description_
+        data (list): _description_
+        coluquaestiomnae (list): The query
+
+    Returns:
+        Tuple[list, list]: _description_
+    """
+    _op_list = ['=', '!=', '<', '<=', '>', '>=']
+    res_1 = ''
+    res_2 = ''
+    op = ''
+    for item in _op_list:
+        if quaestio.find(item) > -1:
+            op = item
+            res_1, res_2, quaestio.split(item)
+            break
+    if len(op) == 0:
+        raise SyntaxError('hxltm_ex_selectis <{0}>? <[{1}]'.format(
+            quaestio,
+            caput
+        ))
+
+    _data = data  # @TODO ...
+    # https://en.wiktionary.org/wiki/columna#Latin
+
+    # _caput = columnae
+    return caput, _data
 
 
 def qhxl_hxlhashtag_2_bcp47(hxlhashtag: str, hxlstd11_compat: bool = False) -> str:

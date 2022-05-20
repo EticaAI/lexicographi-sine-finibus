@@ -47,6 +47,8 @@ from L999999999_0 import (
     CodAbTabulae,
     csv_imprimendo,
     hxltm_carricato,
+    NUMERORDINATIO_BASIM,
+    hxltm_ex_columnis,
     qhxl_hxlhashtag_2_bcp47,
     XLSXSimplici
     # xlsx_meta
@@ -87,24 +89,12 @@ __EPILOGUM__ = """
                             EXEMPLŌRUM GRATIĀ
 ------------------------------------------------------------------------------
 
-    cat 999999/0/ibge_un_adm2.tm.hxl.csv | \
-{0} --objectivum-formato=text/csv \
---archivum-configurationi-ex-fonti=999999999/0/999999999_268072.meta.yml \
---praefixum-configurationi-ex-fonti=methodus,ibge_un_adm2 \
-> 999999/0/ibge_un_adm2.no1.tm.hxl.csv
+    {0} --methodus='cod_ab_index'
 
-    cat 999999/0/ibge_un_adm2.tm.hxl.csv | \
-{0} --objectivum-formato=application/x-turtle \
---archivum-configurationi-ex-fonti=999999999/0/999999999_268072.meta.yml \
---praefixum-configurationi-ex-fonti=methodus,ibge_un_adm2 \
-> 999999/0/ibge_un_adm2.no1.skos.ttl
+    {0} --methodus='cod_ab_index' --ex-metadatis='#country+code+v_iso3'
 
-    cat 999999/0/ibge_un_adm2.tm.hxl.csv | \
-{0} --objectivum-formato=application/n-triples \
---archivum-configurationi-ex-fonti=999999999/0/999999999_268072.meta.yml \
---praefixum-configurationi-ex-fonti=methodus,ibge_un_adm2 \
-> 999999/0/ibge_un_adm2.no1.n3
-
+    {0} --methodus='cod_ab_index' --ex-metadatis='#country+code+v_iso3' \
+--ex-selectis='#date+updated<2021-05-01'
 
    {0} --methodus=xlsx_metadata 999999/1603/45/16/xlsx/ago.xlsx
    {0} --methodus=xlsx_ad_csv --ordines=2 999999/1603/45/16/xlsx/ago.xlsx
@@ -118,6 +108,8 @@ __EPILOGUM__ = """
 ------------------------------------------------------------------------------
 """.format(__file__)
 
+COD_AB_INDEX = NUMERORDINATIO_BASIM + \
+    '/999999/1603/45/16/1603_45_16.index.hxl.csv'
 
 # autopep8 --list-fixes ./999999999/0/999999999_7200235.py
 # pylint --disable=W0511,C0103,C0116 ./999999999/0/999999999_7200235.py
@@ -172,19 +164,20 @@ class Cli:
 
         parser.add_argument(
             '--methodus',
-            help='Modo de operação.',
+            help='Main operation mode',
             dest='methodus',
             nargs='?',
             choices=[
-                'pcode_ex_xlsx',
-                'pcode_ex_csv',
+                # 'pcode_ex_xlsx',
+                # 'pcode_ex_csv',
+                'cod_ab_index',
                 'xlsx_metadata',
                 'xlsx_ad_csv',
                 'xlsx_ad_hxl',
                 'xlsx_ad_hxltm',
             ],
             # required=True
-            default='pcode_ex_csv'
+            default='cod_ab_index'
         )
 
         # - Related
@@ -197,9 +190,20 @@ class Cli:
         parser.add_argument(
             '--ex-metadatis',
             help='For operations related with metadata (nested object) '
-            'this option can be used to filter result. Mostly used to '
-            'help with scripts',
+            'or with index, this option can be used to filter result. '
+            'Mostly used to help with scripts',
             dest='ex_metadatis',
+            nargs='?',
+            # required=True
+            default=None
+        )
+
+        parser.add_argument(
+            '--ex-selectis',
+            help='For operations related with index (limited subset of '
+            'hxlselect cli tool. '
+            'Mostly used to help with scripts',
+            dest='ex_selectis',
             nargs='?',
             # required=True
             default=None
@@ -346,6 +350,20 @@ class Cli:
             _infile = None
             _stdin = True
 
+        if pyargs.methodus.startswith('cod_ab_index'):
+            caput, data = hxltm_carricato(COD_AB_INDEX)
+
+            if pyargs.ex_metadatis:
+                ex_metadatis = pyargs.ex_metadatis.split(',')
+                print(caput, ex_metadatis)
+                print('')
+                # print(caput, data)
+                caput, data = hxltm_ex_columnis(caput, data, ex_metadatis)
+
+            csv_imprimendo(caput, data)
+            # raise ValueError('@TODO ...')
+            return self.EXIT_OK
+
         if pyargs.methodus.startswith('xlsx'):
             xlsx = XLSXSimplici(_infile)
 
@@ -354,7 +372,7 @@ class Cli:
 
             if pyargs.ex_metadatis:
                 # @TODO: maybe implement a jq-like selector.
-                ex_metadatis = pyargs.ex_metadatis.replace('.','')
+                ex_metadatis = pyargs.ex_metadatis.replace('.', '')
                 xlsx_meta = xlsx.meta()
                 if ex_metadatis in xlsx_meta:
                     for item in xlsx_meta[ex_metadatis]:
