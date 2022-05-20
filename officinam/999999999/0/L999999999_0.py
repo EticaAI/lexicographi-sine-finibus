@@ -36,7 +36,7 @@ import os
 # from pathlib import Path
 import re
 import sys
-import datetime
+from datetime import date
 from typing import (
     List,
     Tuple,
@@ -809,7 +809,7 @@ def csv_imprimendo(caput: list = None, data: list = None, delimiter: str = ',',
     # imprimendō, v, s, dativus, https://en.wiktionary.org/wiki/impressus#Latin
 
     _writer = csv.writer(sys.stdout, delimiter=delimiter)
-    if caput:
+    if caput and len(caput) > 0:
         _writer.writerow(caput)
     _writer.writerows(data)
 
@@ -1468,7 +1468,7 @@ def hxltm_ex_columnis(
     # https://en.wiktionary.org/wiki/columna#Latin
     index_columnae = []
     _data = []
-    print(caput, columnae)
+    # print(caput, columnae)
     for item in columnae:
         index_columnae.append(caput.index(item))
 
@@ -1494,14 +1494,17 @@ def hxltm_ex_selectis(
     Returns:
         Tuple[list, list]: _description_
     """
-    _op_list = ['=', '!=', '<', '<=', '>', '>=']
+    _op_list = ['==', '!=', '<', '>=', '>', '<=']
     res_1 = ''
+    res_1_isdate = False
     res_2 = ''
+    res_2_isdate = False
     op = ''
+    _data = []
     for item in _op_list:
         if quaestio.find(item) > -1:
             op = item
-            res_1, res_2, quaestio.split(item)
+            res_1, res_2 = quaestio.split(item)
             break
     if len(op) == 0:
         raise SyntaxError('hxltm_ex_selectis <{0}>? <[{1}]'.format(
@@ -1509,10 +1512,62 @@ def hxltm_ex_selectis(
             caput
         ))
 
-    _data = data  # @TODO ...
-    # https://en.wiktionary.org/wiki/columna#Latin
+    # print('hxltm_ex_selectis <{0}> {1} <{2}>'.format(res_1, op, res_2))
+    # return False, False
 
-    # _caput = columnae
+    if res_1.startswith('#'):
+        res_1_isdate = res_1.startswith('#date')
+        if caput.index(res_1) > -1:
+            res_1 = caput.index(res_1)
+            # print('oi foi res 1', type(res_1), isinstance(res_1, int))
+        else:
+            SyntaxError('{0} <{1}> <{2}>'.format(res_1, quaestio, caput))
+
+    if res_2.startswith('#'):
+        res_1_isdate = res_2.startswith('#date')
+        # res_2 = caput.index(res_2)
+        if caput.index(res_2) > -1:
+            res_2 = caput.index(res_1)
+        else:
+            SyntaxError('{0} <{1}> <{2}>'.format(res_2, quaestio, caput))
+
+    for linea in data:
+        # _linea = []
+
+        _value_1 = res_1
+        if isinstance(res_1, int):
+            _value_1 = linea[res_1]
+            # print('oi foi res 1', type(res_1), isinstance(res_1, int))
+            # print('oi foi _value_1 1', _value_1)
+        _value_2 = res_2
+        if isinstance(res_2, int):
+            _value_2 = linea[res_2]
+            # print('oi foi _value_2 {0} (value1 {1}'.format(_value_2, _value_1))
+
+        # raise SyntaxError('{0} <{1}> <{2}>'.format(_value_1, _value_2, caput))
+        if res_1_isdate or res_2_isdate:
+            _value_1 = date.fromisoformat(_value_1)
+            _value_2 = date.fromisoformat(_value_2)
+
+        # print('<{0}> {1} <{2}>'.format(_value_1, op, _value_2))
+        # print('<{0}> {1} <{2}>'.format(res_1_isdate, op, res_2_isdate))
+
+        if op == '==' and _value_1 == _value_2:
+            _data.append(linea)
+        elif op == '!=' and _value_1 != _value_2:
+            _data.append(linea)
+        elif op == '>' and _value_1 > _value_2:
+            _data.append(linea)
+        elif op == '<' and _value_1 < _value_2:
+            _data.append(linea)
+        elif op == '>=' and _value_1 >= _value_2:
+            _data.append(linea)
+        elif op == '<=' and _value_1 <= _value_2:
+            _data.append(linea)
+        # else:
+        #     print('DEBUG: skip [<{0}> {1} <{2}>]'.format(
+        #         _value_1, op, _value_2))
+
     return caput, _data
 
 

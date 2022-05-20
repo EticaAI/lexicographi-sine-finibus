@@ -49,6 +49,7 @@ from L999999999_0 import (
     hxltm_carricato,
     NUMERORDINATIO_BASIM,
     hxltm_ex_columnis,
+    hxltm_ex_selectis,
     qhxl_hxlhashtag_2_bcp47,
     XLSXSimplici
     # xlsx_meta
@@ -94,7 +95,8 @@ __EPILOGUM__ = """
     {0} --methodus='cod_ab_index' --ex-metadatis='#country+code+v_iso3'
 
     {0} --methodus='cod_ab_index' --ex-metadatis='#country+code+v_iso3' \
---ex-selectis='#date+updated<2021-05-01'
+--ex-selectis='#date+created<2010-01-01' \
+--ex-selectis='#date+updated>2020-01-01'
 
    {0} --methodus=xlsx_metadata 999999/1603/45/16/xlsx/ago.xlsx
    {0} --methodus=xlsx_ad_csv --ordines=2 999999/1603/45/16/xlsx/ago.xlsx
@@ -198,13 +200,35 @@ class Cli:
             default=None
         )
 
-        parser.add_argument(
+        # https://en.wiktionary.org/wiki/memoria#Latin
+        # https://en.wiktionary.org/wiki/internalis#Latin
+        memoria_internalo = parser.add_argument_group(
+            "Memoria internālī",
+            '[ --methodus=\'cod_ab_index\' ] '
+            "Operations to change internal state of tabular internal memory. "
+        )
+
+        # - ex (+ ablativus), https://en.wiktionary.org/wiki/ex#Latin
+        # -columnīs, f, pl, ablativus, https://en.wiktionary.org/wiki/columna
+        memoria_internalo.add_argument(
+            '--ex-columnis',
+            help='For operations related with metadata (nested object) '
+            'or with index, this option can be used to filter result. '
+            'Mostly used to help with scripts',
+            dest='ex_columnis',
+            nargs='?',
+            # required=True
+            default=None
+        )
+
+        memoria_internalo.add_argument(
             '--ex-selectis',
             help='For operations related with index (limited subset of '
             'hxlselect cli tool. '
             'Mostly used to help with scripts',
             dest='ex_selectis',
-            nargs='?',
+            # nargs='?',
+            nargs='*',
             # required=True
             default=None
         )
@@ -353,12 +377,16 @@ class Cli:
         if pyargs.methodus.startswith('cod_ab_index'):
             caput, data = hxltm_carricato(COD_AB_INDEX)
 
-            if pyargs.ex_metadatis:
-                ex_metadatis = pyargs.ex_metadatis.split(',')
-                print(caput, ex_metadatis)
-                print('')
-                # print(caput, data)
-                caput, data = hxltm_ex_columnis(caput, data, ex_metadatis)
+            if pyargs.ex_selectis:
+                ex_selectis = pyargs.ex_selectis
+                # print('ex_selectis', ex_selectis)
+                for op in ex_selectis:
+                    caput, data = hxltm_ex_selectis(caput, data, op)
+
+            # if pyargs.ex_metadatis:
+            if pyargs.ex_columnis:
+                ex_columnis = pyargs.ex_columnis.split(',')
+                caput, data = hxltm_ex_columnis(caput, data, ex_columnis)
 
             csv_imprimendo(caput, data)
             # raise ValueError('@TODO ...')
