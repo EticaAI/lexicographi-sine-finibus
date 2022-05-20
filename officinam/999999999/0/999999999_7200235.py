@@ -49,6 +49,7 @@ from L999999999_0 import (
     hxltm_carricato,
     NUMERORDINATIO_BASIM,
     hxltm_cum_columnis,
+    hxltm_cum_filtro,
     hxltm_ex_columnis,
     hxltm_ex_selectis,
     hxltm_per_columnas,
@@ -95,6 +96,9 @@ __EPILOGUM__ = """
     {0} --methodus='cod_ab_index'
 
     {0} --methodus='cod_ab_index' --ex-columnis='#country+code+v_iso3'
+
+    {0} --methodus='cod_ab_index' --ex-columnis='#country+code+v_iso3' \
+--cum-filtris='LOWER(#country+code+v_iso3)'
 
     {0} --methodus='cod_ab_index' --ex-columnis='#country+code+v_iso3' \
 --ex-selectis='#date+created<2010-01-01' \
@@ -271,6 +275,18 @@ class Cli:
         )
 
         memoria_internalo.add_argument(
+            '--cum-filtris',
+            help='Apply filters for existing columns. '
+            'Example: --cum-filtris=\'LOWER(#country+code+v_iso3)\'. '
+            'Mostly used to help with scripts',
+            dest='cum_filtris',
+            # nargs='?',
+            nargs='*',
+            # required=True
+            default=None
+        )
+
+        memoria_internalo.add_argument(
             '--per-columnas',
             help='Apply filters to existing columns. '
             'Mostly used to help with scripts',
@@ -421,6 +437,11 @@ class Cli:
                 # print('ex_selectis', ex_selectis)
                 for op in per_columnas:
                     caput, data = hxltm_per_columnas(caput, data, op)
+
+            if pyargs.cum_filtris:
+                cum_filtris = pyargs.cum_filtris
+                for op in cum_filtris:
+                    caput, data = hxltm_cum_filtro(caput, data, op)
 
             # if pyargs.ex_metadatis:
             if pyargs.ex_columnis:

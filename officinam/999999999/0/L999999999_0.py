@@ -1404,23 +1404,105 @@ HXLTM_OPERA_2 = {
 }
 
 HXLTM_OPERA_1 = {
-    '(lower|LOWER)\((?<a1>(.*))\)': lambda a1: str(a1).lower(),
-    '(upper|UPPER)\((?<a1>(.*))\)': lambda a1: str(a1).upper(),
+    # '(lower|LOWER)\((?<a1>(.*))\)': lambda a1: str(a1).lower(),
+    # '(upper|UPPER)\((?<a1>(.*))\)': lambda a1: str(a1).upper(),
+    r'(lower|LOWER)\((?P<a1>.*)\)': lambda a1: str(a1).lower(),
+    r'(upper|UPPER)\((?P<a1>.*)\)': lambda a1: str(a1).upper(),
 }
 
 
+def hxltm__quaestio_significatis_i(quaestio: str, caput: list = None) -> dict:
+    """hxltm__quaestio_significatis_i parse a 1-statement query
 
+    Args:
+        quaestio (str): query
+        caput (list, optional): HXL header. Defaults to None.
 
-def hxltm__quaestio_significatis_ii(quaestio: str, caput: list = None) -> dict:
+    Raises:
+        SyntaxError: _description_
+
+    Returns:
+        dict: _description_
+    """
     # - quaestiō, f, s,  dativus, https://en.wiktionary.org/wiki/significatus
     # - significātīs, m/f/n, s, dativus,
     #     https://en.wiktionary.org/wiki/significatus
     significātus = {
         'opus': None,
+        'opus_rebus': [],
         'a1': '',
-        'a1_index': None,
+        'a1_indici': None,
+        'a1_operi': None,  # HXLTM_OPERA_1 lambda lambda function call
+        '_datetime': False,
+    }
+
+    # filtrum = None
+
+    for regex_str, _lambda in HXLTM_OPERA_1.items():
+        # print(regex_str)
+        _regex_result = re.search(regex_str, quaestio)
+        if _regex_result:
+            # significātus['a1_operi'] = _lambda
+            significātus['opus'] = _lambda
+            for _nomen, _res in _regex_result.groupdict().items():
+                significātus[_nomen] = _res
+                significātus['opus_rebus'].append(_nomen)
+            # print('done', _regex_result.groupdict())
+            # print('done', significātus)
+        # _regex_parsed = regex_str.match(quaestio)
+        # print(_regex_result, _regex_result.group('a1'), regex_str)
+
+    if significātus['opus'] is None:
+        raise SyntaxError('{0}? quaestio [{1}] [{2}] <[{3}]>'.format(
+            'hxltm__quaestio_significatis_i',
+            quaestio,
+            significātus,
+            HXLTM_OPERA_1.keys()
+        ))
+
+    if significātus['a1'].startswith('#'):
+        significātus['_datetime'] = significātus['a1'].startswith('#date')
+        if caput.index(significātus['a1']) > -1:
+            significātus['a1_indici'] = caput.index(significātus['a1'])
+        else:
+            raise SyntaxError('{0}? quaestio [{1}] [{2}] <[{3}]>'.format(
+                'hxltm__quaestio_significatis_i (index #)',
+                quaestio,
+                significātus,
+                HXLTM_OPERA_1.keys()
+            ))
+
+    # raise NotImplementedError(
+    #     '@TODO hxltm__quaestio_significatis_i {0}'.format(significātus))
+
+    return significātus
+
+
+def hxltm__quaestio_significatis_ii(quaestio: str, caput: list = None) -> dict:
+    """hxltm__quaestio_significatis_ii parse a 2 statement query
+
+    Args:
+        quaestio (str): query
+        caput (list, optional): HXL header. Defaults to None.
+
+    Raises:
+        SyntaxError: _description_
+
+    Returns:
+        dict: _description_
+    """
+    # - quaestiō, f, s,  dativus, https://en.wiktionary.org/wiki/significatus
+    # - significātīs, m/f/n, s, dativus,
+    #     https://en.wiktionary.org/wiki/significatus
+    significātus = {
+        'opus': None,
+        'opus_rebus': ['a1', 'b2'],
+        'a1': '',
+        'a1_indici': None,
+        'a1_operi': None,  # HXLTM_OPERA_1 lambda lambda function call
         'b2': '',
-        'b2_index': None,
+        'b2_indici': None,
+        'b2_operi': None,  # HXLTM_OPERA_1 lambda lambda function call
         '_datetime': False,
     }
 
@@ -1442,7 +1524,7 @@ def hxltm__quaestio_significatis_ii(quaestio: str, caput: list = None) -> dict:
     if significātus['a1'].startswith('#'):
         significātus['_datetime'] = significātus['a1'].startswith('#date')
         if caput.index(significātus['a1']) > -1:
-            significātus['a1_index'] = caput.index(significātus['a1'])
+            significātus['a1_indici'] = caput.index(significātus['a1'])
         else:
             SyntaxError('{0} <{1}> <{2}>'.format(
                 significātus['a1'], quaestio, caput))
@@ -1450,7 +1532,7 @@ def hxltm__quaestio_significatis_ii(quaestio: str, caput: list = None) -> dict:
     if significātus['b2'].startswith('#'):
         significātus['_datetime'] = significātus['b2'].startswith('#date')
         if caput.index(significātus['b2']) > -1:
-            significātus['b2_index'] = caput.index(significātus['b2'])
+            significātus['b2_indici'] = caput.index(significātus['b2'])
         else:
             SyntaxError('{0} <{1}> <{2}>'.format(
                 significātus['b2'], quaestio, caput))
@@ -1550,6 +1632,60 @@ def hxltm_cum_columnis(
         _data.append(_linea)
 
     # _caput = columnae
+
+
+def hxltm_cum_filtro(
+        caput: list, data: list, quaestio: list) -> Tuple[list, list]:
+    """hxltm_cum_filtris Apply filters for existing columns.
+
+    Trivia:
+      - cum (+ ablativus), https://en.wiktionary.org/wiki/cum#Latin
+      - filtrō, n, s, ablativus, https://en.wiktionary.org/wiki/filtrum#Latin
+      - filtrīs, n, pl, ablativus, https://en.wiktionary.org/wiki/filtrum#Latin
+
+    Args:
+        caput (list): _description_
+        data (list): _description_
+        columnae (list): _description_
+
+    Returns:
+        Tuple[list, list]: _description_
+    """
+    # https://en.wiktionary.org/wiki/columna#Latin
+    index_columnae = []
+    _data = []
+    filtrum = None
+
+    hxltm__quaestio_significatis_i(quaestio, caput)
+
+    for regex_str, _lambda in HXLTM_OPERA_1.items():
+        print(regex_str)
+        _regex_result = re.search(regex_str, quaestio)
+        if _regex_result:
+            filtrum = _lambda
+            print('done', _regex_result, _regex_result.groupdict(), filtrum)
+        # _regex_parsed = regex_str.match(quaestio)
+        # print(_regex_result, _regex_result.group('a1'), regex_str)
+
+    if filtrum is None:
+        raise SyntaxError('{0}? quaestio [{1}] [{2}]'.format(
+            'hxltm_cum_filtro',
+            quaestio,
+            HXLTM_OPERA_1.keys()
+        ))
+
+    raise NotImplementedError('@TODO hxltm_cum_filtro')
+    # print(caput, columnae)
+    for item in columnae:
+        index_columnae.append(caput.index(item))
+
+    for linea in data:
+        _linea = []
+        for index in index_columnae:
+            _linea.append(linea[index])
+        _data.append(_linea)
+
+    # _caput = columnae
     return columnae, _data
 
 
@@ -1613,10 +1749,10 @@ def hxltm_ex_selectis(
         a1 = significātus['a1']
         b2 = significātus['b2']
 
-        if significātus['a1_index'] is not None:
-            a1 = linea[significātus['a1_index']]
-        if significātus['b2_index'] is not None:
-            b2 = linea[significātus['b2_index']]
+        if significātus['a1_indici'] is not None:
+            a1 = linea[significātus['a1_indici']]
+        if significātus['b2_indici'] is not None:
+            b2 = linea[significātus['b2_indici']]
 
         if significātus['_datetime'] is True:
             a1 = date.fromisoformat(a1)
