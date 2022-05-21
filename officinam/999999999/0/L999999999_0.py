@@ -1899,6 +1899,90 @@ def hxltm_carricato(
     return caput, data
 
 
+def hxltm_cum_ordinibus_ex_columnis(
+    caput: list, data: list, quaestio: list, data_referentibus: dict = None
+) -> Tuple[list, list]:
+    """hxltm_cum_columnis_desideriis with preferred order (not enforced)
+
+    Trivia:
+      - cum (+ ablativus), https://en.wiktionary.org/wiki/cum#Latin
+      - ōrdinibus, pl, m, ablativus, https://en.wiktionary.org/wiki/ordo#Latin
+      - ex (+ ablativus) https://en.wiktionary.org/wiki/ex#Latin
+      - columnā, s, f, ablativus, https://en.wiktionary.org/wiki/columna#Latin
+      - columnīs, pl, f, ablativus,
+      - columnae, pl, f, vocātīvus,
+      - dēsīderiīs, pl, n, vocātīvus,
+
+    Args:
+        caput (list): _description_
+        data (list): _description_
+        quaestio (str): _description_
+        data_referentibus (dict): Pre-loaded external referential data
+
+    Returns:
+        Tuple[list, list]: _description_
+    """
+    # _ordo_novo = []
+    caput_novo = []
+    data_novis = []
+    quaestio_dict = {}
+    for index, item in enumerate(caput):
+        quaestio_dict[int(index)] = item
+
+    # print('pre quaestio_dict', quaestio_dict)
+    for item in quaestio:
+        # print(item)
+        if item.find(':') == -1:
+            raise SyntaxError('{0} ":" et <{1}>?? <{2}>'.format(
+                __name__, item, quaestio
+            ))
+        _num, _hash = item.split(':')
+        if _num.lstrip('+-').isnumeric():
+            _num = int(_num)
+        else:
+            raise SyntaxError('{0} "numero" et <{1}> <{2}>?? <{3}>'.format(
+                __name__, _num, item, quaestio
+            ))
+
+        quaestio_dict[int(_num)] = _hash
+    # print('post quaestio_dict', quaestio_dict)
+    # ordo_novo = set()
+    ordo_novo = []
+
+    # print(sorted(quaestio_dict.items(), key=lambda item: int(item[0])))
+    quaestio_dict_sorted = \
+        sorted(quaestio_dict.items(), key=lambda item: int(item[0]))
+
+    for index, item in quaestio_dict_sorted:
+        # print('quaestio_dict_sorted item', item)
+        if item in caput and caput.index(item) not in ordo_novo:
+            # print(item, caput.index(item))
+            ordo_novo.append(caput.index(item))
+
+    # print('   ordo_novo', ordo_novo)
+
+    # return [], [[]]
+    # for index in enumerate(ordo_novo):
+    for index in ordo_novo:
+        caput_novo.append(caput[index])
+
+    # print(caput)
+    # print(caput_novo)
+    # print(list(range(0, len(caput) -1)))
+    if caput_novo == caput:
+        # print('already equal. return same input')
+        return caput, data
+
+    for _, linea in enumerate(data):
+        linea_novae = []
+        for index in ordo_novo:
+            linea_novae.append(linea[index])
+        # linea_novae.extend(linea)
+        data_novis.append(linea_novae)
+
+    return caput_novo, data_novis
+
+
 def hxltm_cum_columna(
     caput: list, data: list, quaestio: str, data_referentibus: dict = None
 ) -> Tuple[list, list]:

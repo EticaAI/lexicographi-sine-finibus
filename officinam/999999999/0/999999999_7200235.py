@@ -52,7 +52,9 @@ from L999999999_0 import (
     hxltm_carricato,
     NUMERORDINATIO_BASIM,
     hxltm_cum_columna,
+    # hxltm_cum_columnis_desideriis,
     hxltm_cum_filtro,
+    hxltm_cum_ordinibus_ex_columnis,
     hxltm_sine_columnis,
     hxltm_ex_selectis,
     hxltm_index_praeparationi,
@@ -107,6 +109,9 @@ Work with local COD-AB index . . . . . . . . . . . . . . . . . . . . . . . . .
     {0} --methodus='cod_ab_index' --sine-columnis='#country+code+v_iso3' \
 --ex-selectis='#date+created<2010-01-01' \
 --ex-selectis='#date+updated>2020-01-01'
+
+    {0} --methodus='cod_ab_index' --cum-ordinibus-ex-columnis=\
+'-9:#meta+id|-8:#country+code+v_iso3|-7#country+code+v_iso2'
 
 Process XLSXs from external sources . . . . . . . . . . . . . . . . . . . . . .
    {0} --methodus=xlsx_metadata 999999/1603/45/16/xlsx/ago.xlsx
@@ -328,6 +333,17 @@ class Cli:
             # nargs='?',
             nargs='*',
             action='append',
+            # required=True
+            default=None
+        )
+
+        memoria_internalo.add_argument(
+            '--cum-ordinibus-ex-columnis',
+            help='With this with preferred order of columns (not enforced). '
+            'If it cannot find the columns, it will not change the order.'
+            'Example: "-999:#meta+id|0:#meta+code|999:#meta+note"',
+            dest='cum_ordinibus_ex_columnis',
+            nargs='?',
             # required=True
             default=None
         )
@@ -566,7 +582,20 @@ class Cli:
             if pyargs.sine_columnis:
                 opus = pyargs.sine_columnis.split(',')
                 caput, data = hxltm_sine_columnis(
-                        caput, data, opus, data_referentibus)
+                    caput, data, opus, data_referentibus)
+
+            # if pyargs.ex_metadatis:
+            if pyargs.cum_ordinibus_ex_columnis:
+                _opus = pyargs.cum_ordinibus_ex_columnis
+                if not isinstance(pyargs.cum_ordinibus_ex_columnis, list):
+                    _opus = [pyargs.cum_ordinibus_ex_columnis]
+                opus = []
+                for item in _opus:
+                    opus.extend(map(str.strip, item.split('|')))
+
+                # opus = pyargs.cum_ordinibus_ex_columnis.split('|')
+                caput, data = hxltm_cum_ordinibus_ex_columnis(
+                    caput, data, opus, data_referentibus)
 
             if pyargs.methodus == 'index_praeparationi':
 
