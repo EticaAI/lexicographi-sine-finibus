@@ -48,15 +48,13 @@ from L999999999_0 import (
     csv_imprimendo,
     hxltm_carricato,
     NUMERORDINATIO_BASIM,
-    hxltm_cum_columnis,
+    hxltm_cum_columna,
     hxltm_cum_filtro,
     hxltm_ex_columnis,
     hxltm_ex_selectis,
     hxltm_index_praeparationi,
-    hxltm_per_columnas,
     qhxl_hxlhashtag_2_bcp47,
     XLSXSimplici
-    # xlsx_meta
 )
 
 STDIN = sys.stdin.buffer
@@ -107,9 +105,6 @@ Work with local COD-AB index . . . . . . . . . . . . . . . . . . . . . . . . .
 --ex-selectis='#date+created<2010-01-01' \
 --ex-selectis='#date+updated>2020-01-01'
 
-    {0} --methodus='cod_ab_index' --ex-columnis='#country+code+v_iso3' \
---per-columnas='LOWER(#country+code+v_iso3)'
-
 Process XLSXs from external sources . . . . . . . . . . . . . . . . . . . . . .
    {0} --methodus=xlsx_metadata 999999/1603/45/16/xlsx/ago.xlsx
    {0} --methodus=xlsx_ad_csv --ordines=2 999999/1603/45/16/xlsx/ago.xlsx
@@ -126,6 +121,14 @@ Generic HXLTM processing . . . . . . . . . . . . . . . . . . . . . . . . . . . .
     {0} --methodus=de_hxltm_ad_hxltm 1603/1/1/1603_1_1.no1.tm.hxl.csv \
 --ex-selectis='#item+conceptum+codicem==1'
 
+
+(Some other examples know to work (at time of testing))
+    {0} --methodus=de_librario 1603_45_49 \
+--cum-columnis=\
+'#meta+v_iso2+alt=LOWER(#item+rem+i_zxx+is_latn+ix_iso3166p1a2)' \
+--cum-columnis=\
+'#meta+v_iso3+alt=LOWER(#item+rem+i_zxx+is_latn+ix_iso3166p1a3)' \
+
 Index preparation (warn up cache) . . . . . . . . . . . . . . . . . . . . . . .
 (this will pre-create a key-value index at 999999/0/i1603_45_49.index.json)
     {0} --methodus=index_praeparationi 1603_45_49 \
@@ -133,6 +136,10 @@ Index preparation (warn up cache) . . . . . . . . . . . . . . . . . . . . . . .
 --ex-columnis='#item+rem+i_zxx+is_zmth+ix_unm49,\
 # item+rem+i_zxx+is_latn+ix_iso3166p1a2,#item+rem+i_zxx+is_latn+ix_iso3166p1a3' \
 --index-ad-columnam='#item+rem+i_zxx+is_zmth+ix_unm49'
+
+    {0} --methodus='cod_ab_index' --cum-columnis=\
+'#item+rem+i_zxx+is_zmth+ix_unm49=\
+DATA_REFERENTIBUS(i1603_45_49,#country+code+v_iso3)'
 
 ------------------------------------------------------------------------------
                             EXEMPLŌRUM GRATIĀ
@@ -281,9 +288,10 @@ class Cli:
             help='For operations related with index (limited subset of '
             'hxlselect cli tool. '
             'Mostly used to help with scripts',
+            action='append',
             dest='ex_selectis',
             # nargs='?',
-            nargs='*',
+            # nargs='*',
             # required=True
             default=None
         )
@@ -292,9 +300,10 @@ class Cli:
             '--cum-columnis',
             help='Add columns. '
             'Mostly used to help with scripts',
+            action='append',
             dest='cum_columnis',
-            # nargs='?',
-            nargs='*',
+            nargs='?',
+            # nargs='*',
             # required=True
             default=None
         )
@@ -307,20 +316,21 @@ class Cli:
             dest='cum_filtris',
             # nargs='?',
             nargs='*',
+            action='append',
             # required=True
             default=None
         )
 
-        memoria_internalo.add_argument(
-            '--per-columnas',
-            help='Apply filters to existing columns. '
-            'Mostly used to help with scripts',
-            dest='per_columnas',
-            # nargs='?',
-            nargs='*',
-            # required=True
-            default=None
-        )
+        # memoria_internalo.add_argument(
+        #     '--per-columnas',
+        #     help='Apply filters to existing columns. '
+        #     'Mostly used to help with scripts',
+        #     dest='per_columnas',
+        #     # nargs='?',
+        #     nargs='*',
+        #     # required=True
+        #     default=None
+        # )
 
         # - index, s, m, nominativus, https://en.wiktionary.org/wiki/index#Latin
         # - praeparātiōnī, s, f, dativus
@@ -477,7 +487,7 @@ class Cli:
             _infile = pyargs.infile
             _stdin = False
         else:
-            if pyargs.methodus.find(('xlsx', 'de_librario')) > -1:
+            if pyargs.methodus in ['xlsx', 'de_librario']:
                 raise ValueError(
                     'stdin not implemented for {0} input'.format(
                         pyargs.methodus))
@@ -510,16 +520,12 @@ class Cli:
                     caput, data = hxltm_ex_selectis(caput, data, op)
 
             if pyargs.cum_columnis:
-                cum_columnis = pyargs.cum_columnis
+                # print('oi')
+                # print(pyargs.cum_columnis)
+                # per_columnas = pyargs.cum_columnis
                 # print('ex_selectis', ex_selectis)
-                for op in cum_columnis:
-                    caput, data = hxltm_cum_columnis(caput, data, op)
-
-            if pyargs.per_columnas:
-                per_columnas = pyargs.per_columnas
-                # print('ex_selectis', ex_selectis)
-                for op in per_columnas:
-                    caput, data = hxltm_per_columnas(caput, data, op)
+                for opus in pyargs.cum_columnis:
+                    caput, data = hxltm_cum_columna(caput, data, opus)
 
             if pyargs.cum_filtris:
                 cum_filtris = pyargs.cum_filtris
