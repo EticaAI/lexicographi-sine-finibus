@@ -31,6 +31,8 @@
 
 
 import csv
+from genericpath import exists
+import json
 # import importlib
 import os
 # from pathlib import Path
@@ -1399,23 +1401,71 @@ def hxltm_data_referentibus(data_referentibus_index: str, columna: str):
     return _caput_columna, _data_columna
 
 
-HXLTM_OPERA_C = {
-    'HO_H1H2': '__HXLTM_OPERA_H1H2__',  # both are local variables
-    'HO_L1H2': '__HXLTM_OPERA_L1H2__',   # First is literal, second is column,
-    'HO_H1L2': '__HXLTM_OPERA_H1L2__'   # Second is literal, first is column
-}
+def hxltm__est_data_referentibus(*options):
+    dr_regex = r'(DATA_REFERENTIBUS)\(\s*(?P<data_referentibus>.*)\s*;\s*(?P<c3>.*)\s*\)'
+    resultatum = set()
+    for options_l1 in options:
+        # print(options_l1)
+        if not options_l1:
+            continue
+        if not isinstance(options_l1, list):
+            options_l1 = [options_l1]
+        for options_l2 in options_l1:
+            # print('options_l2', options_l2)
+            _regex_result = re.search(dr_regex, options_l2)
+            # print('options_l2 _regex_result', _regex_result)
+            if _regex_result:
+                resultatum.add(_regex_result.group('data_referentibus'))
+
+    return resultatum
 
 
-# https://docs.python.org/3/library/operator.html
-# https://en.wiktionary.org/wiki/opus#Latin
-HXLTM_OPERA_2 = {
-    '==': lambda a1, b2: a1 == b2,
-    '!=': lambda a1, b2: a1 != b2,
-    '>': lambda a1, b2: a1 > b2,
-    '<': lambda a1, b2: a1 < b2,
-    '>=': lambda a1, b2: a1 >= b2,
-    '<=': lambda a1, b2: a1 <= b2,
-}
+def hxltm__quod_data_referentibus(index_nomini: str):
+    _path = '{0}/999999/0/{1}.index.json'.format(
+        NUMERORDINATIO_BASIM,
+        index_nomini,
+    )
+    if not exists(_path):
+        raise FileNotFoundError(
+            '{0} not ready. Please use {1}. [{2}]'.format(
+                index_nomini,
+                "--methodus='index_praeparationi'",
+                _path))
+    with open(_path, "r") as archivum:
+        data = json.load(archivum)
+        return data
+
+
+def hxltm__data_referentibus(
+    # al1: str, b2: str,
+    significatus: dict,
+    caput: list = None, linea: list = None, data_referentibus: dict = None
+):
+    # print(significatus)
+    # print('TODO hxltm__data_referentibus')
+    if not significatus['data_referentibus'] in data_referentibus:
+        raise FileNotFoundError(
+            '{0} not ready. Please use {1}. [{2}]'.format(
+                significatus['data_referentibus'],
+                "--methodus='index_praeparationi'"))
+
+    res = linea[significatus['b2h_indici']]
+    if res in data_referentibus[significatus['data_referentibus']]:
+        return data_referentibus[significatus['data_referentibus']][res]
+    else:
+        # @TODO maybe allow raise error instead of return empty
+        return ''
+    # print(res)
+
+    # if significatus['a1'] in caput and significatus['b2'] in caput:
+    #     return (linea[caput.index(significatus['a1'])] +
+    #             linea[caput.index(significatus['b2'])])
+    # if significatus['a1'] in caput and significatus['b2'] in caput:
+    #     return (linea[caput.index(significatus['a1'])] +
+    #             linea[caput.index(significatus['b2'])])
+    # else:
+    #     raise SyntaxError('{0} <{1}>? <{2}>'.format(
+    #         'hxltm__data_referentibus', significatus, caput))
 
 
 def hxltm__concat(
@@ -1473,7 +1523,22 @@ def hxltm__concat_suffix(
     return ''
 
 
+# https://docs.python.org/3/library/operator.html
+# https://en.wiktionary.org/wiki/opus#Latin
+HXLTM_OPERA_2 = {
+    '==': lambda a1, b2: a1 == b2,
+    '!=': lambda a1, b2: a1 != b2,
+    '>': lambda a1, b2: a1 > b2,
+    '<': lambda a1, b2: a1 < b2,
+    '>=': lambda a1, b2: a1 >= b2,
+    '<=': lambda a1, b2: a1 <= b2,
+}
+
 HXLTM_OPERA_2_EX = {
+
+    # both are existing data columns
+    r'(DATA_REFERENTIBUS)\(\s*(?P<data_referentibus>.*)\s*;\s*(?P<b2h>.*)\s*\)': hxltm__data_referentibus,
+
     # Too generic
     # r'(CONCAT)\((?P<a1>.*)\s?;\s?(?P<b2>.*)\)': lambda a1: print('manual'),
 
@@ -1508,9 +1573,15 @@ HXLTM_OPERA_1 = {
     # referentibus, pl, m/f/n, dativus, https://en.wiktionary.org/wiki/referens
     # data, pl, n, nominativus, https://en.wiktionary.org/wiki/datum#Latin
     # https://regex101.com/r/3J42kO/1
-    r'(DATA_REFERENTIBUS)\((?P<dr1>.*),(?P<a1>.*)\)': \
-    lambda dra1, a1: hxltm_data_referentibus(dra1, a1),
+    r'(DATA_REFERENTIBUS)\(\s*(?P<data_referentibus>.*)\s*;\s*(?P<c3>.*)\s*\)': "<complex>",
 }
+
+# CONCAT(#meta+a1;#item+a2)
+# CONCAT(#meta+a1;"teste after")
+# CONCAT("pre";#item+a2)
+# #country+code+v_unm49=DATA_REFERENTIBUS(i1603_45_49; #country+code+v_iso3 )
+# CONCAT("BR";DATA_REFERENTIBUS(i1603_45_49; #country+code+v_iso3 ))
+# #adm2+code+v_pcode=DATA_REFERENTIBUS(i1603_45_49; #country+code+v_iso3 )
 
 HXLTM_OPERA_X = {
     r'(?P<a1>.*)=(?P<b2>.*)': lambda a1, b3: print('manual'),
@@ -1646,7 +1717,9 @@ def hxltm__quaestio_significatis_ii(quaestio: str, caput: list = None) -> dict:
     return significātus
 
 
-def hxltm__quaestio_significatis_x(quaestio: str, caput: list = None) -> dict:
+def hxltm__quaestio_significatis_x(
+    quaestio: str, caput: list = None, data_referentibus: dict = None
+) -> dict:
     """hxltm__quaestio_significatis_i parse a assigment (like add columns)
 
     Args:
@@ -1664,13 +1737,14 @@ def hxltm__quaestio_significatis_x(quaestio: str, caput: list = None) -> dict:
     #     https://en.wiktionary.org/wiki/significatus
     significātus = {
         'opus': None,
-        'opus_rebus': [],
+        # 'opus_rebus': [],
+        'data_referentibus': None,
         'a1': '',
         'a1_indici': None,
-        'a1_operi': None,  # HXLTM_OPERA_1 lambda lambda function call
+        # 'a1_operi': None,
         'b2': '',
         'b2_indici': None,
-        'b2_operi': None,  # HXLTM_OPERA_1 lambda lambda function call
+        # 'b2_operi': None,
         '_datetime': False,
         '__len_before': len(caput),
         '__len_after': len(caput),
@@ -1685,7 +1759,7 @@ def hxltm__quaestio_significatis_x(quaestio: str, caput: list = None) -> dict:
             significātus['opus'] = _lambda
             for _nomen, _res in _regex_result.groupdict().items():
                 significātus[_nomen] = _res
-                significātus['opus_rebus'].append(_nomen)
+                # significātus['opus_rebus'].append(_nomen)
 
     if significātus['a1'].startswith('#'):
         significātus['_datetime'] = significātus['a1'].startswith('#date')
@@ -1713,12 +1787,23 @@ def hxltm__quaestio_significatis_x(quaestio: str, caput: list = None) -> dict:
             # print(regex_str)
             _regex_result = re.search(regex_str, quaestio)
             if _regex_result:
-                # print('foi', _regex_result)
-                # significātus['a1_operi'] = _lambda
                 significātus['opus'] = _lambda
                 for _nomen, _res in _regex_result.groupdict().items():
                     significātus[_nomen] = _res.strip()
-                    significātus['opus_rebus'].append(_nomen.strip())
+                    # significātus['opus_rebus'].append(_nomen.strip())
+                if _regex_result.group('b2h'):
+                    if caput.index(significātus['b2h']) > -1:
+                        significātus['b2h_indici'] = caput.index(
+                            significātus['b2h'])
+                    else:
+                        SyntaxError('{0} <{1}> <{2}>'.format(
+                            significātus['b2h'], quaestio, caput))
+                    # print(caput)
+                    # significātus['b2h_incici'] = \
+                    #     caput.index(significātus['b2h'])
+                # print('foi', _regex_result)
+                # print('foi', _regex_result.groupdict().items())
+                # significātus['a1_operi'] = _lambda
 
     # print(significātus)
     # raise NotImplementedError(significātus)
@@ -1788,7 +1873,8 @@ def hxltm_carricato(
 
 
 def hxltm_cum_columna(
-        caput: list, data: list, quaestio: str) -> Tuple[list, list]:
+    caput: list, data: list, quaestio: str, data_referentibus: dict = None
+) -> Tuple[list, list]:
     """hxltm_cum_columna add new column (variables)
 
     Trivia:
@@ -1799,18 +1885,20 @@ def hxltm_cum_columna(
         caput (list): _description_
         data (list): _description_
         quaestio (str): _description_
+        data_referentibus (dict): Pre-loaded external referential data
 
     Returns:
         Tuple[list, list]: _description_
     """
     # https://en.wiktionary.org/wiki/columna#Latin
-    significātus = hxltm__quaestio_significatis_x(quaestio, caput)
+    significātus = hxltm__quaestio_significatis_x(
+        quaestio, caput, data_referentibus)
 
     caput_novo = caput
     caput_novo.append(significātus['a1'])
     data_novis = []
 
-    data_referentibus = {}
+    # data_referentibus = {}
 
     # print('significātus', significātus)
     # if significātus['opus']:
@@ -1826,7 +1914,8 @@ def hxltm_cum_columna(
             res = significātus['opus'](
                 significātus,
                 caput_novo,
-                linea_novae
+                linea_novae,
+                data_referentibus
             )
         # res = significātus['b2']
         # if significātus['b2_indici'] is not None:
@@ -1849,7 +1938,8 @@ def hxltm_cum_columna(
 
 
 def hxltm_cum_filtro(
-        caput: list, data: list, quaestio: list) -> Tuple[list, list]:
+        caput: list, data: list, quaestio: list, data_referentibus: dict = None
+) -> Tuple[list, list]:
     """hxltm_cum_filtris Apply filters for existing columns.
 
     Trivia:
@@ -1860,7 +1950,8 @@ def hxltm_cum_filtro(
     Args:
         caput (list): _description_
         data (list): _description_
-        columnae (list): _description_
+        quaestio (list): The query
+        data_referentibus (dict): Pre-loaded external referential data
 
     Returns:
         Tuple[list, list]: _description_
@@ -1879,7 +1970,8 @@ def hxltm_cum_filtro(
 
 
 def hxltm_ex_columnis(
-        caput: list, data: list, columnae: list) -> Tuple[list, list]:
+        caput: list, data: list, columnae: list, data_referentibus: dict = None
+) -> Tuple[list, list]:
     """hxltm_ex_columnis cut columns (variables)
 
     Trivia:
@@ -1890,6 +1982,7 @@ def hxltm_ex_columnis(
         caput (list): _description_
         data (list): _description_
         columnae (list): _description_
+        data_referentibus (dict): Pre-loaded external referential data
 
     Returns:
         Tuple[list, list]: _description_
@@ -1912,13 +2005,15 @@ def hxltm_ex_columnis(
 
 
 def hxltm_ex_selectis(
-        caput: list, data: list, quaestio: str) -> Tuple[list, list]:
+        caput: list, data: list, quaestio: str, data_referentibus: dict = None
+) -> Tuple[list, list]:
     """hxltm_ex_selectis select rows (lines of data)
 
     Args:
         caput (list): _description_
         data (list): _description_
-        coluquaestiomnae (list): The query
+        quaestio (list): The query
+        data_referentibus (dict): Pre-loaded external referential data
 
     Returns:
         Tuple[list, list]: _description_

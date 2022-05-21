@@ -46,6 +46,9 @@ import yaml
 from L999999999_0 import (
     CodAbTabulae,
     csv_imprimendo,
+    # hxltm__data_referentibus,
+    hxltm__est_data_referentibus,
+    hxltm__quod_data_referentibus,
     hxltm_carricato,
     NUMERORDINATIO_BASIM,
     hxltm_cum_columna,
@@ -145,7 +148,7 @@ Index preparation (warn up cache) . . . . . . . . . . . . . . . . . . . . . . .
 
     {0} --methodus='cod_ab_index' --cum-columnis=\
 '#item+rem+i_zxx+is_zmth+ix_unm49=\
-DATA_REFERENTIBUS(i1603_45_49,#country+code+v_iso3)'
+DATA_REFERENTIBUS(i1603_45_49;#country+code+v_iso3)'
 
 ------------------------------------------------------------------------------
                             EXEMPLŌRUM GRATIĀ
@@ -519,11 +522,28 @@ class Cli:
             elif pyargs.methodus.startswith('cod_ab_index'):
                 caput, data = hxltm_carricato(COD_AB_INDEX)
 
+            est_data_referentibus = hxltm__est_data_referentibus(
+                pyargs.ex_selectis,
+                pyargs.cum_columnis,
+                pyargs.cum_filtris,
+                pyargs.ex_columnis
+            )
+
+            data_referentibus = {}
+            if est_data_referentibus:
+                for item in est_data_referentibus:
+                    data_referentibus[item] = \
+                        hxltm__quod_data_referentibus(item)
+
+            # print('est_data_referentibus', est_data_referentibus)
+            # print('data_referentibus', data_referentibus.keys())
+
             if pyargs.ex_selectis:
                 ex_selectis = pyargs.ex_selectis
                 # print('ex_selectis', ex_selectis)
-                for op in ex_selectis:
-                    caput, data = hxltm_ex_selectis(caput, data, op)
+                for opus in ex_selectis:
+                    caput, data = hxltm_ex_selectis(
+                        caput, data, opus, data_referentibus)
 
             if pyargs.cum_columnis:
                 # print('oi')
@@ -531,17 +551,20 @@ class Cli:
                 # per_columnas = pyargs.cum_columnis
                 # print('ex_selectis', ex_selectis)
                 for opus in pyargs.cum_columnis:
-                    caput, data = hxltm_cum_columna(caput, data, opus)
+                    caput, data = hxltm_cum_columna(
+                        caput, data, opus, data_referentibus)
 
             if pyargs.cum_filtris:
                 cum_filtris = pyargs.cum_filtris
-                for op in cum_filtris:
-                    caput, data = hxltm_cum_filtro(caput, data, op)
+                for opus in cum_filtris:
+                    caput, data = hxltm_cum_filtro(
+                        caput, data, opus, data_referentibus)
 
             # if pyargs.ex_metadatis:
             if pyargs.ex_columnis:
-                ex_columnis = pyargs.ex_columnis.split(',')
-                caput, data = hxltm_ex_columnis(caput, data, ex_columnis)
+                opus = pyargs.ex_columnis.split(',')
+                caput, data = hxltm_ex_columnis(
+                        caput, data, opus, data_referentibus)
 
             if pyargs.methodus == 'index_praeparationi':
 
