@@ -36,7 +36,7 @@ import os
 # from pathlib import Path
 import re
 import sys
-from datetime import date
+from datetime import date, datetime
 from typing import (
     List,
     Tuple,
@@ -1432,7 +1432,7 @@ def hxltm__quaestio_significatis_i(quaestio: str, caput: list = None) -> dict:
         'opus_rebus': [],
         'a1': '',
         'a1_indici': None,
-        'a1_operi': None,  # HXLTM_OPERA_1 lambda lambda function call
+        # 'a1_operi': None,  # HXLTM_OPERA_1 lambda lambda function call
         '_datetime': False,
     }
 
@@ -1652,41 +1652,16 @@ def hxltm_cum_filtro(
         Tuple[list, list]: _description_
     """
     # https://en.wiktionary.org/wiki/columna#Latin
-    index_columnae = []
-    _data = []
-    filtrum = None
 
-    hxltm__quaestio_significatis_i(quaestio, caput)
+    significātus = hxltm__quaestio_significatis_i(quaestio, caput)
 
-    for regex_str, _lambda in HXLTM_OPERA_1.items():
-        print(regex_str)
-        _regex_result = re.search(regex_str, quaestio)
-        if _regex_result:
-            filtrum = _lambda
-            print('done', _regex_result, _regex_result.groupdict(), filtrum)
-        # _regex_parsed = regex_str.match(quaestio)
-        # print(_regex_result, _regex_result.group('a1'), regex_str)
+    # @TODO: maybe implement only appli filters if match a rule
+    for _index, linea in enumerate(data):
+        data[_index][significātus['a1_indici']] = significātus['opus'](
+            data[_index][significātus['a1_indici']]
+        )
 
-    if filtrum is None:
-        raise SyntaxError('{0}? quaestio [{1}] [{2}]'.format(
-            'hxltm_cum_filtro',
-            quaestio,
-            HXLTM_OPERA_1.keys()
-        ))
-
-    raise NotImplementedError('@TODO hxltm_cum_filtro')
-    # print(caput, columnae)
-    for item in columnae:
-        index_columnae.append(caput.index(item))
-
-    for linea in data:
-        _linea = []
-        for index in index_columnae:
-            _linea.append(linea[index])
-        _data.append(_linea)
-
-    # _caput = columnae
-    return columnae, _data
+    return caput, data
 
 
 def hxltm_ex_columnis(
@@ -1786,7 +1761,7 @@ def hxltm_per_columnas(
     # https://en.wiktionary.org/wiki/columna#Latin
     index_columnae = []
     _data = []
-    raise NotImplementedError
+    raise NotImplementedError('@TODO implement add new column features')
     # print(caput, columnae)
     for item in columnae:
         index_columnae.append(caput.index(item))
@@ -1801,7 +1776,8 @@ def hxltm_per_columnas(
     return columnae, _data
 
 
-def qhxl_hxlhashtag_2_bcp47(hxlhashtag: str, hxlstd11_compat: bool = False) -> str:
+def qhxl_hxlhashtag_2_bcp47(
+        hxlhashtag: str, hxlstd11_compat: bool = False) -> str:
     """qhxl_hxlhashtag_2_bcp47
 
     (try) to convert full HXL hashtag to BCP47
@@ -1854,6 +1830,30 @@ def qhxl_hxlhashtag_2_bcp47(hxlhashtag: str, hxlstd11_compat: bool = False) -> s
 
     return bcp47_simplici
 
+def numerordinatio_neo_separatum(
+        numerordinatio: str, separatum: str = "_") -> str:
+    resultatum = ''
+    resultatum = numerordinatio.replace('_', separatum)
+    resultatum = resultatum.replace('/', separatum)
+    resultatum = resultatum.replace(':', separatum)
+    # TODO: add more as need
+    return resultatum
+
+
+def numerordinatio_ordo(numerordinatio: str) -> int:
+    normale = numerordinatio_neo_separatum(numerordinatio, '_')
+    return (normale.count('_') + 1)
+
+
+def numerordinatio_progenitori(
+        numerordinatio: str, separatum: str = "_") -> int:
+    # prōgenitōrī, s, m, dativus, https://en.wiktionary.org/wiki/progenitor
+    normale = numerordinatio_neo_separatum(numerordinatio, separatum)
+    _parts = normale.split(separatum)
+    _parts = _parts[:-1]
+    if len(_parts) == 0:
+        return "0"
+    return separatum.join(_parts)
 
 def qhxl(rem: dict, query: Union[str, list]):
     if isinstance(query, str):
@@ -2068,7 +2068,8 @@ class XLSXSimplici:
                     textum = row[col_index].value
 
                     if textum:
-                        if isinstance(textum, datetime.datetime):
+                        # if isinstance(textum, datetime.datetime):
+                        if isinstance(textum, datetime):
                             textum = str(textum).replace(' 00:00:00', '')
                         linea.append(textum)
                     else:

@@ -93,6 +93,8 @@ __EPILOGUM__ = """
                             EXEMPLŌRUM GRATIĀ
 ------------------------------------------------------------------------------
 
+
+Work with local COD-AB index . . . . . . . . . . . . . . . . . . . . . . . . .
     {0} --methodus='cod_ab_index'
 
     {0} --methodus='cod_ab_index' --ex-columnis='#country+code+v_iso3'
@@ -107,11 +109,21 @@ __EPILOGUM__ = """
     {0} --methodus='cod_ab_index' --ex-columnis='#country+code+v_iso3' \
 --per-columnas='LOWER(#country+code+v_iso3)'
 
+Process XLSXs from external sources . . . . . . . . . . . . . . . . . . . . . .
    {0} --methodus=xlsx_metadata 999999/1603/45/16/xlsx/ago.xlsx
    {0} --methodus=xlsx_ad_csv --ordines=2 999999/1603/45/16/xlsx/ago.xlsx
 
     cat 999999/1603/45/16/csv/AGO_2.csv | \
 {0} --objectivum-formato=text/csv
+
+Generic HXLTM processing . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+(equivalent commands)
+    {0} --methodus=de_librario 1603_1_1
+    {0} --methodus=de_hxltm_ad_hxltm 1603/1/1/1603_1_1.no1.tm.hxl.csv
+    cat 1603/1/1/1603_1_1.no1.tm.hxl.csv | {0} --methodus=de_hxltm_ad_hxltm
+
+    {0} --methodus=de_hxltm_ad_hxltm 1603/1/1/1603_1_1.no1.tm.hxl.csv \
+--ex-selectis='#item+conceptum+codicem==1'
 
 
 ------------------------------------------------------------------------------
@@ -182,6 +194,8 @@ class Cli:
                 # 'pcode_ex_xlsx',
                 # 'pcode_ex_csv',
                 'cod_ab_index',
+                'de_hxltm_ad_hxltm',  # load main file directly
+                'de_librario',  # load main file by number (uses 1603)
                 'xlsx_metadata',
                 'xlsx_ad_csv',
                 'xlsx_ad_hxl',
@@ -412,13 +426,28 @@ class Cli:
             _infile = pyargs.infile
             _stdin = False
         else:
-            if pyargs.methodus.find('xlsx') > -1:
-                raise ValueError('stdin not implemented for XLSX input')
+            if pyargs.methodus.find(('xlsx', 'de_librario')) > -1:
+                raise ValueError(
+                    'stdin not implemented for {0} input'.format(
+                        pyargs.methodus))
             _infile = None
             _stdin = True
 
-        if pyargs.methodus.startswith('cod_ab_index'):
-            caput, data = hxltm_carricato(COD_AB_INDEX)
+        if pyargs.methodus.startswith(
+                ('de_hxltm_ad_hxltm', 'de_librario', 'cod_ab_index')):
+            # Decide which main file to load.
+            if pyargs.methodus.startswith('de_librario'):
+                _path = '{0}/{1}/{2}.no1.tm.hxl.csv'.format(
+                    NUMERORDINATIO_BASIM,
+                    numerordinatio_neo_separatum(_infile, '/'),
+                    numerordinatio_neo_separatum(_infile, '_')
+                )
+                # caput, data = hxltm_carricato(_infile, _stdin)
+                caput, data = hxltm_carricato(_path)
+            elif pyargs.methodus.startswith('de_hxltm_ad_hxltm'):
+                caput, data = hxltm_carricato(_infile, _stdin)
+            elif pyargs.methodus.startswith('cod_ab_index'):
+                caput, data = hxltm_carricato(COD_AB_INDEX)
 
             if pyargs.ex_selectis:
                 ex_selectis = pyargs.ex_selectis
@@ -449,7 +478,7 @@ class Cli:
                 caput, data = hxltm_ex_columnis(caput, data, ex_columnis)
 
             csv_imprimendo(caput, data)
-            # raise ValueError('@TODO ...')
+
             return self.EXIT_OK
 
         if pyargs.methodus.startswith('xlsx'):
