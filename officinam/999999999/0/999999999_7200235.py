@@ -53,7 +53,7 @@ from L999999999_0 import (
     NUMERORDINATIO_BASIM,
     hxltm_cum_columna,
     hxltm_cum_filtro,
-    hxltm_ex_columnis,
+    hxltm_sine_columnis,
     hxltm_ex_selectis,
     hxltm_index_praeparationi,
     qhxl_hxlhashtag_2_bcp47,
@@ -99,12 +99,12 @@ __EPILOGUM__ = """
 Work with local COD-AB index . . . . . . . . . . . . . . . . . . . . . . . . .
     {0} --methodus='cod_ab_index'
 
-    {0} --methodus='cod_ab_index' --ex-columnis='#country+code+v_iso3'
+    {0} --methodus='cod_ab_index' --sine-columnis='#country+code+v_iso3'
 
-    {0} --methodus='cod_ab_index' --ex-columnis='#country+code+v_iso3' \
+    {0} --methodus='cod_ab_index' --sine-columnis='#country+code+v_iso3' \
 --cum-filtris='LOWER(#country+code+v_iso3)'
 
-    {0} --methodus='cod_ab_index' --ex-columnis='#country+code+v_iso3' \
+    {0} --methodus='cod_ab_index' --sine-columnis='#country+code+v_iso3' \
 --ex-selectis='#date+created<2010-01-01' \
 --ex-selectis='#date+updated>2020-01-01'
 
@@ -128,7 +128,9 @@ Generic HXLTM processing . . . . . . . . . . . . . . . . . . . . . . . . . . . .
     {0} --methodus='de_librario' 1603_1_6 \
 --cum-columnis='#meta+novum=#item+conceptum+codicem'
     {0} --methodus='de_librario' 1603_1_6 \
---cum-columnis='#meta+novum=CONCAT("PRE";#item+conceptum+codicem)'
+--cum-columnis='#meta+novum=CONCAT("PREFIX";#item+conceptum+codicem)'
+    {0} --methodus='de_librario' 1603_1_6 \
+--cum-columnis='#meta+novum=CONCAT(#item+conceptum+codicem;"SUFFIX")'
 
 
 (Some other examples know to work (at time of testing))
@@ -142,7 +144,7 @@ Index preparation (warn up cache) . . . . . . . . . . . . . . . . . . . . . . .
 (this will pre-create a key-value index at 999999/0/i1603_45_49.index.json)
     {0} --methodus=index_praeparationi 1603_45_49 \
 --index-nomini=i1603_45_49 \
---ex-columnis='#item+rem+i_zxx+is_zmth+ix_unm49,\
+--sine-columnis='#item+rem+i_zxx+is_zmth+ix_unm49,\
 #item+rem+i_zxx+is_latn+ix_iso3166p1a2,#item+rem+i_zxx+is_latn+ix_iso3166p1a3' \
 --index-ad-columnam='#item+rem+i_zxx+is_zmth+ix_unm49'
 
@@ -282,11 +284,11 @@ class Cli:
         # - ex (+ ablativus), https://en.wiktionary.org/wiki/ex#Latin
         # -columnīs, f, pl, ablativus, https://en.wiktionary.org/wiki/columna
         memoria_internalo.add_argument(
-            '--ex-columnis',
+            '--sine-columnis',
             help='For operations related with metadata (nested object) '
             'or with index, this option can be used to filter result. '
             'Mostly used to help with scripts',
-            dest='ex_columnis',
+            dest='sine_columnis',
             nargs='?',
             # required=True
             default=None
@@ -526,7 +528,7 @@ class Cli:
                 pyargs.ex_selectis,
                 pyargs.cum_columnis,
                 pyargs.cum_filtris,
-                pyargs.ex_columnis
+                pyargs.sine_columnis
             )
 
             data_referentibus = {}
@@ -561,9 +563,9 @@ class Cli:
                         caput, data, opus, data_referentibus)
 
             # if pyargs.ex_metadatis:
-            if pyargs.ex_columnis:
-                opus = pyargs.ex_columnis.split(',')
-                caput, data = hxltm_ex_columnis(
+            if pyargs.sine_columnis:
+                opus = pyargs.sine_columnis.split(',')
+                caput, data = hxltm_sine_columnis(
                         caput, data, opus, data_referentibus)
 
             if pyargs.methodus == 'index_praeparationi':
