@@ -127,6 +127,7 @@ Generic HXLTM processing . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 --ex-selectis='#item+conceptum+codicem==1'
 
 Index preparation (warn up cache) . . . . . . . . . . . . . . . . . . . . . . .
+(this will pre-create a key-value index at 999999/0/i1603_45_49.index.json)
     {0} --methodus=index_praeparationi 1603_45_49 \
 --index-nomini=i1603_45_49 \
 --ex-columnis='#item+rem+i_zxx+is_zmth+ix_unm49,\
@@ -532,10 +533,29 @@ class Cli:
 
             if pyargs.methodus == 'index_praeparationi':
 
-                caput, data = hxltm_index_praeparationi(caput, data)
-                # ex_columnis = pyargs.ex_columnis.split(',')
-                # caput, data = hxltm_ex_columnis(caput, data, ex_columnis)
-                print('TODO')
+                if pyargs.index_nomini:
+                    index_nomini = pyargs.index_nomini
+                else:
+                    # In this case, _infile is just a string like 1603_45_49
+                    index_nomini = 'i{0}'.format(str(_infile))
+
+                data_json = hxltm_index_praeparationi(
+                    caput, data, pyargs.index_ad_columnam)
+
+                data_json_str = json.dumps(
+                    data_json, indent=4, sort_keys=False, ensure_ascii=False)
+
+                # print(data_json_str)
+
+                _path = '{0}/999999/0/{1}.index.json'.format(
+                    NUMERORDINATIO_BASIM,
+                    index_nomini,
+                )
+
+                with open(_path, "w") as file1:
+                    file1.write(data_json_str)
+                print('index: {0}'.format(_path))
+                return self.EXIT_OK
 
             csv_imprimendo(caput, data)
 

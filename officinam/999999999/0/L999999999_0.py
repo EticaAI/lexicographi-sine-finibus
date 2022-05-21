@@ -1743,7 +1743,9 @@ def hxltm_ex_selectis(
 
 
 def hxltm_index_praeparationi(
-        caput: list, data: list, index_ad_columnam: str) -> dict:
+    caput: list, data: list,
+    index_ad_columnam: str = None, strictum: bool = False
+) -> dict:
     """hxltm_index_praeparationi add new columns (variables)
 
     Trivia:
@@ -1755,25 +1757,55 @@ def hxltm_index_praeparationi(
         caput (list): _description_
         data (list): _description_
         index_ad_columnam (str): _description_
+        strictum (str): raise errors if same source keys can point to different
+                        objective indexes.
 
     Returns:
         dict: _description_
     """
-    # https://en.wiktionary.org/wiki/columna#Latin
-    index_columnae = []
-    _data = []
-    raise NotImplementedError
-    # print(caput, columnae)
-    for item in columnae:
-        index_columnae.append(caput.index(item))
+
+    if strictum:
+        raise NotImplementedError('{0} strictum'.format(
+            'hxltm_index_praeparationi'))
+
+    if not index_ad_columnam:
+        index_ad_columnam = 0
+    else:
+        index_ad_columnam = caput.index(index_ad_columnam)
+
+    _data_json = {}
+    data_json = {}
 
     for linea in data:
-        _linea = []
-        for index in index_columnae:
-            _linea.append(linea[index])
-        _data.append(_linea)
+        _clavis_ad = linea[index_ad_columnam]
+        _clavis_ex = set()
+        for res in linea:
+            if res:
+                _clavis_ex.add(res)
+        for item in _clavis_ex:
+            _data_json[item] = _clavis_ad
 
-    # _caput = columnae
+    _claves_n = []
+    _claves_l = []
+    _clāvēs_nl = []
+
+    for item in _data_json.keys():
+        if item.isnumeric():
+            _claves_n.append(item)
+        else:
+            _claves_l.append(item)
+
+    if len(_claves_n) > 0:
+        _clāvēs_nl.extend(sorted(_claves_n, key=lambda x: int(x)))
+
+    if len(_claves_l) > 0:
+        _claves_l.sort(key=lambda item: (len(item), item))
+        _clāvēs_nl.extend(_claves_l)
+
+    for item in _clāvēs_nl:
+        data_json[item] = _data_json[item]
+
+    return data_json
 
 
 def hxltm_per_columnas(
