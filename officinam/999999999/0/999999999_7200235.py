@@ -121,6 +121,12 @@ Generic HXLTM processing . . . . . . . . . . . . . . . . . . . . . . . . . . . .
     {0} --methodus=de_hxltm_ad_hxltm 1603/1/1/1603_1_1.no1.tm.hxl.csv \
 --ex-selectis='#item+conceptum+codicem==1'
 
+    {0} --methodus='de_librario' 1603_1_6 --cum-columnis='#meta+novum=test123'
+    {0} --methodus='de_librario' 1603_1_6 \
+--cum-columnis='#meta+novum=#item+conceptum+codicem'
+    {0} --methodus='de_librario' 1603_1_6 \
+--cum-columnis='#meta+novum=CONCAT("PRE";#item+conceptum+codicem)'
+
 
 (Some other examples know to work (at time of testing))
     {0} --methodus=de_librario 1603_45_49 \
@@ -134,7 +140,7 @@ Index preparation (warn up cache) . . . . . . . . . . . . . . . . . . . . . . .
     {0} --methodus=index_praeparationi 1603_45_49 \
 --index-nomini=i1603_45_49 \
 --ex-columnis='#item+rem+i_zxx+is_zmth+ix_unm49,\
-# item+rem+i_zxx+is_latn+ix_iso3166p1a2,#item+rem+i_zxx+is_latn+ix_iso3166p1a3' \
+#item+rem+i_zxx+is_latn+ix_iso3166p1a2,#item+rem+i_zxx+is_latn+ix_iso3166p1a3' \
 --index-ad-columnam='#item+rem+i_zxx+is_zmth+ix_unm49'
 
     {0} --methodus='cod_ab_index' --cum-columnis=\

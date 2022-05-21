@@ -1399,6 +1399,13 @@ def hxltm_data_referentibus(data_referentibus_index: str, columna: str):
     return _caput_columna, _data_columna
 
 
+HXLTM_OPERA_C = {
+    'HO_H1H2': '__HXLTM_OPERA_H1H2__',  # both are local variables
+    'HO_L1H2': '__HXLTM_OPERA_L1H2__',   # First is literal, second is column,
+    'HO_H1L2': '__HXLTM_OPERA_H1L2__'   # Second is literal, first is column
+}
+
+
 # https://docs.python.org/3/library/operator.html
 # https://en.wiktionary.org/wiki/opus#Latin
 HXLTM_OPERA_2 = {
@@ -1410,12 +1417,97 @@ HXLTM_OPERA_2 = {
     '<=': lambda a1, b2: a1 <= b2,
 }
 
+
+def hxltm__concat(
+    # al1: str, b2: str,
+    significatus: dict,
+    caput: list = None, linea: list = None, data_referentibus: dict = None
+):
+    if significatus['a1'] in caput and significatus['b2'] in caput:
+        return (linea[caput.index(significatus['a1'])] +
+                linea[caput.index(significatus['b2'])])
+    else:
+        raise SyntaxError('{0} <{1}>? <{2}>'.format(
+            'hxltm__concat', significatus, caput))
+
+
+def hxltm__concat_literal(
+    # al1: str, bl2: str,
+    significatus: dict,
+    caput: list = None, linea: list = None, data_referentibus: dict = None
+):
+    return significatus['al1'] + significatus['bl2']
+
+
+def hxltm__concat_prefix(
+    # al1: str, b2: str,
+    significatus: dict,
+    caput: list = None, linea: list = None, data_referentibus: dict = None
+):
+    if significatus['b2'] in caput:
+        # print('bb2', caput.index(significatus['b2']))
+        # if len(linea[caput[significatus['b2']]]) > 0:
+        if len(linea[caput.index(significatus['b2'])]) > 0:
+            return (significatus['al1'] +
+                    linea[caput.index(significatus['b2'])])
+    else:
+        raise SyntaxError('{0} <{1}>? <{2}>'.format(
+            'hxltm__concat_prefix', significatus, caput))
+    return ''
+
+
+def hxltm__concat_suffix(
+    # al1: str, b2: str,
+    significatus: dict,
+    caput: list = None, linea: list = None, data_referentibus: dict = None
+):
+    # print(significatus)
+    # print(caput)
+    if significatus['a1'] in caput:
+        if len(linea[caput.index(significatus['a1'])]) > 0:
+            return (linea[caput.index(significatus['a1'])] +
+                    significatus['bl2'])
+    else:
+        raise SyntaxError('{0} <{1}>? <{2}>'.format(
+            'hxltm__concat_suffix', significatus, caput))
+    return ''
+
+
+HXLTM_OPERA_2_EX = {
+    # Too generic
+    # r'(CONCAT)\((?P<a1>.*)\s?;\s?(?P<b2>.*)\)': lambda a1: print('manual'),
+
+    # both are existing data columns
+    r'(CONCAT)\((?P<a1>#.*)\s?;\s?(?P<b2>#.*)\)': hxltm__concat,
+
+    # Harcoded prefix
+    r'(CONCAT)\(\s*[\"\'](?P<al1>.*)[\"\']\s*;\s*(?P<b2>#.*)\s*\)': hxltm__concat_prefix,
+
+    # Hardcoded suffix
+    r'(CONCAT)\(\s*(?P<a1>#.*)\s*;\s*[\"\'](?P<bl2>.*)[\"\']\s*\)': hxltm__concat_suffix,
+
+    # Harcoded prefix and suffix
+    r'(CONCAT)\(\s*[\"\'](?P<al1>.*)[\"\']\s*;\s*[\"\'](?P<bl2>.*)[\"\']\s*\)': hxltm__concat_literal,
+}
+
+# CONCAT(#meta+a1;#item+a2)
+# CONCAT(#meta+a1;"teste after")
+# CONCAT("pre";#item+a2)
+# CONCAT(#meta+a1 ; #item+a2)
+# CONCAT(#meta+a1 ; "teste after")
+# CONCAT("pre" ; #item+a2)
+# CONCAT("pre" ; "post")
+
 HXLTM_OPERA_1 = {
+    r'(CAPITALIZE)\((?P<a1>.*)\)': lambda a1: str(a1).capitalize(),
     r'(LOWER)\((?P<a1>.*)\)': lambda a1: str(a1).lower(),
     r'(UPPER)\((?P<a1>.*)\)': lambda a1: str(a1).upper(),
+    r'(TITLE)\((?P<a1>.*)\)': lambda a1: str(a1).title(),
+    r'(TRIM)\((?P<a1>.*)\)': lambda a1: str(a1).strip(),
     # ex (+ ablative) https://en.wiktionary.org/wiki/ex#Latin
     # referentibus, pl, m/f/n, dativus, https://en.wiktionary.org/wiki/referens
     # data, pl, n, nominativus, https://en.wiktionary.org/wiki/datum#Latin
+    # https://regex101.com/r/3J42kO/1
     r'(DATA_REFERENTIBUS)\((?P<dr1>.*),(?P<a1>.*)\)': \
     lambda dra1, a1: hxltm_data_referentibus(dra1, a1),
 }
@@ -1588,7 +1680,7 @@ def hxltm__quaestio_significatis_x(quaestio: str, caput: list = None) -> dict:
         # print(regex_str)
         _regex_result = re.search(regex_str, quaestio)
         if _regex_result:
-            print('foi', _regex_result)
+            # print('foi', _regex_result)
             # significātus['a1_operi'] = _lambda
             significātus['opus'] = _lambda
             for _nomen, _res in _regex_result.groupdict().items():
@@ -1597,8 +1689,8 @@ def hxltm__quaestio_significatis_x(quaestio: str, caput: list = None) -> dict:
 
     if significātus['a1'].startswith('#'):
         significātus['_datetime'] = significātus['a1'].startswith('#date')
-        print(significātus['a1'])
-        print(caput)
+        # print(significātus['a1'])
+        # print(caput)
         # if caput.index(significātus['a1']) > -1:
         if significātus['a1'] in caput:
             significātus['a1_indici'] = caput.index(significātus['a1'])
@@ -1616,8 +1708,20 @@ def hxltm__quaestio_significatis_x(quaestio: str, caput: list = None) -> dict:
         else:
             SyntaxError('{0} <{1}> <{2}>'.format(
                 significātus['b2'], quaestio, caput))
+    else:
+        for regex_str, _lambda in HXLTM_OPERA_2_EX.items():
+            # print(regex_str)
+            _regex_result = re.search(regex_str, quaestio)
+            if _regex_result:
+                # print('foi', _regex_result)
+                # significātus['a1_operi'] = _lambda
+                significātus['opus'] = _lambda
+                for _nomen, _res in _regex_result.groupdict().items():
+                    significātus[_nomen] = _res.strip()
+                    significātus['opus_rebus'].append(_nomen.strip())
 
-    raise NotImplementedError(significātus)
+    # print(significātus)
+    # raise NotImplementedError(significātus)
 
     return significātus
 
@@ -1702,21 +1806,46 @@ def hxltm_cum_columna(
     # https://en.wiktionary.org/wiki/columna#Latin
     significātus = hxltm__quaestio_significatis_x(quaestio, caput)
 
-    print('significātus', significātus)
+    caput_novo = caput
+    caput_novo.append(significātus['a1'])
+    data_novis = []
+
+    data_referentibus = {}
+
+    # print('significātus', significātus)
+    # if significātus['opus']:
+    #     # print('test', significātus['opus'])
+    #     test = significātus['opus']("1", "2")
+    #     print('test', test)
+
+    # caput.append(significātus['a1'])
+    for _, linea in enumerate(data):
+        linea_novae = []
+        linea_novae.extend(linea)
+        if significātus['opus']:
+            res = significātus['opus'](
+                significātus,
+                caput_novo,
+                linea_novae
+            )
+        # res = significātus['b2']
+        # if significātus['b2_indici'] is not None:
+        #     res = linea[significātus['b2_indici']]
+        # linea_novae.append(significātus['b2'])
+        linea_novae.append(res)
+        data_novis.append(linea_novae)
+        # data[index] = data[index].append(significātus['a1'])
+
+    # print('significātus', significātus)
     # raise NotImplementedError('{0} {1}'.format(
     #     'hxltm_cum_columna', quaestio))
     # # print(caput, columnae)
     # for item in columnae:
     #     index_columnae.append(caput.index(item))
 
-    # for linea in data:
-    #     _linea = []
-    #     for index in index_columnae:
-    #         _linea.append(linea[index])
-    #     _data.append(_linea)
-
+    # raise NotImplementedError(data_novis)
     # _caput = columnae
-    return caput, data
+    return caput_novo, data_novis
 
 
 def hxltm_cum_filtro(
