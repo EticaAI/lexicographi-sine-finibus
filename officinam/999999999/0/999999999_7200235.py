@@ -52,6 +52,7 @@ from L999999999_0 import (
     hxltm_cum_filtro,
     hxltm_ex_columnis,
     hxltm_ex_selectis,
+    hxltm_index_praeparationi,
     hxltm_per_columnas,
     qhxl_hxlhashtag_2_bcp47,
     XLSXSimplici
@@ -125,6 +126,12 @@ Generic HXLTM processing . . . . . . . . . . . . . . . . . . . . . . . . . . . .
     {0} --methodus=de_hxltm_ad_hxltm 1603/1/1/1603_1_1.no1.tm.hxl.csv \
 --ex-selectis='#item+conceptum+codicem==1'
 
+Index preparation (warn up cache) . . . . . . . . . . . . . . . . . . . . . . .
+    {0} --methodus=index_praeparationi 1603_45_49 \
+--index-nomini=i1603_45_49 \
+--ex-columnis='#item+rem+i_zxx+is_zmth+ix_unm49,\
+# item+rem+i_zxx+is_latn+ix_iso3166p1a2,#item+rem+i_zxx+is_latn+ix_iso3166p1a3' \
+--index-ad-columnam='#item+rem+i_zxx+is_zmth+ix_unm49'
 
 ------------------------------------------------------------------------------
                             EXEMPLŌRUM GRATIĀ
@@ -195,11 +202,14 @@ class Cli:
                 # 'pcode_ex_csv',
                 'cod_ab_index',
                 'de_hxltm_ad_hxltm',  # load main file directly
-                'de_librario',  # load main file by number (uses 1603)
+                # load main file by number (example: 1603_45_49)
+                'de_librario',
                 'xlsx_metadata',
                 'xlsx_ad_csv',
                 'xlsx_ad_hxl',
                 'xlsx_ad_hxltm',
+                # praeparātiōnī https://en.wiktionary.org/wiki/praeparatio#Latin
+                'index_praeparationi',
             ],
             # required=True
             default='cod_ab_index'
@@ -248,7 +258,7 @@ class Cli:
         # https://en.wiktionary.org/wiki/internalis#Latin
         memoria_internalo = parser.add_argument_group(
             "Memoria internālī",
-            '[ --methodus=\'cod_ab_index\' ] '
+            # '[ --methodus=\'cod_ab_index\' ] '
             "Operations to change internal state of tabular internal memory. "
         )
 
@@ -310,6 +320,46 @@ class Cli:
             # required=True
             default=None
         )
+
+        # - index, s, m, nominativus, https://en.wiktionary.org/wiki/index#Latin
+        # - praeparātiōnī, s, f, dativus
+        #   https://en.wiktionary.org/wiki/praeparatio#Latin
+        index_praeparationi = parser.add_argument_group(
+            "Index praeparātiōnī",
+            '[ --methodus=\'index_praeparationi\' ] '
+            "Create a key-value temporary file on disk optimized for "
+            "uses in advance with data manipulation. "
+            "Common use case is to add new columns to final datasets by using "
+            "pre-build indexes where all possible keys would "
+            "be found on real data and then point (the value) to "
+            "what you would want."
+        )
+
+        # ad (+ accusativus) https://en.wiktionary.org/wiki/ad#Latin
+        # columnam, s, f, acc., https://en.wiktionary.org/wiki/columna#Latin
+        index_praeparationi.add_argument(
+            '--index-ad-columnam',
+            help='Column the index will point to. means both file on temporary directory '
+            ' and option to reference on transformations. ',
+            dest='index_ad_columnam',
+            nargs='?',
+            # required=True
+            default='#item+conceptum+codicem'
+        )
+
+        # nōminī, s, n, dativus, https://en.wiktionary.org/wiki/nomen#Latin
+        index_praeparationi.add_argument(
+            '--index-nomini',
+            help='Name of the index. means both file on temporary directory '
+            ' and option to reference on transformations. ',
+            dest='index_nomini',
+            nargs='?',
+            # required=True
+            default=None
+        )
+
+        #
+        # 'index_praeparationi',
 
         # objectīvum, n, s, nominativus,
         #                       https://en.wiktionary.org/wiki/objectivus#Latin
@@ -433,10 +483,13 @@ class Cli:
             _infile = None
             _stdin = True
 
-        if pyargs.methodus.startswith(
-                ('de_hxltm_ad_hxltm', 'de_librario', 'cod_ab_index')):
+        if pyargs.methodus in [
+            'de_hxltm_ad_hxltm', 'de_librario',
+                'index_praeparationi',  'cod_ab_index']:
             # Decide which main file to load.
-            if pyargs.methodus.startswith('de_librario'):
+            # if pyargs.methodus.startswith('de_librario'):
+            if pyargs.methodus.startswith(
+                    ('de_librario', 'index_praeparationi')):
                 _path = '{0}/{1}/{2}.no1.tm.hxl.csv'.format(
                     NUMERORDINATIO_BASIM,
                     numerordinatio_neo_separatum(_infile, '/'),
@@ -476,6 +529,13 @@ class Cli:
             if pyargs.ex_columnis:
                 ex_columnis = pyargs.ex_columnis.split(',')
                 caput, data = hxltm_ex_columnis(caput, data, ex_columnis)
+
+            if pyargs.methodus == 'index_praeparationi':
+
+                caput, data = hxltm_index_praeparationi(caput, data)
+                # ex_columnis = pyargs.ex_columnis.split(',')
+                # caput, data = hxltm_ex_columnis(caput, data, ex_columnis)
+                print('TODO')
 
             csv_imprimendo(caput, data)
 

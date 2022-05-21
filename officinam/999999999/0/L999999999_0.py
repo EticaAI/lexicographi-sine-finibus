@@ -1742,6 +1742,40 @@ def hxltm_ex_selectis(
     return caput, _data
 
 
+def hxltm_index_praeparationi(
+        caput: list, data: list, index_ad_columnam: str) -> dict:
+    """hxltm_index_praeparationi add new columns (variables)
+
+    Trivia:
+      - index, s, m, nominativus, https://en.wiktionary.org/wiki/index#Latin
+      - ad (+ accusativus) https://en.wiktionary.org/wiki/ad#Latin
+      - columnam, s, f, acc., https://en.wiktionary.org/wiki/columna#Latin
+
+    Args:
+        caput (list): _description_
+        data (list): _description_
+        index_ad_columnam (str): _description_
+
+    Returns:
+        dict: _description_
+    """
+    # https://en.wiktionary.org/wiki/columna#Latin
+    index_columnae = []
+    _data = []
+    raise NotImplementedError
+    # print(caput, columnae)
+    for item in columnae:
+        index_columnae.append(caput.index(item))
+
+    for linea in data:
+        _linea = []
+        for index in index_columnae:
+            _linea.append(linea[index])
+        _data.append(_linea)
+
+    # _caput = columnae
+
+
 def hxltm_per_columnas(
         caput: list, data: list, columnae: list) -> Tuple[list, list]:
     """hxltm_per_columnas Apply filters to existing columns.
@@ -1830,6 +1864,7 @@ def qhxl_hxlhashtag_2_bcp47(
 
     return bcp47_simplici
 
+
 def numerordinatio_neo_separatum(
         numerordinatio: str, separatum: str = "_") -> str:
     resultatum = ''
@@ -1854,6 +1889,7 @@ def numerordinatio_progenitori(
     if len(_parts) == 0:
         return "0"
     return separatum.join(_parts)
+
 
 def qhxl(rem: dict, query: Union[str, list]):
     if isinstance(query, str):
