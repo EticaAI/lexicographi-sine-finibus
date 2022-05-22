@@ -1439,7 +1439,7 @@ def hxltm__quod_data_referentibus(index_nomini: str):
 def hxltm__data_referentibus(
     # al1: str, b2: str,
     significatus: dict,
-    _caput: list = None, linea: list = None, data_referentibus: dict = None
+    caput: list = None, linea: list = None, data_referentibus: dict = None
 ):
     # print(significatus)
     # print('TODO hxltm__data_referentibus')
@@ -1448,6 +1448,11 @@ def hxltm__data_referentibus(
             '{0} not ready. Please use {1}. [{2}]'.format(
                 significatus['data_referentibus'],
                 "--methodus='index_praeparationi'"))
+
+    # print(_caput)
+    # print(significatus)
+    if 'b2h_indici' not in significatus or significatus['b2h_indici'] is None:
+        significatus['b2h_indici'] = caput.index(significatus['b2h'])
 
     res = linea[significatus['b2h_indici']]
     if res in data_referentibus[significatus['data_referentibus']]:
@@ -1983,14 +1988,20 @@ def hxltm_cum_ordinibus_ex_columnis(
     return caput_novo, data_novis
 
 
-def hxltm_cum_columna(
-    caput: list, data: list, quaestio: str, data_referentibus: dict = None
+def hxltm_cum_aut_sine_columnis_simplicibus(
+    caput: list, data: list, columnae: list,
+    _data_referentibus: dict = None, cum_columnis: bool = True
 ) -> Tuple[list, list]:
-    """hxltm_cum_columna add new column (variables)
+    """hxltm_cum_aut_sine_columnis_simplicibus select/exclude only these columns
+
+    This function will not do advanced checks.
 
     Trivia:
       - cum (+ ablativus), https://en.wiktionary.org/wiki/cum#Latin
-      - columnā, s, f, ablativus, https://en.wiktionary.org/wiki/columna#Latin
+      - columnīs, pl, f, ablativus, https://en.wiktionary.org/wiki/columna#Latin
+      - columnae, pl, f, vocātīvus,
+      - columnae, pl, f, nominativus,
+      - simplicibus, pl, m/f/n, dativus https://en.wiktionary.org/wiki/simplex
 
     Args:
         caput (list): _description_
@@ -2001,45 +2012,34 @@ def hxltm_cum_columna(
     Returns:
         Tuple[list, list]: _description_
     """
+
     # https://en.wiktionary.org/wiki/columna#Latin
-    significātus = hxltm__quaestio_significatis_x(
-        quaestio, caput, data_referentibus)
-
-    caput_novo = caput
-    caput_novo.append(significātus['a1'])
+    index_columnae = []
+    _data = []
+    caput_novo = []
     data_novis = []
+    # print('    caput', caput)
+    # print('    columnae', columnae)
+    if cum_columnis:
+        for item in columnae:
+            caput_indici = caput.index(item)
+            index_columnae.append(caput_indici)
+            caput_novo.append(caput[caput_indici])
+    else:
+        for item in caput:
+            if item not in columnae:
+                caput_indici = caput.index(item)
+                index_columnae.append(caput_indici)
+                caput_novo.append(caput[caput_indici])
 
-    # caput.append(significātus['a1'])
-    for _, linea in enumerate(data):
-        linea_novae = []
-        linea_novae.extend(linea)
-        if significātus['opus']:
-            # import inspect
-            # print(inspect.getsource(significātus['opus']))
-            res = significātus['opus'](
-                significātus,
-                caput_novo,
-                linea_novae,
-                data_referentibus
-            )
-        else:
-            # @TODO: potential bug or simpler cases
-            if 'b2' in significātus:
-                res = significātus['b2']
+    # @TODO: return same data if the caput are equal
 
-        linea_novae.append(res)
-        data_novis.append(linea_novae)
-        # data[index] = data[index].append(significātus['a1'])
+    for linea in data:
+        _linea = []
+        for index in index_columnae:
+            _linea.append(linea[index])
+        data_novis.append(_linea)
 
-    # print('significātus', significātus)
-    # raise NotImplementedError('{0} {1}'.format(
-    #     'hxltm_cum_columna', quaestio))
-    # # print(caput, columnae)
-    # for item in columnae:
-    #     index_columnae.append(caput.index(item))
-
-    # raise NotImplementedError(data_novis)
-    # _caput = columnae
     return caput_novo, data_novis
 
 
@@ -2095,21 +2095,7 @@ def hxltm_sine_columnis(
     Returns:
         Tuple[list, list]: _description_
     """
-    # https://en.wiktionary.org/wiki/columna#Latin
-    index_columnae = []
-    _data = []
-    # print(caput, columnae)
-    for item in columnae:
-        index_columnae.append(caput.index(item))
-
-    for linea in data:
-        _linea = []
-        for index in index_columnae:
-            _linea.append(linea[index])
-        _data.append(_linea)
-
-    # _caput = columnae
-    return columnae, _data
+    raise DeprecationWarning('use hxltm_sine_columnis')
 
 
 # def hxltm_sine_columnis(
@@ -2201,6 +2187,8 @@ def hxltm_index_praeparationi(
     Returns:
         dict: _description_
     """
+
+    # print('caput', caput)
 
     if strictum:
         raise NotImplementedError('{0} strictum'.format(

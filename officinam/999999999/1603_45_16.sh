@@ -424,6 +424,46 @@ __temp_fetch_external_indexes() {
     >"${ROOTDIR}/999999/1603/45/16/fieldmaps-cod~cached.csv"
 }
 
+__temp_index_praeparationi_1603_45_16() {
+
+  echo "${FUNCNAME[0]} ..."
+
+  echo "    i1603_45_49 (ix_unm49 ex ix_unm49, ix_iso3166p1a2, ix_iso3166p1a3)"
+  set -x
+  "${ROOTDIR}/999999999/0/999999999_7200235.py" \
+    --methodus=index_praeparationi \
+    --cum-columnis='#item+rem+i_zxx+is_zmth+ix_unm49,#item+rem+i_zxx+is_latn+ix_iso3166p1a2,#item+rem+i_zxx+is_latn+ix_iso3166p1a3' \
+    --index-ad-columnam='#item+rem+i_zxx+is_zmth+ix_unm49' \
+    --index-nomini="i1603_45_49" \
+    1603_45_49
+  set +x
+
+  echo ""
+
+  echo "    i1603_45_49 (ix_iso3166p1a2 ex ix_unm49, ix_iso3166p1a2, ix_iso3166p1a3)"
+  set -x
+  "${ROOTDIR}/999999999/0/999999999_7200235.py" \
+    --methodus=index_praeparationi \
+    --cum-columnis='#item+rem+i_zxx+is_zmth+ix_unm49,#item+rem+i_zxx+is_latn+ix_iso3166p1a2,#item+rem+i_zxx+is_latn+ix_iso3166p1a3' \
+    --index-ad-columnam='#item+rem+i_zxx+is_latn+ix_iso3166p1a2' \
+    --index-nomini="i1603_45_49__iso3166p1a2" \
+    1603_45_49
+  set +x
+
+  echo ""
+
+  echo "    i1603_45_49 (iso3166p1a3 ex ix_unm49, ix_iso3166p1a2, ix_iso3166p1a3)"
+  set -x
+  "${ROOTDIR}/999999999/0/999999999_7200235.py" \
+    --methodus=index_praeparationi \
+    --cum-columnis='#item+rem+i_zxx+is_zmth+ix_unm49,#item+rem+i_zxx+is_latn+ix_iso3166p1a2,#item+rem+i_zxx+is_latn+ix_iso3166p1a3' \
+    --index-ad-columnam='#item+rem+i_zxx+is_latn+ix_iso3166p1a3' \
+    --index-nomini="i1603_45_49__iso3166p1a3" \
+    1603_45_49
+  set +x
+
+}
+
 __temp_preprocess_external_indexes() {
   fontem_archivum="${ROOTDIR}/999999/1603/45/16/fieldmaps-cod~cached.csv"
   objectivum_archivum_q_temporarium="${ROOTDIR}/999999/0/fieldmaps-cod.hxl.csv"
@@ -451,7 +491,7 @@ __temp_preprocess_external_indexes() {
 
   hxladd \
     --spec="__#org+name+contributor2=Fieldmaps.io" \
-    "$objectivum_archivum_q_temporarium" > "$objectivum_archivum_q_temporarium_2"
+    "$objectivum_archivum_q_temporarium" >"$objectivum_archivum_q_temporarium_2"
 
   sed -i '1d' "${objectivum_archivum_q_temporarium_2}"
 
@@ -476,7 +516,9 @@ __temp_preprocess_external_indexes() {
   # 17: #item+source+type_xlsx
   # 18: #org+name+contributor2
 
-  csvcut --columns 1,2,5,6,7,17,15,11,18,9,8,10,3,4 "$objectivum_archivum_q_temporarium_2" > "$objectivum_archivum_q_temporarium"
+  csvcut --columns 1,2,5,6,7,17,15,11,18,9,8,10,3,4 "$objectivum_archivum_q_temporarium_2" >"$objectivum_archivum_q_temporarium"
+
+  csvcut --names "$objectivum_archivum_q_temporarium"
 
   # sed -i '1d' "${objectivum_archivum_q_temporarium_2}"
 
@@ -488,6 +530,12 @@ __temp_preprocess_external_indexes() {
   #     "$objectivum_archivum_q_temporarium_2"
   #meta+id,#country+code+v_iso3,#country+name,#country+name+alt,#meta+source+level,#date+created,#date+updated,#org+name+source,#org+name+contributor1,#meta+license,#item+source,#item+source+extended+type_gpkg,#item+source+extended+type_shp,#item+source+extended+type_xlsx,#item+source+type_gpkg,#item+source+type_shp,#item+source+type_xlsx
 
+  "${ROOTDIR}/999999999/0/999999999_7200235.py" \
+    --methodus=de_hxltm_ad_hxltm \
+    --cum-columnis='#country+code+v_unm49=DATA_REFERENTIBUS(i1603_45_49;#country+code+v_iso3)' \
+    --cum-ordinibus-ex-columnis='-9:#meta+id|-8:#country+code+v_unm49|-7:#country+code+v_iso3|-6:#country+code+v_iso2' \
+    "$objectivum_archivum_q_temporarium"
+
   set +x
   # file_update_if_necessary csv "$objectivum_archivum_q_temporarium" "$objectivum_archivum"
   file_update_if_necessary csv "$objectivum_archivum_q_temporarium" "$objectivum_archivum"
@@ -498,7 +546,9 @@ __temp_preprocess_external_indexes() {
 # bootstrap_999999_1603_45_16
 
 # __temp_fetch_external_indexes
-__temp_preprocess_external_indexes
+__temp_index_praeparationi_1603_45_16
+
+# __temp_preprocess_external_indexes
 exit 1
 
 bootstrap_999999_1603_45_16_neo

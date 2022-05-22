@@ -51,7 +51,8 @@ from L999999999_0 import (
     hxltm__quod_data_referentibus,
     hxltm_carricato,
     NUMERORDINATIO_BASIM,
-    hxltm_cum_columna,
+    hxltm_cum_aut_sine_columnis_simplicibus,
+    # hxltm_cum_columna,
     # hxltm_cum_columnis_desideriis,
     hxltm_cum_filtro,
     hxltm_cum_ordinibus_ex_columnis,
@@ -145,7 +146,9 @@ Generic HXLTM processing . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 --cum-columnis=\
 '#meta+v_iso3+alt=LOWER(#item+rem+i_zxx+is_latn+ix_iso3166p1a3)' \
 
+
 Index preparation (warn up cache) . . . . . . . . . . . . . . . . . . . . . . .
+
 (this will pre-create a key-value index at 999999/0/i1603_45_49.index.json)
     {0} --methodus=index_praeparationi 1603_45_49 \
 --index-nomini=i1603_45_49 \
@@ -564,13 +567,16 @@ class Cli:
                         caput, data, opus, data_referentibus)
 
             if pyargs.cum_columnis:
-                # print('oi')
-                # print(pyargs.cum_columnis)
-                # per_columnas = pyargs.cum_columnis
-                # print('ex_selectis', ex_selectis)
-                for opus in pyargs.cum_columnis:
-                    caput, data = hxltm_cum_columna(
-                        caput, data, opus, data_referentibus)
+
+                _opus = pyargs.cum_columnis
+                if not isinstance(pyargs.cum_columnis, list):
+                    _opus = [pyargs.cum_columnis]
+                opus = []
+                for item in _opus:
+                    opus.extend(map(str.strip, item.split(',')))
+                # opus = pyargs.cum_columnis.split(',')
+                caput, data = hxltm_cum_aut_sine_columnis_simplicibus(
+                    caput, data, opus, data_referentibus, cum_columnis=True)
 
             if pyargs.cum_filtris:
                 cum_filtris = pyargs.cum_filtris
@@ -580,9 +586,19 @@ class Cli:
 
             # if pyargs.ex_metadatis:
             if pyargs.sine_columnis:
-                opus = pyargs.sine_columnis.split(',')
-                caput, data = hxltm_sine_columnis(
-                    caput, data, opus, data_referentibus)
+                # opus = pyargs.sine_columnis.split(',')
+                # caput, data = hxltm_sine_columnis(
+                #     caput, data, opus, data_referentibus)
+
+                _opus = pyargs.sine_columnis
+                if not isinstance(pyargs.sine_columnis, list):
+                    _opus = [pyargs.sine_columnis]
+                opus = []
+                for item in _opus:
+                    opus.extend(map(str.strip, item.split(',')))
+                # opus = pyargs.cum_columnis.split(',')
+                caput, data = hxltm_cum_aut_sine_columnis_simplicibus(
+                    caput, data, opus, data_referentibus, cum_columnis=False)
 
             # if pyargs.ex_metadatis:
             if pyargs.cum_ordinibus_ex_columnis:
@@ -607,6 +623,9 @@ class Cli:
 
                 data_json = hxltm_index_praeparationi(
                     caput, data, pyargs.index_ad_columnam)
+                # data_json_len = data_json.keys().len()
+                data_json_len = len(data_json.keys())
+                data_json_len_uniq = len(set(data_json.values()))
 
                 data_json_str = json.dumps(
                     data_json, indent=4, sort_keys=False, ensure_ascii=False)
@@ -620,7 +639,8 @@ class Cli:
 
                 with open(_path, "w") as file1:
                     file1.write(data_json_str)
-                print('index: {0}'.format(_path))
+                print('index [{0} -> {1}]: {2}'.format(
+                    data_json_len, data_json_len_uniq, _path))
                 return self.EXIT_OK
 
             csv_imprimendo(caput, data)
