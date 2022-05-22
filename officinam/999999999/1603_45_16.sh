@@ -216,7 +216,7 @@ bootstrap_999999_1603_45_16_metadata_pre_deploy() {
   echo "${FUNCNAME[0]}  ..."
   # About administrative civision https://en.wikipedia.org/wiki/Administrative_division
 
-  echo "#item+conceptum+numerordinatio,#item+conceptum+codicem,#item+rem+i_zxx+is_zmth+ix_unm49,#item+rem+i_zxx+is_zmth+ix_admlevel,#meta+source" \
+  echo "#item+conceptum+numerordinatio,#item+conceptum+codicem,#item+rem+i_qcc+is_zxxx+ix_unm49,#item+rem+i_qcc+is_zxxx+ix_admlevel,#meta+source" \
     >"${ROOTDIR}/999999/1603/45/16/3_meta-hxl-temp.tm.hxl.csv"
 
   for archivum_loci in "${ROOTDIR}"/999999/1603/45/16/hxl/*.hxl.csv; do
@@ -238,7 +238,7 @@ bootstrap_999999_1603_45_16_metadata_pre_deploy() {
 
   # echo "TODO delete 999999/1603/45/16/3_meta-hxl-temp.hxl.csv"
 
-  hxlsort --tags="#item+rem+i_zxx+is_zmth+ix_unm49,#item+rem+i_zxx+is_zmth+ix_admlevel" \
+  hxlsort --tags="#item+rem+i_qcc+is_zxxx+ix_unm49,#item+rem+i_qcc+is_zxxx+ix_admlevel" \
     "${ROOTDIR}/999999/1603/45/16/3_meta-hxl-temp.tm.hxl.csv" \
     "${ROOTDIR}/999999/1603/45/16/3_meta-hxl.tm.hxl.csv"
 
@@ -320,7 +320,7 @@ deploy_1603_45_16_global_admX() {
 
   echo "${FUNCNAME[0]} [$administrative_level] sources changed_recently. Reloading..."
 
-  # echo "#item+conceptum+numerordinatio,#item+conceptum+codicem,#item+rem+i_zxx+is_zmth+ix_unm49,#item+rem+i_zxx+is_zmth+ix_admlevel" \
+  # echo "#item+conceptum+numerordinatio,#item+conceptum+codicem,#item+rem+i_qcc+is_zxxx+ix_unm49,#item+rem+i_qcc+is_zxxx+ix_admlevel" \
   #   >"${ROOTDIR}/1603/45/16/1/1603_45_16_1.no1.tm.hxl.csv"
   echo "#adm${administrative_level}+code+pcode,#date,#date+valid_on,#date+valid_to" \
     >"${objectivum_archivum_temporarium}"
@@ -375,7 +375,7 @@ deploy_1603_45_16_global_admX_unicum() {
   # printf "01234\n" | ./999999999/0/2600.py --actionem-cifram
   # 15828996298662	01234
 
-  # echo "#item+conceptum+numerordinatio,#item+conceptum+codicem,#item+rem+i_zxx+is_zmth+ix_unm49,#item+rem+i_zxx+is_zmth+ix_admlevel" \
+  # echo "#item+conceptum+numerordinatio,#item+conceptum+codicem,#item+rem+i_qcc+is_zxxx+ix_unm49,#item+rem+i_qcc+is_zxxx+ix_admlevel" \
   #   >"${ROOTDIR}/1603/45/16/1/1603_45_16_1.no1.tm.hxl.csv"
   echo "#meta+adm_level,#meta+code+pcode,#date,#date+valid_on,#date+valid_to" \
     >"${objectivum_archivum_temporarium}"
@@ -432,8 +432,8 @@ __temp_index_praeparationi_1603_45_16() {
   set -x
   "${ROOTDIR}/999999999/0/999999999_7200235.py" \
     --methodus=index_praeparationi \
-    --cum-columnis='#item+rem+i_zxx+is_zmth+ix_unm49,#item+rem+i_zxx+is_latn+ix_iso3166p1a2,#item+rem+i_zxx+is_latn+ix_iso3166p1a3' \
-    --index-ad-columnam='#item+rem+i_zxx+is_zmth+ix_unm49' \
+    --cum-columnis='#item+rem+i_qcc+is_zxxx+ix_unm49,#item+rem+i_qcc+is_zxxx+ix_iso3166p1a2,#item+rem+i_qcc+is_zxxx+ix_iso3166p1a3' \
+    --index-ad-columnam='#item+rem+i_qcc+is_zxxx+ix_unm49' \
     --index-nomini="i1603_45_49" \
     1603_45_49
   set +x
@@ -444,8 +444,8 @@ __temp_index_praeparationi_1603_45_16() {
   set -x
   "${ROOTDIR}/999999999/0/999999999_7200235.py" \
     --methodus=index_praeparationi \
-    --cum-columnis='#item+rem+i_zxx+is_zmth+ix_unm49,#item+rem+i_zxx+is_latn+ix_iso3166p1a2,#item+rem+i_zxx+is_latn+ix_iso3166p1a3' \
-    --index-ad-columnam='#item+rem+i_zxx+is_latn+ix_iso3166p1a2' \
+    --cum-columnis='#item+rem+i_qcc+is_zxxx+ix_unm49,#item+rem+i_qcc+is_zxxx+ix_iso3166p1a2,#item+rem+i_qcc+is_zxxx+ix_iso3166p1a3' \
+    --index-ad-columnam='#item+rem+i_qcc+is_zxxx+ix_iso3166p1a2' \
     --index-nomini="i1603_45_49__iso3166p1a2" \
     1603_45_49
   set +x
@@ -456,8 +456,8 @@ __temp_index_praeparationi_1603_45_16() {
   set -x
   "${ROOTDIR}/999999999/0/999999999_7200235.py" \
     --methodus=index_praeparationi \
-    --cum-columnis='#item+rem+i_zxx+is_zmth+ix_unm49,#item+rem+i_zxx+is_latn+ix_iso3166p1a2,#item+rem+i_zxx+is_latn+ix_iso3166p1a3' \
-    --index-ad-columnam='#item+rem+i_zxx+is_latn+ix_iso3166p1a3' \
+    --cum-columnis='#item+rem+i_qcc+is_zxxx+ix_unm49,#item+rem+i_qcc+is_zxxx+ix_iso3166p1a2,#item+rem+i_qcc+is_zxxx+ix_iso3166p1a3' \
+    --index-ad-columnam='#item+rem+i_qcc+is_zxxx+ix_iso3166p1a3' \
     --index-nomini="i1603_45_49__iso3166p1a3" \
     1603_45_49
   set +x
@@ -475,7 +475,7 @@ __temp_preprocess_external_indexes() {
 
   # hxlcaput_final="#meta+id,#country+code+v_iso3,#meta+source+cod_ab_level,#country+name+ref,#country+name+alt,#date+created,#date+updated,#org+name+source,#org+name+contributor1,#org+name+contributor2,#meta+license,#item+source+type_ckan,#item+source+type_gpkg,#item+source+type_shp,#item+source+type_xlsx"
 
-  hxlcaput_final="#meta+id,#country+code+v_iso3,#meta+source+cod_ab_level,#country+name+ref,#country+name+alt,#date+created,#date+updated,#org+name+source,#org+name+contributor1,#org+name+contributor2,#meta+license,#item+source+type_ckan,#item+source+type_gpkg,#item+source+type_xlsx"
+  # hxlcaput_final="#meta+id,#country+code+v_iso3,#meta+source+cod_ab_level,#country+name+ref,#country+name+alt,#date+created,#date+updated,#org+name+source,#org+name+contributor1,#org+name+contributor2,#meta+license,#item+source+type_ckan,#item+source+type_gpkg,#item+source+type_xlsx"
 
   # hxlcaput_final="#item+source+type_xlsx!,#country+code+v_iso3!,#meta+id!,#meta+source+cod_ab_level!"
 
@@ -532,7 +532,7 @@ __temp_preprocess_external_indexes() {
 
   "${ROOTDIR}/999999999/0/999999999_7200235.py" \
     --methodus=de_hxltm_ad_hxltm \
-    --cum-columnis='#country+code+v_unm49=DATA_REFERENTIBUS(i1603_45_49;#country+code+v_iso3)' \
+    --adde-columnis='#country+code+v_unm49=DATA_REFERENTIBUS(i1603_45_49;#country+code+v_iso3)' \
     --cum-ordinibus-ex-columnis='-9:#meta+id|-8:#country+code+v_unm49|-7:#country+code+v_iso3|-6:#country+code+v_iso2' \
     "$objectivum_archivum_q_temporarium"
 
@@ -548,7 +548,7 @@ __temp_preprocess_external_indexes() {
 # __temp_fetch_external_indexes
 __temp_index_praeparationi_1603_45_16
 
-# __temp_preprocess_external_indexes
+__temp_preprocess_external_indexes
 exit 1
 
 bootstrap_999999_1603_45_16_neo

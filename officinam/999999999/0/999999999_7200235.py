@@ -49,6 +49,7 @@ from L999999999_0 import (
     # hxltm__data_referentibus,
     hxltm__est_data_referentibus,
     hxltm__quod_data_referentibus,
+    hxltm_adde_columna,
     hxltm_carricato,
     NUMERORDINATIO_BASIM,
     hxltm_cum_aut_sine_columnis_simplicibus,
@@ -56,7 +57,7 @@ from L999999999_0 import (
     # hxltm_cum_columnis_desideriis,
     hxltm_cum_filtro,
     hxltm_cum_ordinibus_ex_columnis,
-    hxltm_sine_columnis,
+    # hxltm_sine_columnis,
     hxltm_ex_selectis,
     hxltm_index_praeparationi,
     qhxl_hxlhashtag_2_bcp47,
@@ -112,7 +113,7 @@ Work with local COD-AB index . . . . . . . . . . . . . . . . . . . . . . . . .
 --ex-selectis='#date+updated>2020-01-01'
 
     {0} --methodus='cod_ab_index' --cum-ordinibus-ex-columnis=\
-'-9:#meta+id|-8:#country+code+v_iso3|-7#country+code+v_iso2'
+'-9:#meta+id|-8:#country+code+v_iso3|-7:#country+code+v_iso2'
 
 Process XLSXs from external sources . . . . . . . . . . . . . . . . . . . . . .
    {0} --methodus=xlsx_metadata 999999/1603/45/16/xlsx/ago.xlsx
@@ -130,21 +131,21 @@ Generic HXLTM processing . . . . . . . . . . . . . . . . . . . . . . . . . . . .
     {0} --methodus=de_hxltm_ad_hxltm 1603/1/1/1603_1_1.no1.tm.hxl.csv \
 --ex-selectis='#item+conceptum+codicem==1'
 
-    {0} --methodus='de_librario' 1603_1_6 --cum-columnis='#meta+novum=test123'
+    {0} --methodus='de_librario' 1603_1_6 --adde-columnis='#meta+novum=test123'
     {0} --methodus='de_librario' 1603_1_6 \
---cum-columnis='#meta+novum=#item+conceptum+codicem'
+--adde-columnis='#meta+novum=#item+conceptum+codicem'
     {0} --methodus='de_librario' 1603_1_6 \
---cum-columnis='#meta+novum=CONCAT("PREFIX";#item+conceptum+codicem)'
+--adde-columnis='#meta+novum=CONCAT("PREFIX";#item+conceptum+codicem)'
     {0} --methodus='de_librario' 1603_1_6 \
---cum-columnis='#meta+novum=CONCAT(#item+conceptum+codicem;"SUFFIX")'
+--adde-columnis='#meta+novum=CONCAT(#item+conceptum+codicem;"SUFFIX")'
 
 
 (Some other examples know to work (at time of testing))
     {0} --methodus=de_librario 1603_45_49 \
---cum-columnis=\
-'#meta+v_iso2+alt=LOWER(#item+rem+i_zxx+is_latn+ix_iso3166p1a2)' \
---cum-columnis=\
-'#meta+v_iso3+alt=LOWER(#item+rem+i_zxx+is_latn+ix_iso3166p1a3)' \
+--adde-columnis=\
+'#meta+v_iso2+alt=LOWER(#item+rem+i_qcc+is_zxxx+ix_iso3166p1a2)' \
+--adde-columnis=\
+'#meta+v_iso3+alt=LOWER(#item+rem+i_qcc+is_zxxx+ix_iso3166p1a3)' \
 
 
 Index preparation (warn up cache) . . . . . . . . . . . . . . . . . . . . . . .
@@ -152,12 +153,12 @@ Index preparation (warn up cache) . . . . . . . . . . . . . . . . . . . . . . .
 (this will pre-create a key-value index at 999999/0/i1603_45_49.index.json)
     {0} --methodus=index_praeparationi 1603_45_49 \
 --index-nomini=i1603_45_49 \
---sine-columnis='#item+rem+i_zxx+is_zmth+ix_unm49,\
-#item+rem+i_zxx+is_latn+ix_iso3166p1a2,#item+rem+i_zxx+is_latn+ix_iso3166p1a3' \
---index-ad-columnam='#item+rem+i_zxx+is_zmth+ix_unm49'
+--sine-columnis='#item+rem+i_qcc+is_zxxx+ix_unm49,\
+#item+rem+i_qcc+is_zxxx+ix_iso3166p1a2,#item+rem+i_qcc+is_zxxx+ix_iso3166p1a3' \
+--index-ad-columnam='#item+rem+i_qcc+is_zxxx+ix_unm49'
 
-    {0} --methodus='cod_ab_index' --cum-columnis=\
-'#item+rem+i_zxx+is_zmth+ix_unm49=\
+    {0} --methodus='cod_ab_index' --adde-columnis=\
+'#item+rem+i_qcc+is_zxxx+ix_unm49=\
 DATA_REFERENTIBUS(i1603_45_49;#country+code+v_iso3)'
 
 ------------------------------------------------------------------------------
@@ -316,8 +317,22 @@ class Cli:
         )
 
         memoria_internalo.add_argument(
+            '--adde-columnis',
+            help='Add columns (advanced processing). '
+            'Can use both columns on exiting dataset and, with '
+            '"#meta+new=DATA_REFERENTIBUS(iNNNN_NN_NN, #item+existing)", '
+            'use external sources.',
+            action='append',
+            dest='adde_columnis',
+            nargs='?',
+            # nargs='*',
+            # required=True
+            default=None
+        )
+
+        memoria_internalo.add_argument(
             '--cum-columnis',
-            help='Add columns. '
+            help='Select columns (simple processing). '
             'Mostly used to help with scripts',
             action='append',
             dest='cum_columnis',
@@ -334,7 +349,7 @@ class Cli:
             'Mostly used to help with scripts',
             dest='cum_filtris',
             # nargs='?',
-            nargs='*',
+            # nargs='*',
             action='append',
             # required=True
             default=None
@@ -544,6 +559,7 @@ class Cli:
                 caput, data = hxltm_carricato(COD_AB_INDEX)
 
             est_data_referentibus = hxltm__est_data_referentibus(
+                pyargs.adde_columnis,
                 pyargs.ex_selectis,
                 pyargs.cum_columnis,
                 pyargs.cum_filtris,
@@ -556,7 +572,7 @@ class Cli:
                     data_referentibus[item] = \
                         hxltm__quod_data_referentibus(item)
 
-            # print('est_data_referentibus', est_data_referentibus)
+            # print('    est_data_referentibus', est_data_referentibus)
             # print('data_referentibus', data_referentibus.keys())
 
             if pyargs.ex_selectis:
@@ -564,6 +580,20 @@ class Cli:
                 # print('ex_selectis', ex_selectis)
                 for opus in ex_selectis:
                     caput, data = hxltm_ex_selectis(
+                        caput, data, opus, data_referentibus)
+
+            if pyargs.adde_columnis:
+
+                _opus = pyargs.adde_columnis
+                if not isinstance(pyargs.adde_columnis, list):
+                    _opus = [pyargs.adde_columnis]
+                opera = []
+                for item in _opus:
+                    opera.extend(map(str.strip, item.split(',')))
+                # opus = pyargs.cum_columnis.split(',')
+
+                for opus in opera:
+                    caput, data = hxltm_adde_columna(
                         caput, data, opus, data_referentibus)
 
             if pyargs.cum_columnis:

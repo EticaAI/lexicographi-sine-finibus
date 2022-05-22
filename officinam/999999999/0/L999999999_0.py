@@ -1771,6 +1771,7 @@ def hxltm__quaestio_significatis_x(
     #             significātus[_nomen] = _res
     #             # significātus['opus_rebus'].append(_nomen)
 
+    # print('    quaestio', quaestio)
     _reg1 = re.search(HXLTM_OPERA_X_REG, quaestio)
     # print('_reg1', _reg1, _reg1.groupdict())
     # print('', _reg1.group('a1'))
@@ -1841,6 +1842,65 @@ def hxltm__quaestio_significatis_x(
     # raise NotImplementedError(significātus)
 
     return significātus
+
+
+def hxltm_adde_columna(
+    caput: list, data: list, quaestio: str, data_referentibus: dict = None
+) -> Tuple[list, list]:
+    """hxltm_cum_columna add new column (variables)
+    Trivia:
+      - cum (+ ablativus), https://en.wiktionary.org/wiki/cum#Latin
+      - columnā, s, f, ablativus, https://en.wiktionary.org/wiki/columna#Latin
+      - adde, verbum, sing, imper. https://en.wiktionary.org/wiki/addo#Latin
+    Args:
+        caput (list): _description_
+        data (list): _description_
+        quaestio (str): _description_
+        data_referentibus (dict): Pre-loaded external referential data
+    Returns:
+        Tuple[list, list]: _description_
+    """
+
+    # https://en.wiktionary.org/wiki/columna#Latin
+    significātus = hxltm__quaestio_significatis_x(
+        quaestio, caput, data_referentibus)
+
+    caput_novo = caput
+    caput_novo.append(significātus['a1'])
+    data_novis = []
+
+    # caput.append(significātus['a1'])
+    for _, linea in enumerate(data):
+        linea_novae = []
+        linea_novae.extend(linea)
+        if significātus['opus']:
+            # import inspect
+            # print(inspect.getsource(significātus['opus']))
+            res = significātus['opus'](
+                significātus,
+                caput_novo,
+                linea_novae,
+                data_referentibus
+            )
+        else:
+            # @TODO: potential bug or simpler cases
+            if 'b2' in significātus:
+                res = significātus['b2']
+
+        linea_novae.append(res)
+        data_novis.append(linea_novae)
+        # data[index] = data[index].append(significātus['a1'])
+
+    # print('significātus', significātus)
+    # raise NotImplementedError('{0} {1}'.format(
+    #     'hxltm_cum_columna', quaestio))
+    # # print(caput, columnae)
+    # for item in columnae:
+    #     index_columnae.append(caput.index(item))
+
+    # raise NotImplementedError(data_novis)
+    # _caput = columnae
+    return caput_novo, data_novis
 
 
 def hxltm_carricato(
