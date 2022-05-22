@@ -70,12 +70,16 @@ NUMERORDINATIO_DEFALLO = int(os.getenv('NUMERORDINATIO_DEFALLO', '60'))  # �
 NUMERORDINATIO_MISSING = "�"
 VENANDUM_INSECTUM = bool(os.getenv('VENANDUM_INSECTUM', ''))
 
+EXIT_OK = 0
+EXIT_ERROR = 1
+EXIT_SYNTAX = 2
 
 # def _dictionaria_linguarum():
 #     # importlib.import_module('', package=None)
 #     L1603_1_51 = importlib.import_module('1603_1_51', package='1603_1_1')
 
 #     return L1603_1_51.DictionariaLinguarum()
+
 
 def bcp47_langtag(
         rem: str,
@@ -1844,6 +1848,253 @@ def hxltm__quaestio_significatis_x(
     return significātus
 
 
+class HXLTMAdRDFSimplicis:
+    """HXLTM ad RDF
+
+    - ad (+ accusativus),https://en.wiktionary.org/wiki/ad#Latin
+    - HXLTM, https://hxltm.etica.ai/
+    - RDF, ...
+    - simplicis, m/f/n, s, Gen., https://en.wiktionary.org/wiki/simplex#Latin
+
+    """
+    # fōns, m, s, nominativus, https://en.wiktionary.org/wiki/fons#Latin
+    fons_configurationi: dict = {}
+    # methodus_ex_tabulae: dict = {}
+    objectivum_formato: str = 'application/x-turtle'
+    # methodus: str = ''
+
+    caput: list = []
+    data: list = []
+    praefixo: str = ''
+
+    # _hxltm: '#meta+{caput}'
+
+    #  '#meta+{{caput_clavi_normali}}'
+    # _hxltm_hashtag_defallo: str = '#meta+{{caput_clavi_normali}}'
+    # _hxl_hashtag_defallo: str = '#meta+{{caput_clavi_normali}}'
+
+    # identitās, f, s, nom., https://en.wiktionary.org/wiki/identitas#Latin
+    # ex (+ ablative), https://en.wiktionary.org/wiki/ex#Latin
+    # locālī, n, s, dativus, https://en.wiktionary.org/wiki/localis#Latin
+    # identitas_locali_ex_hxl_hashtag: str = '#item+conceptum+codicem'
+    identitas_locali_index: int = -1
+    venandum_insectum: bool = False  # noqa
+    _hxltm_linguae_index: list = []
+    _hxltm_linguae_info: dict = {}
+    _hxltm_meta_index: list = []
+    _hxltm_meta_info: dict = {}
+    _hxltm_unlabeled_index: list = []
+    _hxltm_unlabeled_info: dict = {}
+    _hxltm_labeled = [
+        '#item+conceptum+numerordinatio',
+        '#item+conceptum+codicem',
+        '#status+conceptum+codicem',
+        '#status+conceptum+definitionem',
+        '#item+rem+i_qcc+is_zxxx+ix_codexfacto',
+    ]
+
+    def __init__(
+        self,
+        fons_configurationi: dict,
+        objectivum_formato: str,
+        caput: list = None,
+        data: list = None,
+        venandum_insectum: bool = False  # noqa
+    ):
+        """__init__ _summary_
+
+        Args:
+            methodus_ex_tabulae (dict):
+        """
+        self.fons_configurationi = fons_configurationi
+        self.objectivum_formato = objectivum_formato
+        self.venandum_insectum = venandum_insectum
+        self.caput = caput
+        self.data = data
+        # self.methodus = methodus
+
+        self.praefixo = numerordinatio_neo_separatum(
+            self.fons_configurationi['numerordinatio']['praefixo'], ':')
+
+        self._post_init()
+
+    def _post_init(self):
+        # @TODO esse desgambiarrizar esse _post_init
+
+        if 'identitas_locali_ex_hxl_hashtag' in \
+                self.fons_configurationi['numerordinatio']:
+            _test = self.fons_configurationi['numerordinatio']['identitas_locali_ex_hxl_hashtag']
+            # print("{0}".format(_test))
+            # print("{0}".format(self.caput))
+            for item in _test:
+                if item in self.caput:
+                    # self.identitas_locali_ex_hxl_hashtag = item
+                    self.identitas_locali_index = self.caput.index(item)
+                    break
+            if self.identitas_locali_index == -1:
+                raise ValueError("HXLTMAdRDFSimplicis [{0}] ?? <{1}>".format(
+                    _test, self.caput))
+
+        for _index, item in enumerate(self.caput):
+            attrs = item.replace('#item+rem', '')
+            bcp47_simplici = qhxl_hxlhashtag_2_bcp47(attrs)
+            # lingua = bcp47_langtag(bcp47_simplici, [
+            #     # 'Language-Tag',
+            #     'Language-Tag_normalized',
+            #     'language'
+            # ], strictum=False)
+            # bcp47_langtag
+
+            if item not in self._hxltm_labeled:
+                # _index = self.caput.index(item)
+                if item.startswith('#meta'):
+                    self._hxltm_meta_index.append(_index)
+                    self._hxltm_meta_info[_index] = {
+                        'hxltm_hashtag': item,
+                        'bcp47': bcp47_simplici
+                    }
+                    continue
+                self._hxltm_unlabeled_index.append(_index)
+                self._hxltm_unlabeled_info[_index] = {
+                    'hxltm_hashtag': item,
+                    'bcp47': bcp47_simplici
+                }
+
+            # Language tags only
+            if not item.startswith('#item+rem'):
+                continue
+            # attrs = item.replace('#item+rem', '')
+            # hxlattslinguae = qhxl_attr_2_bcp47(attrs)
+            # lingua = bcp47_langtag(hxlattslinguae, [
+            #     # 'Language-Tag',
+            #     'Language-Tag_normalized',
+            #     'language'
+            # ], strictum=False)
+            if bcp47_simplici and not bcp47_simplici.startswith(('qcc', 'zxx')):
+                self._hxltm_linguae_index.append(_index)
+                self._hxltm_linguae_info[_index] = {
+                    'hxltm_hashtag': item,
+                    'bcp47': bcp47_simplici
+                }
+
+    def resultatum_ad_csv(self):
+        """resultatum ad csv text/csv
+
+        Returns:
+            (int): status code
+        """
+        _writer = csv.writer(sys.stdout)
+        _writer.writerow(self.caput)
+        _writer.writerows(self.data)
+        return EXIT_OK
+
+    # resultātum, n, s, nominativus, https://en.wiktionary.org/wiki/resultatum
+    def resultatum_ad_ntriples(self):
+        """resultatum ad n triples application/n-triples
+
+        Returns:
+            (int): status code
+        """
+        print('# TODO HXLTMAdRDFSimplicis.resultatum_ad_ntriples')
+        print('# ' + str(self.fons_configurationi))
+
+        return EXIT_OK
+
+    # resultātum, n, s, nominativus, https://en.wiktionary.org/wiki/resultatum
+    def resultatum_ad_turtle(self):
+        """resultatum ad n turtle application/x-turtle
+
+        Returns:
+            (int): status code
+        """
+        print('# [{0}]'.format(self.praefixo))
+        print('@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .')
+        print('@prefix skos: <http://www.w3.org/2004/02/skos/core#> .')
+        print('')
+        if self.venandum_insectum:
+            print('# @TODO melhorar HXLTMAdRDFSimplicis.resultatum_ad_turtle')
+            print('# fons_configurationi ' + str(self.fons_configurationi))
+            print('# _hxltm_unlabeled_info ' + str(self._hxltm_unlabeled_info))
+            print('# _hxltm_meta_info ' + str(self._hxltm_meta_info))
+            print('# _hxltm_linguae_info ' + str(self._hxltm_linguae_info))
+            print('')
+            print('# @TODO adicionar mais prefixos de '
+                  'https://www.wikidata.org/wiki/EntitySchema:E49')
+            print('')
+        # print('<urn:1603:63:101> a skos:ConceptScheme ;')
+        # print('  skos:prefLabel "1603:63:101"@mul-Zyyy-x-n1603 .')
+        print("<urn:{0}> a skos:ConceptScheme ; \n"
+              "  skos:prefLabel \"{0}\"@mul-Zyyy-x-n1603 .".format(
+                  self.praefixo))
+        print('  # @TODO skos:hasTopConcept')
+        print('')
+
+        # @TODO: implementar qhx-Latn (HXLStandard), refs
+        #        https://github.com/EticaAI/hxltm/blob/main/docs
+        #        /codex-simplex-ontologiae/ontologia.yml
+
+        for linea in self.data:
+            # print('# {0}'.format(linea))
+            # print('# {0}'.format(self.identitas_locali_index))
+            # _codex_locali = self.quod(
+            #     linea, '#item+rem+i_qcc+is_zxxx+ix_wikip1585')
+            _codex_locali = str(int(linea[self.identitas_locali_index]))
+            print('<urn:{0}:{1}> a skos:Concept ;'.format(
+                self.praefixo,
+                _codex_locali
+            ))
+            # print('  skos:prefLabel "{0}:{1}"@mul-Zyyy-x-n1603 .'.format(
+            print('  skos:prefLabel "{0}:{1}"@mul-Zyyy-x-n1603 ;'.format(
+                self.praefixo,
+                _codex_locali
+            ))
+            _skos_related = []
+            _skos_related_raw = []
+            for _index, item in enumerate(linea):
+                if item and _index in self._hxltm_unlabeled_index and \
+                        self._hxltm_unlabeled_info[_index]['bcp47']:
+                    _skos_related_raw.append('"{0}"@{1}'.format(
+                        item.replace('"', '\\"'),
+                        self._hxltm_unlabeled_info[_index]['bcp47']
+                    ))
+                    # pass
+
+            # @TODO add other related
+            _skos_related = _skos_related_raw
+            # linguae = self._quod_linguae(res)
+            if len(_skos_related) > 0:
+                print("  skos:related\n    {0} .".format(
+                    " ,\n    ".join(_skos_related_raw)
+                ))
+            for _index, item in enumerate(linea):
+                # if len(item) and _index in self._hxltm_unlabeled_index:
+                #     print('  # {0} [{1}]'.format(
+                #         self._hxltm_unlabeled_info[_index]['hxltm_hashtag'], item))
+                if self.venandum_insectum:
+                    if len(item) and _index in self._hxltm_meta_index:
+                        print('  # verbose: {0} [{1}]'.format(
+                            self._hxltm_meta_info[_index]['hxltm_hashtag'],
+                            item))
+
+            # linguae = self._quod_linguae(res)
+            # if len(linguae) > 0:
+            #     print("  skos:prefLabel\n    {0} .".format(
+            #         " ,\n    ".join(linguae)
+            #     ))
+
+            print('')
+
+        return EXIT_OK
+
+    def quod(self, linea: list, caput_item: str) -> str:
+        if caput_item in self.caput:
+            index = self.caput.index(caput_item)
+            # print('## {0}'.format(linea))
+            # print('## {0}'.format(linea[index]))
+            return linea[index]
+        return ''
+
+
 def hxltm_adde_columna(
     caput: list, data: list, quaestio: str, data_referentibus: dict = None
 ) -> Tuple[list, list]:
@@ -2507,6 +2758,275 @@ def res_interlingualibus_formata(rem: dict, query) -> str:
         return resultatum
 
     return rem[query]
+
+
+class TabulaSimplici:
+    """Tabula simplicī /Simple Table/@eng-Latn
+
+    Trivia:
+    - tabula, s, f, nominativus, https://en.wiktionary.org/wiki/tabula#Latin
+    - simplicī, s, m/f/n, Dativus, https://en.wiktionary.org/wiki/simplex#Latin
+    """
+
+    archivum_trivio: str = ''
+    nomen: str = ''
+    statum: bool = None
+    caput: list = []
+    concepta: dict = None
+    res_totali: int = 0
+    ex_radice: bool = False
+    archivum_trivio_ex_radice: str = ''
+    archivum_nomini: str = ''
+    # codex_opus: list = []
+    # opus: list = []
+    # in_limitem: int = 0
+    # in_ordinem: str = None
+    # quaero_numerordinatio: list = []
+
+    def __init__(
+        self,
+        archivum_trivio: str,
+        nomen: str,
+        ex_radice: bool = False
+    ):
+        self.archivum_trivio = archivum_trivio
+        self.nomen = nomen
+        self.ex_radice = ex_radice
+        # self.initiari()
+
+    def _initiari(self):
+        """initiarī
+
+        Trivia:
+        - initiārī, https://en.wiktionary.org/wiki/initio#Latin
+        """
+        if not os.path.exists(self.archivum_trivio):
+            self.statum = False
+            return self.statum
+
+        self.archivum_trivio_ex_radice = \
+            self.archivum_trivio.replace(NUMERORDINATIO_BASIM, '')
+
+        self.archivum_nomini = Path(self.archivum_trivio_ex_radice).name
+
+        with open(self.archivum_trivio) as csvfile:
+            reader = csv.reader(csvfile)
+            for lineam in reader:
+                if len(self.caput) == 0:
+                    self.caput = lineam
+                    continue
+                # TODO: what about empty lines?
+                self.res_totali += 1
+
+        self.statum = True
+        return self.statum
+
+    def _initiari_v2(self):
+        """initiarī
+
+        Trivia:
+        - initiārī, https://en.wiktionary.org/wiki/initio#Latin
+        """
+        if not os.path.exists(self.archivum_trivio):
+            self.statum = False
+            return self.statum
+
+        self.archivum_trivio_ex_radice = \
+            self.archivum_trivio.replace(NUMERORDINATIO_BASIM, '')
+
+        self.archivum_nomini = Path(self.archivum_trivio_ex_radice).name
+
+        self.concepta = {}
+        with open(self.archivum_trivio) as csvfile:
+            reader = csv.DictReader(csvfile)
+            for lineam in reader:
+                # de_codex = lineam['#item+conceptum+numerordinatio']
+                de_codex = lineam['#item+conceptum+codicem']
+                self.concepta[de_codex] = lineam
+                # if len(self.caput) == 0:
+                #     self.caput = lineam
+                #     continue
+                # # TODO: what about empty lines?
+                # self.res_totali += 1
+
+        self.statum = True
+        return self.statum
+
+    def _quod_linguae(self, res: dict) -> list:
+        resultatum = []
+        # resultatum.append('"todo"@en')
+        for clavem, item in res.items():
+            if not clavem.startswith('#item+rem') or len(item) == 0:
+                continue
+            if item.find('"') > -1:
+                # item = item.replace('"', 'zzzz')
+                item = item.replace('"', '\\"')
+            attrs = clavem.replace('#item+rem', '')
+            hxlattslinguae = qhxl_attr_2_bcp47(attrs)
+            # lingua = bcp47_langtag(clavem, [
+            lingua = bcp47_langtag(hxlattslinguae, [
+                # 'Language-Tag',
+                'Language-Tag_normalized',
+                'language'
+            ], strictum=False)
+            if lingua['language'] not in ['qcc', 'zxx']:
+                resultatum.append('"{0}"@{1}'.format(
+                    item, lingua['Language-Tag_normalized']))
+        return resultatum
+
+    def _quod_descendentia(
+            self, dictionaria_codici: list, item_codici: str) -> list:
+        # dēscendentia, n, pl, Nominativus,
+        #     https://en.wiktionary.org/wiki/descendens#Latin
+        resultatum = []
+
+        # de_codex_n = numerordinatio_progenitori(de_codex, ':')
+
+        # for clavem, _item in dictionaria_radici.items():
+        for clavem in dictionaria_codici:
+            # clavem_n = numerordinatio_progenitori(clavem, ':')
+            # print('clavem', de_codex_n, clavem_n)
+            progenitor = numerordinatio_progenitori(clavem, ':')
+            # print('clavem', item_codici, progenitor)
+            if progenitor == item_codici:
+                resultatum.append(clavem)
+            # pass
+        return resultatum
+
+    def praeparatio(self):
+        """praeparātiō
+
+        Trivia:
+        - praeparātiō, s, f, Nom., https://en.wiktionary.org/wiki/praeparatio
+        """
+        self._initiari()
+        return self.statum
+
+    def quod_datapackage(self) -> dict:
+        if self.ex_radice is True:
+            _path = self.archivum_trivio_ex_radice
+        else:
+            _path = self.archivum_nomini
+
+        resultatum = {
+            'name': self.nomen,
+            # 'path': self.nomen,
+            'path': _path,
+            'profile': 'tabular-data-resource',
+            'schema': {
+                'fields': []
+            },
+            'stats': {
+                'fields': len(self.caput),
+                'rows': self.res_totali,
+            }
+        }
+
+        for caput_rei in self.caput:
+            item = {
+                'name': caput_rei,
+                # TODO: actually get rigth type from reference dictionaries
+                'type': 'string',
+            }
+            resultatum['schema']['fields'].append(item)
+
+        return resultatum
+
+    def quod_rdf_skos_ttl_concepta(self) -> list:
+        self._initiari_v2()
+
+        paginae = []
+
+        nomen_radici = numerordinatio_neo_separatum(self.nomen, ':')
+
+        # https://www.w3.org/2015/03/ShExValidata/ (near ok)
+        # https://skos-play.sparna.fr/skos-testing-tool (needs more work)
+        # paginae.append("<urn:{0}> a skos:Concept ;".format(nomen_radici))
+        paginae.append("<urn:{0}> a skos:ConceptScheme ;".format(nomen_radici))
+        # paginae.append("  skos:prefLabel\n    {0} .".format(
+        #     ",\n    ".join(linguae)
+        # ))
+        paginae.append("  skos:prefLabel \"{0}\"@{1} .".format(
+            nomen_radici,
+            'mul-Zyyy-x-n1603'
+        ))
+        paginae.append('')
+
+        dictionaria_codici = []
+
+        # for codex_de, res in enumerate(self.concepta):
+        for codex_de, _res in self.concepta.items():
+            codex_de_n = numerordinatio_neo_separatum(codex_de, ':')
+            numerodinatio = nomen_radici + ':' + str(codex_de_n)
+            dictionaria_codici.append(numerodinatio)
+
+        for codex_de, res in self.concepta.items():
+
+            codex_de_n = numerordinatio_neo_separatum(codex_de, ':')
+            if codex_de_n.startswith('0:1603'):
+                continue
+            # This is deprecated use; used on 1603_25_1
+            if codex_de_n.startswith('0:999'):
+                continue
+            numerodinatio = nomen_radici + ':' + str(codex_de_n)
+            # paginae.append(':{0} a skos:Concept ;'.format(codex_de))
+            paginae.append("<urn:{0}> a skos:Concept ;".format(numerodinatio))
+
+            progenitor = numerordinatio_progenitori(numerodinatio, ':')
+
+            if nomen_radici == progenitor:
+                paginae.append('  skos:topConceptOf\n    <urn:{0}> ;'.format(
+                    progenitor))
+
+            descendentia = self._quod_descendentia(
+                dictionaria_codici, numerodinatio)
+            if len(descendentia) > 0:
+                # print('descendentia', descendentia)
+                # paginae.append('  skos:broader\n    {0} ;'.format(
+                paginae.append('  skos:narrower\n    {0} ;'.format(
+                    ' ,\n    '.join(
+                        map(lambda x: '<urn:' + x + '>', descendentia))
+                ))
+
+            # paginae.append('  rdfs:subClassOf <urn:{0}> ;'.format(
+            #     progenitor
+            # ))
+            # paginae.append('  skos:narrowerTransitive <urn:{0}> ;'.format(
+            # paginae.append('  skos:narrower\n    <urn:{0}> ;'.format(
+
+            # AVOID: tchbc - Top Concepts Having Broader Concepts
+            if nomen_radici != progenitor:
+                paginae.append('  skos:broader\n    <urn:{0}> ;'.format(
+                    progenitor
+                ))
+            # @TODO: implement inverse, skos:broader
+
+            linguae = self._quod_linguae(res)
+            if len(linguae) > 0:
+                paginae.append("  skos:prefLabel\n    {0} .".format(
+                    " ,\n    ".join(linguae)
+                ))
+            else:
+                # The "." also need to be on last statement
+                raise NotImplementedError('{0} / {0} needs be fixed'.format(
+                    nomen_radici, numerodinatio))
+
+            # paginae.append('  rdfs:subClassOf <urn:{0}> . '.format(
+            # paginae.append('  skos:topConceptOf <urn:{0}> . '.format(
+            #     progenitor
+            # ))
+            # paginae.append('  skos:topConceptOf <http://vocabularies.unesco.org/thesaurus> .')
+            # paginae.append('  skos:topConceptOf <http://vocabularies.unesco.org/thesaurus> ;')
+            paginae.append('')
+
+        # @TODO: ...
+
+        # @TODO: edge case, such as 1603:25:1
+        #   <urn:1603:25:1:4> a skos:Concept ;
+        #   skos:prefLabel
+        #       "extremitates"@lat-Latn-x-wikip3982 .
+
+        return paginae
 
 
 class XLSXSimplici:

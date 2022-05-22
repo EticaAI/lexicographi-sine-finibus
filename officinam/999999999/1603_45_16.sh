@@ -141,26 +141,35 @@ bootstrap_999999_1603_45_16() {
 #
 # Globals:
 #   ROOTDIR
+#
 # Arguments:
-#   None
+#   objectivum_iso3661p1a3  If given, will restrict processing to one place)
+#                           Empty will process all files on disk
+#
+# Outputs:
+#   Convert files
 #######################################
 bootstrap_999999_1603_45_16_neo() {
-  # @see https://github.com/wireservice/csvkit/issues/1112
-  # export PYTHONWARNINGS="ignore"
-  # PYTHONWARNINGS="ignore"
+  objectivum_iso3661p1a3="${1:-""}"
+  # objectivum_unm49="${1:-""}"
 
-  echo "${FUNCNAME[0]} ...2"
+  echo "${FUNCNAME[0]} ... [$objectivum_iso3661p1a3]"
 
-  echo "#meta,#meta+m49,#meta+archivum,#meta+iso3,#meta+sheets+original,#meta+sheets+new" >"${ROOTDIR}"/999999/1603/45/16/1_meta-de-archivum.csv
-  echo "" >"${ROOTDIR}"/999999/1603/45/16/2_meta-de-caput.txt
-  echo "#meta,#meta+m49,#meta+archivum,#meta+caput,#meta+level,#meta+language+#meta+hxlhashtag" >"${ROOTDIR}"/999999/1603/45/16/2_meta-de-caput.csv
-  echo "${FUNCNAME[0]} ...2"
   for file_path in "${ROOTDIR}"/999999/1603/45/16/xlsx/*.xlsx; do
     ISO3166p1a3_original=$(basename --suffix=.xlsx "$file_path")
     ISO3166p1a3=$(echo "$ISO3166p1a3_original" | tr '[:lower:]' '[:upper:]')
     # UNm49=$(numerordinatio_codicem_locali__1603_45_49 "$ISO3166p1a3")
 
     file_xlsx="${ISO3166p1a3_original}.xlsx"
+
+    if [ -n "$objectivum_iso3661p1a3" ]; then
+      echo "... [$objectivum_iso3661p1a3] [$ISO3166p1a3]"
+      if [ "$objectivum_iso3661p1a3" != "$ISO3166p1a3" ]; then
+        echo "Skiping [$ISO3166p1a3]"
+        continue
+      fi
+    fi
+
     cod_ab_levels=$("${ROOTDIR}/999999999/0/999999999_7200235.py" \
       --methodus=xlsx_metadata \
       --ex-metadatis=.cod_ab_level "$file_path")
@@ -618,16 +627,17 @@ __temp_download_external_cod_data() {
 # bootstrap_999999_1603_45_16_fetch_data
 # bootstrap_999999_1603_45_16
 
-__temp_fetch_external_indexes
-__temp_index_praeparationi_1603_45_16
-__temp_preprocess_external_indexes
+# __temp_fetch_external_indexes
+# __temp_index_praeparationi_1603_45_16
+# __temp_preprocess_external_indexes
 # exit 1
 
-__temp_download_external_cod_data
+# __temp_download_external_cod_data
 # exit 1
 
-bootstrap_999999_1603_45_16_neo
-# exit 1
+bootstrap_999999_1603_45_16_neo ""
+# bootstrap_999999_1603_45_16_neo "BRA"
+exit 1
 
 
 echo "after here is old scripts that need to be refatored"
@@ -725,3 +735,32 @@ set +x
 
 ## This one somwwhat return what we need
 # https://data.humdata.org/api/3/action/package_search?q=vocab_Topics=common+operational+dataset+-+cod
+
+# https://www.npmjs.com/package/wikidata-taxonomy
+# Brazil
+#     wdtaxonomy Q155 -P P131 --brief
+#     wdtaxonomy Q155 -P P131 --brief -s
+#
+#     wdtaxonomy Q16502 -P P361
+#
+# Countryes
+#     wdtaxonomy Q6256
+#
+#     wdtaxonomy Q6256 -P P131
+# country (Q6256) •165 ×192
+# └──first-level administrative country subdivision (Q10864048) •3 ×106
+#    └──second-level administrative country subdivision (Q13220204) ×2726
+#       └──third-level administrative country subdivision (Q13221722) ×2922
+#          ├──??? (Q10872650) •2 ↑
+#          └──fourth-level administrative country subdivision (Q14757767) ×6364
+#             └──fifth-level administrative country subdivision (Q15640612) ×1
+#                └──sixth-level administrative country subdivision (Q22927291)
+#
+#     wdtaxonomy Q22927291 -P P131 -r
+# sixth-level administrative country subdivision (Q22927291)
+# └──fifth-level administrative country subdivision (Q15640612) ×1
+#    └──fourth-level administrative country subdivision (Q14757767) ×6364
+#       └──third-level administrative country subdivision (Q13221722) ×2922
+#          └──second-level administrative country subdivision (Q13220204) ×2726
+#             └──first-level administrative country subdivision (Q10864048) •3 ×106
+#                └──country (Q6256) •165 ×192
