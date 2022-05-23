@@ -784,7 +784,14 @@ class Cli:
             xlsx.praeparatio()
             caput, data = xlsx.imprimere()
 
-            codt = CodAbTabulae(caput=caput, data=data)
+            codt = CodAbTabulae(
+                caput=caput,
+                data=data,
+                ordo=int(pyargs.ordines[0]),
+                numerordinatio_praefixo=numerordinatio_praefixo,
+                pcode_praefixo=pcode_praefixo,
+                unm49=unm49,
+            )
             caput, data = codt.praeparatio(schema).imprimere()
             # print(type(caput), caput)
             # print(type(data), data)
@@ -797,21 +804,21 @@ class Cli:
             xlsx.finis()
             return self.EXIT_OK
 
-        climain = CliMain(
-            infile=_infile, stdin=_stdin,
-            pyargs=pyargs,
-            configuratio=configuratio,
-            venandum_insectum=self.venandum_insectum
-        )
+        # climain = CliMain(
+        #     infile=_infile, stdin=_stdin,
+        #     pyargs=pyargs,
+        #     configuratio=configuratio,
+        #     venandum_insectum=self.venandum_insectum
+        # )
 
-        if pyargs.objectivum_formato == 'text/csv':
-            return climain.actio()
-        if pyargs.objectivum_formato == 'application/x-turtle':
-            return climain.actio()
-            # return self.EXIT_OK
-        if pyargs.objectivum_formato == 'application/n-triples':
-            return climain.actio()
-            # return self.EXIT_OK
+        # if pyargs.objectivum_formato == 'text/csv':
+        #     return climain.actio()
+        # if pyargs.objectivum_formato == 'application/x-turtle':
+        #     return climain.actio()
+        #     # return self.EXIT_OK
+        # if pyargs.objectivum_formato == 'application/n-triples':
+        #     return climain.actio()
+        #     # return self.EXIT_OK
 
         # if pyargs.objectivum_formato == 'uri_fonti':
         #     print(METHODUS_FONTI[pyargs.methodus])

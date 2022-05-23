@@ -505,8 +505,20 @@ class CodAbTabulae:
     caput_originali: List[str] = None
     caput_hxl: List[str] = None
     caput_hxltm: List[str] = None
+    caput_no1: List[str] = None
     data: List[list] = None
     dictionaria_linguarum: Type['DictionariaLinguarum'] = None
+    ordo: int = 1
+    numerordinatio_praefixo: str = None
+    pcode_praefixo: str = None
+    unm49: str = None
+
+    # identitās, f, s, nom., https://en.wiktionary.org/wiki/identitas#Latin
+    # ex (+ ablative), https://en.wiktionary.org/wiki/ex#Latin
+    # locālī, n, s, dativus, https://en.wiktionary.org/wiki/localis#Latin
+    # identitas_locali_ex_hxl_hashtag: str = '#item+conceptum+codicem'
+    identitas_locali_index: int = -1
+    numerordinatio_indici: int = -2
 
     # https://en.wiktionary.org/wiki/originalis#Latin
 
@@ -519,11 +531,19 @@ class CodAbTabulae:
     def __init__(
         self,
         caput: list,
-        data: list = None
+        data: list = None,
+        ordo: int = 1,
+        numerordinatio_praefixo: str = None,
+        pcode_praefixo: str = None,
+        unm49: str = None,
     ):
         """__init__"""
         self.caput_originali = caput
         self.data = data
+        self.ordo = ordo
+        self.numerordinatio_praefixo = numerordinatio_praefixo
+        self.pcode_praefixo = pcode_praefixo
+        self.unm49 = unm49
 
     def imprimere(self) -> list:
         """imprimere /print/@eng-Latn
@@ -546,17 +566,21 @@ class CodAbTabulae:
 
         # if formatum is None or formatum == 'csv':
 
+        # print(self._objectivo_dictionario)
+
         caput = self.caput_originali
         data = self.data
         if self._objectivo_dictionario == 'hxl':
             caput = self.caput_hxl
         if self._objectivo_dictionario == 'hxltm':
             caput = self.caput_hxltm
+        if self._objectivo_dictionario == 'no1':
+            caput = self.caput_no1
 
         # @TODO potentially re-arrange the order of columns on the result
         return caput, data
 
-    def praeparatio(self, formatum: str = None):
+    def praeparatio(self, formatum: str):
         """praeparātiō
 
         Trivia:
@@ -579,21 +603,55 @@ class CodAbTabulae:
 
         # @TODO refactor from bash scripts
         #       - un_pcode_csvheader_administrative_level
-        if formatum is None or formatum == 'hxltm':
+        if formatum == 'hxltm':
             self.caput_hxltm = []
 
             self.dictionaria_linguarum = DictionariaLinguarum()
 
             for index, res in enumerate(self.caput_hxl):
-                self.caput_hxltm.append(
-                    self.quod_hxltm_de_hxl_rei(res))
-        # else:
-        # print('teste??', self.caput_hxltm)
+                caput_novi = self.quod_hxltm_de_hxl_rei(res)
 
-        # self.caput_hxltm = self.caput_hxl
-        # pass
+                if caput_novi == '#item+conceptum+codicem':
+                    self.identitas_locali_index = index
+                if caput_novi == '#item+conceptum+numerordinatio':
+                    self.numerordinatio_indici = index
+
+                self.caput_hxltm.append(caput_novi)
+
+        if formatum == 'no1':
+            self.caput_no1 = []
+
+            self.dictionaria_linguarum = DictionariaLinguarum()
+
+            for index, res in enumerate(self.caput_hxl):
+                caput_novi = self.quod_no1_de_hxltm_rei(res)
+
+                if caput_novi == '#item+conceptum+codicem':
+                    self.identitas_locali_index = index
+                if caput_novi == '#item+conceptum+numerordinatio':
+                    self.numerordinatio_indici = index
+
+                self.caput_no1.append(caput_novi)
+
+        if formatum in ['hxltm', 'no1'] and self.identitas_locali_index < 0:
+            self.praeparatio_identitas_locali()
+
+        if formatum == 'no1' and self.numerordinatio_indici < 0:
+            self.praeparatio_numerordinatio()
 
         return self
+
+    def praeparatio_identitas_locali(self):
+        """praeparatio_identitas_locali
+        """
+        # @TODO
+        pass
+
+    def praeparatio_numerordinatio(self):
+        """numerordinatio
+        """
+        # @TODO
+        pass
 
     @staticmethod
     def quod_columna_alphabeto_orini(column: list = None) -> str:
@@ -763,18 +821,22 @@ class CodAbTabulae:
 
         return hxlhashtag
 
-# def cod_caput_ad_hxl_hastag(caput: list) -> list:
-#     """cod_caput_ad_hxl_hastag
-#     Convert a raw CSV header to HXL hashtags
+    def quod_no1_de_hxltm_rei(self, hxlhashtag: str) -> str:
+        """quod_hxl_de_caput_rei
 
-#     Args:
-#         caput (list):
+        Args:
+            res (str):
 
-#     Returns:
-#         list:
-#     """
-#     # un_pcode_csvheader_administrative_level
-#     return caput
+        Returns:
+            str:
+        """
+        # lingua = ''
+
+        if not hxlhashtag or len(hxlhashtag) == 0 or \
+                not hxlhashtag.startswith('#'):
+            return ''
+
+        return self.quod_hxltm_de_hxl_rei(hxlhashtag)
 
 
 def configuratio(
