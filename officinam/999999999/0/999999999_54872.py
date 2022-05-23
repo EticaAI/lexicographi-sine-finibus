@@ -100,8 +100,17 @@ _ET_AL_URL = [
     'https://jena.apache.org/',
     'https://www.w3.org/2018/09/rdf-data-viz/',
     'https://rdf2svg.redefer.rhizomik.net/',
-    # 'http://robot.obolibrary.org/reason'
-] 
+    # 'http://robot.obolibrary.org/reason',
+    ## Papers
+    'https://www.w3.org/2009/12/rdf-ws/papers/ws21',
+    # https://en.wikipedia.org/wiki/Ontology_engineering
+    ## 300 page book
+    # - https://people.cs.uct.ac.za/~mkeet/files/OEbook.pdf
+    # - https://people.cs.uct.ac.za/~mkeet/OEbook/OEsoftware.html#OElang
+]
+
+# https://github.com/seebi/rdf.sh#installation
+# /workspace/bin/rdf
 # https://github.com/essepuntato/undo/blob/master/ontology/current/undo.ttl
 
 # autopep8 --list-fixes ./999999999/0/999999999_54872.py

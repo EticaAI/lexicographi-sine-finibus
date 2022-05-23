@@ -64,6 +64,126 @@ bootstrap_999999_1603_45_16_fetch_data() {
 }
 
 #######################################
+# Convert the XLSXs to intermediate formats on 999999/1603/45/16 using
+# 999999999_7200235.py to 1603/45/16/{cod_ab_level}/
+#
+# @TODO: potentially use more than one source (such as IGBE data for BRA)
+#        instead of direclty from OCHA
+#
+# Globals:
+#   ROOTDIR
+#
+# Arguments:
+#   objectivum_iso3661p1a3  If given, will restrict processing to one place)
+#                           Empty will process all files on disk
+#
+# Outputs:
+#   Convert files
+#######################################
+bootstrap_1603_45_16__all() {
+  objectivum_iso3661p1a3="${1:-""}"
+  # objectivum_unm49="${1:-""}"
+
+  # echo "${FUNCNAME[0]} ... [$objectivum_iso3661p1a3]"
+  echo "${FUNCNAME[0]} ... [@TODO]"
+}
+
+#######################################
+# Convert the XLSXs to intermediate formats on 999999/1603/45/16 using
+# 999999999_7200235.py to 1603/45/16/{cod_ab_level}/
+#
+# @TODO: potentially use more than one source (such as IGBE data for BRA)
+#        instead of direclty from OCHA
+#
+# Globals:
+#   ROOTDIR
+#
+# Arguments:
+#   unm49
+#   iso3661p1a3
+#   est_temporarium_fontem
+#   est_temporarium_objectivum
+#
+# Outputs:
+#   Convert files
+#######################################
+bootstrap_1603_45_16__item() {
+  unm49="${1:-""}"
+  iso3661p1a3="${2:-""}"
+  est_temporarium_fontem="${3:-"1"}"
+  est_temporarium_objectivum="${4:-"0"}"
+
+  if [ "$est_temporarium_fontem" -eq "1" ]; then
+    _basim_fontem="${ROOTDIR}/999999"
+  else
+    _basim_fontem="${ROOTDIR}"
+  fi
+  if [ "$est_temporarium_objectivum" -eq "1" ]; then
+    _basim_objectivum="${ROOTDIR}/999999"
+  else
+    _basim_objectivum="${ROOTDIR}"
+  fi
+
+  _iso3661p1a3_lower=$(echo "$iso3661p1a3" | tr '[:upper:]' '[:lower:]')
+
+  fontem_archivum="${_basim_fontem}/1603/45/16/xlsx/${_iso3661p1a3_lower}.xlsx"
+  objectivum_archivum_basi="${_basim_objectivum}/1603/45/16/${unm49}"
+
+  echo "${FUNCNAME[0]} ... [$unm49] [$iso3661p1a3]"
+
+  # for file_path in "${ROOTDIR}"/999999/1603/45/16/xlsx/*.xlsx; do
+  ISO3166p1a3_original=$(basename --suffix=.xlsx "$file_path")
+  ISO3166p1a3=$(echo "$ISO3166p1a3_original" | tr '[:lower:]' '[:upper:]')
+  # UNm49=$(numerordinatio_codicem_locali__1603_45_49 "$ISO3166p1a3")
+
+
+
+  file_xlsx="${ISO3166p1a3_original}.xlsx"
+
+  cod_ab_levels=$("${ROOTDIR}/999999999/0/999999999_7200235.py" \
+    --methodus=xlsx_metadata \
+    --ex-metadatis=.cod_ab_level "$fontem_archivum")
+
+  echo "  > ${file_xlsx}"
+
+  file_xlsx_sheets=""
+  file_xlsx_sheets_new=""
+  echo ""
+  echo "${file_path}"
+
+  echo "@TODO [$cod_ab_levels]"
+  return 0
+  # return 0
+  # # ./999999999/0/999999999_7200235.py --methodus=xlsx_metadata --ex-metadatis=.cod_ab_level 999999/1603/45/16/xlsx/ago.xlsx
+  fontem_archivum="${file_path}"
+  for cod_level in $cod_ab_levels; do
+    echo "  cod-ab-$ISO3166p1a3-$cod_level ..."
+
+    objectivum_archivum_csv="${ROOTDIR}/999999/1603/45/16/csv/${ISO3166p1a3}_${cod_level}.csv"
+    objectivum_archivum_hxl="${ROOTDIR}/999999/1603/45/16/hxl/${ISO3166p1a3}_${cod_level}.hxl.csv"
+    objectivum_archivum_no1="${ROOTDIR}/1603/45/16/hxltm/${ISO3166p1a3}_${cod_level}.tm.hxl.csv"
+
+    # set -x
+    "${ROOTDIR}/999999999/0/999999999_7200235.py" \
+      --methodus=xlsx_ad_csv \
+      --ordines="$cod_level" "$file_path" >"${objectivum_archivum_csv}"
+
+    "${ROOTDIR}/999999999/0/999999999_7200235.py" \
+      --methodus=xlsx_ad_hxl \
+      --ordines="$cod_level" "$file_path" >"${objectivum_archivum_hxl}"
+
+    "${ROOTDIR}/999999999/0/999999999_7200235.py" \
+      --methodus=xlsx_ad_hxltm \
+      --ordines="$cod_level" "$file_path" >"${objectivum_archivum_hxltm}"
+    # set +x
+    # return 0
+    # continue
+  done
+    # return 0
+  # done
+}
+
+#######################################
 # Convert the XLSXs to intermediate formats on 999999/1603/45/16
 # DEPRECATED use bootstrap_999999_1603_45_16_neo
 #
@@ -635,8 +755,10 @@ __temp_download_external_cod_data() {
 # __temp_download_external_cod_data
 # exit 1
 
-bootstrap_999999_1603_45_16_neo ""
+# bootstrap_999999_1603_45_16_neo ""
 # bootstrap_999999_1603_45_16_neo "BRA"
+
+bootstrap_1603_45_16__item "76" "BRA"
 exit 1
 
 
@@ -764,3 +886,11 @@ set +x
 #          └──second-level administrative country subdivision (Q13220204) ×2726
 #             └──first-level administrative country subdivision (Q10864048) •3 ×106
 #                └──country (Q6256) •165 ×192
+
+# https://github.com/seebi/rdf.sh (also any23 https://github.com/seebi/rdf.sh/issues/8)
+# /workspace/bin/rdf
+# rdf desc skos:narrower
+# rdf list geo:
+
+# rapper -g 999999/0/ibge_un_adm2.no1.skos.ttl
+# rapper --output dot --guess 999999/0/ibge_un_adm2.no1.skos.ttl
