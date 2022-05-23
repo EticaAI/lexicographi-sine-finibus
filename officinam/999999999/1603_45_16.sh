@@ -108,10 +108,11 @@ bootstrap_1603_45_16__all() {
 #   Convert files
 #######################################
 bootstrap_1603_45_16__item() {
-  unm49="${1:-""}"
-  iso3661p1a3="${2:-""}"
-  est_temporarium_fontem="${3:-"1"}"
-  est_temporarium_objectivum="${4:-"0"}"
+  numerordinatio_praefixo="$1"
+  unm49="${2:-""}"
+  iso3661p1a3="${3:-""}"
+  est_temporarium_fontem="${4:-"1"}"
+  est_temporarium_objectivum="${5:-"0"}"
 
   if [ "$est_temporarium_fontem" -eq "1" ]; then
     _basim_fontem="${ROOTDIR}/999999"
@@ -136,7 +137,9 @@ bootstrap_1603_45_16__item() {
   ISO3166p1a3=$(echo "$ISO3166p1a3_original" | tr '[:lower:]' '[:upper:]')
   # UNm49=$(numerordinatio_codicem_locali__1603_45_49 "$ISO3166p1a3")
 
-
+  if [ ! -d "$objectivum_archivum_basi" ]; then
+    mkdir "$objectivum_archivum_basi"
+  fi
 
   file_xlsx="${ISO3166p1a3_original}.xlsx"
 
@@ -146,40 +149,25 @@ bootstrap_1603_45_16__item() {
 
   echo "  > ${file_xlsx}"
 
-  file_xlsx_sheets=""
-  file_xlsx_sheets_new=""
-  echo ""
-  echo "${file_path}"
-
-  echo "@TODO [$cod_ab_levels]"
-  return 0
-  # return 0
-  # # ./999999999/0/999999999_7200235.py --methodus=xlsx_metadata --ex-metadatis=.cod_ab_level 999999/1603/45/16/xlsx/ago.xlsx
-  fontem_archivum="${file_path}"
   for cod_level in $cod_ab_levels; do
     echo "  cod-ab-$ISO3166p1a3-$cod_level ..."
 
-    objectivum_archivum_csv="${ROOTDIR}/999999/1603/45/16/csv/${ISO3166p1a3}_${cod_level}.csv"
-    objectivum_archivum_hxl="${ROOTDIR}/999999/1603/45/16/hxl/${ISO3166p1a3}_${cod_level}.hxl.csv"
-    objectivum_archivum_no1="${ROOTDIR}/1603/45/16/hxltm/${ISO3166p1a3}_${cod_level}.tm.hxl.csv"
+    objectivum_archivum_basi_lvl="${objectivum_archivum_basi}/${cod_level}"
+    objectivum_archivum_no1="${objectivum_archivum_basi_lvl}/${numerordinatio_praefixo}_${cod_level}.no1.tm.hxl.csv"
 
-    # set -x
-    "${ROOTDIR}/999999999/0/999999999_7200235.py" \
-      --methodus=xlsx_ad_csv \
-      --ordines="$cod_level" "$file_path" >"${objectivum_archivum_csv}"
+    if [ ! -d "$objectivum_archivum_basi_lvl" ]; then
+      mkdir "$objectivum_archivum_basi_lvl"
+    fi
 
-    "${ROOTDIR}/999999999/0/999999999_7200235.py" \
-      --methodus=xlsx_ad_hxl \
-      --ordines="$cod_level" "$file_path" >"${objectivum_archivum_hxl}"
-
+    set -x
     "${ROOTDIR}/999999999/0/999999999_7200235.py" \
       --methodus=xlsx_ad_hxltm \
-      --ordines="$cod_level" "$file_path" >"${objectivum_archivum_hxltm}"
-    # set +x
+      --ordines="$cod_level" "$fontem_archivum" >"${objectivum_archivum_no1}"
+    set +x
     # return 0
     # continue
   done
-    # return 0
+  # return 0
   # done
 }
 
@@ -758,9 +746,9 @@ __temp_download_external_cod_data() {
 # bootstrap_999999_1603_45_16_neo ""
 # bootstrap_999999_1603_45_16_neo "BRA"
 
-bootstrap_1603_45_16__item "76" "BRA"
+# bootstrap_1603_45_16__item "76" "BRA"
+bootstrap_1603_45_16__item "1603_45_16_24" "24" "AGO" "1" "0"
 exit 1
-
 
 echo "after here is old scripts that need to be refatored"
 exit 1
