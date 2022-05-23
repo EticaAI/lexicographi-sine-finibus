@@ -592,6 +592,8 @@ class CodAbTabulae:
         self.caput_hxl = []
         self.dictionaria_linguarum = None
 
+        # print('self.data', self.data)
+
         # Let's assume is a plain CSV (we skip if start with #)
         for index, res in enumerate(self.caput_originali):
             column = []
@@ -651,6 +653,7 @@ class CodAbTabulae:
         """praeparatio_identitas_locali
         """
         pcode_index = None
+        pcode_hashtag_de_facto = ''
         if self.ordo == 0:
             pcode_hashtag = [
                 '#country+code+v_pcode', '#country+code+v_iso2',
@@ -660,12 +663,15 @@ class CodAbTabulae:
 
         for item in pcode_hashtag:
             if item in self.caput_hxltm:
+                pcode_hashtag_de_facto = item
                 pcode_index = self.caput_hxltm.index(item)
                 break
 
         if pcode_index is None:
-            raise SyntaxError('{0} not in <{1}>/<{2}>'.format(
-                pcode_hashtag, self.caput_hxltm, self.caput_hxl
+            raise SyntaxError(
+                '{0} not in (hxltm)<{1}>/(hxl)<{2}>(csv){3}'.format(
+                pcode_hashtag, self.caput_hxltm,
+                self.caput_hxl, self.caput_originali
             ))
         # pcode_index = self.caput_hxltm.index(pcode_hashtag)
 
@@ -678,9 +684,22 @@ class CodAbTabulae:
             if self.ordo == 0:
                 linea_novae.append(pcode_completo)  # Ex. BR
             else:
+
                 # Ex. 31 ad BR31
-                linea_novae.append(
-                    int(pcode_completo.replace(self.pcode_praefixo, '')))
+                pcode_numeri = pcode_completo.replace(self.pcode_praefixo, '')
+
+                ## Ex: Haiti admin3Pcode HT0111-01, HT0111-02, HT0111-03
+                pcode_numeri = re.sub('[^0-9]','', pcode_numeri)
+
+                try:
+                    linea_novae.append(int(pcode_numeri))
+                except ValueError as err:
+                    raise ValueError('<{0}:{1}> -> int({2})?? [{3}]'.format(
+                        pcode_hashtag_de_facto,
+                        pcode_completo,
+                        pcode_numeri,
+                        err
+                    ))
 
             linea_novae.extend(linea)
             data_novis.append(linea_novae)
@@ -692,7 +711,7 @@ class CodAbTabulae:
         """
         identitas_locali_index = self.caput_hxltm.index(
             '#item+conceptum+codicem')
-        self.caput_hxltm.insert(0, '#item+conceptum+numerordinatio')
+        self.caput_no1.insert(0, '#item+conceptum+numerordinatio')
         data_novis = []
 
         for linea in self.data:
@@ -732,6 +751,8 @@ class CodAbTabulae:
                     _ordo.add(len(alpha))
             if len(_ordo) == 1:
                 ordo = _ordo.pop()
+
+        # print('  ordo', ordo, column)
         return ordo
 
     @staticmethod
@@ -790,6 +811,10 @@ class CodAbTabulae:
                         data_exemplis)
                     if ordo_codici and ordo_codici in [2, 3]:
                         suffīxum = '+code+v_iso{0}'.format(ordo_codici)
+                    elif ordo_codici is None:
+                        # Weird case: no data at all on adm0. Lets force
+                        # as ISO 3661p1a2
+                        suffīxum = '+code+v_iso2'
                     else:
                         suffīxum = '+code'
                 else:
@@ -3349,7 +3374,7 @@ class XLSXSimplici:
             archivum_trivio (str):
         """
         # from openpyxl import load_workbook
-        print(archivum_trivio)
+        # print(archivum_trivio)
         self.archivum_trivio = archivum_trivio
         self.workbook = load_workbook(
             archivum_trivio, data_only=True, read_only=True)

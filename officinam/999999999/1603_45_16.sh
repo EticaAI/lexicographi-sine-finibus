@@ -96,7 +96,11 @@ bootstrap_1603_45_16__all() {
     >"${opus_temporibus_temporarium}"
   # set +x
 
-  # echo "${opus_temporibus_temporarium}"
+  echo ""
+  echo "  LIST HERE <${opus_temporibus_temporarium}>"
+  echo ""
+
+
 
   # while IFS=, read -r iso3 source_url; do
   {
@@ -113,6 +117,20 @@ bootstrap_1603_45_16__all() {
       # echo "unm49 $unm49"
       # echo "v_iso3 $v_iso3"
       # echo "v_iso2 $v_iso2"
+
+      if [ "$unm49" = "426" ]; then
+        echo " 2022-05-23: we will skip LSA admin1 for now as it cannot extract"
+        echo " number (it use 3-letter P-codes)"
+        ## 2022-05-23: we will skip LSA admin1 for now as it cannot extract
+        ## number (it use 3-letter P-codes)
+        # admin1Name_en	admin1Pcode
+        # Maseru	LSA
+        # Butha-Buthe	LSB
+        # Leribe	LSC
+        # (...)
+        continue
+      fi
+
 
       # echo "numerordinatio_praefixo $numerordinatio_praefixo"
       # bootstrap_1603_45_16__item "1603_45_16_24" "24" "AGO" "AO" "3" "1" "0"
@@ -212,6 +230,8 @@ bootstrap_1603_45_16__item() {
       --unm49="$unm49" \
       "$fontem_archivum" >"${objectivum_archivum_no1}"
     set +x
+
+    frictionless validate "${objectivum_archivum_no1}" || true
 
   done
   # return 0
