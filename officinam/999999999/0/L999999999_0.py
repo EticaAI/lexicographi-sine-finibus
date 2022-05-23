@@ -590,6 +590,7 @@ class CodAbTabulae:
         self._objectivo_dictionario = formatum
 
         self.caput_hxl = []
+        self.dictionaria_linguarum = None
 
         # Let's assume is a plain CSV (we skip if start with #)
         for index, res in enumerate(self.caput_originali):
@@ -603,42 +604,45 @@ class CodAbTabulae:
 
             self.caput_hxl.append(self.quod_hxl_de_caput_rei(res, column))
 
-        # @TODO refactor from bash scripts
-        #       - un_pcode_csvheader_administrative_level
-        if formatum == 'hxltm':
-            self.caput_hxltm = []
+        if formatum not in ['hxltm', 'no1']:
+            return self
+        # if formatum in ['hxltm', 'no1']:
+        self.caput_hxltm = []
 
-            self.dictionaria_linguarum = DictionariaLinguarum()
+        self.dictionaria_linguarum = DictionariaLinguarum()
 
-            for index, res in enumerate(self.caput_hxl):
-                caput_novi = self.quod_hxltm_de_hxl_rei(res)
+        for index, res in enumerate(self.caput_hxl):
+            caput_novi = self.quod_hxltm_de_hxl_rei(res)
 
-                if caput_novi == '#item+conceptum+codicem':
-                    self.identitas_locali_index = index
-                if caput_novi == '#item+conceptum+numerordinatio':
-                    self.numerordinatio_indici = index
+            if caput_novi == '#item+conceptum+codicem':
+                self.identitas_locali_index = index
+            # if caput_novi == '#item+conceptum+numerordinatio':
+            #     self.numerordinatio_indici = index
 
-                self.caput_hxltm.append(caput_novi)
+            self.caput_hxltm.append(caput_novi)
+
+        if self.identitas_locali_index < 0:
+            self.praeparatio_identitas_locali()
 
         if formatum == 'no1':
             self.caput_no1 = []
 
-            self.dictionaria_linguarum = DictionariaLinguarum()
+            # self.dictionaria_linguarum = DictionariaLinguarum()
 
-            for index, res in enumerate(self.caput_hxl):
+            for index, res in enumerate(self.caput_hxltm):
                 caput_novi = self.quod_no1_de_hxltm_rei(res)
 
-                if caput_novi == '#item+conceptum+codicem':
-                    self.identitas_locali_index = index
+                # if caput_novi == '#item+conceptum+codicem':
+                #     self.identitas_locali_index = index
                 if caput_novi == '#item+conceptum+numerordinatio':
                     self.numerordinatio_indici = index
 
                 self.caput_no1.append(caput_novi)
 
-        if formatum in ['hxltm', 'no1'] and self.identitas_locali_index < 0:
-            self.praeparatio_identitas_locali()
+        # if formatum in ['hxltm', 'no1'] and self.identitas_locali_index < 0:
+        #     self.praeparatio_identitas_locali()
 
-        if formatum == 'no1' and self.numerordinatio_indici < 0:
+        if self.numerordinatio_indici < 0:
             self.praeparatio_numerordinatio()
 
         return self
@@ -646,14 +650,63 @@ class CodAbTabulae:
     def praeparatio_identitas_locali(self):
         """praeparatio_identitas_locali
         """
-        # @TODO
-        pass
+        pcode_index = None
+        if self.ordo == 0:
+            pcode_hashtag = [
+                '#country+code+v_pcode', '#country+code+v_iso2',
+                '#country+code+v_iso3166p1a2']
+        else:
+            pcode_hashtag = ['#adm{0}+code+v_pcode'.format(self.ordo)]
+
+        for item in pcode_hashtag:
+            if item in self.caput_hxltm:
+                pcode_index = self.caput_hxltm.index(item)
+                break
+
+        if pcode_index is None:
+            raise SyntaxError('{0} not in <{1}>/<{2}>'.format(
+                pcode_hashtag, self.caput_hxltm, self.caput_hxl
+            ))
+        # pcode_index = self.caput_hxltm.index(pcode_hashtag)
+
+        self.caput_hxltm.insert(0, '#item+conceptum+codicem')
+        data_novis = []
+
+        for linea in self.data:
+            linea_novae = []
+            pcode_completo = linea[pcode_index]
+            if self.ordo == 0:
+                linea_novae.append(pcode_completo)  # Ex. BR
+            else:
+                # Ex. 31 ad BR31
+                linea_novae.append(
+                    int(pcode_completo.replace(self.pcode_praefixo, '')))
+
+            linea_novae.extend(linea)
+            data_novis.append(linea_novae)
+
+        self.data = data_novis
 
     def praeparatio_numerordinatio(self):
         """numerordinatio
         """
-        # @TODO
-        pass
+        identitas_locali_index = self.caput_hxltm.index(
+            '#item+conceptum+codicem')
+        self.caput_hxltm.insert(0, '#item+conceptum+numerordinatio')
+        data_novis = []
+
+        for linea in self.data:
+            linea_novae = ['{0}:{1}:{2}:{3}'.format(
+                self.numerordinatio_praefixo,
+                self.unm49,
+                str(self.ordo),
+                linea[identitas_locali_index],
+
+            )]
+            linea_novae.extend(linea)
+            data_novis.append(linea_novae)
+
+        self.data = data_novis
 
     @staticmethod
     def quod_columna_alphabeto_orini(column: list = None) -> str:
@@ -925,13 +978,14 @@ def configuratio(
     return None
 
 
-def csv_imprimendo(caput: list = None, data: list = None, delimiter: str = ',',
-                   archivum_trivio: str = None):
+def csv_imprimendo(
+        caput: list = None, data: list = None, punctum_separato: str = ",",
+        archivum_trivio: str = None):
     if archivum_trivio:
         raise NotImplementedError('{0}'.format(archivum_trivio))
     # imprimendō, v, s, dativus, https://en.wiktionary.org/wiki/impressus#Latin
 
-    _writer = csv.writer(sys.stdout, delimiter=delimiter)
+    _writer = csv.writer(sys.stdout, delimiter=punctum_separato)
     if caput and len(caput) > 0:
         _writer.writerow(caput)
     _writer.writerows(data)
@@ -3295,6 +3349,7 @@ class XLSXSimplici:
             archivum_trivio (str):
         """
         # from openpyxl import load_workbook
+        print(archivum_trivio)
         self.archivum_trivio = archivum_trivio
         self.workbook = load_workbook(
             archivum_trivio, data_only=True, read_only=True)

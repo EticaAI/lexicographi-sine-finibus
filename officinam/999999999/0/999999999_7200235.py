@@ -107,7 +107,9 @@ __EPILOGUM__ = """
 Work with local COD-AB index . . . . . . . . . . . . . . . . . . . . . . . . .
     {0} --methodus='cod_ab_index'
 
-    {0} --methodus='cod_ab_index' --sine-columnis='#country+code+v_iso3'
+    {0} --methodus='cod_ab_index' --punctum-separato-ad-tab --cum-columnis='\
+#country+code+v_unm49,#country+code+v_iso3,#country+code+v_iso2,\
+#meta+source+cod_ab_level,#date+created,#date+updated'
 
     {0} --methodus='cod_ab_index' --sine-columnis='#country+code+v_iso3' \
 --cum-filtris='LOWER(#country+code+v_iso3)'
@@ -524,6 +526,27 @@ class Cli:
         )
 
         parser.add_argument(
+            '--punctum-separato-ad-tab',
+            help='Change output separator to tab',
+            metavar="punctum_separato",
+            dest="punctum_separato_ad_tab",
+            action='store_const',
+            const=True,
+            default=False
+        )
+
+        # parser.add_argument(
+        #     # '--venandum-insectum-est, --debug',
+        #     '--venandum-insectum-est', '--debug',
+        #     help='Enable debug? Show extra informations',
+        #     metavar="venandum_insectum",
+        #     dest="venandum_insectum",
+        #     action='store_const',
+        #     const=True,
+        #     default=False
+        # )
+
+        parser.add_argument(
             # '--venandum-insectum-est, --debug',
             '--venandum-insectum-est', '--debug',
             help='Enable debug? Show extra informations',
@@ -546,6 +569,10 @@ class Cli:
                     _stderr=sys.stderr):
         # self.pyargs = pyargs
 
+        punctum_separato = ','
+        if pyargs.punctum_separato_ad_tab:
+            punctum_separato = "\t"
+
         # _infile = None
         # _stdin = None
         # unm49_basi = '24'
@@ -567,21 +594,24 @@ class Cli:
         if pyargs.unm49:
             unm49 = str(int(pyargs.unm49))
 
-        # print(numerordinatio_praefixo, pcode_praefixo, unm49)
+        # print('    aaaa', numerordinatio_praefixo, pcode_praefixo, unm49)
 
         if pyargs.venandum_insectum or VENANDUM_INSECTUM:
             self.venandum_insectum = True
 
-        if stdin.isatty():
-            _infile = pyargs.infile
-            _stdin = False
-        else:
-            if pyargs.methodus in ['xlsx', 'de_librario']:
-                raise ValueError(
-                    'stdin not implemented for {0} input'.format(
-                        pyargs.methodus))
-            _infile = None
-            _stdin = True
+        # if stdin.isatty():
+        #     _infile = pyargs.infile
+        #     _stdin = False
+        # else:
+        #     if pyargs.methodus in ['xlsx_metadata', 'de_librario']:
+        #         # print('   oi pyargs.infile', pyargs.infile)
+        #         raise ValueError(
+        #             'stdin not implemented for {0} input'.format(
+        #                 pyargs.methodus))
+        #     _infile = None
+        #     _stdin = True
+
+        _infile = pyargs.infile
 
         if pyargs.methodus in [
             'de_hxltm_ad_hxltm', 'de_librario',
@@ -717,7 +747,7 @@ class Cli:
                     data_json_len, data_json_len_uniq, _path))
                 return self.EXIT_OK
 
-            csv_imprimendo(caput, data)
+            csv_imprimendo(caput, data, punctum_separato)
 
             return self.EXIT_OK
 
@@ -725,6 +755,7 @@ class Cli:
             raise NotImplementedError
 
         if pyargs.methodus.startswith('xlsx'):
+            # print('_infile', _infile)
             xlsx = XLSXSimplici(_infile)
 
         if pyargs.methodus == 'xlsx_metadata':
@@ -763,13 +794,13 @@ class Cli:
                     ['ERROR', 'xlsx.meta', xlsx.meta()],
                 ]
 
-                csv_imprimendo(caput, data)
+                csv_imprimendo(caput, data, punctum_separato=punctum_separato)
                 return self.EXIT_ERROR
 
         if pyargs.methodus == 'xlsx_ad_csv':
             xlsx.praeparatio()
             caput, data = xlsx.imprimere()
-            csv_imprimendo(caput, data)
+            csv_imprimendo(caput, data, punctum_separato=punctum_separato)
 
             xlsx.finis()
             return self.EXIT_OK
@@ -796,7 +827,7 @@ class Cli:
             # print(type(caput), caput)
             # print(type(data), data)
             # raise NotImplementedError('test test')
-            csv_imprimendo(caput, data)
+            csv_imprimendo(caput, data, punctum_separato=punctum_separato)
 
             # print()
             # print('@TODO not implemented yet')
