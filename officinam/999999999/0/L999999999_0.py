@@ -590,6 +590,8 @@ class CodAbTabulae:
         self._objectivo_dictionario = formatum
 
         self.caput_hxl = []
+
+        # Let's assume is a plain CSV (we skip if start with #)
         for index, res in enumerate(self.caput_originali):
             column = []
             if res and len(res) > 0 and not res.startswith('#') and \
@@ -775,7 +777,7 @@ class CodAbTabulae:
         return '{0}{1}{2}'.format(praefīxum, suffīxum, lingua)
 
     def quod_hxltm_de_hxl_rei(self, hxlhashtag: str) -> str:
-        """quod_hxl_de_caput_rei
+        """quod_hxltm_de_hxl_rei
 
         Args:
             res (str):
@@ -822,7 +824,7 @@ class CodAbTabulae:
         return hxlhashtag
 
     def quod_no1_de_hxltm_rei(self, hxlhashtag: str) -> str:
-        """quod_hxl_de_caput_rei
+        """quod_no1_de_hxltm_rei
 
         Args:
             res (str):
@@ -835,6 +837,58 @@ class CodAbTabulae:
         if not hxlhashtag or len(hxlhashtag) == 0 or \
                 not hxlhashtag.startswith('#'):
             return ''
+
+        # print('hxlhashtag', hxlhashtag)
+        # Time-related hashtags
+        # @see https://www.wikidata.org/wiki/Wikidata:List_of_properties/time
+        # # https://www.wikidata.org/wiki/Property:P571
+        # # inception (P571)
+        # # time when an entity begins to exist
+        # # equivalent property
+        # #  - https://schema.org/dateCreated
+        # #  - http://id.nlm.nih.gov/mesh/vocab#dateCreated
+        # if hxlhashtag == '#date+start':
+        #     return '#item+rem+i_qcc+is_zxxx+ix_wikip571'
+
+        # # P729 service entry
+        # # date or point in time on which a piece or class of equipment
+        # # https://www.wikidata.org/wiki/Property:P729
+        # if hxlhashtag == '#date+start':
+        #     return '#item+rem+i_qcc+is_zxxx+ix_wikip729'
+
+        # # P729 service entry
+        # # date or point in time on which a piece or class of equipment
+        # # https://www.wikidata.org/wiki/Property:P730
+        # if hxlhashtag == '#date+end':
+        #     return '#item+rem+i_qcc+is_zxxx+ix_wikip730'
+
+        # publication date (P577)
+        # date or point in time when a work was first published or released
+        # https://www.wikidata.org/wiki/Property:P577
+        if hxlhashtag == '#date+start':
+            return '#item+rem+i_qcc+is_zxxx+ix_wikip577'
+
+        # discontinued date (P2669)
+        # date that the availability of a product was discontinued;
+        # see also "dissolved, abolished or demolished" (P576)
+        # https://www.wikidata.org/wiki/Property:P2669
+        if hxlhashtag == '#date+end':
+            return '#item+rem+i_qcc+is_zxxx+ix_wikip2669'
+
+        ## retrieved (P813)
+        # - https://www.wikidata.org/wiki/Property:P813
+        # - https://wiki.openstreetmap.org/wiki/Key:check_date
+        if hxlhashtag == '#date+updated':
+            return '#item+rem+i_qcc+is_zxxx+ix_wikip813'
+
+        # ISO 3166-1 alpha-2 code (P297)
+        # https://www.wikidata.org/wiki/Property:P297
+        if hxlhashtag in [
+                '#country+code+v_iso2', '#country+code+v_iso3166p1a2']:
+            # @TODO: make qualifier if this is not adm0
+            return '#item+rem+i_qcc+is_zxxx+ix_wikip297'
+
+        # @TODO '#adm1+code+v_pcode' likely to be alpha 2 (needs check data)
 
         return self.quod_hxltm_de_hxl_rei(hxlhashtag)
 
