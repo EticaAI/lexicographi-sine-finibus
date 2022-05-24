@@ -8,7 +8,7 @@ More about on:
 
 Namespace explanations at [officinam/](officinam/).
 -->
-Namespace explanations at [HXL-CPLP-Vocab_Auxilium-Humanitarium-API/1603_1_1](https://docs.google.com/spreadsheets/d/1ih3ouvx_n8W5ntNcYBqoyZ2NRMdaA0LRg5F9mGriZm4/edit#gid=2095477004.
+Namespace explanations at [HXL-CPLP-Vocab_Auxilium-Humanitarium-API/1603_1_1](https://docs.google.com/spreadsheets/d/1ih3ouvx_n8W5ntNcYBqoyZ2NRMdaA0LRg5F9mGriZm4/edit#gid=2095477004).
 
 ## Disclaimers
 
