@@ -125,7 +125,10 @@ Work with local COD-AB index . . . . . . . . . . . . . . . . . . . . . . . . .
 '-9:#meta+id|-8:#country+code+v_iso3|-7:#country+code+v_iso2'
 
 Work with local COD-AB index (levels) . . . . . . . . . . . . . . . . . . . . .
-    {0} --methodus='cod_ab_index_levels'
+    {0} --methodus='cod_ab_index_levels' --punctum-separato-ad-tab
+
+    {0} --methodus='cod_ab_index_levels' --sine-capite \
+--cum-columnis='#item+conceptum+numerordinatio'
 
 Process XLSXs from external sources . . . . . . . . . . . . . . . . . . . . . .
    {0} --methodus=xlsx_metadata 999999/1603/45/16/xlsx/ago.xlsx
@@ -541,6 +544,17 @@ class Cli:
             const=True,
             default=False
         )
+        # sine (+ ablative) https://en.wiktionary.org/wiki/sine#Latin
+        # capite, s, n, ablativus, https://en.wiktionary.org/wiki/caput#Latin
+        parser.add_argument(
+            '--sine-capite',
+            help='Output without header',
+            metavar="sine_capite",
+            dest="sine_capite",
+            action='store_const',
+            const=True,
+            default=False
+        )
 
         # parser.add_argument(
         #     # '--venandum-insectum-est, --debug',
@@ -761,6 +775,9 @@ class Cli:
                     data_json_len, data_json_len_uniq, _path))
                 return self.EXIT_OK
 
+            if pyargs.sine_capite:
+                caput = None
+
             csv_imprimendo(caput, data, punctum_separato)
 
             return self.EXIT_OK
@@ -814,6 +831,8 @@ class Cli:
         if pyargs.methodus == 'xlsx_ad_csv':
             xlsx.praeparatio()
             caput, data = xlsx.imprimere()
+            if pyargs.sine_capite:
+                caput = None
             csv_imprimendo(caput, data, punctum_separato=punctum_separato)
 
             xlsx.finis()
@@ -841,6 +860,8 @@ class Cli:
             # print(type(caput), caput)
             # print(type(data), data)
             # raise NotImplementedError('test test')
+            if pyargs.sine_capite:
+                caput = None
             csv_imprimendo(caput, data, punctum_separato=punctum_separato)
 
             # print()
@@ -1008,27 +1029,45 @@ def hxltm_carricato__cod_ab_levels(
     Returns:
         Tuple[list, list]: _description_
     """
-    columnae = [
+    caput_novo = ['#item+conceptum+numerordinatio']
+    caput_cum_columnis = [
         '#country+code+v_unm49',
         '#meta+source+cod_ab_level',
+        '#country+code+v_iso3',
+        '#country+code+v_iso2'
     ]
-    # print('  ooi')
+    data_novis = []
 
     caput, data = hxltm_cum_aut_sine_columnis_simplicibus(
-        caput, data, columnae)
-    # _ordo_novo = []
+        caput, data, caput_cum_columnis)
+
     numerordinatio_praefixo = numerordinatio_neo_separatum(
         numerordinatio_praefixo, ':')
-    caput_novo = ['#item+conceptum+numerordinatio']
-    caput_novo.extend(caput)
-    data_novis = []
+
+    caput_novo.extend(caput_cum_columnis)
+
+    data.sort(key=lambda linea: int(linea[0]))
+
+    _numerordinatio__done = []
+
     for linea in data:
-        linea_novae = []
-        linea_novae.append('{0}:{1}:{2}'.format(
-            numerordinatio_praefixo, linea[0], linea[1]
-        ))
-        linea_novae.extend(linea)
-        data_novis.append(linea_novae)
+        for cod_ab_level in range(0, int(linea[1])):
+            linea_novae = []
+            numerordinatio = '{0}:{1}:{2}'.format(
+                numerordinatio_praefixo, linea[0], cod_ab_level
+            )
+
+            if numerordinatio in _numerordinatio__done:
+                continue
+
+            _numerordinatio__done.append(numerordinatio)
+            linea_novae.append(numerordinatio)
+            linea_novae.append(linea[0])
+            linea_novae.append(cod_ab_level)
+            linea_novae.append(linea[2])
+            linea_novae.append(linea[3])
+            # linea_novae.extend(linea)
+            data_novis.append(linea_novae)
 
     # raise NotImplementedError
     # return caput, data
