@@ -63,6 +63,7 @@ from L999999999_0 import (
     # hxltm_sine_columnis,
     hxltm_ex_selectis,
     hxltm_index_praeparationi,
+    numerordinatio_progenitori,
     qhxl_hxlhashtag_2_bcp47,
     HXLTMAdRDFSimplicis,
     numerordinatio_neo_separatum,
@@ -255,6 +256,7 @@ class Cli:
                 # 'pcode_ex_csv',
                 'cod_ab_index',
                 'cod_ab_index_levels',
+                'cod_ab_index_levels_ttl',
                 'cod_ab_ad_rdf_skos_ttl',
                 'de_hxltm_ad_hxltm',  # load main file directly
                 # load main file by number (example: 1603_45_49)
@@ -636,7 +638,8 @@ class Cli:
         # raise NotImplementedError(pyargs.methodus)
         if pyargs.methodus in [
             'de_hxltm_ad_hxltm', 'de_librario',
-                'index_praeparationi',  'cod_ab_index', 'cod_ab_index_levels']:
+                'index_praeparationi',  'cod_ab_index',
+                'cod_ab_index_levels', 'cod_ab_index_levels_ttl']:
             # Decide which main file to load.
             # if pyargs.methodus.startswith('de_librario'):
             if pyargs.methodus.startswith(
@@ -653,12 +656,18 @@ class Cli:
             elif pyargs.methodus.startswith('cod_ab_index'):
                 caput, data = hxltm_carricato(COD_AB_INDEX)
 
-            if pyargs.methodus == 'cod_ab_index_levels':
+            # if pyargs.methodus == 'cod_ab_index_levels':
+            if pyargs.methodus.startswith('cod_ab_index_levels'):
                 # @TODO cod_ab_index_levels
                 # caput, data = hxltm_carricato(COD_AB_INDEX)
                 # raise NotImplementedError(pyargs.methodus)
-
                 caput, data = hxltm_carricato__cod_ab_levels(caput, data)
+
+            if pyargs.methodus == 'cod_ab_index_levels_ttl':
+                paginae = hxltm_carricato__cod_ab_levels_ttl(caput, data)
+                for linea in paginae:
+                    print(linea)
+                return self.EXIT_OK
 
             est_data_referentibus = hxltm__est_data_referentibus(
                 pyargs.adde_columnis,
@@ -1025,6 +1034,7 @@ def hxltm_carricato__cod_ab_levels(
     Args:
         caput (list): _description_
         data (list): _description_
+        numerordinatio_praefixo (str): _description_
 
     Returns:
         Tuple[list, list]: _description_
@@ -1073,6 +1083,36 @@ def hxltm_carricato__cod_ab_levels(
     # raise NotImplementedError
     # return caput, data
     return caput_novo, data_novis
+
+
+def hxltm_carricato__cod_ab_levels_ttl(
+    caput: list, data: list, numerordinatio_praefixo: str = '1603_45_16'
+) -> list:
+    """hxltm_carricato__cod_ab_levels filter cod_ab_index into a list of levels
+
+    Args:
+        caput (list): _description_
+        data (list): _description_
+        numerordinatio_praefixo (str): _description_
+
+    Returns:
+        list: _description_
+    """
+    paginae = []
+
+    print('caput', caput)
+
+    # https://www.wikidata.org/wiki/EntitySchema:E49
+
+    # paginae.append('# [{0}]'.format(
+    #     numerordinatio_progenitori(numerordinatio_praefixo, ':')))
+    # paginae.append('@prefix skos: <http://www.w3.org/2004/02/skos/core#> .')
+
+    # for linea in data:
+    #     paginae.append('<urn:{0}>'.format(linea[0]))
+    #     paginae.append('  # {0}'.format(str(linea)))
+
+    return paginae
 
 
 if __name__ == "__main__":
