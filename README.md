@@ -101,4 +101,4 @@ This software will use intermediate files to do data conciliation and check cons
 
 At least part of the final compiled result on https://github.com/EticaAI/n-data can actually be viable for re-distribution fully public domain, despite both human and automated being based in part on datasets with incompatible licenses between themselves. Quite often best candidates refer to the same concepts such as country names, or facts, such as human body parts, so their non-altered forms do have copyright, but the facts themselves do not. This is on a case by case basis, **but our intent tends to be focused on helping the existing publishers to have direct access from donated translations for languages outside the English/French**.
 
-This is why the repository https://github.com/EticaAI/multilingual-lexicography-automation have license, and https://github.com/EticaAI/n-data make no clains about copyright.
+This is why the repository https://github.com/EticaAI/lexicographi-sine-finibus have license, and https://github.com/EticaAI/n-data make no clains about copyright.

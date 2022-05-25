@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.0-rc] - 2021-01-09
 ### Added
 ### Changed
-- Project started on https://github.com/EticaAI/multilingual-lexicography-automation
+- Project started on https://github.com/EticaAI/lexicographi-sine-finibus
 
 ## [0.1.0] - 2021-01-03
 

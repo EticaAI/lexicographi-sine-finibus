@@ -1,79 +1,79 @@
 
 # Everything from the workbench is ignored from the top level. We add few
 # Exceptions
-/officinam/**/**.csv
-/officinam/**/**.tab
-/officinam/**/**.tsv
-/officinam/**/**.txt
-/officinam/**/**.xlsx
-/officinam/**/**.zip
-/officinam/**/**.gz
-/officinam/**/**.svg
-/officinam/**/**.codex.md
-/officinam/**/**.codex.adoc
-/officinam/**/**.codex.epub
-/officinam/**/**.codex.mobi
-/officinam/**/**.ttf
-/officinam/**/**.otf
-/officinam/**/**.xml
-/officinam/**/**.tmx
-/officinam/**/**.tbx
-/officinam/**/**.png
-/officinam/**/**.jpg
-/officinam/**/**.json
-/officinam/**/**.statum.yml
-/officinam/**/**.db
-/officinam/**/**.sqlite
-/officinam/**/**.skos.ttl
-officinam/1603/1603.statum.yml
-# /officinam/README.md
-/officinam/LICENSE.md
-/officinam/README.md
-/officinam/package.json
-/officinam/package-lock.json
-/officinam/node_modules
+/officina/**/**.csv
+/officina/**/**.tab
+/officina/**/**.tsv
+/officina/**/**.txt
+/officina/**/**.xlsx
+/officina/**/**.zip
+/officina/**/**.gz
+/officina/**/**.svg
+/officina/**/**.codex.md
+/officina/**/**.codex.adoc
+/officina/**/**.codex.epub
+/officina/**/**.codex.mobi
+/officina/**/**.ttf
+/officina/**/**.otf
+/officina/**/**.xml
+/officina/**/**.tmx
+/officina/**/**.tbx
+/officina/**/**.png
+/officina/**/**.jpg
+/officina/**/**.json
+/officina/**/**.statum.yml
+/officina/**/**.db
+/officina/**/**.sqlite
+/officina/**/**.skos.ttl
+officina/1603/1603.statum.yml
+# /officina/README.md
+/officina/LICENSE.md
+/officina/README.md
+/officina/package.json
+/officina/package-lock.json
+/officina/node_modules
 *~lock.*
 
-/officinam/**/**\.~[0-9]/*
-!/officinam/**/**\.~[0-9]/.gitkeep
+/officina/**/**\.~[0-9]/*
+!/officina/**/**\.~[0-9]/.gitkeep
 
 #### The _de facto_ automation scripts _________________________________________
 # The script folder can be tracked freely
-# !/officinam/999999/**/README.md
-!officinam/999999999
-!officinam/999999999/0/codex_copertae.svg
+# !/officina/999999/**/README.md
+!officina/999999999
+!officina/999999999/0/codex_copertae.svg
 
-### officinam/1603/1/1 (handcrafted data tables) _______________________________
+### officina/1603/1/1 (handcrafted data tables) _______________________________
 # Anything on the 1613 is manual work.
-!officinam/1603/1/1/1603_1_1.no1.tm.hxl.csv
-!officinam/1603/1/6/1603_1_6.no1.tm.hxl.csv
-!officinam/1603/1/7/1603_1_7.no1.tm.hxl.csv
-!officinam/1603/1/51/1603_1_51.no1.tm.hxl.csv
-!officinam/1603/1/101/1603_1_101.no1.tm.hxl.csv
+!officina/1603/1/1/1603_1_1.no1.tm.hxl.csv
+!officina/1603/1/6/1603_1_6.no1.tm.hxl.csv
+!officina/1603/1/7/1603_1_7.no1.tm.hxl.csv
+!officina/1603/1/51/1603_1_51.no1.tm.hxl.csv
+!officina/1603/1/101/1603_1_101.no1.tm.hxl.csv
 
 ### 1603_45_49 (no1 only): automated table, but important at international
-!officinam/1603/45/49/1603_45_49.no1.tm.hxl.csv
+!officina/1603/45/49/1603_45_49.no1.tm.hxl.csv
 
-### officinam/1679/1/1 (handcrafted data tables) _______________________________
+### officina/1679/1/1 (handcrafted data tables) _______________________________
 # Anything on the 1679 is manual work.
-!officinam/1679/1/1/1679_1_1.no1.tm.hxl.csv
+!officina/1679/1/1/1679_1_1.no1.tm.hxl.csv
 
-### officinam/1613 (handcrafted data tables) ___________________________________
+### officina/1613 (handcrafted data tables) ___________________________________
 # Anything on the 1613 is manual work. 
-!officinam/1613
-!officinam/1613/*
-!officinam/1603/17*
-!officinam/1603/17/*
-!officinam/1603/17/*/*
-!officinam/1603/17/*/*/*
+!officina/1613
+!officina/1613/*
+!officina/1603/17*
+!officina/1603/17/*
+!officina/1603/17/*/*
+!officina/1603/17/*/*/*
 
 ### Other exceptions ___________________________________________________________
-!/officinam/**/.gitkeep
-!/officinam/.editorconfig
+!/officina/**/.gitkeep
+!/officina/.editorconfig
 
 
-# git check-ignore officinam/1613
+# git check-ignore officina/1613
 
 
-# officinam$ git check-ignore --verbose 1613
-# git check-ignore --verbose officinam/999999/README.md
+# officina$ git check-ignore --verbose 1613
+# git check-ignore --verbose officina/999999/README.md
