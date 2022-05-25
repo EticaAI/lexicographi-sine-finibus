@@ -63,6 +63,7 @@ from L999999999_0 import (
     # hxltm_sine_columnis,
     hxltm_ex_selectis,
     hxltm_index_praeparationi,
+    numerordinatio_descendentibus,
     numerordinatio_progenitori,
     qhxl_hxlhashtag_2_bcp47,
     HXLTMAdRDFSimplicis,
@@ -1086,7 +1087,7 @@ def hxltm_carricato__cod_ab_levels(
 
 
 def hxltm_carricato__cod_ab_levels_ttl(
-    caput: list, data: list, numerordinatio_praefixo: str = '1603_45_16'
+    caput: list, data: list, numerordinatio_praefixo: str = '1603:45:16'
 ) -> list:
     """hxltm_carricato__cod_ab_levels filter cod_ab_index into a list of levels
 
@@ -1100,17 +1101,43 @@ def hxltm_carricato__cod_ab_levels_ttl(
     """
     paginae = []
 
-    print('caput', caput)
+    # note, on this case, we get an list already with only the root
+    # items, so we have to deal with
 
     # https://www.wikidata.org/wiki/EntitySchema:E49
 
-    # paginae.append('# [{0}]'.format(
-    #     numerordinatio_progenitori(numerordinatio_praefixo, ':')))
-    # paginae.append('@prefix skos: <http://www.w3.org/2004/02/skos/core#> .')
+    basi = numerordinatio_neo_separatum(numerordinatio_praefixo, ':')
 
-    # for linea in data:
-    #     paginae.append('<urn:{0}>'.format(linea[0]))
+
+#     <urn:1603:63:101> a skos:ConceptScheme ;
+#   skos:prefLabel "1603:63:101"@mul-Zyyy-x-n1603 .
+
+    collectio = map(lambda x: x[0], data)
+    collectio_sine_ordo = set(map(
+        lambda x: numerordinatio_progenitori(x, ':'), collectio))
+    # print(collectio_sine_ordo)
+
+    paginae.append('# [{0}]'.format(basi))
+    paginae.append('@prefix skos: <http://www.w3.org/2004/02/skos/core#> .')
+    paginae.append('')
+    paginae.append("<urn:{0}> a skos:ConceptScheme ; \n"
+                   "  skos:prefLabel \"{0}\"@mul-Zyyy-x-n1603 .".format(
+                       basi))
+    paginae.append("  skos:hasTopConcept\n    {0} .".format(
+        " ,\n    ".join(map(lambda x: f'<urn:{x}>', collectio_sine_ordo ))
+    ))
+    for linea in data:
+        progenitori = numerordinatio_progenitori(linea[0], ':')
+        descendentibus = numerordinatio_descendentibus(
+            progenitori, collectio, 1)
+        # paginae.append('<urn:{0}>'.format(linea[0]))
     #     paginae.append('  # {0}'.format(str(linea)))
+    # <urn:1603:45:16:76:0>
+    # # ['1603:45:16:76:0', '76', 0, 'BRA', 'BR']
+    # <urn:1603:45:16:76:1>
+    # # ['1603:45:16:76:1', '76', 1, 'BRA', 'BR']
+    # <urn:1603:45:16:76:2>
+    # # ['1603:45:16:76:2', '76', 2, 'BRA', 'BR']
 
     return paginae
 
