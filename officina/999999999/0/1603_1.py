@@ -52,6 +52,8 @@
 #        https://www.mediawiki.org/wiki
 #        /Help:Tabular_Data?rdfrom=commons:Help:Tabular_Data
 
+# @see https://www.w3.org/2001/sw/BestPractices/OEP/SimplePartWhole
+
 import sys
 import os
 import argparse
@@ -183,6 +185,11 @@ Status quō . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
     {0} --methodus='status-quo' --status-quo-in-datapackage \
 --ex-librario='locale'
+
+Ontologia simplicī . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+    {0} --methodus='ontologia-simplici' --ontologia-de 1603_1_1
+
+    {0} --methodus='ontologia-simplici' --ontologia-de 1603_1_7
 
 Opus temporibus . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
     {0} --methodus='opus-temporibus' --ex-opere-temporibus='cdn'
@@ -4851,6 +4858,7 @@ class CLI_2600:
                 'codex',
                 'data-apothecae',
                 'hxltm-explanationi',
+                'ontologia-simplici',
                 'opus-temporibus',
                 'status-quo',
                 'deprecatum-dictionaria-numerordinatio'
@@ -5052,6 +5060,25 @@ class CLI_2600:
             # const=True,
             action='store_true',
             # nargs='?'
+        )
+
+        # https://en.wikipedia.org/wiki/Status_quo
+        # https://en.wiktionary.org/wiki/ontologia#Latin
+        # simplicī, s, m/f/b, dativus, https://en.wiktionary.org/wiki/simplex
+        ontologia_simplici = parser.add_argument_group(
+            "Ontologia simplicī",
+            '[ --methodus=\'ontologia-simplici\' ] '
+            "Otimized generation of OWL from previous generated table "
+            "Requires --ontologia-de 1603_NN_NN (focused Codex). "
+        )
+
+        ontologia_simplici.add_argument(
+            '--ontologia-de',
+            help='Working ontology code',
+            # metavar='',
+            dest='ontologia_de',
+            # const=True,
+            nargs='?'
         )
 
         # https://en.wikipedia.org/wiki/Status_quo
@@ -5310,6 +5337,19 @@ class CLI_2600:
 
             return self.output(data_apothecae.imprimere())
             # return self.output(['TODO...'])
+
+        # Opus temporibus _____________________________________________________
+        # if self.pyargs.dictionaria_numerordinatio:
+        # if pyargs.methodus == 'opus-temporibus' or \
+        #         self.pyargs.ex_opere_temporibus and \
+        #         len(self.pyargs.ex_opere_temporibus) > 0:
+        if pyargs.methodus == 'ontologia-simplici':
+            # @TODO implement from direct file
+            if not pyargs.ontologia_de:
+                raise ValueError('--ontologia-de ?')
+
+            print(pyargs.ontologia_de)
+            return self.EXIT_ERROR
 
         # Opus temporibus _____________________________________________________
         # if self.pyargs.dictionaria_numerordinatio:
