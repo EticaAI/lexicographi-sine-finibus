@@ -25,6 +25,8 @@
 /officina/**/**.db
 /officina/**/**.sqlite
 /officina/**/**.skos.ttl
+/officina/**/**.ttl
+/officina/**/**.dot
 officina/1603/1603.statum.yml
 # /officina/README.md
 /officina/LICENSE.md

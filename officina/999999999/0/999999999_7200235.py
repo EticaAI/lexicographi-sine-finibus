@@ -1091,6 +1091,10 @@ def hxltm_carricato__cod_ab_levels_ttl(
 ) -> list:
     """hxltm_carricato__cod_ab_levels filter cod_ab_index into a list of levels
 
+    @see https://www.wikidata.org/wiki/EntitySchema:E49
+    @see https://www.wikidata.org/wiki/Wikidata:List_of_properties/geography
+    @see https://www.wikidata.org/wiki/Special:ListDatatypes
+
     Args:
         caput (list): _description_
         data (list): _description_
@@ -1119,9 +1123,15 @@ def hxltm_carricato__cod_ab_levels_ttl(
     # '#country+name+ref'
     # '#country+name+alt'
 
-    # print('caput', caput)
-    # return []
-    # print('data', data[0])
+    # https://www.wikidata.org/wiki/Special:EntityData/Q42.ttl
+    # https://www.wikidata.org/wiki/Special:EntityData/P297.ttl
+
+    # Brasil uses
+    # - https://www.wikidata.org/wiki/Special:EntityData/Q155.ttl
+    #   - wdt:P297 "BR" ;
+    # Rio de Janeiro uses
+    # - https://www.wikidata.org/wiki/Special:EntityData/Q8678.ttl
+    #   - wdt:P297 "BR" ;
 
     data.sort(key=lambda linea: int(linea[1]))
 
@@ -1149,6 +1159,13 @@ def hxltm_carricato__cod_ab_levels_ttl(
 
     paginae.append('# [{0}]'.format(basi))
     paginae.append('@prefix skos: <http://www.w3.org/2004/02/skos/core#> .')
+    # paginae.append('@prefix p: <http://www.wikidata.org/prop/> .')
+    paginae.append('@prefix wdt: <http://www.wikidata.org/prop/direct/> .')
+    paginae.append('')
+    paginae.append(
+        '# @TODO: need decide if administrative boundaries levels \n#'
+        ' are only related or  skos:broaderTransitive + skos:narrowerTransitive'
+    )
     paginae.append('')
     paginae.append("<urn:{0}> a skos:ConceptScheme ;\n"
                    "  skos:prefLabel \"{0}\"@mul-Zyyy-x-n1603 ;".format(
@@ -1157,19 +1174,170 @@ def hxltm_carricato__cod_ab_levels_ttl(
         " ,\n    ".join(map(lambda x: f'<urn:{x}>', numerodiatio_collecti))
     ))
 
+    paginae.append('')
+
     for linea in data:
         numerodiatio_re = basi + ':' + linea[1]
         ordo_maximo = int(linea[4])
-        paginae.append("<urn:{0}> a skos:Concept ;".format(numerodiatio_re))
-        paginae.append('  skos:topConceptOf <urn:{0}> ;'.format(basi))
-        paginae.append("  skos:prefLabel \"{0}\"@mul-Zyyy-x-n1603 ;".format(
-                       numerodiatio_re))
 
-        paginae.append("  # unm49 {0}".format(linea[1]))
-        paginae.append("  # v_iso3 {0}".format(linea[2]))
-        paginae.append("  # v_iso2 {0}".format(linea[3]))
+        _paginae_basi = []
+        _paginae_primus = []
+        _paginae_secundus = []
+        _paginae_tertius = []
+        _paginae_quartus = []
+        _paginae_quintus = []
+        _paginae_sextus = []
+
+        _paginae_basi.append(
+            f'<urn:{numerodiatio_re}> a skos:Concept')
+        _paginae_basi.append(
+            f'  skos:prefLabel "{numerodiatio_re}"@mul-Zyyy-x-n1603')
+        _paginae_basi.append(f'  wdt:P2082 "{linea[1].zfill(3)}"')
+        # ISO 3166-1 numeric
+        _paginae_basi.append(f'  wdt:P299 "{linea[1].zfill(3)}"')
+        _paginae_basi.append(f'  wdt:P298 "{linea[2]}"')
+        _paginae_basi.append(f'  wdt:P297 "{linea[3]}"')
+        _paginae_basi.append(
+            f'  skos:topConceptOf <urn:{basi}>')
+
+        # ordo_nunc = 1
 
         if ordo_maximo >= 1:
+            _paginae_basi.append(
+                f'  skos:related <urn:{numerodiatio_re}:1>')
+
+            _paginae_primus.append(
+                f'<urn:{numerodiatio_re}:1> a skos:Concept')
+            _paginae_primus.append(
+                f'  skos:prefLabel "{numerodiatio_re}:1"@mul-Zyyy-x-n1603')
+            _paginae_primus.append(
+                f'  skos:related <urn:{numerodiatio_re}>')
+
+        if ordo_maximo >= 2:
+            _paginae_primus.append(
+                f'  skos:related <urn:{numerodiatio_re}:2>')
+
+            _paginae_secundus.append(
+                f'<urn:{numerodiatio_re}:2> a skos:Concept')
+            _paginae_secundus.append(
+                f'  skos:prefLabel "{numerodiatio_re}:2"@mul-Zyyy-x-n1603')
+            _paginae_secundus.append(
+                f'  skos:related <urn:{numerodiatio_re}>')
+
+        if ordo_maximo >= 3:
+            _paginae_secundus.append(
+                f'  skos:related <urn:{numerodiatio_re}:3>')
+
+            _paginae_tertius.append(
+                f'<urn:{numerodiatio_re}:3> a skos:Concept')
+            _paginae_tertius.append(
+                f'  skos:prefLabel "{numerodiatio_re}:3"@mul-Zyyy-x-n1603')
+            _paginae_tertius.append(
+                f'  skos:related <urn:{numerodiatio_re}>')
+
+        if ordo_maximo >= 4:
+            _paginae_tertius.append(
+                f'  skos:related <urn:{numerodiatio_re}:4>')
+
+            _paginae_quartus.append(
+                f'<urn:{numerodiatio_re}:4> a skos:Concept')
+            _paginae_quartus.append(
+                f'  skos:prefLabel "{numerodiatio_re}:4"@mul-Zyyy-x-n1603')
+            _paginae_quartus.append(
+                f'  skos:related <urn:{numerodiatio_re}>')
+
+        if ordo_maximo >= 5:
+            _paginae_quartus.append(
+                f'  skos:related <urn:{numerodiatio_re}:5>')
+
+            _paginae_quintus.append(
+                f'<urn:{numerodiatio_re}:5> a skos:Concept')
+            _paginae_quintus.append(
+                f'  skos:prefLabel "{numerodiatio_re}:5"@mul-Zyyy-x-n1603')
+            _paginae_quintus.append(
+                f'  skos:related <urn:{numerodiatio_re}>')
+
+        if ordo_maximo == 6:
+            _paginae_quintus.append(
+                f'  skos:related <urn:{numerodiatio_re}:6>')
+
+            _paginae_sextus.append(
+                f'<urn:{numerodiatio_re}:6> a skos:Concept')
+            _paginae_sextus.append(
+                f'  skos:prefLabel "{numerodiatio_re}:6"@mul-Zyyy-x-n1603')
+            _paginae_sextus.append(
+                f'  skos:related <urn:{numerodiatio_re}>')
+
+        if ordo_maximo > 6:
+            raise ValueError
+
+        #     _paginae_basi.append(
+        #         f'  skos:broaderTransitive <urn:{numerodiatio_re}:1>')
+
+        #     paginae.append(
+        #         f'  skos:broaderTransitive <urn:{numerodiatio_re}:1> ;')
+        #     paginae.append('')
+        #     paginae.append(
+        #         "<urn:{0}:1> a skos:Concept ;".format(numerodiatio_re))
+        #     paginae.append("  skos:prefLabel \"{0}:1\"@mul-Zyyy-x-n1603 ;".format(
+        #         numerodiatio_re))
+        #     paginae.append(
+        #         f'  skos:narrowerTransitive <urn:{numerodiatio_re}> .')
+
+        if len(_paginae_basi) > 0:
+            paginae.append("{0} .\n".format(
+                " ;\n".join(_paginae_basi)
+            ))
+        if len(_paginae_primus) > 0:
+            paginae.append("{0} .\n".format(
+                " ;\n".join(_paginae_primus)
+            ))
+        if len(_paginae_secundus) > 0:
+            paginae.append("{0} .\n".format(
+                " ;\n".join(_paginae_secundus)
+            ))
+        if len(_paginae_tertius) > 0:
+            paginae.append("{0} .\n".format(
+                " ;\n".join(_paginae_tertius)
+            ))
+        if len(_paginae_quartus) > 0:
+            paginae.append("{0} .\n".format(
+                " ;\n".join(_paginae_quartus)
+            ))
+        if len(_paginae_quintus) > 0:
+            paginae.append("{0} .\n".format(
+                " ;\n".join(_paginae_quintus)
+            ))
+        if len(_paginae_sextus) > 0:
+            paginae.append("{0} .\n".format(
+                " ;\n".join(_paginae_sextus)
+            ))
+        continue
+
+        # paginae_basi = (
+        #     f'<urn:{numerodiatio_re}> a skos:ConceptScheme ;\n'
+        #     f'  skos:prefLabel "{numerodiatio_re}"@mul-Zyyy-x-n1603 ;\n'
+        #     f'  skos:topConceptOf <urn:{basi}> .\n'
+        # )
+        # paginae_basi += ("  skos:topConceptOf\n    {0} .".format(
+        #     " ,\n    ".join(map(lambda x: f'<urn:{x}>', numerodiatio_collecti))
+        # ))
+
+        # paginae.append("<urn:{0}> a skos:Concept ;".format(numerodiatio_re))
+        # paginae.append('  skos:topConceptOf <urn:{0}> ;'.format(basi))
+        # paginae.append("  skos:prefLabel \"{0}\"@mul-Zyyy-x-n1603 ;".format(
+        #                numerodiatio_re))
+
+        # paginae.append("  # unm49 {0}".format(linea[1]))
+        # paginae.append("  # v_iso3 {0}".format(linea[2]))
+        # paginae.append("  # v_iso2 {0}".format(linea[3]))
+
+        paginae.append(paginae_basi)
+
+        if ordo_maximo >= 1:
+
+            _paginae_basi.append(
+                f'  skos:broaderTransitive <urn:{numerodiatio_re}:1>')
 
             paginae.append(
                 f'  skos:broaderTransitive <urn:{numerodiatio_re}:1> ;')
@@ -1181,70 +1349,70 @@ def hxltm_carricato__cod_ab_levels_ttl(
             paginae.append(
                 f'  skos:narrowerTransitive <urn:{numerodiatio_re}> .')
 
-        if ordo_maximo >= 2:
+        # if ordo_maximo >= 2:
 
-            paginae.append(
-                f'  skos:broaderTransitive <urn:{numerodiatio_re}:2> ;')
-            paginae.append('')
-            paginae.append(
-                "<urn:{0}:2> a skos:Concept ;".format(numerodiatio_re))
-            paginae.append(
-                "  skos:prefLabel \"{0}:1\"@mul-Zyyy-x-n1603 ;".format(
-                    numerodiatio_re))
-            paginae.append(
-                f'  skos:narrowerTransitive <urn:{numerodiatio_re}:1> ;')
+        #     paginae.append(
+        #         f'  skos:broaderTransitive <urn:{numerodiatio_re}:2> ;')
+        #     paginae.append('')
+        #     paginae.append(
+        #         "<urn:{0}:2> a skos:Concept ;".format(numerodiatio_re))
+        #     paginae.append(
+        #         "  skos:prefLabel \"{0}:1\"@mul-Zyyy-x-n1603 ;".format(
+        #             numerodiatio_re))
+        #     paginae.append(
+        #         f'  skos:narrowerTransitive <urn:{numerodiatio_re}:1> ;')
 
-        if ordo_maximo >= 3:
+        # if ordo_maximo >= 3:
 
-            paginae.append(
-                f'  skos:broaderTransitive <urn:{numerodiatio_re}:3> ;')
-            paginae.append('')
-            paginae.append(
-                "<urn:{0}:3> a skos:Concept ;".format(numerodiatio_re))
-            paginae.append(
-                "  skos:prefLabel \"{0}:1\"@mul-Zyyy-x-n1603 ;".format(
-                    numerodiatio_re))
-            paginae.append(
-                f'  skos:narrowerTransitive <urn:{numerodiatio_re}:2> ;')
+        #     paginae.append(
+        #         f'  skos:broaderTransitive <urn:{numerodiatio_re}:3> ;')
+        #     paginae.append('')
+        #     paginae.append(
+        #         "<urn:{0}:3> a skos:Concept ;".format(numerodiatio_re))
+        #     paginae.append(
+        #         "  skos:prefLabel \"{0}:1\"@mul-Zyyy-x-n1603 ;".format(
+        #             numerodiatio_re))
+        #     paginae.append(
+        #         f'  skos:narrowerTransitive <urn:{numerodiatio_re}:2> ;')
 
-        if ordo_maximo >= 4:
+        # if ordo_maximo >= 4:
 
-            paginae.append(
-                f'  skos:broaderTransitive <urn:{numerodiatio_re}:4> ;')
-            paginae.append('')
-            paginae.append(
-                "<urn:{0}:4> a skos:Concept ;".format(numerodiatio_re))
-            paginae.append(
-                "  skos:prefLabel \"{0}:1\"@mul-Zyyy-x-n1603 ;".format(
-                    numerodiatio_re))
-            paginae.append(
-                f'  skos:narrowerTransitive <urn:{numerodiatio_re}:3> ;')
+        #     paginae.append(
+        #         f'  skos:broaderTransitive <urn:{numerodiatio_re}:4> ;')
+        #     paginae.append('')
+        #     paginae.append(
+        #         "<urn:{0}:4> a skos:Concept ;".format(numerodiatio_re))
+        #     paginae.append(
+        #         "  skos:prefLabel \"{0}:1\"@mul-Zyyy-x-n1603 ;".format(
+        #             numerodiatio_re))
+        #     paginae.append(
+        #         f'  skos:narrowerTransitive <urn:{numerodiatio_re}:3> ;')
 
-        if ordo_maximo >= 5:
+        # if ordo_maximo >= 5:
 
-            paginae.append(
-                f'  skos:broaderTransitive <urn:{numerodiatio_re}:5> ;')
-            paginae.append('')
-            paginae.append(
-                "<urn:{0}:5> a skos:Concept ;".format(numerodiatio_re))
-            paginae.append(
-                "  skos:prefLabel \"{0}:1\"@mul-Zyyy-x-n1603 ;".format(
-                    numerodiatio_re))
-            paginae.append(
-                f'  skos:narrowerTransitive <urn:{numerodiatio_re}:4> ;')
+        #     paginae.append(
+        #         f'  skos:broaderTransitive <urn:{numerodiatio_re}:5> ;')
+        #     paginae.append('')
+        #     paginae.append(
+        #         "<urn:{0}:5> a skos:Concept ;".format(numerodiatio_re))
+        #     paginae.append(
+        #         "  skos:prefLabel \"{0}:1\"@mul-Zyyy-x-n1603 ;".format(
+        #             numerodiatio_re))
+        #     paginae.append(
+        #         f'  skos:narrowerTransitive <urn:{numerodiatio_re}:4> ;')
 
-        if ordo_maximo >= 6:
+        # if ordo_maximo >= 6:
 
-            paginae.append(
-                f'  skos:broaderTransitive <urn:{numerodiatio_re}:6> ;')
-            paginae.append('')
-            paginae.append(
-                "<urn:{0}:6> a skos:Concept ;".format(numerodiatio_re))
-            paginae.append(
-                "  skos:prefLabel \"{0}:1\"@mul-Zyyy-x-n1603 ;".format(
-                    numerodiatio_re))
-            paginae.append(
-                f'  skos:narrowerTransitive <urn:{numerodiatio_re}:6> ;')
+        #     paginae.append(
+        #         f'  skos:broaderTransitive <urn:{numerodiatio_re}:6> ;')
+        #     paginae.append('')
+        #     paginae.append(
+        #         "<urn:{0}:6> a skos:Concept ;".format(numerodiatio_re))
+        #     paginae.append(
+        #         "  skos:prefLabel \"{0}:1\"@mul-Zyyy-x-n1603 ;".format(
+        #             numerodiatio_re))
+        #     paginae.append(
+        #         f'  skos:narrowerTransitive <urn:{numerodiatio_re}:6> ;')
 
         paginae.append('')
 
