@@ -85,6 +85,8 @@ import csv
 import yaml
 
 from L999999999_0 import (
+    OntologiaSimplici,
+    OntologiaSimpliciAdOWL,
     bcp47_langtag,
     DictionariaLinguarum,
     DictionariaInterlinguarum,
@@ -187,9 +189,12 @@ Status quō . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 --ex-librario='locale'
 
 Ontologia simplicī . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-    {0} --methodus='ontologia-simplici' --ontologia-de 1603_1_1
+    {0} --methodus='ontologia-simplici' --ontologia-radici=1603_1_1
 
-    {0} --methodus='ontologia-simplici' --ontologia-de 1603_1_7
+    {0} --methodus='ontologia-simplici' --ontologia-radici=1603_1_7
+
+    {0} --methodus='ontologia-simplici' --ontologia-radici=1603_1_7 \
+--ontologia-ex-archivo=1603/1/7/1603_1_7.no1.tm.hxl.csv
 
 Opus temporibus . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
     {0} --methodus='opus-temporibus' --ex-opere-temporibus='cdn'
@@ -979,7 +984,7 @@ class Codex:
         - dictiōnāria, n, pl, (Nominative),
           https://en.wiktionary.org/wiki/dictionarium#Latin
         - archīva, n, pl, (Nominative)
-        - ex (+ ablative), https://en.wiktionary.org/wiki/ex#Latin
+        - ex (+ ablativus), https://en.wiktionary.org/wiki/ex#Latin
         - ad (+ accusative), https://en.wiktionary.org/wiki/ad#Latin
         - ab (+ ablative), https://en.wiktionary.org/wiki/ab#Latin
         - prō (+ ablative, accusative) (accusative in Late Latin)
@@ -5069,14 +5074,23 @@ class CLI_2600:
             "Ontologia simplicī",
             '[ --methodus=\'ontologia-simplici\' ] '
             "Otimized generation of OWL from previous generated table "
-            "Requires --ontologia-de 1603_NN_NN (focused Codex). "
+            "Requires --ontologia-radici 1603_NN_NN (focused Codex). "
         )
 
         ontologia_simplici.add_argument(
-            '--ontologia-de',
+            '--ontologia-radici',
             help='Working ontology code',
             # metavar='',
-            dest='ontologia_de',
+            dest='ontologia_radici',
+            # const=True,
+            nargs='?'
+        )
+
+        ontologia_simplici.add_argument(
+            '--ontologia-ex-archivo',
+            help='Explicit path to a file on disk. ',
+            # metavar='',
+            dest='ontologia_ex_archivo',
             # const=True,
             nargs='?'
         )
@@ -5338,18 +5352,26 @@ class CLI_2600:
             return self.output(data_apothecae.imprimere())
             # return self.output(['TODO...'])
 
-        # Opus temporibus _____________________________________________________
-        # if self.pyargs.dictionaria_numerordinatio:
-        # if pyargs.methodus == 'opus-temporibus' or \
-        #         self.pyargs.ex_opere_temporibus and \
-        #         len(self.pyargs.ex_opere_temporibus) > 0:
+        # Ontologia Simplicī ___________________________________________________
         if pyargs.methodus == 'ontologia-simplici':
             # @TODO implement from direct file
-            if not pyargs.ontologia_de:
-                raise ValueError('--ontologia-de ?')
+            if not pyargs.ontologia_radici:
+                raise ValueError('--ontologia-radici ?')
 
-            print(pyargs.ontologia_de)
-            return self.EXIT_ERROR
+            if not pyargs.ontologia_ex_archivo:
+                raise NotADirectoryError(
+                    '@TODO infer from --ontologia-radici ')
+            ontologia_ex_archivo = pyargs.ontologia_ex_archivo
+
+            ontologia = OntologiaSimpliciAdOWL(
+                pyargs.ontologia_radici,
+                ontologia_ex_archivo
+            )
+            # print(ontologia)
+            ontologia.imprimere_ad_tabula()
+
+            print(pyargs.ontologia_radici)
+            return self.EXIT_OK
 
         # Opus temporibus _____________________________________________________
         # if self.pyargs.dictionaria_numerordinatio:

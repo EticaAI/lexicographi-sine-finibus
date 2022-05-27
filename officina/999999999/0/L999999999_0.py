@@ -41,6 +41,7 @@ import re
 import sys
 from datetime import date, datetime
 from typing import (
+    Iterator,
     List,
     Tuple,
     Type,
@@ -2896,6 +2897,69 @@ def numerordinatio_progenitori(
     return separatum.join(_parts)
 
 
+class OntologiaSimplici:
+    """Ontologia Simplicī
+
+
+    Trivia:
+    - ontologia, ---, https://en.wiktionary.org/wiki/ontologia#Latin
+    - simplicī, s, m/f/b, dativus, https://en.wiktionary.org/wiki/simplex
+    - ex (+ ablativus), https://en.wiktionary.org/wiki/ex#Latin
+    - rādīcī, s, f, dativus, https://en.wiktionary.org/wiki/radix#Latin
+    - archīvō, s, n, dativus, https://en.wiktionary.org/wiki/archivum
+
+    @see https://www.w3.org/2001/sw/BestPractices/OEP/SimplePartWhole
+    @see https://www.w3.org/TR/owl2-overview/#Overview
+
+    """
+
+    # No 1603 prefix
+    ontologia_radici: str = None
+    data_apothecae_ex: str = []
+    caput_no1: List[str] = None
+    data: List[list] = None
+
+    PRAEFIXUM = [
+        '@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .',
+        '@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .',
+        '@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .',
+        '@prefix owl: <http://www.w3.org/2002/07/owl#> .'
+    ]
+
+    def __init__(
+        self,
+        ontologia_radici: str,
+        ontologia_ex_archivo: str,
+    ):
+
+        self.ontologia_radici = ontologia_radici
+        self.ontologia_ex_archivo = ontologia_ex_archivo
+
+        self.initiari()
+
+    def initiari(self):
+        """initiarī
+
+        Trivia:
+        - initiārī, https://en.wiktionary.org/wiki/initio#Latin
+        """
+        self.caput_no1, self.data = hxltm_carricato(self.ontologia_ex_archivo)
+        # pass
+
+    def imprimere_ad_tabula(self, punctum_separato: str = ","):
+        csv_imprimendo(
+            self.caput_no1, self.data, punctum_separato=punctum_separato)
+        # return self.resultatum
+
+
+class OntologiaSimpliciAdOWL(OntologiaSimplici):
+    def imprimere_owl(self, punctum_separato: str = ","):
+        paginae = []
+        paginae.extend(self.PRAEFIXUM)
+
+        ttl_imprimendo(paginae)
+
+
 def qhxl(rem: dict, query: Union[str, list]):
     if isinstance(query, str):
         query = [query]
@@ -3387,6 +3451,17 @@ class TabulaSimplici:
         #       "extremitates"@lat-Latn-x-wikip3982 .
 
         return paginae
+
+
+def ttl_imprimendo(
+        paginae: Iterator[str],
+        archivum_trivio: str = None):
+    if archivum_trivio:
+        raise NotImplementedError('{0}'.format(archivum_trivio))
+    # imprimendō, v, s, dativus, https://en.wiktionary.org/wiki/impressus#Latin
+
+    for linea in paginae:
+        print(linea)
 
 
 class XLSXSimplici:
