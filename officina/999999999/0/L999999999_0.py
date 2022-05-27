@@ -2915,6 +2915,7 @@ class OntologiaSimplici:
 
     # No 1603 prefix
     ontologia_radici: str = None
+    ordo_radici: int = None
     data_apothecae_ex: str = []
     caput_no1: List[str] = None
     data: List[list] = None
@@ -2923,7 +2924,9 @@ class OntologiaSimplici:
         '@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .',
         '@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .',
         '@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .',
-        '@prefix owl: <http://www.w3.org/2002/07/owl#> .'
+        '@prefix owl: <http://www.w3.org/2002/07/owl#> .',
+        '@prefix skos: <http://www.w3.org/2004/02/skos/core#> .',
+        '@prefix p: <http://www.wikidata.org/prop/> .'
     ]
 
     def __init__(
@@ -2932,7 +2935,8 @@ class OntologiaSimplici:
         ontologia_ex_archivo: str,
     ):
 
-        self.ontologia_radici = ontologia_radici
+        self.ontologia_radici = numerordinatio_neo_separatum(
+            ontologia_radici, ':')
         self.ontologia_ex_archivo = ontologia_ex_archivo
 
         self.initiari()
@@ -2944,6 +2948,20 @@ class OntologiaSimplici:
         - initiārī, https://en.wiktionary.org/wiki/initio#Latin
         """
         self.caput_no1, self.data = hxltm_carricato(self.ontologia_ex_archivo)
+
+        if self.caput_no1[0] != '#item+conceptum+numerordinatio':
+            raise SyntaxError('Non [{0}] index 0 ad [{1}]'.format(
+                '#item+conceptum+numerordinatio',
+                self.ontologia_ex_archivo
+            ))
+
+        if self.caput_no1[1] != '#item+conceptum+codicem':
+            raise SyntaxError('Non [{0}] index 1 ad [{1}]'.format(
+                '#item+conceptum+codicem',
+                self.ontologia_ex_archivo
+            ))
+
+        self.ordo_radici = numerordinatio_ordo(self.ontologia_radici)
         # pass
 
     def imprimere_ad_tabula(self, punctum_separato: str = ","):
@@ -2953,9 +2971,50 @@ class OntologiaSimplici:
 
 
 class OntologiaSimpliciAdOWL(OntologiaSimplici):
-    def imprimere_owl(self, punctum_separato: str = ","):
+    def imprimere_ad_owl(self, punctum_separato: str = ","):
+        # - part of (P361)
+        #   - https://www.wikidata.org/wiki/Property:P361
+        #   - https://www.wikidata.org/wiki/Special:EntityData/P361.ttl
+        # - https://www.wikidata.org/wiki/EntitySchema:E49
+
         paginae = []
+        paginae.append('# {0}'.format(self.ontologia_radici))
         paginae.extend(self.PRAEFIXUM)
+        paginae.append('')
+        paginae.append('p:P361 a owl:ObjectProperty .')
+        paginae.append('')
+        paginae.append(
+            '<urn:{0}> rdf:type owl:Ontology .'.format(self.ontologia_radici))
+        ordo_nunc = self.ordo_radici
+        parēns = {
+            ordo_nunc: self.ontologia_radici
+        }
+        # print(parēns)
+        for linea in self.data:
+            numerordinatio_nunc = numerordinatio_neo_separatum(linea[0], ':')
+            if numerordinatio_nunc.startswith(
+                    self.ontologia_radici + ':0:1603'):
+                continue
+
+            ordo_nunc = numerordinatio_ordo(linea[0])
+            parēns[ordo_nunc] = numerordinatio_nunc
+            numerordinatio_parentī = parēns[ordo_nunc - 1]
+
+            paginae.append('# {0} {1} {2}'.format(
+                linea[0], linea[1], ordo_nunc))
+
+            paginae.append('<urn:{0}> p:P361 <urn:{1}> .'.format(
+                numerordinatio_nunc, numerordinatio_parentī,
+                parēns[ordo_nunc]))
+
+            paginae.append(
+                '<urn:{0}> rdfs:Literal "{1}" .'.format(
+                    numerordinatio_nunc, numerordinatio_nunc,
+                    parēns[ordo_nunc]))
+
+            paginae.append('')
+            # ordo_nunc = self.ordo_radici
+            # parēns = self.ontologia_radici
 
         ttl_imprimendo(paginae)
 

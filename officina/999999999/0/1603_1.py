@@ -196,6 +196,10 @@ Ontologia simplicī . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
     {0} --methodus='ontologia-simplici' --ontologia-radici=1603_1_7 \
 --ontologia-ex-archivo=1603/1/7/1603_1_7.no1.tm.hxl.csv
 
+    {0} --methodus='ontologia-simplici' --ontologia-radici=1603_1_7 \
+--ontologia-ex-archivo=1603/1/7/1603_1_7.no1.tm.hxl.csv \
+| rapper --quiet --input=turtle --output=turtle /dev/fd/0
+
 Opus temporibus . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
     {0} --methodus='opus-temporibus' --ex-opere-temporibus='cdn'
 
@@ -5368,9 +5372,10 @@ class CLI_2600:
                 ontologia_ex_archivo
             )
             # print(ontologia)
-            ontologia.imprimere_ad_tabula()
+            # ontologia.imprimere_ad_tabula()
+            ontologia.imprimere_ad_owl()
 
-            print(pyargs.ontologia_radici)
+            # print(pyargs.ontologia_radici)
             return self.EXIT_OK
 
         # Opus temporibus _____________________________________________________
