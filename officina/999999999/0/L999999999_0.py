@@ -2915,6 +2915,12 @@ class OntologiaSimplici:
 
     # No 1603 prefix
     ontologia_radici: str = None
+
+    # dictionaria_radici: This affects how we infer "classes".
+    # Without this we may make partsOf as if they're classes,
+    # which may be wrong
+    dictionaria_radici: str = None
+
     ordo_radici: int = None
     data_apothecae_ex: str = []
     caput_no1: List[str] = None
@@ -2929,15 +2935,23 @@ class OntologiaSimplici:
         '@prefix p: <http://www.wikidata.org/prop/> .'
     ]
 
+    PARENTES = []
+
     def __init__(
         self,
         ontologia_radici: str,
         ontologia_ex_archivo: str,
+        dictionaria_radici: str = None
     ):
 
         self.ontologia_radici = numerordinatio_neo_separatum(
             ontologia_radici, ':')
         self.ontologia_ex_archivo = ontologia_ex_archivo
+        if dictionaria_radici:
+            self.dictionaria_radici = numerordinatio_neo_separatum(
+                dictionaria_radici, ':')
+        else:
+            self.dictionaria_radici = self.ontologia_radici
 
         self.initiari()
 
@@ -2962,6 +2976,47 @@ class OntologiaSimplici:
             ))
 
         self.ordo_radici = numerordinatio_ordo(self.ontologia_radici)
+
+        _parents__parts = self.dictionaria_radici.split(':')
+        _parents__parens = []
+        # print('oi', _parents__parts)
+        for item in _parents__parts:
+            if len(_parents__parens) == 0:
+                self.PARENTES.append(
+                    '<urn:{0}> rdf:type owl:Ontology .'.format(item))
+                self.PARENTES.append(
+                    '<urn:{0}> rdf:type owl:Class .'.format(item))
+                self.PARENTES.append('')
+                _parents__parens.append(item)
+                continue
+
+            # if len(_parents__parens) > 0:
+            #     # _parents__parens.append(item)
+            #     # _aa =
+            #     numerordinatio_nunc = ':'.join(_parents__parens)
+            # else:
+            #     # numerordinatio_nunc = item
+
+            #     self.PARENTES.append(
+            #         '<urn:{0}> rdf:type owl:Ontology .'.format(item))
+            #     _parents__parens.append(item)
+            #     continue
+            _parents__parens_old = list(_parents__parens)
+            _parents__parens.append(item)
+            numerordinatio_nunc = ':'.join(_parents__parens)
+
+            self.PARENTES.append(
+                '<urn:{0}> rdf:type owl:Class .'.format(numerordinatio_nunc))
+            self.PARENTES.append(
+                '<urn:{0}> rdfs:subClassOf <urn:{1}> .'.format(
+                    numerordinatio_nunc, ':'.join(_parents__parens_old)))
+            # if len(_parents__parens) > 0:
+            #     self.PARENTES.append(
+            #         '<urn:{0}> rdfs:subClassOf <urn:{1}> .'.format(
+            #             numerordinatio_nunc, ':'.join(_parents__parens)))
+
+            self.PARENTES.append('')
+        # self.PARENTES = []
         # pass
 
     def imprimere_ad_tabula(self, punctum_separato: str = ","):
@@ -2975,16 +3030,28 @@ class OntologiaSimpliciAdOWL(OntologiaSimplici):
         # - part of (P361)
         #   - https://www.wikidata.org/wiki/Property:P361
         #   - https://www.wikidata.org/wiki/Special:EntityData/P361.ttl
+        # - has part or parts (P527)
+        #   - https://www.wikidata.org/wiki/Property:P527
+        #   - https://www.wikidata.org/wiki/Special:EntityData/P527.ttl
+        # - inverse property (P1696)
+        #   - https://www.wikidata.org/wiki/Property:P1696
+        #   - https://www.wikidata.org/wiki/Property_talk:P1696
         # - https://www.wikidata.org/wiki/EntitySchema:E49
+        # ObjectInverseOf
+        # owl:inverseOf
 
         paginae = []
         paginae.append('# {0}'.format(self.ontologia_radici))
         paginae.extend(self.PRAEFIXUM)
         paginae.append('')
-        paginae.append('p:P361 a owl:ObjectProperty .')
+        paginae.append('p:P361 rdf:type owl:ObjectProperty .')
+        paginae.append('p:P1696 rdf:type owl:ObjectProperty .')
+        paginae.append('p:P361 owl:inverseOf p:P1696 .')
         paginae.append('')
-        paginae.append(
-            '<urn:{0}> rdf:type owl:Ontology .'.format(self.ontologia_radici))
+        paginae.extend(self.PARENTES)
+        paginae.append('')
+        # paginae.append(
+        #     '<urn:{0}> rdf:type owl:Ontology .'.format(self.ontologia_radici))
         ordo_nunc = self.ordo_radici
         parēns = {
             ordo_nunc: self.ontologia_radici
