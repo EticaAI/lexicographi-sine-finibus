@@ -1,4 +1,9 @@
 #item+bpc47	#item+hxl	#item+rdf	#item+namespace
 qcc-Zxxx	+i_qcc+is_zxxx		
-qcc-Zxxx-r-rrdf-type	+i_qcc+is_zxxx+ir_rdf_type	rdf:type	http://www.w3.org/2000/01/rdf-schema#
-lat-Latn-r-rskos-preflabel	+i_lat+is_latn+ir_skos_preflabel	skos:preflabel/"[$0]"@lat-Latn	http://www.w3.org/2004/02/skos/core#
+qcc-Zxxx-r-rrdf-type	+i_qcc+is_zxxx+ir_rrdf_type	rdf:type	http://www.w3.org/2000/01/rdf-schema#
+lat-Latn-r-rskos-preflabel	+i_lat+is_latn+ir_rskos_preflabel	skos:preflabel/"[$0]"@lat-Latn	http://www.w3.org/2004/02/skos/core#
+qcc-Zxxx-r-rskos-broader	+i_qcc+is_zxxx+ir_skos_broader	skos:broader	http://www.w3.org/2004/02/skos/core#
+qcc-Zxxx-r-rskos-narrower	+i_qcc+is_zxxx+ir_skos_narrower	skos:narrower	http://www.w3.org/2004/02/skos/core#
+qcc-Zxxx-r-rskos-related	+i_qcc+is_zxxx+ir_skos_related	skos:related	http://www.w3.org/2004/02/skos/core#
+qcc-Zxxx-r-rdct-modified	+i_qcc+is_zxxx+ir_dct_modified	dct:modified	http://purl.org/dc/terms/
+qcc-Zxxx-r-rdct-modified-txsd-datetime	+i_qcc+is_zxxx+ir_dct_modified+irt_xsd_datetime	dct:modified/"[$0]"^^xsd:datetime	http://purl.org/dc/terms/|<http://www.w3.org/2001/XMLSchema#
