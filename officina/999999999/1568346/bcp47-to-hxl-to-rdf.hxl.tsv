@@ -1,0 +1,4 @@
+#item+bpc47	#item+hxl	#item+rdf	#item+namespace
+qcc-Zxxx	+i_qcc+is_zxxx		
+qcc-Zxxx-r-rrdf-type	+i_qcc+is_zxxx+ir_rdf_type	rdf:type	http://www.w3.org/2000/01/rdf-schema#
+lat-Latn-r-rskos-preflabel	+i_lat+is_latn+ir_skos_preflabel	skos:preflabel/"[$0]"@lat-Latn	http://www.w3.org/2004/02/skos/core#
