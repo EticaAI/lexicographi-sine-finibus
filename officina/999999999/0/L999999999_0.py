@@ -538,36 +538,85 @@ def bcp47_rdf_extension(
     Exemplōrum gratiā (et Python doctest, id est, automata testīs):
         (python3 -m doctest myscript.py)
 
-    #>>> bcp47_langtag_rdf('lat-Latn-r-rskos-prefLabel', 'language')
-    #'pt'
-
-    >>> t1 = bcp47_langtag('lat-Latn-r-rskos-prefLabel', 'extension')['r']
+    >>> t1 = bcp47_langtag('lat-Latn-r-pskos-prefLabel', 'extension')['r']
     >>> t1
-    'rskos-prefLabel'
+    'pskos-prefLabel'
 
-    >>> bcp47_langtag_rdf(t1)
+    >>> bcp47_rdf_extension(t1, 'rdf:predicate')
+    ['skos:prefLabel']
+
+    >>> bcp47_rdf_extension('pdc-contributor-pdc-creator-pdc-publisher',
+    ... 'rdf:predicate')
+    ['dc:contributor', 'dc:creator', 'dc:publisher']
+
+    >>> bcp47_rdf_extension('pdct-modified-txsd-dateTime',
+    ... ['rdf:predicate', 'rdfs:Datatype'])
+    {'rdf:predicate': ['dct:modified'], 'rdfs:Datatype': 'xsd:dateTime'}
+
     """
     # For sake of copy-and-paste portability, we ignore a few pylints:
     # pylint: disable=too-many-branches,too-many-statements,too-many-locals
     result = {
         'bcp47_extension_r': bcp47_extension_r,
-        'bcp47_extension_r_normalized': None,
+        # 'bcp47_extension_r_normalized': None,
         'rdf:subject': None,
-        'rdf:predicate': None,
+        'rdf:predicate': [],
         'rdf:object': None,
+        'rdfs:Datatype': None,
         '_unknown': [],
         '_error': [],
     }
+    _predicates = []
 
-    # @TODO ...
+    # result['bcp47_extension_r_normalized'] = \
+    #     result['bcp47_extension_r'].lower()
 
-    result['bcp47_extension_r_normalized'] = \
-        result['bcp47_extension_r'].lower()
+    if bcp47_extension_r.find('-') > 0:
+        r_parts = bcp47_extension_r.split('-')
+        r_parts_tot = len(r_parts)
+        r_rest = r_parts_tot
+        while r_rest > 0:
+            r_item_key = r_parts[r_parts_tot - r_rest]
+            r_item_value = r_parts[r_parts_tot - r_rest + 1]
+            if r_item_key.startswith('p'):
+                _predicates.append('{0}:{1}'.format(
+                    r_item_key.lstrip('p'),
+                    r_item_value
+                ))
+            elif r_item_key.startswith('t'):
+                if result['rdfs:Datatype'] is None:
+                    result['rdfs:Datatype'] = '{0}:{1}'.format(
+                        r_item_key.lstrip('t'),
+                        r_item_value
+                    )
+                else:
+                    result['_error'].append(
+                        'rdfs:Datatype [{0}]-[{1}]'.format(
+                            r_item_key,
+                            r_item_value
+                        ))
+            else:
+                result['_error'].append('Unknow [{0}-{1}]'.format(
+                    r_item_key,
+                    r_item_value
+                ))
+            r_rest = r_rest - 2
+
+        if len(_predicates) > 0:
+            _predicates.sort()
+            result['rdf:predicate'] = _predicates
+
+    else:
+        result['_error'].append('G extension do not have -')
+
+    if len(r_parts) % 2 == 0:
+        pass
+    else:
+        result['_error'].append('G extension not even number')
 
     if strictum and len(result['_error']) > 0:
-        raise ValueError(
-            'Errors for [' + bcp47_extension_r + ']: '
-            ', '.join(result['_error']))
+        raise SyntaxError('[{0}]: <{1}>'.format(
+            bcp47_extension_r, result['_error']))
 
     if clavem is not None:
         if isinstance(clavem, str):
