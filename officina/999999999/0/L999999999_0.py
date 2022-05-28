@@ -29,6 +29,9 @@
 """Common library for 999999999_*.py cli scripts
 """
 
+# pytest
+#    python3 -m doctest ./999999999/0/L999999999_0.py
+
 
 import csv
 from genericpath import exists
@@ -127,6 +130,7 @@ def bcp47_langtag(
         Emerson Rocha <rocha(at)ieee.org>
     License:
         SPDX-License-Identifier: Unlicense OR 0BSD
+
     -------------
     The syntax of the language tag in ABNF [RFC5234] is:
     Language-Tag  = langtag             ; normal language tags
@@ -189,11 +193,14 @@ def bcp47_langtag(
                 / "zh-xiang"
     alphanum      = (ALPHA / DIGIT)     ; letters and numbers
     -------------
+
     Most tests use examples from https://tools.ietf.org/search/bcp47 and
     https://github.com/unicode-org/cldr/blob/main/tools/cldr-code
     /src/main/resources/org/unicode/cldr/util/data/langtagTest.txt
-    Exemplōrum gratiā (et Python doctest, id est, testum automata):
-    (run with python3 -m doctest myscript.py)
+
+    Exemplōrum gratiā (et Python doctest, id est, automata testīs):
+        (python3 -m doctest myscript.py)
+
     >>> bcp47_langtag('pt-Latn-BR', 'language')
     'pt'
     >>> bcp47_langtag('pt-Latn-BR', 'script')
@@ -466,6 +473,101 @@ def bcp47_langtag(
     if strictum and len(result['_error']) > 0:
         raise ValueError(
             'Errors for [' + rem + ']: ' + ', '.join(result['_error']))
+
+    if clavem is not None:
+        if isinstance(clavem, str):
+            return result[clavem]
+        if isinstance(clavem, list):
+            result_partial = {}
+            for item in clavem:
+                result_partial[item] = result[item]
+            return result_partial
+        raise TypeError(
+            'clavem [' + str(type(clavem)) + '] != [str, list]')
+
+    return result
+
+
+def bcp47_rdf_extension(
+        bcp47_extension_r: str,
+        clavem: Type[Union[str, list]] = None,
+        strictum: bool = True
+) -> dict:
+    """""Public domain python function to process RDF "G" extension for BCP47
+
+    The bcp47_rdf_extension is an public domain python function to
+    aid parsing of the IETF BCP 47 language tag. It implements the syntactic
+    analysis of RFC 5646 and does not require lookup tables which makes
+    it friendly for quick analysis.
+
+    The general description of extensions is described at
+    https://www.rfc-editor.org/rfc/rfc5646.html#section-2.2.6
+
+    Args:
+        bcp47_extension_r (str):         The r extention part of a BCP47
+                                         language tag
+        clavem (Type[Union[str, list]]): Key (string) for specific value or keys
+                                         (list) to return a dict (optional)
+        strictum (bool):                 Throw exceptions. False replace values
+                                        with False (optional)
+
+    Returns:
+        dict: Python dictionary. None means not found. False means the feature
+                                 is not implemented
+
+    Changelog:
+        - 2022-05-28: Created.
+
+    Author:
+        Emerson Rocha <rocha(at)ieee.org>
+
+    License:
+        SPDX-License-Identifier: Unlicense OR 0BSD
+
+    -----
+    See also
+        - en.wikipedia.org/wiki/Resource_Description_Framework#Vocabulary
+        - https://en.wikipedia.org/wiki/Reification_(knowledge_representation)
+
+    RDF Vocabulary / Properties
+        - rdf:subject – the subject of the RDF statement
+        - rdf:predicate – the predicate of the RDF statement
+
+    -----
+
+    Exemplōrum gratiā (et Python doctest, id est, automata testīs):
+        (python3 -m doctest myscript.py)
+
+    #>>> bcp47_langtag_rdf('lat-Latn-r-rskos-prefLabel', 'language')
+    #'pt'
+
+    >>> t1 = bcp47_langtag('lat-Latn-r-rskos-prefLabel', 'extension')['r']
+    >>> t1
+    'rskos-prefLabel'
+
+    >>> bcp47_langtag_rdf(t1)
+    """
+    # For sake of copy-and-paste portability, we ignore a few pylints:
+    # pylint: disable=too-many-branches,too-many-statements,too-many-locals
+    result = {
+        'bcp47_extension_r': bcp47_extension_r,
+        'bcp47_extension_r_normalized': None,
+        'rdf:subject': None,
+        'rdf:predicate': None,
+        'rdf:object': None,
+        '_unknown': [],
+        '_error': [],
+    }
+
+    # @TODO ...
+
+    result['bcp47_extension_r_normalized'] = \
+        result['bcp47_extension_r'].lower()
+
+    if strictum and len(result['_error']) > 0:
+        raise ValueError(
+            'Errors for [' + bcp47_extension_r + ']: '
+            ', '.join(result['_error']))
 
     if clavem is not None:
         if isinstance(clavem, str):

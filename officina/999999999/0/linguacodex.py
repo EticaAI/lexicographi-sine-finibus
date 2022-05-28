@@ -25,11 +25,13 @@
 #       COMPANY:  EticaAI
 #       LICENSE:  Public Domain dedication OR Zero-Clause BSD
 #                 SPDX-License-Identifier: Unlicense OR 0BSD
-#       VERSION:  v0.6
+#       VERSION:  v0.7
 #       CREATED:  2021-11-20 10:37 UTC v0.1 name langcodescli.py
 #       CHANGED:  2021-11-21 04:59 UTC v0.5 renamed as linguacodex.py
 #                 2021-11-23 09:20 UTC v0.6 --in_bcp47_simplex implemented
 #                 -- in_bcp47_simplex -> de_bcp47_simplex
+#                 2022-05-08 03:30 UTC v0.7 copied from EticaAI/tico-19-hxltm
+#                                           to EticaAI/lexicographi-sine-finibus
 # ==============================================================================
 """linguacodex: expert system command line tool to aid misuse of language codes
 
@@ -247,6 +249,10 @@ from typing import (
 
 import langcodes
 
+from L999999999_0 import (
+    hxltm_carricato,
+    qhxl_hxlhashtag_2_bcp47,
+)
 
 DESCRIPTION = "_[eng-Latn]Command line to process language codes[eng-Latn]_"
 EPILOG = """
@@ -1068,7 +1074,7 @@ def bcp47_langtag(
 ) -> dict:
     """Public domain python function to process BCP47 langtag
 
-    The BCP47Langtag is an public domain python function to
+    The bcp47_langtag is an public domain python function to
     aid parsing of the IETF BCP 47 language tag. It implements the syntactic
     analysis of RFC 5646 and does not require lookup tables which makes
     it friendly for quick analysis.
