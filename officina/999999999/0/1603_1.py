@@ -54,6 +54,7 @@
 
 # @see https://www.w3.org/2001/sw/BestPractices/OEP/SimplePartWhole
 
+from genericpath import exists
 import sys
 import os
 import argparse
@@ -5363,9 +5364,22 @@ class CLI_2600:
                 raise ValueError('--ontologia-radici ?')
 
             if not pyargs.ontologia_ex_archivo:
-                raise NotADirectoryError(
-                    '@TODO infer from --ontologia-radici ')
-            ontologia_ex_archivo = pyargs.ontologia_ex_archivo
+                ontologia_ex_archivo_basi = '{0}/{1}'.format(
+                    numerordinatio_neo_separatum(pyargs.ontologia_radici, '/'),
+                    numerordinatio_neo_separatum(pyargs.ontologia_radici, '_'),
+                )
+                print(ontologia_ex_archivo_basi + '.no11.tm.hxl.csv')
+                if exists(ontologia_ex_archivo_basi + '.no11.tm.hxl.csv'):
+                    ontologia_ex_archivo = \
+                        ontologia_ex_archivo_basi + '.no11.tm.hxl.csv'
+                elif exists(ontologia_ex_archivo_basi + '.no1.tm.hxl.csv'):
+                    ontologia_ex_archivo = \
+                        ontologia_ex_archivo_basi + '.no1.tm.hxl.csv'
+                else:
+                    raise NotADirectoryError(
+                        '@TODO infer from --ontologia-radici ')
+            else:
+                ontologia_ex_archivo = pyargs.ontologia_ex_archivo
 
             ontologia = OntologiaSimpliciAdOWL(
                 pyargs.ontologia_radici,

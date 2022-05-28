@@ -3039,6 +3039,9 @@ class OntologiaSimpliciAdOWL(OntologiaSimplici):
         # - https://www.wikidata.org/wiki/EntitySchema:E49
         # ObjectInverseOf
         # owl:inverseOf
+        #
+        # @TODO parse list of wikidata properties
+        # https://www.wikidata.org/wiki/Property:P31
 
         paginae = []
         paginae.append('# {0}'.format(self.ontologia_radici))
@@ -3050,8 +3053,7 @@ class OntologiaSimpliciAdOWL(OntologiaSimplici):
         paginae.append('')
         paginae.extend(self.PARENTES)
         paginae.append('')
-        # paginae.append(
-        #     '<urn:{0}> rdf:type owl:Ontology .'.format(self.ontologia_radici))
+
         ordo_nunc = self.ordo_radici
         parēns = {
             ordo_nunc: self.ontologia_radici
@@ -3067,8 +3069,8 @@ class OntologiaSimpliciAdOWL(OntologiaSimplici):
             parēns[ordo_nunc] = numerordinatio_nunc
             numerordinatio_parentī = parēns[ordo_nunc - 1]
 
-            paginae.append('# {0} {1} {2}'.format(
-                linea[0], linea[1], ordo_nunc))
+            # paginae.append('# {0} {1} {2}'.format(
+            #     linea[0], linea[1], ordo_nunc))
 
             paginae.append('<urn:{0}> p:P361 <urn:{1}> .'.format(
                 numerordinatio_nunc, numerordinatio_parentī,
