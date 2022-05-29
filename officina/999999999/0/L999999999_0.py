@@ -88,7 +88,15 @@ EXIT_SYNTAX = 2
 BCP47_LANGTAG_EXTENSIONS = {
     'r': lambda r, strictum: bcp47_rdf_extension(r, strictum=strictum)
 }
-
+BCP47_LANGTAG_RDF_NAMESPACES = {
+    'rdf': '<http://www.w3.org/2000/01/rdf-schema#>',
+    'rdfs': '<http://www.w3.org/2000/01/rdf-schema#>',
+    'xsd': '<http://www.w3.org/2001/XMLSchema#>',
+    'owl': '<http://www.w3.org/2002/07/owl#>',
+    'skos': '<http://www.w3.org/2004/02/skos/core#>',
+    'p': '<http://www.wikidata.org/prop/>',
+    'dct': '<http://purl.org/dc/terms/>',
+}
 
 def bcp47_langtag(
         rem: str,
@@ -617,7 +625,7 @@ def bcp47_rdf_extension(
             r_item_value = r_parts[r_parts_tot - r_rest + 1]
             if r_item_key.startswith('p'):
                 _predicates.append('{0}:{1}'.format(
-                    r_item_key.lstrip('p'),
+                    r_item_key.lstrip('p').lower(),
                     r_item_value
                 ))
             elif r_item_key.startswith('s'):
@@ -657,6 +665,10 @@ def bcp47_rdf_extension(
         if len(_subjects) > 0:
             _subjects.sort()
             result['rdf:subject'] = _subjects
+        else:
+            result['rdf:subject'] = [
+                {'id': 'i1'}
+            ]
 
     else:
         result['_error'].append('G extension do not have -')
@@ -687,7 +699,7 @@ def bcp47_rdf_extension(
 def bcp47_rdf_extension_poc(
         header: List[str],
         data: List[List],
-        namespaces: List[dict],
+        namespaces: List[dict] = None,
         strictum: bool = True
 ) -> dict:
     """bcp47_rdf_extension_poc _summary_
@@ -2619,7 +2631,8 @@ def hxltm_adde_columna(
 
 def hxltm_carricato(
     archivum_trivio: str = None,
-    est_stdin: bool = False
+    est_stdin: bool = False,
+    punctum_separato=","
 ) -> list:
     """hxltm_carricato load entire raw CSV file to memory.
 
@@ -2646,7 +2659,7 @@ def hxltm_carricato(
                 # caput = linea
                 # _reader_caput = csv.reader(linea)
                 _gambi = [linea, linea]
-                _reader_caput = csv.reader(_gambi)
+                _reader_caput = csv.reader(_gambi, delimiter=punctum_separato)
                 caput = next(_reader_caput)
             else:
                 _data.append(linea)
@@ -2656,7 +2669,7 @@ def hxltm_carricato(
     #     fons = archivum_trivio
     data = []
     with open(archivum_trivio, 'r') as _fons:
-        _csv_reader = csv.reader(_fons)
+        _csv_reader = csv.reader(_fons, delimiter=punctum_separato)
         for linea in _csv_reader:
             if len(caput) == 0:
                 # caput = linea

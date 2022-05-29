@@ -1,0 +1,4 @@
+qcc-Zxxx-r-sU2200-s1	qcc-Zxxx-r-pSKOS-broader-sS-s1	qcc-Zxxx-r-pSKOS-narrower-sS-s1	qcc-Zxxx-r-pSKOS-related-sS-s1	rus-Cyrl-r-pSKOS-prefLabel-sS-s1	arb-Arab-r-pSKOS-prefLabel-sS-s1	spa-Latn-r-pSKOS-prefLabel-sS-s1	qcc-Zxxx-r-pDCT-modified-txsd-datetime-sS-s2
+concept10	_	concept4938|concept7597	concept9	Право на образование	حق في التعليم	Derecho a la educación	2019-12-15T13:26:49Z
+concept9	_	_	concept10	Политика в области образования	سياسة تربوية	Política educacional	2019-12-15T22:36:40Z
+concept4938	concept10	_	concept10	Возможности получения образования	فرص تربوية	Oportunidades educacionales	2019-12-15T22:36:42Z
