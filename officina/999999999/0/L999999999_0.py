@@ -557,6 +557,7 @@ def bcp47_rdf_extension(
         - https://en.wikipedia.org/wiki/Universal_quantification
         - https://en.wikipedia.org/wiki/List_of_logic_symbols
           - "∀" U+2200
+          - “🔗” (U+1F517)
 
 
     RDF Vocabulary / Properties
@@ -605,13 +606,14 @@ def bcp47_rdf_extension(
         # 'bcp47_extension_r_normalized': None,
         'rdf:subject': [],
         'rdf:predicate': [],
-        'rdf:object': None,
+        'rdf:object': [],
         'rdfs:Datatype': None,
         '_unknown': [],
         '_error': [],
     }
     _predicates = []
     _subjects = []
+    _objects = []
 
     # result['bcp47_extension_r_normalized'] = \
     #     result['bcp47_extension_r'].lower()
@@ -628,17 +630,23 @@ def bcp47_rdf_extension(
                     r_item_key.lstrip('p').lower(),
                     r_item_value
                 ))
-            elif r_item_key.startswith('s'):
-                # _subjects.append('{0}:{1}'.format(
-                #     r_item_key.lstrip('s'),
-                #     r_item_value
-                # ))
+
+            # sU2200
+            elif r_item_key.lower().startswith('su'):
                 _subjects.append('∀{0}'.format(
                     r_item_value.lstrip('s')
                 ))
-                # _subjects.append('{0}'.format(
-                #     r_item_value.lstrip('s')
-                # ))
+            elif r_item_key.lower().startswith('ss'):
+                _subjects.append('{0}'.format(
+                    r_item_value.lstrip('s')
+                ))
+
+            # oU1F517
+            elif r_item_key.lower().startswith('ou'):
+                _objects.append('🔗{0}'.format(
+                    r_item_value.lstrip('o')
+                ))
+
             elif r_item_key.startswith('t'):
                 if result['rdfs:Datatype'] is None:
                     result['rdfs:Datatype'] = '{0}:{1}'.format(
@@ -662,13 +670,13 @@ def bcp47_rdf_extension(
             _predicates.sort()
             result['rdf:predicate'] = _predicates
 
+        if len(_objects) > 0:
+            _objects.sort()
+            result['rdf:object'] = _objects
+
         if len(_subjects) > 0:
             _subjects.sort()
             result['rdf:subject'] = _subjects
-        else:
-            result['rdf:subject'] = [
-                {'id': 'i1'}
-            ]
 
     else:
         result['_error'].append('G extension do not have -')
@@ -693,6 +701,53 @@ def bcp47_rdf_extension(
         raise TypeError(
             'clavem [' + str(type(clavem)) + '] != [str, list]')
 
+    return result
+
+
+def bcp47_rdf_extension_relationship(
+        header: List[str],
+        strictum: bool = True
+) -> dict:
+    """""Metadata processing of the bcp47_rdf_extension version
+
+    _extended_summary_
+
+    Args:
+        caput (List[str]): _description_
+        strictum (bool, optional): _description_. Defaults to True.
+
+    Returns:
+        dict: _description_
+    """
+    result = {
+        'columns_original': header,
+        'columns': [],
+        # 'rdf:subject': None,
+        # 'rdf:predicate': [],
+        # 'rdf:object': None,
+        # 'rdfs:Datatype': None,
+        # '_unknown': [],
+        '_error': [],
+    }
+
+    # print('header', header)
+
+    for index, item in enumerate(header):
+        item_meta = bcp47_langtag(
+            item, ['language', 'script', 'extension'], strictum=False)
+        # @TODO; get erros and export them to upper level
+        item_meta['_column'] = index
+
+        result['columns'].append(item_meta)
+        # print(index, item, item_meta)
+
+    # index = 0
+    # for index, item in enumerate(header):
+    #     # print('item', item)
+    #     item_meta = bcp47_langtag(
+    #         item, ['language', 'script', 'extension'], strictum=False)
+    #     result['columns'].append(item_meta)
+    #     # index += 1
     return result
 
 
@@ -746,17 +801,14 @@ def bcp47_rdf_extension_poc(
         # '_unknown': [],
         '_error': [],
     }
-    for item in header:
-        # print('item', item)
-        item_meta = bcp47_langtag(item, ['language', 'script', 'extension'])
-        # if 'r' in item_meta['extension']:
-        #     item_meta['extension']['r'] = bcp47_rdf_extension(
-        #         item_meta['extension']['r'],
-        #         ['rdf:subject', 'rdf:predicate', 'rdfs:Datatype'],
-        #     )
-        result['header_result'].append(item_meta)
+    # return {}
 
-    return result
+    # print('header', header)
+
+    # header.pop()
+
+    meta = bcp47_rdf_extension_relationship(header, strictum=strictum)
+    return meta
 
 
 class CodAbTabulae:
