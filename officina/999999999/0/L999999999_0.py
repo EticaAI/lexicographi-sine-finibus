@@ -528,10 +528,33 @@ def bcp47_rdf_extension(
     See also
         - en.wikipedia.org/wiki/Resource_Description_Framework#Vocabulary
         - https://en.wikipedia.org/wiki/Reification_(knowledge_representation)
+        - https://en.wikipedia.org/wiki/First-order_logic
+        - https://en.wikipedia.org/wiki/Universal_quantification
+        - https://en.wikipedia.org/wiki/List_of_logic_symbols
+          - "∀" U+2200
+
 
     RDF Vocabulary / Properties
         - rdf:subject – the subject of the RDF statement
         - rdf:predicate – the predicate of the RDF statement
+
+    @TODO: - https://en.wikipedia.org/wiki/First-order_logic#Logical_symbols
+             - The logical connectives: ∧ for conjunction,
+               ∨ for disjunction, → for implication, ↔ for biconditional,
+               ¬ for negation. Occasionally other logical connective symbol
+               are included. Some authors[7] use Cpq, instead of →,
+               and Epq, instead of ↔, especially in contexts where → is used
+               for other purposes. Moreover, the horseshoe ⊃ may replace →;
+               the triple-bar ≡ may replace ↔;
+               a tilde (~), Np, or Fp, may replace ¬;
+               a double bar {\displaystyle \|}\|, {\displaystyle +}+ or
+               Apq may replace ∨; and ampersand &, Kpq, or the middle dot, ⋅,
+               may replace ∧, especially if these symbols are not available
+               for technical reasons. (The aforementioned symbols
+               Cpq, Epq, Np, Apq, and Kpq are used in Polish notation.)
+           - en.wikipedia.org/wiki/Polish_notation#Polish_notation_for_logic
+           - https://en.wikipedia.org/wiki/Hungarian_notation
+           - https://en.wikipedia.org/wiki/Leszynski_naming_convention
 
     -----
 
@@ -559,7 +582,7 @@ def bcp47_rdf_extension(
     result = {
         'bcp47_extension_r': bcp47_extension_r,
         # 'bcp47_extension_r_normalized': None,
-        'rdf:subject': None,
+        'rdf:subject': [],
         'rdf:predicate': [],
         'rdf:object': None,
         'rdfs:Datatype': None,
@@ -567,6 +590,7 @@ def bcp47_rdf_extension(
         '_error': [],
     }
     _predicates = []
+    _subjects = []
 
     # result['bcp47_extension_r_normalized'] = \
     #     result['bcp47_extension_r'].lower()
@@ -583,6 +607,17 @@ def bcp47_rdf_extension(
                     r_item_key.lstrip('p'),
                     r_item_value
                 ))
+            elif r_item_key.startswith('s'):
+                # _subjects.append('{0}:{1}'.format(
+                #     r_item_key.lstrip('s'),
+                #     r_item_value
+                # ))
+                _subjects.append('∀{0}'.format(
+                    r_item_value.lstrip('s')
+                ))
+                # _subjects.append('{0}'.format(
+                #     r_item_value.lstrip('s')
+                # ))
             elif r_item_key.startswith('t'):
                 if result['rdfs:Datatype'] is None:
                     result['rdfs:Datatype'] = '{0}:{1}'.format(
@@ -606,6 +641,10 @@ def bcp47_rdf_extension(
             _predicates.sort()
             result['rdf:predicate'] = _predicates
 
+        if len(_subjects) > 0:
+            _subjects.sort()
+            result['rdf:subject'] = _subjects
+
     else:
         result['_error'].append('G extension do not have -')
 
@@ -628,6 +667,70 @@ def bcp47_rdf_extension(
             return result_partial
         raise TypeError(
             'clavem [' + str(type(clavem)) + '] != [str, list]')
+
+    return result
+
+
+def bcp47_rdf_extension_poc(
+        header: List[str],
+        data: List[List],
+        namespaces: List[dict],
+        strictum: bool = True
+) -> dict:
+    """bcp47_rdf_extension_poc _summary_
+
+    _extended_summary_
+
+    Args:
+        header (List[str]): _description_
+        data (List[List]): _description_
+        strictum (bool, optional): _description_. Defaults to True.
+
+    Returns:
+        dict: _description_
+
+    Exemplōrum gratiā (et Python doctest, id est, automata testīs):
+        (python3 -m doctest myscript.py)
+
+
+    >>> namespaces = [
+    ...    {'prefix': 'dc', 'iri': 'http://purl.org/dc/elements/1.1/'}
+    ... ]
+
+    >>> header_1 = ['qcc-Zxxx-r-sRDF-subject',
+    ...             'eng-Latn-r-pdc-contributor-pdc-creator-pdc-publisher']
+    >>> header_2 = ['qcc-Zxxx-r-sU2200-s0',
+    ...             'eng-Latn-r-pdc-contributor-pdc-creator-pdc-publisher']
+    >>> data_1 = [['<http://vocabularies.unesco.org/thesaurus>'
+    ...             'UNESCO']]
+    >>> poc1 = bcp47_rdf_extension_poc(header_2, data_1, namespaces)
+
+
+    # >>> poc1['header_result']
+    #'pskos-prefLabel'
+
+    """
+    # raise NotImplementedError(header)
+    result = {
+        'header': header,
+        'header_result': [],
+        'data': data,
+        # 'rdf:subject': None,
+        # 'rdf:predicate': [],
+        # 'rdf:object': None,
+        # 'rdfs:Datatype': None,
+        # '_unknown': [],
+        '_error': [],
+    }
+    for item in header:
+        # print('item', item)
+        item_meta = bcp47_langtag(item, ['language', 'script', 'extension'])
+        if 'r' in item_meta['extension']:
+            item_meta['extension']['r'] = bcp47_rdf_extension(
+                item_meta['extension']['r'],
+                ['rdf:subject', 'rdf:predicate', 'rdfs:Datatype'],
+            )
+        result['header_result'].append(item_meta)
 
     return result
 
