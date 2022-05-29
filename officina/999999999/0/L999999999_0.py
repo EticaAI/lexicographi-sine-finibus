@@ -85,6 +85,10 @@ EXIT_SYNTAX = 2
 
 #     return L1603_1_51.DictionariaLinguarum()
 
+BCP47_LANGTAG_EXTENSIONS = {
+    'r': lambda r, strictum: bcp47_rdf_extension(r, strictum=strictum)
+}
+
 
 def bcp47_langtag(
         rem: str,
@@ -114,9 +118,12 @@ def bcp47_langtag(
        upfront and there is no problem with using other licenses
        than public domain.
     Changelog:
+       - 2022-05-28: Uses global variable BCP47_LANGTAG_EXTENSIONS to search
+                     for functions to process extensions.
        - 2021-11-22: Partial implementation of BCP47 (RFC 5646)
        - 2021-01-02: Fixes on Language-Tag_normalized (discoversed when ported
                      JavaScript version was created)
+
     Args:
         rem (str):                       The BCP47 langtag
         clavem (Type[Union[str, list]]): Key (string) for specific value or keys
@@ -469,6 +476,26 @@ def bcp47_langtag(
                 norm.append('x-' + '-'.join(result['privateuse']))
 
             result['Language-Tag_normalized'] = '-'.join(norm)
+
+    # print('teste', result['extension'].keys())
+    # print('teste', BCP47_LANGTAG_EXTENSIONS.keys())
+    # print('teste', 'BCP47_LANGTAG_EXTENSIONS' in globals())
+    if len(result['extension'].keys()) > 0 and \
+            'BCP47_LANGTAG_EXTENSIONS' in globals():
+        # print('testesss')
+        for extension_key, extension_raw in result['extension'].items():
+            # print('testesss', extension_key, extension_raw)
+            # print('testesss', BCP47_LANGTAG_EXTENSIONS['r'])
+            # print('testesss4', 'r' in BCP47_LANGTAG_EXTENSIONS)
+            # print('testesss44', extension_key in BCP47_LANGTAG_EXTENSIONS)
+            if extension_key in BCP47_LANGTAG_EXTENSIONS:
+                # print('foi')
+                result['extension'][extension_key] = \
+                    BCP47_LANGTAG_EXTENSIONS[extension_key](
+                        extension_raw,
+                        strictum=strictum
+                )
+        # pass
 
     if strictum and len(result['_error']) > 0:
         raise ValueError(
