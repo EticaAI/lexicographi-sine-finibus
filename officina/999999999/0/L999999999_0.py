@@ -36,6 +36,7 @@
 import csv
 from genericpath import exists
 import json
+from multiprocessing.sharedctypes import Value
 # import importlib
 import os
 from pathlib import Path
@@ -788,7 +789,7 @@ def bcp47_rdf_extension_relationship(
                             # We will fallback the pivots as generic classes
                             # We should enable later override this behavior
                             # via language tag on the pivot
-                            'rdf:type': ['rdfs:Class'],
+                            'rdf:predicate': ['rdfs:Class'],
                         },
                         'columns': []
                     }
@@ -867,7 +868,7 @@ def bcp47_rdf_extension_poc(
         # 'rdf:object': None,
         # 'rdfs:Datatype': None,
         # '_unknown': [],
-        'rdf_ttl': [],
+        'triples': [],
         '_error': [],
     }
     # return {}
@@ -878,13 +879,84 @@ def bcp47_rdf_extension_poc(
 
     meta = bcp47_rdf_extension_relationship(header, strictum=strictum)
     meta['data'] = data
+    # return meta
     if objective_bag not in meta['rdfs:Container']:
         raise SyntaxError('objective_bag({0})? {1} <{1}>'.format(
             objective_bag, header, meta))
+    bag_meta = meta['rdfs:Container'][objective_bag]
+    is_urn = bag_meta['pivot']['prefix'].startswith('urn')
+    prexi_iri = None
 
+    # return bag_meta
+    if not is_urn:
+        prexi_iri = bag_meta['pivot']['iri']
+
+    index_id = bag_meta['pivot']['index']
+    triples_delayed = []
+
+    def _helper_aux(
+        bag_meta, bcp47_lang=None, subject=None,
+        object_literal=None, linea=[]
+    ) -> Tuple:
+        triples = []
+
+        # @TODO: implement some way to discover implicit relations
+        #        (up to one level). Would need scan table twice
+        triples_delayed = []
+        # This obviously is simplistic, because we can reference multiple
+        # columns for same hashtags.
+        for predicate in bag_meta['rdf:predicate']:
+            object_result = object_literal
+            if not bcp47_lang.startswith('qcc'):
+                object_result = '"{0}"@{1}'.format(object_result, bcp47_lang)
+            else:
+                object_result = '"{0}"'.format(object_result)
+
+            triples.append([subject, predicate, object_result])
+
+        # raise ValueError(bag_meta)
+
+        return triples, triples_delayed
+
+    for linea in data:
+        # triple = []
+        # First pivot
+        if is_urn:
+            triple_subject = '<urn:{0}>'.format(linea[index_id])
+        else:
+            triple_subject = '<{0}{1}>'.format(prexi_iri, linea[index_id])
+
+        # Predicate for self is Subject here
+        for predicate in bag_meta['pivot']['rdf:predicate']:
+            triple = [triple_subject, 'a', predicate]
+            result['triples'].append(triple)
+
+        for referenced_by in bag_meta['columns']:
+            if referenced_by == index_id:
+                continue
+
+            _bcp47lang = '{0}-{1}'.format(
+                meta['columns'][referenced_by]['language'],
+                meta['columns'][referenced_by]['script'],
+            )
+            object_literal = linea[referenced_by]
+            aux_triples, triples_delayed = _helper_aux(
+                meta['columns'][referenced_by]['extension']['r'],
+                bcp47_lang=_bcp47lang,
+                subject=triple_subject,
+                object_literal=object_literal,
+                linea=linea)
+            if len(aux_triples) > 0:
+                result['triples'].extend(aux_triples)
+
+    return result
+    # return result['triples']
+    return objective_bag_meta
     main_prefix = '_:'
     main_is_urn = False
-    result['rdf_ttl'].append(meta['rdfs:Container'][objective_bag])
+    result['triples'].append(meta['rdfs:Container'][objective_bag])
+
+    return result['triples']
 
     return meta
 

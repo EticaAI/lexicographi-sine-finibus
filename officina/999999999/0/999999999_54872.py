@@ -295,7 +295,11 @@ class Cli:
             # print(caput, data)
             # print('')
             meta = bcp47_rdf_extension_poc(caput, data)
-            print(json.dumps(meta, sort_keys=True ,ensure_ascii=False))
+            # print(json.dumps(meta, sort_keys=True ,ensure_ascii=False))
+            for triple in meta['triples']:
+                print('{0} {1} {2} .'.format(triple[0], triple[1], triple[2]))
+
+
             return self.EXIT_OK
 
         # _infile = None
