@@ -89,14 +89,21 @@ BCP47_LANGTAG_EXTENSIONS = {
     'r': lambda r, strictum: bcp47_rdf_extension(r, strictum=strictum)
 }
 BCP47_LANGTAG_RDF_NAMESPACES = {
-    'rdf': '<http://www.w3.org/2000/01/rdf-schema#>',
-    'rdfs': '<http://www.w3.org/2000/01/rdf-schema#>',
-    'xsd': '<http://www.w3.org/2001/XMLSchema#>',
-    'owl': '<http://www.w3.org/2002/07/owl#>',
-    'skos': '<http://www.w3.org/2004/02/skos/core#>',
-    'p': '<http://www.wikidata.org/prop/>',
-    'dct': '<http://purl.org/dc/terms/>',
+    'rdf': 'http://www.w3.org/2000/01/rdf-schema#',
+    'rdfs': 'http://www.w3.org/2000/01/rdf-schema#',
+    'xsd': 'http://www.w3.org/2001/XMLSchema#',
+    'owl': 'http://www.w3.org/2002/07/owl#',
+    'skos': 'http://www.w3.org/2004/02/skos/core#',
+    # https://www.w3.org/ns/csvw
+    # https://www.w3.org/ns/csvw.ttl
+    # 'csvw': '<http://www.w3.org/ns/csvw#>',
+    'p': 'http://www.wikidata.org/prop/',
+    'dct': 'http://purl.org/dc/terms/',
+    # @TODO see also https://www.w3.org/ns/prov.ttl boostrapper imported by
+    #       https://www.w3.org/ns/csvw.ttl
+    'unescothes': 'http://vocabularies.unesco.org/thesaurus/',
 }
+
 
 def bcp47_langtag(
         rem: str,
@@ -727,6 +734,7 @@ def bcp47_rdf_extension_relationship(
         # 'rdf:object': None,
         # 'rdfs:Datatype': None,
         # '_unknown': [],
+        'rdfs:Container': {},
         '_error': [],
     }
 
@@ -737,6 +745,64 @@ def bcp47_rdf_extension_relationship(
             item, ['language', 'script', 'extension'], strictum=False)
         # @TODO; get erros and export them to upper level
         item_meta['_column'] = index
+        inline_namespace = None
+        inline_namespace_iri = None
+        # is_inline_namespace = False
+        if 'r' in item_meta['extension'] and \
+                len(item_meta['extension']['r']['rdf:object']) > 0:
+            for object in item_meta['extension']['r']['rdf:object']:
+                if object.startswith('🔗'):
+                    # is_inline_namespace = True
+                    inline_namespace = object.replace('🔗', '')
+                    strictum = True
+                    if inline_namespace not in BCP47_LANGTAG_RDF_NAMESPACES:
+                        if strictum:
+                            raise SyntaxError(
+                                'inline_namespace ({0}) ? <{1}> <{2}>'.format(
+                                    inline_namespace, header, item_meta
+                                ))
+                        else:
+                            inline_namespace_iri = '_' + inline_namespace
+                    else:
+                        inline_namespace_iri = \
+                            BCP47_LANGTAG_RDF_NAMESPACES[inline_namespace]
+
+        # print('item inline_namespace_iri', item, inline_namespace_iri)
+        if 'r' in item_meta['extension'] and \
+                len(item_meta['extension']['r']['rdf:subject']) > 0:
+            for subject in item_meta['extension']['r']['rdf:subject']:
+                is_pivot_key = False
+                if subject.startswith('∀'):
+                    is_pivot_key = True
+                    subject = subject.replace('∀', '')
+                if subject.startswith('🔗'):
+                    is_pivot_key = True
+                    subject = subject.replace('🔗', '')
+
+                if subject not in result['rdfs:Container']:
+                    result['rdfs:Container'][subject] = {
+                        'pivot': {
+                            'index': -1,
+                            'iri': inline_namespace_iri,
+                            'prefix': 'urn',
+                            # We will fallback the pivots as generic classes
+                            # We should enable later override this behavior
+                            # via language tag on the pivot
+                            'rdf:type': ['rdfs:Class'],
+                        },
+                        'columns': []
+                    }
+
+                if inline_namespace is not None:
+                    result['rdfs:Container'][subject]['pivot']['prefix'] = \
+                        inline_namespace
+                result['rdfs:Container'][subject]['columns'].append(index)
+
+                if is_pivot_key:
+                    if result['rdfs:Container'][subject]['pivot']['index'] > -1:
+                        SyntaxError('{0} <{1}>'.format(header, item_meta))
+                    result['rdfs:Container'][subject]['pivot']['index'] = index
+        # if subjects
 
         result['columns'].append(item_meta)
         # print(index, item, item_meta)
@@ -754,6 +820,8 @@ def bcp47_rdf_extension_relationship(
 def bcp47_rdf_extension_poc(
         header: List[str],
         data: List[List],
+        objective_bag: str = '1',
+        _auxiliary_bags: List[str] = None,
         namespaces: List[dict] = None,
         strictum: bool = True
 ) -> dict:
@@ -799,6 +867,7 @@ def bcp47_rdf_extension_poc(
         # 'rdf:object': None,
         # 'rdfs:Datatype': None,
         # '_unknown': [],
+        'rdf_ttl': [],
         '_error': [],
     }
     # return {}
@@ -808,6 +877,15 @@ def bcp47_rdf_extension_poc(
     # header.pop()
 
     meta = bcp47_rdf_extension_relationship(header, strictum=strictum)
+    meta['data'] = data
+    if objective_bag not in meta['rdfs:Container']:
+        raise SyntaxError('objective_bag({0})? {1} <{1}>'.format(
+            objective_bag, header, meta))
+
+    main_prefix = '_:'
+    main_is_urn = False
+    result['rdf_ttl'].append(meta['rdfs:Container'][objective_bag])
+
     return meta
 
 
