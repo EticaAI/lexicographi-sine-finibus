@@ -21,7 +21,6 @@
 #===============================================================================
 set -e
 
-
 ROOTDIR="$(pwd)"
 
 #######################################
@@ -38,10 +37,10 @@ bcp47_to_hxl_to_rdf__tests() {
   # numerordinatio="$1"
   # ex_librario="$2"
 
-  echo "oi"
+  # echo "oi"
 
   archivum__regulae_exemplis="${ROOTDIR}/999999999/1568346/bcp47-to-hxl-to-rdf.hxl.tsv"
-  echo "oi2"
+  # echo "oi2"
   archivum__resultata="${ROOTDIR}/999999/1568346/bcp47-to-hxl-to-rdf.jsonl"
 
   # "${ROOTDIR}/999999999/0/1603_1.py" \
@@ -50,7 +49,7 @@ bcp47_to_hxl_to_rdf__tests() {
   #   --codex-de "$_nomen" \
   #   >"$status_archivum_codex"
 
-  echo "['#item+bpc47', '#item+hxl', '#item+rdf']" > "$archivum__resultata"
+  echo "[\"#item+bpc47\", \"#item+hxl\", \"#item+rdf\", \"#item+debug\"]" >"$archivum__resultata"
 
   # while IFS=, read -r iso3 source_url; do
   {
@@ -61,16 +60,13 @@ bcp47_to_hxl_to_rdf__tests() {
       hxl="${linea[1]}"
       rdf="${linea[2]}"
       namespace="${linea[3]}"
-      echo ""
-      echo "        ${linea[*]}"
-      # echo "unm49 $unm49"
-      # echo "v_iso3 $v_iso3"
-      # echo "v_iso2 $v_iso2"
+      # echo ""
+      # echo "        ${linea[*]}"
 
+      bc47_full=$("${ROOTDIR}/999999999/0/linguacodex.py" \
+        --de_bcp47_simplex --de_codex="${bpc47}" --quod=.extension)
 
-      echo "['${bpc47}', '${hxl}', '${rdf}']" >> "$archivum__resultata"
-
-
+      echo "[\"${bpc47}\", \"${hxl}\", \"${rdf}\", ${bc47_full}]" >>"$archivum__resultata"
 
       # # echo "numerordinatio_praefixo $numerordinatio_praefixo"
       # # bootstrap_1603_45_16__item "1603_45_16_24" "24" "AGO" "AO" "3" "1" "0"
@@ -79,7 +75,6 @@ bcp47_to_hxl_to_rdf__tests() {
       # sleep 5
     done
   } <"${archivum__regulae_exemplis}"
-
 
 }
 

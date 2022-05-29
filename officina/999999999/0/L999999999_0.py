@@ -477,25 +477,15 @@ def bcp47_langtag(
 
             result['Language-Tag_normalized'] = '-'.join(norm)
 
-    # print('teste', result['extension'].keys())
-    # print('teste', BCP47_LANGTAG_EXTENSIONS.keys())
-    # print('teste', 'BCP47_LANGTAG_EXTENSIONS' in globals())
     if len(result['extension'].keys()) > 0 and \
             'BCP47_LANGTAG_EXTENSIONS' in globals():
-        # print('testesss')
         for extension_key, extension_raw in result['extension'].items():
-            # print('testesss', extension_key, extension_raw)
-            # print('testesss', BCP47_LANGTAG_EXTENSIONS['r'])
-            # print('testesss4', 'r' in BCP47_LANGTAG_EXTENSIONS)
-            # print('testesss44', extension_key in BCP47_LANGTAG_EXTENSIONS)
             if extension_key in BCP47_LANGTAG_EXTENSIONS:
-                # print('foi')
                 result['extension'][extension_key] = \
                     BCP47_LANGTAG_EXTENSIONS[extension_key](
                         extension_raw,
                         strictum=strictum
                 )
-        # pass
 
     if strictum and len(result['_error']) > 0:
         raise ValueError(
@@ -516,7 +506,7 @@ def bcp47_langtag(
 
 
 def bcp47_rdf_extension(
-        bcp47_extension_r: str,
+        rem: str,
         clavem: Type[Union[str, list]] = None,
         strictum: bool = True
 ) -> dict:
@@ -588,11 +578,7 @@ def bcp47_rdf_extension(
     Exemplōrum gratiā (et Python doctest, id est, automata testīs):
         (python3 -m doctest myscript.py)
 
-    >>> t1 = bcp47_langtag('lat-Latn-r-pskos-prefLabel', 'extension')['r']
-    >>> t1
-    'pskos-prefLabel'
-
-    >>> bcp47_rdf_extension(t1, 'rdf:predicate')
+    >>> bcp47_rdf_extension('pskos-prefLabel', 'rdf:predicate')
     ['skos:prefLabel']
 
     >>> bcp47_rdf_extension('pdc-contributor-pdc-creator-pdc-publisher',
@@ -607,7 +593,7 @@ def bcp47_rdf_extension(
     # For sake of copy-and-paste portability, we ignore a few pylints:
     # pylint: disable=too-many-branches,too-many-statements,too-many-locals
     result = {
-        'bcp47_extension_r': bcp47_extension_r,
+        'rdf:Statement_raw': rem,
         # 'bcp47_extension_r_normalized': None,
         'rdf:subject': [],
         'rdf:predicate': [],
@@ -622,8 +608,8 @@ def bcp47_rdf_extension(
     # result['bcp47_extension_r_normalized'] = \
     #     result['bcp47_extension_r'].lower()
 
-    if bcp47_extension_r.find('-') > 0:
-        r_parts = bcp47_extension_r.split('-')
+    if rem.find('-') > 0:
+        r_parts = rem.split('-')
         r_parts_tot = len(r_parts)
         r_rest = r_parts_tot
         while r_rest > 0:
@@ -682,7 +668,7 @@ def bcp47_rdf_extension(
 
     if strictum and len(result['_error']) > 0:
         raise SyntaxError('[{0}]: <{1}>'.format(
-            bcp47_extension_r, result['_error']))
+            rem, result['_error']))
 
     if clavem is not None:
         if isinstance(clavem, str):
@@ -732,7 +718,6 @@ def bcp47_rdf_extension_poc(
     ...             'UNESCO']]
     >>> poc1 = bcp47_rdf_extension_poc(header_2, data_1, namespaces)
 
-
     # >>> poc1['header_result']
     #'pskos-prefLabel'
 
@@ -752,11 +737,11 @@ def bcp47_rdf_extension_poc(
     for item in header:
         # print('item', item)
         item_meta = bcp47_langtag(item, ['language', 'script', 'extension'])
-        if 'r' in item_meta['extension']:
-            item_meta['extension']['r'] = bcp47_rdf_extension(
-                item_meta['extension']['r'],
-                ['rdf:subject', 'rdf:predicate', 'rdfs:Datatype'],
-            )
+        # if 'r' in item_meta['extension']:
+        #     item_meta['extension']['r'] = bcp47_rdf_extension(
+        #         item_meta['extension']['r'],
+        #         ['rdf:subject', 'rdf:predicate', 'rdfs:Datatype'],
+        #     )
         result['header_result'].append(item_meta)
 
     return result
