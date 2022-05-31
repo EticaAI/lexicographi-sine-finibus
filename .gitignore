@@ -21,6 +21,7 @@
 /officina/**/**.png
 /officina/**/**.jpg
 /officina/**/**.json
+/officina/**/**.jsonl
 /officina/**/**.statum.yml
 /officina/**/**.db
 /officina/**/**.sqlite

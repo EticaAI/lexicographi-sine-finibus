@@ -86,9 +86,15 @@ EXIT_SYNTAX = 2
 
 #     return L1603_1_51.DictionariaLinguarum()
 
+BCP47_LANGTAG_CALLBACKS = {
+    'hxl': lambda lmeta, strictum: bcp47_langtag_callback_hxl(
+        lmeta, strictum=strictum)
+}
+
 BCP47_LANGTAG_EXTENSIONS = {
     'r': lambda r, strictum: bcp47_rdf_extension(r, strictum=strictum)
 }
+
 BCP47_LANGTAG_RDF_NAMESPACES = {
     'rdf': 'http://www.w3.org/2000/01/rdf-schema#',
     'rdfs': 'http://www.w3.org/2000/01/rdf-schema#',
@@ -298,6 +304,7 @@ def bcp47_langtag(
         'extension': {},   # Example {'a': ['bbb', 'ccc'], 'd': True}
         'privateuse': [],  # Example: ['wadegile', 'private1']
         'grandfathered': None,
+        '_callbacks': {},
         '_unknown': [],
         '_error': [],
     }
@@ -503,6 +510,14 @@ def bcp47_langtag(
                         strictum=strictum
                 )
 
+    if 'BCP47_LANGTAG_CALLBACKS' in globals():
+        if clavem is None or \
+                ('_callbacks' == clavem or '_callbacks' in clavem):
+            # pass
+            for cb_key, cb_fn in BCP47_LANGTAG_CALLBACKS.items():
+                result['_callbacks'][cb_key] = cb_fn(result, strictum=strictum)
+        # raise NotImplementedError(BCP47_LANGTAG_CALLBACKS)
+
     if strictum and len(result['_error']) > 0:
         raise ValueError(
             'Errors for [' + rem + ']: ' + ', '.join(result['_error']))
@@ -519,6 +534,45 @@ def bcp47_langtag(
             'clavem [' + str(type(clavem)) + '] != [str, list]')
 
     return result
+
+
+def bcp47_langtag_callback_hxl(
+        langtag_meta: dict,
+        _strictum: bool = True
+) -> dict:
+    resultatum = []
+    # resultatum.append('+todo')
+    resultatum.append('+i_{0}'.format(langtag_meta['language'].lower()))
+
+    if langtag_meta['script']:
+        resultatum.append('+is_{0}'.format(langtag_meta['script'].lower()))
+
+    if langtag_meta['privateuse'] and len(langtag_meta['privateuse']) > 0:
+        for item in langtag_meta['privateuse']:
+            resultatum.append('+ix_{0}'.format(item.lower()))
+
+    if langtag_meta['extension'] and 'r' in langtag_meta['extension']:
+        _r = langtag_meta['extension']['r']
+
+        # if _r['rdf:predicate'] and len(_r['rdf:predicate']) > 0:
+        #     for item in _r['rdf:predicate']:
+        #         prefix, term = item.lower().split(':')
+        #         resultatum.append('+rdf_p_{0}_{1}'.format(prefix, term))
+
+        if _r['rdf:subject'] and len(_r['rdf:subject']) > 0:
+            for item in _r['rdf:subject']:
+                prefix, term = item.lower().split(':')
+                resultatum.append('+rdf_s_{0}_{1}'.format(prefix, term))
+
+        if _r['rdfs:Datatype'] and len(_r['rdfs:Datatype']) > 0:
+            prefix, term = _r['rdfs:Datatype'].lower().split(':')
+            resultatum.append('+rdf_t_{0}_{1}'.format(prefix, term))
+
+
+
+    resultatum = sorted(resultatum)
+
+    return ''.join(resultatum)
 
 
 def bcp47_rdf_extension(
@@ -813,17 +867,16 @@ def bcp47_rdf_extension_relationship(
 
         if 'r' in item_meta['extension'] and \
                 len(item_meta['extension']['r']['rdf:predicate']) > 0:
-                for predicate in item_meta['extension']['r']['rdf:predicate']:
-                    prefix, suffix = predicate.split(':')
-                    if prefix not in result['prefixes']:
-                        if prefix not in BCP47_LANGTAG_RDF_NAMESPACES:
-                            raise SyntaxError(
-                                'prefix [{0}]? <{1}> <{2}>'.format(
+            for predicate in item_meta['extension']['r']['rdf:predicate']:
+                prefix, suffix = predicate.split(':')
+                if prefix not in result['prefixes']:
+                    if prefix not in BCP47_LANGTAG_RDF_NAMESPACES:
+                        raise SyntaxError(
+                            'prefix [{0}]? <{1}> <{2}>'.format(
                                 prefix, header, BCP47_LANGTAG_RDF_NAMESPACES
                             ))
-                        result['prefixes'][prefix] = \
-                            BCP47_LANGTAG_RDF_NAMESPACES[prefix]
-
+                    result['prefixes'][prefix] = \
+                        BCP47_LANGTAG_RDF_NAMESPACES[prefix]
 
         result['columns'].append(item_meta)
 
