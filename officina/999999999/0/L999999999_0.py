@@ -87,7 +87,7 @@ EXIT_SYNTAX = 2
 #     return L1603_1_51.DictionariaLinguarum()
 
 BCP47_LANGTAG_CALLBACKS = {
-    'hxl': lambda lmeta, strictum: bcp47_langtag_callback_hxl(
+    'hxl_attrs': lambda lmeta, strictum: bcp47_langtag_callback_hxl(
         lmeta, strictum=strictum)
 }
 
@@ -538,7 +538,7 @@ def bcp47_langtag(
 
 def bcp47_langtag_callback_hxl(
         langtag_meta: dict,
-        _strictum: bool = True
+        strictum: bool = True
 ) -> dict:
     resultatum = []
     # resultatum.append('+todo')
@@ -554,15 +554,21 @@ def bcp47_langtag_callback_hxl(
     if langtag_meta['extension'] and 'r' in langtag_meta['extension']:
         _r = langtag_meta['extension']['r']
 
-        # if _r['rdf:predicate'] and len(_r['rdf:predicate']) > 0:
-        #     for item in _r['rdf:predicate']:
-        #         prefix, term = item.lower().split(':')
-        #         resultatum.append('+rdf_p_{0}_{1}'.format(prefix, term))
+        if _r['rdf:predicate'] and len(_r['rdf:predicate']) > 0:
+            for item in _r['rdf:predicate']:
+                prefix, term = item.lower().split(':')
+                resultatum.append('+rdf_p_{0}_{1}'.format(prefix, term))
 
         if _r['rdf:subject'] and len(_r['rdf:subject']) > 0:
             for item in _r['rdf:subject']:
-                prefix, term = item.lower().split(':')
-                resultatum.append('+rdf_s_{0}_{1}'.format(prefix, term))
+                item_num = int(''.join(filter(str.isdigit, item)))
+                # item_prefix = ''.join(filter(str.isdigit, item, ))
+                item_prefix = item.replace(str(item_num), '')
+                item_prefix = item_prefix.encode("unicode_escape").decode()
+                item_prefix = item_prefix.replace('\\', '')
+                # item_prefix = item_prefix.encode().decode()
+                # prefix, term = item.lower().split(':')
+                resultatum.append('+rdf_s_{0}_{1}'.format(item_prefix, item_num))
 
         if _r['rdfs:Datatype'] and len(_r['rdfs:Datatype']) > 0:
             prefix, term = _r['rdfs:Datatype'].lower().split(':')
@@ -2143,6 +2149,84 @@ def descriptio_tabulae_de_lingua(
 
     return paginae
 
+
+def hxl_hashtag_to_bcp47(hashtag: str) -> str:
+    """hxl_hashtag_to_bcp47 _summary_
+
+    _extended_summary_
+
+    Args:
+        hashtag (str): an full HXL hashtag
+
+    Returns:
+        str: an BCP47 language tag
+    """
+    if not hashtag.startswith('#'):
+        raise ValueError('{0} not start with #'.format(hashtag))
+
+    # This this AST is similar to bcp47_langtag
+    result = {
+        # The input Language-Tag, _as it is_
+        'Language-Tag': None,
+        # The Language-Tag normalized syntax, if no errors
+        'Language-Tag_normalized': None,
+        'language': None,
+        'script': None,
+        'region': None,
+        'variant': [],
+        'extension': {},   # Example {'a': ['bbb', 'ccc'], 'd': True}
+        'privateuse': [],  # Example: ['wadegile', 'private1']
+        'grandfathered': None,
+        '_callbacks': {
+            'hxl_attrs': None,
+            'hxl_original': hashtag,
+            'rdf_parts': None
+        },
+        '_unknown': [],
+        '_error': [],
+    }
+
+    parts = hashtag.split('+')
+    # bash_hashtag = parts.pop(0)
+    privateuse = []
+    rdf_parts = []
+    for item in parts:
+        if item.startswith('i_'):
+            result['language'] = item.lower().replace('i_', '')
+
+        if item.startswith('is_'):
+            result['script'] = item.replace('is_', '').capitalize()
+
+        # Did we really use ir_ as prefix for region? Is necessary at all?
+        # Anyway adding here, just in case may relevant later
+        # (Rocha, 2022-05-31)
+        if item.startswith('ir_'):
+            region = item.replace('ir_', '')
+            if region.isdigit():
+                result['region'] = region
+            else:
+                result['region'] = region.upper()
+
+        if item.startswith('ix_'):
+            privateuse.append(item.lower().replace('ix_', ''))
+
+        if item.startswith('rdf_'):
+            rdf_parts.append(item.replace('rdf_', ''))
+
+    if len(privateuse) > 0:
+        privateuse.sort()
+        result['privateuse'] = privateuse
+
+    if len(rdf_parts) > 0:
+        result['_callbacks']['rdf_parts'] = rdf_parts
+
+    resultatum = []
+    resultatum.append('qcc')
+    resultatum.append('Zxxx')
+    resultatum.append('x-todo' + hashtag.replace('#', '').replace('+', '-'))
+
+    resultatum = '-'.join(resultatum)
+    return result
 
 def hxltm_data_referentibus(data_referentibus_index: str, columna: str):
     _caput_columna = [columna]
