@@ -3,7 +3,7 @@
 #
 #          FILE:  linguacodex.py
 #
-#         USAGE:  ./scripts/fn/linguacodex.py
+#         USAGE:  ./999999999/0/linguacodex.py --help
 #
 #   DESCRIPTION: _[eng-Latn]
 #                Expert system command line tool to aid misuse of language codes
@@ -295,6 +295,9 @@ EXEMPLUM
    $ linguacodex --de_codex=lat-Latn --in_formatum=csv_caput
    $ linguacodex --de_codex=lat-Latn --in_formatum=csv_non_caput
 
+5. Extras from EticaAI/lexicographi-sine-finibus application
+   {0} --de_bcp47_simplex \
+--de_codex=qcc-Zxxx-r-pDCT-modified-txsd-datetime
 
 ABOUT LANGUAGE-TERRITORY INFORMATION
 (--quod .communitas)
@@ -309,7 +312,7 @@ ABOUT LANGUAGE-TERRITORY INFORMATION
     See https://unicode-org.github.io/cldr-staging/charts/39/supplemental
     /territory_language_information.html
 
-"""
+""".format(__file__)
 
 parser = argparse.ArgumentParser(
     description=DESCRIPTION,

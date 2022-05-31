@@ -8,5 +8,4 @@ qcc-Zxxx-r-pSKOS-related	+i_qcc+is_zxxx+irp_skos_related	skos:related	<http://ww
 qcc-Zxxx-r-pDCT-modified	+i_qcc+is_zxxx+irp_dct_modified	dct:modified	<http://purl.org/dc/terms/>
 qcc-Zxxx-r-pDCT-modified-txsd-datetime	+i_qcc+is_zxxx+irp_dct_modified+irt_xsd_datetime	dct:modified/[$1]^^xsd:datetime	<http://purl.org/dc/terms/>|<http://www.w3.org/2001/XMLSchema#>
 eng-Latn-r-pDC-contributor-pDC-creator-pDC-publisher	+i_eng+is_latn+irp_dc_contributor+irp_dc_creator+irp_dc_publisher	dc:contributor|dc:creator|dc:publisher	<http://purl.org/dc/elements/1.1/>
-qcc-Zxxx-r-sRDF-subject	+i_qcc+is_zxxx+irs_rdf_subject	rdf:subject	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 qcc-Zxxx-r-sU2200-s0	+i_qcc+is_zxxx+irs_u2200_s0	((rdf:subject 0))	<http://www.w3.org/1999/02/22-rdf-syntax-ns#>

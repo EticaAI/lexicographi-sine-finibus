@@ -99,6 +99,10 @@ Temporary tests . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
     {0} --objectivum-formato=_temp_bcp47 \
 999999999/1568346/data/unesco-thesaurus.bcp47g.tsv
 
+    {0} --objectivum-formato=_temp_bcp47 \
+999999999/1568346/data/unesco-thesaurus.bcp47g.tsv \
+| rapper --quiet --input=turtle --output=turtle /dev/fd/0
+
 ------------------------------------------------------------------------------
                             EXEMPLŌRUM GRATIĀ
 ------------------------------------------------------------------------------
@@ -296,9 +300,13 @@ class Cli:
             # print('')
             meta = bcp47_rdf_extension_poc(caput, data)
             # print(json.dumps(meta, sort_keys=True ,ensure_ascii=False))
+            # return self.EXIT_OK
+
+            for prefix, iri in meta['prefixes'].items():
+                print('@prefix {0}: <{1}> .'.format(prefix, iri))
+
             for triple in meta['triples']:
                 print('{0} {1} {2} .'.format(triple[0], triple[1], triple[2]))
-
 
             return self.EXIT_OK
 

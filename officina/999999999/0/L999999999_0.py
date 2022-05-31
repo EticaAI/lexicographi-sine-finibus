@@ -736,6 +736,12 @@ def bcp47_rdf_extension_relationship(
         # 'rdfs:Datatype': None,
         # '_unknown': [],
         'rdfs:Container': {},
+        'prefixes': {
+            'rdf': BCP47_LANGTAG_RDF_NAMESPACES['rdf'],
+            'rdfs': BCP47_LANGTAG_RDF_NAMESPACES['rdfs'],
+            'xsd': BCP47_LANGTAG_RDF_NAMESPACES['xsd'],
+            'owl': BCP47_LANGTAG_RDF_NAMESPACES['owl']
+        },
         '_error': [],
     }
 
@@ -767,6 +773,7 @@ def bcp47_rdf_extension_relationship(
                     else:
                         inline_namespace_iri = \
                             BCP47_LANGTAG_RDF_NAMESPACES[inline_namespace]
+                        result['prefixes'][inline_namespace] = inline_namespace_iri
 
         # print('item inline_namespace_iri', item, inline_namespace_iri)
         if 'r' in item_meta['extension'] and \
@@ -803,18 +810,23 @@ def bcp47_rdf_extension_relationship(
                     if result['rdfs:Container'][subject]['pivot']['index'] > -1:
                         SyntaxError('{0} <{1}>'.format(header, item_meta))
                     result['rdfs:Container'][subject]['pivot']['index'] = index
-        # if subjects
+
+        if 'r' in item_meta['extension'] and \
+                len(item_meta['extension']['r']['rdf:predicate']) > 0:
+                for predicate in item_meta['extension']['r']['rdf:predicate']:
+                    prefix, suffix = predicate.split(':')
+                    if prefix not in result['prefixes']:
+                        if prefix not in BCP47_LANGTAG_RDF_NAMESPACES:
+                            raise SyntaxError(
+                                'prefix [{0}]? <{1}> <{2}>'.format(
+                                prefix, header, BCP47_LANGTAG_RDF_NAMESPACES
+                            ))
+                        result['prefixes'][prefix] = \
+                            BCP47_LANGTAG_RDF_NAMESPACES[prefix]
+
 
         result['columns'].append(item_meta)
-        # print(index, item, item_meta)
 
-    # index = 0
-    # for index, item in enumerate(header):
-    #     # print('item', item)
-    #     item_meta = bcp47_langtag(
-    #         item, ['language', 'script', 'extension'], strictum=False)
-    #     result['columns'].append(item_meta)
-    #     # index += 1
     return result
 
 
@@ -869,6 +881,7 @@ def bcp47_rdf_extension_poc(
         # 'rdfs:Datatype': None,
         # '_unknown': [],
         'triples': [],
+        'prefixes': {},
         '_error': [],
     }
     # return {}
@@ -948,6 +961,9 @@ def bcp47_rdf_extension_poc(
                 linea=linea)
             if len(aux_triples) > 0:
                 result['triples'].extend(aux_triples)
+
+    # result['prefixes'] = BCP47_LANGTAG_RDF_NAMESPACES
+    result['prefixes'] = meta['prefixes']
 
     return result
     # return result['triples']
