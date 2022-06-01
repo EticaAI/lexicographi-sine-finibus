@@ -568,13 +568,12 @@ def bcp47_langtag_callback_hxl(
                 item_prefix = item_prefix.replace('\\', '')
                 # item_prefix = item_prefix.encode().decode()
                 # prefix, term = item.lower().split(':')
-                resultatum.append('+rdf_s_{0}_{1}'.format(item_prefix, item_num))
+                resultatum.append(
+                    '+rdf_s_{0}_{1}'.format(item_prefix, item_num))
 
         if _r['rdfs:Datatype'] and len(_r['rdfs:Datatype']) > 0:
             prefix, term = _r['rdfs:Datatype'].lower().split(':')
             resultatum.append('+rdf_t_{0}_{1}'.format(prefix, term))
-
-
 
     resultatum = sorted(resultatum)
 
@@ -2174,7 +2173,19 @@ def hxl_hashtag_to_bcp47(hashtag: str) -> str:
         'script': None,
         'region': None,
         'variant': [],
-        'extension': {},   # Example {'a': ['bbb', 'ccc'], 'd': True}
+        'extension': {
+            # Based on AST of bcp47_langtag_callback_hxl()
+            'r': {
+                'rdf:Statement_raw': None,
+                # 'bcp47_extension_r_normalized': None,
+                'rdf:subject': [],
+                'rdf:predicate': [],
+                'rdf:object': [],
+                'rdfs:Datatype': None,
+                '_unknown': [],
+                '_error': [],
+            }
+        },
         'privateuse': [],  # Example: ['wadegile', 'private1']
         'grandfathered': None,
         '_callbacks': {
@@ -2219,6 +2230,42 @@ def hxl_hashtag_to_bcp47(hashtag: str) -> str:
 
     if len(rdf_parts) > 0:
         result['_callbacks']['rdf_parts'] = rdf_parts
+        for item in rdf_parts:
+            if item.startswith('s_'):
+                _subject= item.replace('s_', '').replace('_', ':')
+                _subject_code, _subjec_value = item.replace('s_', '').split('_')
+                _subject_code = _subject_code.encode('raw_unicode_escape').decode('utf-8')
+
+                # @TODO get a value like '∀0' instead of 'u2200:0'
+                _subject_code = "\u2200".encode('raw_unicode_escape').decode('utf-8')
+                # _subject_code = ('\\' + _subject_code).encode('raw_unicode_escape').decode('utf-8')
+                # _subject_code = ("\u2200").encode().decode('utf-8')
+                _subject_code = ("\u2200")
+                # _subject_code = ("\u2200")
+                # _subject_code = str(ord("\u2200"))
+                # _subject_code = str(ord("\u2200"))
+                # _subject_code = ("\\u{0}".format(str(2200)))
+                # _subject_code = (r"\u2200").encode().decode('utf-8')
+                # _subject_code = ("\\u{0}".format(str(2200))).encode('raw_unicode_escape').decode('utf-8')
+                # _subject_code = ("\u2200").encode().decode('utf-8')
+                # _subject_code = ("\{0}".format(_subject_code)).encode().decode('utf-8')
+                # _subject_code = (f'\\{_subject_code}').encode().decode('utf-8')
+                # _subject_code = (_subject_code).encode('raw_unicode_escape').decode('utf-8')
+                _subjec_value = _subjec_value.replace('s', '')
+                result['extension']['r']['rdf:subject'].append(_subject)
+                # result['extension']['r']['rdf:subject'].append(_subject_code + ' ' + _subjec_value)
+                # result['extension']['r']['rdf:subject'].append(_subject_code + _subjec_value)
+
+            elif item.startswith('p_'):
+                _predicate = item.replace('p_', '').replace('_', ':')
+                result['extension']['r']['rdf:predicate'].append(_predicate)
+
+            elif item.startswith('o_'):
+                _object= item.replace('o_', '').replace('_', ':')
+                result['extension']['r']['rdf:object'].append(_object)
+            else:
+                result['_unknown'].append('rdf_parts [{0}]'.format(item))
+            # pass
 
     resultatum = []
     resultatum.append('qcc')
@@ -2227,6 +2274,7 @@ def hxl_hashtag_to_bcp47(hashtag: str) -> str:
 
     resultatum = '-'.join(resultatum)
     return result
+
 
 def hxltm_data_referentibus(data_referentibus_index: str, columna: str):
     _caput_columna = [columna]
