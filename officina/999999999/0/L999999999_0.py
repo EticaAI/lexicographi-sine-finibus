@@ -2197,6 +2197,8 @@ def hxl_hashtag_to_bcp47(hashtag: str) -> str:
         '_error': [],
     }
 
+    _bpc47_g_parts = []
+
     parts = hashtag.split('+')
     # bash_hashtag = parts.pop(0)
     privateuse = []
@@ -2232,47 +2234,92 @@ def hxl_hashtag_to_bcp47(hashtag: str) -> str:
         result['_callbacks']['rdf_parts'] = rdf_parts
         for item in rdf_parts:
             if item.startswith('s_'):
-                _subject= item.replace('s_', '').replace('_', ':')
-                _subject_code, _subjec_value = item.replace('s_', '').split('_')
-                _subject_code = _subject_code.encode('raw_unicode_escape').decode('utf-8')
+                # _subject= item.replace('s_', '').replace('_', ':')
+                _subject_code, _subjec_value = item.replace(
+                    's_', '').split('_')
+                _subject_code = _subject_code.upper()
+                _subjec_value = _subjec_value.replace('s', '')
 
                 # @TODO get a value like '∀0' instead of 'u2200:0'
-                _subject_code = "\u2200".encode('raw_unicode_escape').decode('utf-8')
-                # _subject_code = ('\\' + _subject_code).encode('raw_unicode_escape').decode('utf-8')
                 # _subject_code = ("\u2200").encode().decode('utf-8')
-                _subject_code = ("\u2200")
+                # _subject_code = ("\u2200")
                 # _subject_code = ("\u2200")
                 # _subject_code = str(ord("\u2200"))
                 # _subject_code = str(ord("\u2200"))
                 # _subject_code = ("\\u{0}".format(str(2200)))
                 # _subject_code = (r"\u2200").encode().decode('utf-8')
-                # _subject_code = ("\\u{0}".format(str(2200))).encode('raw_unicode_escape').decode('utf-8')
                 # _subject_code = ("\u2200").encode().decode('utf-8')
-                # _subject_code = ("\{0}".format(_subject_code)).encode().decode('utf-8')
-                # _subject_code = (f'\\{_subject_code}').encode().decode('utf-8')
-                # _subject_code = (_subject_code).encode('raw_unicode_escape').decode('utf-8')
                 _subjec_value = _subjec_value.replace('s', '')
-                result['extension']['r']['rdf:subject'].append(_subject)
-                # result['extension']['r']['rdf:subject'].append(_subject_code + ' ' + _subjec_value)
-                # result['extension']['r']['rdf:subject'].append(_subject_code + _subjec_value)
+                # result['extension']['r']['rdf:subject'].append(_subject)
+                result['extension']['r']['rdf:subject'].append('{0}:{1}'.format(
+                    _subject_code, _subjec_value
+                ))
+
+                _bpc47_g_parts.append('s{0}-s{1}'.format(
+                    _subject_code, _subjec_value
+                ))
 
             elif item.startswith('p_'):
                 _predicate = item.replace('p_', '').replace('_', ':')
                 result['extension']['r']['rdf:predicate'].append(_predicate)
+                _predicate_key, _object = _predicate.split(':')
+                _bpc47_g_parts.append('p{0}-{1}'.format(
+                    _predicate_key.upper(), _object
+                ))
 
             elif item.startswith('o_'):
-                _object= item.replace('o_', '').replace('_', ':')
+                _object = item.replace('o_', '').replace('_', ':')
                 result['extension']['r']['rdf:object'].append(_object)
+                raise NotImplementedError(
+                    'o [{0}] <{1}>'.format(item, hashtag))
             else:
                 result['_unknown'].append('rdf_parts [{0}]'.format(item))
             # pass
+        if len(_bpc47_g_parts) > 0:
+            result['extension']['r']['rdf:Statement_raw'] = \
+                'r-' + '-'.join(_bpc47_g_parts)
+            # norm.append('r-' + '-'.join(_bpc47_g_parts))
 
-    resultatum = []
-    resultatum.append('qcc')
-    resultatum.append('Zxxx')
-    resultatum.append('x-todo' + hashtag.replace('#', '').replace('+', '-'))
+    # resultatum = '-'.join(resultatum)
 
-    resultatum = '-'.join(resultatum)
+    # based on bcp47_langtag() without grandfathered and -r- implemented
+    if len(result['_error']) == 0:
+        norm = []
+        if result['language']:
+            norm.append(result['language'])
+        if result['script']:
+            norm.append(result['script'])
+        if result['region']:
+            norm.append(result['region'])
+        if len(result['variant']) > 0:
+            norm.append('-'.join(result['variant']))
+
+        # if len(result['extension']) > 0:
+        #     sorted_extension = {}
+        #     for key in sorted(result['extension']):
+        #         sorted_extension[key] = result['extension'][key]
+        #     result['extension'] = sorted_extension
+
+        #     # for key in result['extension']:
+        #     #     # if result['extension'][key][0] is None:
+        #     #     #     norm.append(key)
+        #     #     # else:
+        #     #     #     norm.append(key)
+        #     #     #     # norm.extend(result['extension'][key])
+        #     #     #     norm.append(result['extension'][key])
+        #     #     norm.append(key)
+        #     #     # norm.extend(result['extension'][key])
+        #     #     norm.append(result['extension'][key])
+
+        if result['extension']['r']['rdf:Statement_raw']:
+            # norm.append('r-' + '-'.join(_bpc47_g_parts))
+            norm.append(result['extension']['r']['rdf:Statement_raw'])
+
+        if len(result['privateuse']) > 0:
+            norm.append('x-' + '-'.join(result['privateuse']))
+
+        result['Language-Tag_normalized'] = '-'.join(norm)
+
     return result
 
 

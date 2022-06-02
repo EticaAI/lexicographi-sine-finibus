@@ -303,8 +303,12 @@ EXEMPLUM
    {0} --de_bcp47_simplex \
 --de_codex=qcc-Zxxx-r-sU2200-s0
 
-   {0} --de_hxl_simplex \
---de_hxlhashtag='#item+i_qcc+is_zxxx+rdf_s_u2200_s0'
+   {0} --de_hxl_simplex --de_hxlhashtag=\
+'#item+i_qcc+is_zxxx+rdf_s_u2200_s0+rdf_p_SKOS_related+ix_wikip123' \
+--quod=.Language-Tag_normalized
+
+   {0} --de_hxl_simplex --de_bcp47_simplex \
+--de_codex=qcc-Zxxx-r-sU2200-s0-pSKOS-related-x-wikip12
 
 ABOUT LANGUAGE-TERRITORY INFORMATION
 (--quod .communitas)
@@ -765,11 +769,9 @@ class LinguaCodexCli:
         if self.de_hxl_simplex:
             de_hxlhashtag = self.argparse_args.de_hxlhashtag
             de_hxlhashtag = hxl_hashtag_to_bcp47(de_hxlhashtag)
-            raise NotImplementedError('todo', self.argparse_args.de_hxlhashtag, de_hxlhashtag)
+            # raise NotImplementedError('todo', self.argparse_args.de_hxlhashtag, de_hxlhashtag)
             return quaerendum_de_punctum(
-                bcp47_langtag(
-                    self.argparse_args.de_codex,
-                ),
+                de_hxlhashtag,
                 self.argparse_args.quod
             )
         if self.de_bcp47_simplex:
