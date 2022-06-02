@@ -1024,6 +1024,8 @@ def bcp47_rdf_extension_poc(
         # This obviously is simplistic, because we can reference multiple
         # columns for same hashtags.
         for predicate in bag_meta['rdf:predicate']:
+            if not object_literal:
+                continue
             object_result = object_literal
             if not bcp47_lang.startswith('qcc'):
                 object_result = '"{0}"@{1}'.format(object_result, bcp47_lang)
