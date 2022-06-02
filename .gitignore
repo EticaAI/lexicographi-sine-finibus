@@ -31,6 +31,7 @@
 officina/1603/1603.statum.yml
 !officina/999999999/1568346/data/unesco-thesaurus.bcp47g.tsv
 !officina/999999999/1568346/data/unesco-thesaurus.tm.hxl.tsv
+!officina/999999999/1568346/data/unesco-thesaurus~statement.xrdf.hxl.csv
 # /officina/README.md
 /officina/LICENSE.md
 /officina/README.md

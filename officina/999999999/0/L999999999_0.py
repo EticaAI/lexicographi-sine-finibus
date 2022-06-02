@@ -106,6 +106,7 @@ BCP47_LANGTAG_RDF_NAMESPACES = {
     # 'csvw': '<http://www.w3.org/ns/csvw#>',
     'p': 'http://www.wikidata.org/prop/',
     'dct': 'http://purl.org/dc/terms/',
+    'dc': 'http://purl.org/dc/elements/1.1/',
     # @TODO see also https://www.w3.org/ns/prov.ttl boostrapper imported by
     #       https://www.w3.org/ns/csvw.ttl
     'unescothes': 'http://vocabularies.unesco.org/thesaurus/',
@@ -277,8 +278,9 @@ def bcp47_langtag(
 'language': 'en', 'script': 'Latn', 'region': 'US', \
 'variant': ['lojban', 'gaulish'], \
 'extension': {'a': '12345678-ABCD', 'b': 'ABCDEFGH'}, \
-'privateuse': ['a', 'b', 'c', '12345678'], \
-'grandfathered': None, '_unknown': [], '_error': []}
+'privateuse': ['a', 'b', 'c', '12345678'], 'grandfathered': None, \
+'_callbacks': {'hxl_attrs': '+i_en+is_latn+ix_12345678+ix_a+ix_b+ix_c'}, \
+'_unknown': [], '_error': []}
 
     # BCP47: "Example: The language tag "en-a-aaa-b-ccc-bbb-x-xyz" is in
     # canonical form, while "en-b-ccc-bbb-a-aaa-X-xyz" is well-formed (...)
@@ -288,7 +290,8 @@ def bcp47_langtag(
 'Language-Tag_normalized': 'en-a-aaa-b-ccc-bbb-x-xyz', \
 'language': 'en', 'script': None, 'region': None, 'variant': [], \
 'extension': {'a': 'aaa', 'b': 'ccc-bbb'}, 'privateuse': ['xyz'], \
-'grandfathered': None, '_unknown': [], '_error': []}
+'grandfathered': None, '_callbacks': {'hxl_attrs': '+i_en+ix_xyz'}, \
+'_unknown': [], '_error': []}
     """
     # For sake of copy-and-paste portability, we ignore a few pylints:
     # pylint: disable=too-many-branches,too-many-statements,too-many-locals
@@ -561,15 +564,19 @@ def bcp47_langtag_callback_hxl(
 
         if _r['rdf:subject'] and len(_r['rdf:subject']) > 0:
             for item in _r['rdf:subject']:
-                item_num = int(''.join(filter(str.isdigit, item)))
-                # item_prefix = ''.join(filter(str.isdigit, item, ))
-                item_prefix = item.replace(str(item_num), '')
-                item_prefix = item_prefix.encode("unicode_escape").decode()
-                item_prefix = item_prefix.replace('\\', '')
-                # item_prefix = item_prefix.encode().decode()
-                # prefix, term = item.lower().split(':')
+                subject_key, subject_namespace = item.lower().split(':')
+                # raise ValueError(item)
+                # item_num = int(''.join(filter(str.isdigit, item)))
+                # # item_prefix = ''.join(filter(str.isdigit, item, ))
+                # item_prefix = item.replace(str(item_num), '')
+                # item_prefix = item_prefix.encode("unicode_escape").decode()
+                # item_prefix = item_prefix.replace('\\', '')
+                # # item_prefix = item_prefix.encode().decode()
+                # # prefix, term = item.lower().split(':')
+                # resultatum.append(
+                #     '+rdf_s_{0}_{1}'.format(item_prefix, item_num))
                 resultatum.append(
-                    '+rdf_s_{0}_{1}'.format(item_prefix, item_num))
+                    '+rdf_s_{0}_{1}'.format(subject_key, subject_namespace))
 
         if _r['rdfs:Datatype'] and len(_r['rdfs:Datatype']) > 0:
             prefix, term = _r['rdfs:Datatype'].lower().split(':')
@@ -699,19 +706,31 @@ def bcp47_rdf_extension(
                 ))
 
             # sU2200
+            # elif r_item_key.lower().startswith('su'):
+            #     _subjects.append('∀{0}'.format(
+            #         r_item_value.lstrip('s')
+            #     ))
+            # elif r_item_key.lower().startswith('ss'):
+            #     _subjects.append('{0}'.format(
+            #         r_item_value.lstrip('s')
+            #     ))
+
+            # # oU1F517
+            # elif r_item_key.lower().startswith('ou'):
+            #     _objects.append('🔗{0}'.format(
+            #         r_item_value.lstrip('o')
+            #     ))
+
+            # exemplum: sU2200
             elif r_item_key.lower().startswith('su'):
-                _subjects.append('∀{0}'.format(
-                    r_item_value.lstrip('s')
-                ))
-            elif r_item_key.lower().startswith('ss'):
-                _subjects.append('{0}'.format(
-                    r_item_value.lstrip('s')
+                _subjects.append('{0}:{1}'.format(
+                    r_item_key.lstrip('s'), r_item_value.lstrip('s')
                 ))
 
-            # oU1F517
+            # exemplum: oU1F517
             elif r_item_key.lower().startswith('ou'):
-                _objects.append('🔗{0}'.format(
-                    r_item_value.lstrip('o')
+                _objects.append('{0}:{1}'.format(
+                    r_item_key.lstrip('o'), r_item_value
                 ))
 
             elif r_item_key.startswith('t'):
@@ -839,15 +858,21 @@ def bcp47_rdf_extension_relationship(
                 len(item_meta['extension']['r']['rdf:subject']) > 0:
             for subject in item_meta['extension']['r']['rdf:subject']:
                 is_pivot_key = False
+                subject_key, subject_value = subject.split(':')
                 if subject.startswith('∀'):
                     is_pivot_key = True
                     subject = subject.replace('∀', '')
                 if subject.startswith('🔗'):
                     is_pivot_key = True
                     subject = subject.replace('🔗', '')
+                if subject.startswith('∀') or subject.startswith('🔗') or \
+                        subject.lower().startswith('u2200') or \
+                        subject.lower().startswith('u1F517'):
+                    is_pivot_key = True
 
                 if subject not in result['rdfs:Container']:
-                    result['rdfs:Container'][subject] = {
+                    # result['rdfs:Container'][subject] = {
+                    result['rdfs:Container'][subject_value] = {
                         'pivot': {
                             'index': -1,
                             'iri': inline_namespace_iri,
@@ -861,14 +886,15 @@ def bcp47_rdf_extension_relationship(
                     }
 
                 if inline_namespace is not None:
-                    result['rdfs:Container'][subject]['pivot']['prefix'] = \
+                    result['rdfs:Container'][subject_value]['pivot']['prefix'] = \
                         inline_namespace
-                result['rdfs:Container'][subject]['columns'].append(index)
+                result['rdfs:Container'][subject_value]['columns'].append(
+                    index)
 
                 if is_pivot_key:
-                    if result['rdfs:Container'][subject]['pivot']['index'] > -1:
+                    if result['rdfs:Container'][subject_value]['pivot']['index'] > -1:
                         SyntaxError('{0} <{1}>'.format(header, item_meta))
-                    result['rdfs:Container'][subject]['pivot']['index'] = index
+                    result['rdfs:Container'][subject_value]['pivot']['index'] = index
 
         if 'r' in item_meta['extension'] and \
                 len(item_meta['extension']['r']['rdf:predicate']) > 0:
@@ -891,7 +917,7 @@ def bcp47_rdf_extension_relationship(
 def bcp47_rdf_extension_poc(
         header: List[str],
         data: List[List],
-        objective_bag: str = '1',
+        objective_bag: str = '0',
         _auxiliary_bags: List[str] = None,
         namespaces: List[dict] = None,
         strictum: bool = True
@@ -920,9 +946,9 @@ def bcp47_rdf_extension_poc(
     ...             'eng-Latn-r-pdc-contributor-pdc-creator-pdc-publisher']
     >>> header_2 = ['qcc-Zxxx-r-sU2200-s0',
     ...             'eng-Latn-r-pdc-contributor-pdc-creator-pdc-publisher']
-    >>> data_1 = [['<http://vocabularies.unesco.org/thesaurus>'
+    >>> data_1 = [['<http://vocabularies.unesco.org/thesaurus>',
     ...             'UNESCO']]
-    >>> poc1 = bcp47_rdf_extension_poc(header_2, data_1, namespaces)
+    >>> poc1 = bcp47_rdf_extension_poc(header_2, data_1, namespaces=namespaces)
 
     # >>> poc1['header_result']
     #'pskos-prefLabel'
@@ -950,9 +976,12 @@ def bcp47_rdf_extension_poc(
 
     meta = bcp47_rdf_extension_relationship(header, strictum=strictum)
     meta['data'] = data
+    # raise ValueError(meta)
+    # raise ValueError(objective_bag, meta['rdfs:Container'])
     # return meta
+    # print(meta['rdfs:Container'])
     if objective_bag not in meta['rdfs:Container']:
-        raise SyntaxError('objective_bag({0})? {1} <{1}>'.format(
+        raise SyntaxError('objective_bag({0})? {1} <{2}>'.format(
             objective_bag, header, meta))
     bag_meta = meta['rdfs:Container'][objective_bag]
     is_urn = bag_meta['pivot']['prefix'].startswith('urn')
