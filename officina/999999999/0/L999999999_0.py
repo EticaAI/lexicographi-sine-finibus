@@ -721,10 +721,16 @@ def bcp47_rdf_extension(
             #         r_item_value.lstrip('o')
             #     ))
 
-            # exemplum: sU2200
+            # exemplum: sU2200 (if using unicode as prefix, assume is key)
             elif r_item_key.lower().startswith('su'):
                 _subjects.append('{0}:{1}'.format(
                     r_item_key.lstrip('s'), r_item_value.lstrip('s')
+                ))
+            # exemplum: sS (not using unicode as key, assuming is just
+            #           a pointer, not the pivoct column)
+            elif r_item_key.lower().startswith('ss'):
+                _subjects.append('{0}:{1}'.format(
+                    '_' + r_item_key.lower().lstrip('s'), r_item_value.lstrip('s')
                 ))
 
             # exemplum: oU1F517
@@ -836,9 +842,13 @@ def bcp47_rdf_extension_relationship(
         if 'r' in item_meta['extension'] and \
                 len(item_meta['extension']['r']['rdf:object']) > 0:
             for object in item_meta['extension']['r']['rdf:object']:
-                if object.startswith('🔗'):
+                # if object.startswith('🔗'):
+                #     # is_inline_namespace = True
+                #     inline_namespace = object.replace('🔗', '')
+                #     strictum = True
+                if object.startswith('_'):
                     # is_inline_namespace = True
-                    inline_namespace = object.replace('🔗', '')
+                    inline_namespace = object.replace('_', '')
                     strictum = True
                     if inline_namespace not in BCP47_LANGTAG_RDF_NAMESPACES:
                         if strictum:
@@ -859,18 +869,19 @@ def bcp47_rdf_extension_relationship(
             for subject in item_meta['extension']['r']['rdf:subject']:
                 is_pivot_key = False
                 subject_key, subject_value = subject.split(':')
-                if subject.startswith('∀'):
-                    is_pivot_key = True
-                    subject = subject.replace('∀', '')
-                if subject.startswith('🔗'):
-                    is_pivot_key = True
-                    subject = subject.replace('🔗', '')
+                # if subject.startswith('∀'):
+                #     is_pivot_key = True
+                #     subject = subject.replace('∀', '')
+                # if subject.startswith('🔗'):
+                #     is_pivot_key = True
+                #     subject = subject.replace('🔗', '')
                 if subject.startswith('∀') or subject.startswith('🔗') or \
                         subject.lower().startswith('u2200') or \
                         subject.lower().startswith('u1F517'):
                     is_pivot_key = True
+                    # raise ValueError('deu', is_pivot_key)
 
-                if subject not in result['rdfs:Container']:
+                if subject_value not in result['rdfs:Container']:
                     # result['rdfs:Container'][subject] = {
                     result['rdfs:Container'][subject_value] = {
                         'pivot': {
@@ -894,6 +905,7 @@ def bcp47_rdf_extension_relationship(
                 if is_pivot_key:
                     if result['rdfs:Container'][subject_value]['pivot']['index'] > -1:
                         SyntaxError('{0} <{1}>'.format(header, item_meta))
+                    # raise ValueError('deu', index)
                     result['rdfs:Container'][subject_value]['pivot']['index'] = index
 
         if 'r' in item_meta['extension'] and \
@@ -910,14 +922,18 @@ def bcp47_rdf_extension_relationship(
                         BCP47_LANGTAG_RDF_NAMESPACES[prefix]
 
         result['columns'].append(item_meta)
+    # raise ValueError(result['rdfs:Container'])
 
     return result
 
 
+# @TODO implement via command line specify which objective_bag.
+# #     Defaults to 1 but we actually can get the others
+
 def bcp47_rdf_extension_poc(
         header: List[str],
         data: List[List],
-        objective_bag: str = '0',
+        objective_bag: str = '2',
         _auxiliary_bags: List[str] = None,
         namespaces: List[dict] = None,
         strictum: bool = True
@@ -944,7 +960,7 @@ def bcp47_rdf_extension_poc(
 
     >>> header_1 = ['qcc-Zxxx-r-sRDF-subject',
     ...             'eng-Latn-r-pdc-contributor-pdc-creator-pdc-publisher']
-    >>> header_2 = ['qcc-Zxxx-r-sU2200-s0',
+    >>> header_2 = ['qcc-Zxxx-r-sU2200-s1',
     ...             'eng-Latn-r-pdc-contributor-pdc-creator-pdc-publisher']
     >>> data_1 = [['<http://vocabularies.unesco.org/thesaurus>',
     ...             'UNESCO']]
@@ -980,9 +996,11 @@ def bcp47_rdf_extension_poc(
     # raise ValueError(objective_bag, meta['rdfs:Container'])
     # return meta
     # print(meta['rdfs:Container'])
+
     if objective_bag not in meta['rdfs:Container']:
         raise SyntaxError('objective_bag({0})? {1} <{2}>'.format(
             objective_bag, header, meta))
+
     bag_meta = meta['rdfs:Container'][objective_bag]
     is_urn = bag_meta['pivot']['prefix'].startswith('urn')
     prexi_iri = None
@@ -1048,6 +1066,8 @@ def bcp47_rdf_extension_poc(
                 linea=linea)
             if len(aux_triples) > 0:
                 result['triples'].extend(aux_triples)
+
+    # raise ValueError(meta)
 
     # result['prefixes'] = BCP47_LANGTAG_RDF_NAMESPACES
     result['prefixes'] = meta['prefixes']

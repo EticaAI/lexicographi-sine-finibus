@@ -99,6 +99,9 @@ Temporary tests . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
     {0} --objectivum-formato=_temp_bcp47 \
 999999999/1568346/data/unesco-thesaurus.bcp47g.tsv
 
+    {0} --objectivum-formato=_temp_bcp47 --rdf-bag=2 \
+999999999/1568346/data/unesco-thesaurus.bcp47g.tsv
+
     {0} --objectivum-formato=_temp_bcp47 \
 999999999/1568346/data/unesco-thesaurus.bcp47g.tsv \
 | rapper --quiet --input=turtle --output=turtle /dev/fd/0
@@ -239,6 +242,21 @@ class Cli:
         # ex
         # fontī, m, s, dativus, https://en.wiktionary.org/wiki/fons#Latin
         parser.add_argument(
+            '--rdf-bag',
+            help='(Advanced) RDF bag; extract triples from tabular data from '
+            'other groups than 1',
+            dest='rdf_bag',
+            nargs='?',
+            # required=True,
+            default='1'
+        )
+
+        # archīvum, n, s, nominativus, https://en.wiktionary.org/wiki/archivum
+        # cōnfigūrātiōnī, f, s, dativus,
+        #                      https://en.wiktionary.org/wiki/configuratio#Latin
+        # ex
+        # fontī, m, s, dativus, https://en.wiktionary.org/wiki/fons#Latin
+        parser.add_argument(
             '--archivum-configurationi-ex-fonti',
             help='Arquivo de configuração .meta.yml da fonte de dados',
             dest='archivum_configurationi',
@@ -298,7 +316,8 @@ class Cli:
                 _infile, _stdin, punctum_separato="\t")
             # print(caput, data)
             # print('')
-            meta = bcp47_rdf_extension_poc(caput, data)
+            meta = bcp47_rdf_extension_poc(
+                caput, data, objective_bag=pyargs.rdf_bag)
             # print(json.dumps(meta, sort_keys=True ,ensure_ascii=False))
             # return self.EXIT_OK
 
