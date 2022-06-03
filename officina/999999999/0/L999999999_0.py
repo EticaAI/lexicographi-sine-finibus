@@ -100,6 +100,7 @@ BCP47_LANGTAG_RDF_NAMESPACES = {
     'rdfs': 'http://www.w3.org/2000/01/rdf-schema#',
     'xsd': 'http://www.w3.org/2001/XMLSchema#',
     'owl': 'http://www.w3.org/2002/07/owl#',
+    'obo': 'http://purl.obolibrary.org/obo/',
     'skos': 'http://www.w3.org/2004/02/skos/core#',
     # https://www.w3.org/ns/csvw
     # https://www.w3.org/ns/csvw.ttl
@@ -1658,7 +1659,8 @@ class DictionariaLinguarum:
         return datum
 
     def imprimere(
-            self, linguam: list = None, codex: Type['Codex'] = None) -> list:
+            self, linguam: list = None,
+            codex: Type['Codex'] = None) -> list:  # type: ignore
         """imprimere /print/@eng-Latn
 
         Trivia:
