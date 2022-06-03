@@ -95,22 +95,29 @@ BCP47_LANGTAG_EXTENSIONS = {
     'r': lambda r, strictum: bcp47_rdf_extension(r, strictum=strictum)
 }
 
-BCP47_LANGTAG_RDF_NAMESPACES = {
+RDF_NAMESPACES = {
     'rdf': 'http://www.w3.org/2000/01/rdf-schema#',
     'rdfs': 'http://www.w3.org/2000/01/rdf-schema#',
     'xsd': 'http://www.w3.org/2001/XMLSchema#',
     'owl': 'http://www.w3.org/2002/07/owl#',
     'obo': 'http://purl.obolibrary.org/obo/',
     'skos': 'http://www.w3.org/2004/02/skos/core#',
+    'wdata': 'http://www.wikidata.org/wiki/Special:EntityData/',
     # https://www.w3.org/ns/csvw
     # https://www.w3.org/ns/csvw.ttl
     # 'csvw': '<http://www.w3.org/ns/csvw#>',
-    'p': 'http://www.wikidata.org/prop/',
-    'dct': 'http://purl.org/dc/terms/',
-    'dc': 'http://purl.org/dc/elements/1.1/',
+    # 'p': 'http://www.wikidata.org/prop/',
+    # 'dct': 'http://purl.org/dc/terms/',
+    # 'dc': 'http://purl.org/dc/elements/1.1/',
     # @TODO see also https://www.w3.org/ns/prov.ttl boostrapper imported by
     #       https://www.w3.org/ns/csvw.ttl
-    'unescothes': 'http://vocabularies.unesco.org/thesaurus/',
+    # 'unescothes': 'http://vocabularies.unesco.org/thesaurus/',
+}
+
+# This can be pre-populated by tools before being used
+# @see rdf_namespaces_extras()
+RDF_NAMESPACES_EXTRAS = {
+
 }
 
 
@@ -822,10 +829,13 @@ def bcp47_rdf_extension_relationship(
         # '_unknown': [],
         'rdfs:Container': {},
         'prefixes': {
-            'rdf': BCP47_LANGTAG_RDF_NAMESPACES['rdf'],
-            'rdfs': BCP47_LANGTAG_RDF_NAMESPACES['rdfs'],
-            'xsd': BCP47_LANGTAG_RDF_NAMESPACES['xsd'],
-            'owl': BCP47_LANGTAG_RDF_NAMESPACES['owl']
+            'rdf': RDF_NAMESPACES['rdf'],
+            'rdfs': RDF_NAMESPACES['rdfs'],
+            'xsd': RDF_NAMESPACES['xsd'],
+            'owl': RDF_NAMESPACES['owl'],
+            'obo': RDF_NAMESPACES['obo'],
+            'skos': RDF_NAMESPACES['skos'],
+            'wdata': RDF_NAMESPACES['wdata'],
         },
         '_error': [],
     }
@@ -851,7 +861,17 @@ def bcp47_rdf_extension_relationship(
                     # is_inline_namespace = True
                     inline_namespace = object.replace('_', '')
                     strictum = True
-                    if inline_namespace not in BCP47_LANGTAG_RDF_NAMESPACES:
+                    if inline_namespace in RDF_NAMESPACES:
+                        inline_namespace_iri = \
+                            RDF_NAMESPACES[inline_namespace]
+                        result['prefixes'][inline_namespace] = \
+                            inline_namespace_iri
+                    elif inline_namespace in RDF_NAMESPACES_EXTRAS:
+                        inline_namespace_iri = \
+                            RDF_NAMESPACES_EXTRAS[inline_namespace]
+                        result['prefixes'][inline_namespace] = \
+                            inline_namespace_iri
+                    else:
                         if strictum:
                             raise SyntaxError(
                                 'inline_namespace ({0}) ? <{1}> <{2}>'.format(
@@ -859,10 +879,6 @@ def bcp47_rdf_extension_relationship(
                                 ))
                         else:
                             inline_namespace_iri = '_' + inline_namespace
-                    else:
-                        inline_namespace_iri = \
-                            BCP47_LANGTAG_RDF_NAMESPACES[inline_namespace]
-                        result['prefixes'][inline_namespace] = inline_namespace_iri
 
         # print('item inline_namespace_iri', item, inline_namespace_iri)
         if 'r' in item_meta['extension'] and \
@@ -914,13 +930,14 @@ def bcp47_rdf_extension_relationship(
             for predicate in item_meta['extension']['r']['rdf:predicate']:
                 prefix, suffix = predicate.split(':')
                 if prefix not in result['prefixes']:
-                    if prefix not in BCP47_LANGTAG_RDF_NAMESPACES:
+                    # if prefix not in RDF_NAMESPACES:
+                    if prefix not in RDF_NAMESPACES_EXTRAS:
                         raise SyntaxError(
                             'prefix [{0}]? <{1}> <{2}>'.format(
-                                prefix, header, BCP47_LANGTAG_RDF_NAMESPACES
+                                prefix, header, RDF_NAMESPACES_EXTRAS
                             ))
                     result['prefixes'][prefix] = \
-                        BCP47_LANGTAG_RDF_NAMESPACES[prefix]
+                        RDF_NAMESPACES_EXTRAS[prefix]
 
         result['columns'].append(item_meta)
     # raise ValueError(result['rdfs:Container'])
@@ -1072,7 +1089,7 @@ def bcp47_rdf_extension_poc(
 
     # raise ValueError(meta)
 
-    # result['prefixes'] = BCP47_LANGTAG_RDF_NAMESPACES
+    # result['prefixes'] = RDF_NAMESPACES
     result['prefixes'] = meta['prefixes']
 
     return result
@@ -3613,6 +3630,34 @@ def qhxl_hxlhashtag_2_bcp47(
         )
 
     return bcp47_simplici
+
+
+def rdf_namespaces_extras(archivum: str) -> dict:
+    """rdf_namespaces_extras Populate global RDF_NAMESPACES_EXTRAS
+
+    _extended_summary_
+
+    Args:
+        archivum (str): path or stdin for archive with extra namespace
+
+    Returns:
+        dict: result
+    """
+    caput, data = hxltm_carricato(archivum)
+    index_prefix = caput.index('#x_rdf+prefix')
+    index_iri = caput.index('#x_rdf+iri')
+    if index_prefix == -1:
+        raise SyntaxError('#x_rdf+prefix ? [{0}]'.format(archivum))
+    if index_iri == -1:
+        raise SyntaxError('#x_rdf+iri ? [{0}]'.format(index_iri))
+
+    global RDF_NAMESPACES_EXTRAS
+    for linea in data:
+        RDF_NAMESPACES_EXTRAS[linea[index_prefix]] = linea[index_iri]
+
+    # print(index_prefix, index_iri, RDF_NAMESPACES_EXTRAS)
+    # pass
+    return RDF_NAMESPACES_EXTRAS
 
 
 def numerordinatio_descendentibus(
