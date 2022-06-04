@@ -717,9 +717,10 @@ def bcp47_rdf_extension(
         'rdf:predicate': [],
         'rdf:object': [],
         'rdfs:Datatype': None,
-        # 'csvw:separator': '',
         '_unknown': [],
         '_error': [],
+        # 'csvw:separator': '', # Added only if necessary
+        # 'prefix': [],  # Added only if necessary
     }
     _predicates = []
     _subjects = []
@@ -773,7 +774,7 @@ def bcp47_rdf_extension(
             # exemplum: oU1F517
             elif r_item_key.lower().startswith('ou'):
                 _objects.append('{0}:{1}'.format(
-                    r_item_key.lstrip('o'), r_item_value
+                    r_item_key.lstrip('o'), r_item_value.lstrip('o')
                 ))
 
             elif r_item_key.startswith('t'):
@@ -809,12 +810,17 @@ def bcp47_rdf_extension(
                         # r_item_value
                         r_item_value_enc
                     )
-                else:
                     result['_error'].append(
                         'csvw:??? [{0}]-[{1}]'.format(
                             r_item_key,
                             r_item_value
                         ))
+
+            elif r_item_key.lower() == 'yprefix':
+                if 'prefix' not in result:
+                    result['prefix'] = []
+                result['prefix'].append(r_item_value.lower())
+
             else:
                 result['_error'].append('Unknow [{0}-{1}]'.format(
                     r_item_key,
@@ -2347,6 +2353,8 @@ def hxl_hashtag_to_bcp47(hashtag: str) -> str:
                 'rdfs:Datatype': None,
                 '_unknown': [],
                 '_error': [],
+                # 'csvw:separator': '', # Added only if necessary
+                # 'prefix': [],  # Added only if necessary
             }
         },
         'privateuse': [],  # Example: ['wadegile', 'private1']
