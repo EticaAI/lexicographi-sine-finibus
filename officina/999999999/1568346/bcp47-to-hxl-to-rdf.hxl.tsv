@@ -4,6 +4,7 @@ qcc-Zxxx-r-pRDF-type	+i_qcc+is_zxxx+ir_rrdf_type	rdf:type	<http://www.w3.org/200
 lat-Latn-r-pSKOS-prefLabel	+i_lat+is_latn+rdf_p_skos_preflabel	skos:prefLabel/[$1]@lat-Latn	<http://www.w3.org/2004/02/skos/core#>
 qcc-Zxxx-r-pSKOS-broader	+i_qcc+is_zxxx+rdf_p_skos_broader	skos:broader	<http://www.w3.org/2004/02/>skos/core#
 qcc-Zxxx-r-pSKOS-narrower	+i_qcc+is_zxxx+rdf_p_skos_narrower	skos:narrower	<http://www.w3.org/2004/>02/skos/core#
+qcc-Zxxx-r-pSKOS-narrower-yCSVWseparator-u007c	+i_qcc+is_zxxx+rdf_p_skos_narrower+csvw_separator_u007c	skos:narrower	<http://www.w3.org/2004/>02/skos/core#
 qcc-Zxxx-r-pSKOS-related	+i_qcc+is_zxxx+rdf_p_skos_related	skos:related	<http://www.w3.org/2004/02/>skos/core#
 qcc-Zxxx-r-pDCT-modified	+i_qcc+is_zxxx+rdf_p_dct_modified	dct:modified	<http://purl.org/dc/terms/>
 qcc-Zxxx-r-pDCT-modified-tXSD-datetime	+i_qcc+is_zxxx+rdf_p_dct_modified+rdf_t_xsd_datetime	dct:modified/[$1]^^xsd:datetime	<http://purl.org/dc/terms/>|<http://www.w3.org/2001/XMLSchema#>

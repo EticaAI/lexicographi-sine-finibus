@@ -590,6 +590,13 @@ def bcp47_langtag_callback_hxl(
             prefix, term = _r['rdfs:Datatype'].lower().split(':')
             resultatum.append('+rdf_t_{0}_{1}'.format(prefix, term))
 
+        # if _r['csvw:separator'] and len(_r['csvw:separator']) > 0:
+        #     # separaor = _r['csvw:separator'].encode().decode('utf-8')
+        #     # separaor = _r['csvw:separator'].encode('utf-8').decode('utf-8')
+        #     separators = _r['csvw:separator'].encode('utf-16')
+        #     raise ValueError(separators)
+        #     resultatum.append('+csvw_separator_{0}'.format(separaor))
+
     resultatum = sorted(resultatum)
 
     return ''.join(resultatum)
@@ -690,6 +697,7 @@ def bcp47_rdf_extension(
         'rdf:predicate': [],
         'rdf:object': [],
         'rdfs:Datatype': None,
+        # 'csvw:separator': '',
         '_unknown': [],
         '_error': [],
     }
@@ -738,7 +746,8 @@ def bcp47_rdf_extension(
             #           a pointer, not the pivoct column)
             elif r_item_key.lower().startswith('ss'):
                 _subjects.append('{0}:{1}'.format(
-                    '_' + r_item_key.lower().lstrip('s'), r_item_value.lstrip('s')
+                    '_' + r_item_key.lower().lstrip(
+                        's'), r_item_value.lstrip('s')
                 ))
 
             # exemplum: oU1F517
@@ -756,6 +765,39 @@ def bcp47_rdf_extension(
                 else:
                     result['_error'].append(
                         'rdfs:Datatype [{0}]-[{1}]'.format(
+                            r_item_key,
+                            r_item_value
+                        ))
+
+            elif r_item_key.lower().startswith('ycsvw'):
+                if r_item_key.lower() == 'ycsvwseparator':
+                    r_item_value = r_item_value.lower()
+                    r_item_value_enc = '__error__'
+                    # @TODO implement in pure python encode/decode. This is
+                    #       an obvious ugly hacky
+                    if r_item_value == 'u007c':
+                        r_item_value_enc = '|'
+                    elif r_item_value == 'u007cu007c':
+                        r_item_value_enc = '||'
+                    elif r_item_value == 'u0020':
+                        r_item_value_enc = ' '
+                    elif r_item_value == 'u003b':
+                        r_item_value_enc = ';'
+                    elif r_item_value == 'u0009':
+                        r_item_value_enc = '	'  # tab
+                    else:
+                        raise NotImplementedError(
+                            'Sorry, separator [{0}] '
+                            'not implemented. This may be a bug. '.format(
+                                r_item_value))
+
+                    result['csvw:separator'] = '{0}'.format(
+                        # r_item_value
+                        r_item_value_enc
+                    )
+                else:
+                    result['_error'].append(
+                        'csvw:??? [{0}]-[{1}]'.format(
                             r_item_key,
                             r_item_value
                         ))
