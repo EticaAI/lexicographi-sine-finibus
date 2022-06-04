@@ -76,6 +76,54 @@ bcp47_to_hxl_to_rdf__tests() {
 
 }
 
+#######################################
+# bcp47_to_hxl_to_rdf__tests
+#
+# Globals:
+#   ROOTDIR
+# Arguments:
+#   None
+# Outputs:
+#   Test result
+#######################################
+test_unesco_thesaurus() {
+  archivum__namespace="${ROOTDIR}/999999999/1568346/data/hxlstandard-rdf-namespaces-example.hxl.csv"
+  archivum__unesco_thesaurus_bcp47="${ROOTDIR}/999999999/1568346/data/unesco-thesaurus.bcp47g.tsv"
+  archivum__resultata_bag1="${ROOTDIR}/999999/0/unesco-thesaurus~rdfbag1.ttl"
+  archivum__resultata_bag2="${ROOTDIR}/999999/0/unesco-thesaurus~rdfbag2.ttl"
+  archivum__resultata_ttl="${ROOTDIR}/999999/0/unesco-thesaurus.rdf.ttl"
+  archivum__resultata_xml="${ROOTDIR}/999999/0/unesco-thesaurus.rdf.xml"
+
+  "${ROOTDIR}/999999999/0/999999999_54872.py" \
+    --objectivum-formato=_temp_bcp47 \
+    --rdf-bag=1 \
+    --rdf-namespaces-archivo="${archivum__namespace}" \
+    "${archivum__unesco_thesaurus_bcp47}" |
+    rapper --quiet --input=turtle --output=turtle /dev/fd/0 \
+    > "${archivum__resultata_bag1}"
+
+  "${ROOTDIR}/999999999/0/999999999_54872.py" \
+    --objectivum-formato=_temp_bcp47 \
+    --rdf-bag=2 \
+    --rdf-namespaces-archivo="${archivum__namespace}" \
+    "${archivum__unesco_thesaurus_bcp47}" |
+    rapper --quiet --input=turtle --output=turtle /dev/fd/0 \
+    > "${archivum__resultata_bag2}"
+
+    # riot --output=Turtle \
+    riot --time --output=RDF/XML \
+      "${archivum__resultata_bag1}" \
+      "${archivum__resultata_bag2}" \
+      > "${archivum__resultata_xml}"
+
+    riot --time --output=Turtle \
+      "${archivum__resultata_xml}" \
+      > "${archivum__resultata_ttl}"
+
+    riot --validate "${archivum__resultata_ttl}"
+}
+
 # echo "test"
 
-bcp47_to_hxl_to_rdf__tests
+# bcp47_to_hxl_to_rdf__tests
+test_unesco_thesaurus
