@@ -106,6 +106,20 @@ CSVW_SEPARATORS = {
     'u0009': '	'  # tab
 }
 
+# @see https://en.wikipedia.org/wiki/List_of_logic_symbols
+FIRST_ORDER_LOGIC = {
+    '∀': {
+        'python': u'\u2200',
+        'eng-Latn': 'universal quantification',
+        'wdata': 'Q126695'  # https://www.wikidata.org/wiki/Q126695
+    },
+    '∃': {
+        'python': u'\u2203',
+        'eng-Latn': 'existential quantification',
+        'wdata': 'Q773483'  # https://www.wikidata.org/wiki/Q773483
+    },
+}
+
 RDF_NAMESPACES = {
     'rdf': 'http://www.w3.org/2000/01/rdf-schema#',
     'rdfs': 'http://www.w3.org/2000/01/rdf-schema#',
@@ -772,6 +786,7 @@ def bcp47_rdf_extension(
                 ))
 
             # exemplum: oU1F517
+            # @TODO removing test data for this. Maybe re-add later
             elif r_item_key.lower().startswith('ou'):
                 _objects.append('{0}:{1}'.format(
                     r_item_key.lstrip('o'), r_item_value.lstrip('o')
@@ -810,11 +825,11 @@ def bcp47_rdf_extension(
                         # r_item_value
                         r_item_value_enc
                     )
-                    result['_error'].append(
-                        'csvw:??? [{0}]-[{1}]'.format(
-                            r_item_key,
-                            r_item_value
-                        ))
+                    # result['_error'].append(
+                    #     'csvw:??? [{0}]-[{1}]'.format(
+                    #         r_item_key,
+                    #         r_item_value
+                    #     ))
 
             elif r_item_key.lower() == 'yprefix':
                 if 'prefix' not in result:
@@ -919,7 +934,17 @@ def bcp47_rdf_extension_relationship(
         item_meta['_column'] = index
         inline_namespace = None
         inline_namespace_iri = None
-        # is_inline_namespace = False
+        is_inline_namespace = False
+
+        is_pivot_key = False
+
+        object_prefixes = None
+        if 'r' in item_meta['extension'] and \
+                'prefix' in item_meta['extension']['r'] and \
+                len(item_meta['extension']['r']['prefix']) > 0:
+            object_prefixes = item_meta['extension']['r']['prefix']
+
+        # RDFStatement: Subject -> Predicate -> [[ Object ]]
         if 'r' in item_meta['extension'] and \
                 len(item_meta['extension']['r']['rdf:object']) > 0:
             for object in item_meta['extension']['r']['rdf:object']:
@@ -950,11 +975,11 @@ def bcp47_rdf_extension_relationship(
                         else:
                             inline_namespace_iri = '_' + inline_namespace
 
-        # print('item inline_namespace_iri', item, inline_namespace_iri)
+        # RDFStatement: [[ Subject ]] -> Predicate -> Object
         if 'r' in item_meta['extension'] and \
                 len(item_meta['extension']['r']['rdf:subject']) > 0:
             for subject in item_meta['extension']['r']['rdf:subject']:
-                is_pivot_key = False
+                # is_pivot_key = False
                 subject_key, subject_value = subject.split(':')
                 # if subject.startswith('∀'):
                 #     is_pivot_key = True
@@ -962,9 +987,9 @@ def bcp47_rdf_extension_relationship(
                 # if subject.startswith('🔗'):
                 #     is_pivot_key = True
                 #     subject = subject.replace('🔗', '')
-                if subject.startswith('∀') or subject.startswith('🔗') or \
+                if subject.startswith('∀') or subject.startswith('∃') or \
                         subject.lower().startswith('u2200') or \
-                        subject.lower().startswith('u1F517'):
+                        subject.lower().startswith('u2203'):
                     is_pivot_key = True
                     # raise ValueError('deu', is_pivot_key)
 
@@ -973,7 +998,7 @@ def bcp47_rdf_extension_relationship(
                     result['rdfs:Container'][subject_value] = {
                         'pivot': {
                             'index': -1,
-                            'iri': inline_namespace_iri,
+                            # 'iri': inline_namespace_iri,
                             'prefix': 'urn',
                             # We will fallback the pivots as generic classes
                             # We should enable later override this behavior
@@ -992,9 +1017,15 @@ def bcp47_rdf_extension_relationship(
                 if is_pivot_key:
                     if result['rdfs:Container'][subject_value]['pivot']['index'] > -1:
                         SyntaxError('{0} <{1}>'.format(header, item_meta))
+                    if object_prefixes is not None and len(object_prefixes) > 1:
+                        SyntaxError('{0} <{1}>:: > 1 prefix [{2}]'.format(
+                            header, item_meta, object_prefixes))
+                    if object_prefixes is not None:
+                        result['rdfs:Container'][subject_value]['pivot']['prefix'] = object_prefixes[0]
                     # raise ValueError('deu', index)
                     result['rdfs:Container'][subject_value]['pivot']['index'] = index
 
+        # RDFStatement: Subject -> [[ Predicate ]] -> Object
         if 'r' in item_meta['extension'] and \
                 len(item_meta['extension']['r']['rdf:predicate']) > 0:
             for predicate in item_meta['extension']['r']['rdf:predicate']:
@@ -1069,7 +1100,8 @@ def bcp47_rdf_extension_poc(
         # 'rdfs:Datatype': None,
         # '_unknown': [],
         'triples': [],
-        'prefixes': {},
+        # We always start with default prefixes
+        'prefixes': RDF_NAMESPACES,
         '_error': [],
     }
     # return {}
@@ -1090,13 +1122,25 @@ def bcp47_rdf_extension_poc(
         raise SyntaxError('objective_bag({0})? {1} <{2}>'.format(
             objective_bag, header, meta))
 
+    # print(meta)
+    # print('')
+    # print(meta['rdfs:Container'][objective_bag])
+
     bag_meta = meta['rdfs:Container'][objective_bag]
     is_urn = bag_meta['pivot']['prefix'].startswith('urn')
-    prexi_iri = None
+    prefix_pivot = None
 
     # return bag_meta
     if not is_urn:
-        prexi_iri = bag_meta['pivot']['iri']
+        # @todo solve this error later
+        prefix_pivot = bag_meta['pivot']['prefix']
+        if prefix_pivot not in result['prefixes']:
+            if prefix_pivot not in RDF_NAMESPACES_EXTRAS:
+                raise ValueError('prefix [{0}] not in [{1}]'.format(
+                    prefix_pivot, RDF_NAMESPACES_EXTRAS
+                ))
+            result['prefixes'][prefix_pivot] = \
+                RDF_NAMESPACES_EXTRAS[prefix_pivot]
 
     index_id = bag_meta['pivot']['index']
     triples_delayed = []
@@ -1113,10 +1157,17 @@ def bcp47_rdf_extension_poc(
         # This obviously is simplistic, because we can reference multiple
         # columns for same hashtags.
 
+        is_literal = True
+
         value_separator = None
         if 'csvw:separator' in bag_meta and \
-            len(bag_meta['csvw:separator']) > 0:
+                len(bag_meta['csvw:separator']) > 0:
             value_separator = bag_meta['csvw:separator']
+
+        value_prefixes = None
+        if 'prefix' in bag_meta and \
+                len(bag_meta['prefix']) > 0:
+            value_prefixes = bag_meta['prefix']
 
         for predicate in bag_meta['rdf:predicate']:
             if not object_literal:
@@ -1132,23 +1183,28 @@ def bcp47_rdf_extension_poc(
                 # pass
             else:
                 object_results = [object_literal]
-    
+
+            if value_prefixes is not None:
+                is_literal = False
+                for prefix in value_prefixes:
+                    for index in range(len(object_results)):
+                        if not object_results[index].startswith(prefix):
+                            object_results[index] = '{0}:{1}'.format(
+                                prefix, object_results[index]
+                            )
+
             for item in object_results:
                 if not bcp47_lang.startswith('qcc'):
                     object_result = '"{0}"@{1}'.format(item, bcp47_lang)
+                elif not is_literal:
+                    # Example: prefixed result
+                    object_result = item
                 else:
                     # TODO: implement other data types
                     object_result = '"{0}"'.format(item)
 
                 triples.append([subject, predicate, object_result])
             continue
-            object_result = object_literal
-            if not bcp47_lang.startswith('qcc'):
-                object_result = '"{0}"@{1}'.format(object_result, bcp47_lang)
-            else:
-                object_result = '"{0}"'.format(object_result)
-
-            triples.append([subject, predicate, object_result])
 
         # print('bag_meta', bag_meta)
         # raise ValueError(bag_meta)
@@ -1161,7 +1217,7 @@ def bcp47_rdf_extension_poc(
         if is_urn:
             triple_subject = '<urn:{0}>'.format(linea[index_id])
         else:
-            triple_subject = '<{0}{1}>'.format(prexi_iri, linea[index_id])
+            triple_subject = '{0}:{1}'.format(prefix_pivot, linea[index_id])
 
         # Predicate for self is Subject here
         for predicate in bag_meta['pivot']['rdf:predicate']:
@@ -1189,7 +1245,7 @@ def bcp47_rdf_extension_poc(
     # raise ValueError(meta)
 
     # result['prefixes'] = RDF_NAMESPACES
-    result['prefixes'] = meta['prefixes']
+    # result['prefixes'] = meta['prefixes']
 
     return result
     # return result['triples']
@@ -2459,6 +2515,14 @@ def hxl_hashtag_to_bcp47(hashtag: str) -> str:
                     # _predicate_key, _object = _predicate.split(':')
                     _bpc47_g_parts.append('yCSVWseparator-{0}'.format(
                         decoded_separator
+                    ))
+                elif _tkey == 'prefix':
+                    if 'prefix' not in result['extension']['r']:
+                        result['extension']['r']['prefix'] = []
+                    result['extension']['r']['prefix'].append(_tvalue.lower())
+                    # _predicate_key, _object = _predicate.split(':')
+                    _bpc47_g_parts.append('yPREFIX-{0}'.format(
+                        _tvalue.lower()
                     ))
                 else:
                     result['_unknown'].append('rdf_parts [{0}]'.format(item))
