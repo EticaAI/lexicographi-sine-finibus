@@ -106,19 +106,56 @@ CSVW_SEPARATORS = {
     'u0009': '	'  # tab
 }
 
+# @see https://www.asciitable.com/
+
+EXTRA_OPERATORS = {
+    # Used for @prefix
+    'STX': {
+        'eng-Latn': '(start of text)',
+        # 'hxl': 'u02',
+        'hxl': 'U0002',
+        'wikidata': 'Q10366650',  # https://www.wikidata.org/wiki/Q10366650
+        # 'unicode': 'U+0002',
+        'unicode': u"\x02"
+    },
+    # Used to explain what separator the cell value may use
+    'GS': {
+        'eng-Latn': '(group separator)',  # Also: information separator three
+        'hxl': 'U001D',
+        # 'hxl': 'u001d',
+        'wikidata': 'Q10366650',  # https://www.wikidata.org/wiki/Q110028713
+        # 'unicode': 'U+001D',
+        'unicode': u"\x1D",
+    }
+}
+
 # @see https://en.wikipedia.org/wiki/List_of_logic_symbols
 FIRST_ORDER_LOGIC = {
     '∀': {
         'python': u'\u2200',
         'eng-Latn': 'universal quantification',
-        'wdata': 'Q126695'  # https://www.wikidata.org/wiki/Q126695
+        'hxl': 'u2200',
+        'wdata': 'Q126695',  # https://www.wikidata.org/wiki/Q126695
+        'unicode': 'U+2200'
     },
     '∃': {
         'python': u'\u2203',
         'eng-Latn': 'existential quantification',
-        'wdata': 'Q773483'  # https://www.wikidata.org/wiki/Q773483
+        'hxl': 'u2203',
+        'wdata': 'Q773483',  # https://www.wikidata.org/wiki/Q773483
+        'unicode': 'U+2203'
+    },
+    # print(u'{0}'.format("\U0001D53B"))
+    # print(u'{0}'.format(u"\U0001D53B"))
+    '𝔻': {
+        'python': u"\U0001D53B",
+        'eng-Latn': 'domain of discourse',
+        'hxl': 'u0001D53B',
+        'wdata': 'Q1228944',  # https://www.wikidata.org/wiki/Q1228944
+        'unicode': 'U+1D53B'
     },
 }
+
 
 RDF_NAMESPACES = {
     'rdf': 'http://www.w3.org/2000/01/rdf-schema#',
@@ -592,12 +629,12 @@ def bcp47_langtag_callback_hxl(
 
         if _r['rdf:predicate'] and len(_r['rdf:predicate']) > 0:
             for item in _r['rdf:predicate']:
-                prefix, term = item.lower().split(':')
+                prefix, term, _nop, _nop2 = item.lower().split(':')
                 resultatum.append('+rdf_p_{0}_{1}'.format(prefix, term))
 
         if _r['rdf:subject'] and len(_r['rdf:subject']) > 0:
             for item in _r['rdf:subject']:
-                subject_key, subject_namespace = item.lower().split(':')
+                subject_key, subject_namespace, _nop = item.lower().split(':')
                 # raise ValueError(item)
                 # item_num = int(''.join(filter(str.isdigit, item)))
                 # # item_prefix = ''.join(filter(str.isdigit, item, ))
@@ -731,6 +768,7 @@ def bcp47_rdf_extension(
         'rdf:predicate': [],
         'rdf:object': [],
         'rdfs:Datatype': None,
+        'xsl:transform': [],
         '_unknown': [],
         '_error': [],
         # 'csvw:separator': '', # Added only if necessary
@@ -748,6 +786,73 @@ def bcp47_rdf_extension(
         r_parts_tot = len(r_parts)
         r_rest = r_parts_tot
         while r_rest > 0:
+            r_verb = r_parts[r_parts_tot - r_rest]
+            r_op_1 = r_parts[r_parts_tot - r_rest + 1]
+            r_op_2 = r_parts[r_parts_tot - r_rest + 2]
+
+            r_op = r_verb[0].lower()
+
+            if r_op_1[0].lower() != r_op or r_op_2[0].lower() != r_op:
+                result['_error'].append(
+                    'Prefix not equal [{0}]: [{1}-{2}-{3}]'.format(
+                        r_op,
+                        r_verb,
+                        r_op_1,
+                        r_op_2,
+                    ))
+                r_rest = r_rest - 3
+                continue
+
+            r_verb = r_verb[1:]
+            r_op_1 = r_op_1[1:]
+            r_op_2 = r_op_2[1:]
+            if r_op_2 == 'nop':
+                r_op_2 = 'NOP'
+
+            if r_op == 'p':
+                if r_op_2[0].lower() != 's':
+                    result['_error'].append(
+                        '[{3}] only implemented for reference subject. '
+                        'This means require prefix [s]: '
+                        'Used: [{0}{1}-{0}{2}{0}-{3}]'.format(
+                            r_op,
+                            r_verb,
+                            r_op_1,
+                            r_op_2,
+
+                        ))
+                else:
+                    r_op_2 = r_op_2[1:]
+
+                    result['rdf:predicate'].append('{0}:{1}:{2}:{3}'.format(
+                        r_verb.lower(), r_op_1, r_op_2, 'NOP'
+                    ))
+            elif r_op == 's':
+                _subjects.append('{0}:{1}:{2}'.format(
+                    r_verb.upper(), r_op_1.lower(), r_op_2
+                ))
+            elif r_op == 'o':
+                pass
+            elif r_op == 't':
+                pass
+            elif r_op == 'y':
+                result['xsl:transform'].append('{0}:{1}:{2}'.format(
+                    r_verb.upper(), r_op_1.lower(), r_op_2,
+                ))
+            else:
+                result['_error'].append(
+                    'Unknown prefix [{0}]: [{0}{1}-{0}{2}{0}-{3}]'.format(
+                        r_op,
+                        r_verb,
+                        r_op_1,
+                        r_op_2,
+                    ))
+
+            r_verb = r_verb.upper()
+            r_op_2 = r_op_2.lower()
+
+            r_rest = r_rest - 3
+            continue
             r_item_key = r_parts[r_parts_tot - r_rest]
             r_item_value = r_parts[r_parts_tot - r_rest + 1]
             if r_item_key.startswith('p'):
@@ -837,15 +942,17 @@ def bcp47_rdf_extension(
                 result['prefix'].append(r_item_value.lower())
 
             else:
-                result['_error'].append('Unknow [{0}-{1}]'.format(
+                result['_error'].append('Unknown [{0}-{1}]'.format(
                     r_item_key,
                     r_item_value
                 ))
             r_rest = r_rest - 2
 
-        if len(_predicates) > 0:
-            _predicates.sort()
-            result['rdf:predicate'] = _predicates
+        # if len(_predicates) > 0:
+        #     _predicates.sort()
+        #     result['rdf:predicate'] = _predicates
+        if len(_predicates) > 1:
+            result['rdf:predicate'].sort()
 
         if len(_objects) > 0:
             _objects.sort()
@@ -855,13 +962,22 @@ def bcp47_rdf_extension(
             _subjects.sort()
             result['rdf:subject'] = _subjects
 
+        if len(result['xsl:transform']) > 0:
+            result['xsl:transform'].sort()
+            # result['rdf:subject'] = _subjects
+
     else:
         result['_error'].append('G extension do not have -')
 
-    if len(r_parts) % 2 == 0:
+    if len(r_parts) % 3 == 0:
         pass
     else:
-        result['_error'].append('G extension not even number')
+        result['_error'].append('G extension not groups of 3')
+
+    # if len(r_parts) % 2 == 0:
+    #     pass
+    # else:
+    #     result['_error'].append('G extension not even number')
 
     if strictum and len(result['_error']) > 0:
         raise SyntaxError('[{0}]: <{1}>'.format(

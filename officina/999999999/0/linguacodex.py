@@ -755,6 +755,37 @@ class LinguaCodexCli:
         # print(self.argparse_args)
         # sys.exit()
 
+        # s = 'U+0041'
+
+        # print(s[2:])
+        # # 0041
+
+        # print(chr(int(s[2:], 16)))
+        # # A
+
+        # # city = 'Ribeir\xc3\xa3o Preto'
+        # unicode_str = 'U+1D53B'
+        # unicode_str = 'U+0041'
+        # print(unicode_str[2:])
+        # print('𝔻')
+        # print(len('𝔻'))
+        # print('𝔻'.encode('utf-8').decode('utf-16'))
+        # print(u'{0}'.format(u'\u3042'))
+        # print(u'{0}'.format(u'\u0041'))
+        # print(u'{0}'.format("\U00000394"))
+        # print(u'{0}'.format("\U0001D53B"))
+        # print(u'{0}'.format(u"\U0001D53B"))
+        # print('ultimo')
+        # print(u'{0}'.format(u"\u001D"))
+        # print('ultimo2')
+        # print(u'{0}'.format(u"\x1D"))
+        # print('ultimo3')
+        # print(u'{0}'.format(u"\x02"))
+        # # print('U+1D53B'.encode('utf-8').decode(''))
+        # # print(u'\U1D53B'.encode('utf-8').decode(''))
+        # # print ('𝔻'.encode('utf-8').decode('ascii'))
+        # return None
+
         if not self.argparse_args.de_codex and \
                 not self.argparse_args.de_hxlhashtag:
             if not self.argparse_args.de_nomen:
