@@ -30,7 +30,7 @@
 # ==============================================================================
 # /opt/Protege-5.5.0/run.sh
 
-import json
+# import json
 import sys
 import os
 import argparse
@@ -64,19 +64,7 @@ STDIN = sys.stdin.buffer
 NOMEN = '999999999_826165'
 
 DESCRIPTION = """
-{0} Conversor de HXLTM para formatos RDF (alternativa ao uso de 1603_1_1.py, \
-que envolve processamento muito mais intenso para datasets enormes)
-
-AVISO: versão atual ainda envolve carregar todos os dados para memória. \
-       Considere fornecer tabela HXLTM de entrada que já não contenha \
-       informações que pretende que estejam no arquivo gerado.
-
-@see https://github.com/EticaAI/lexicographi-sine-finibus/issues/42
-
-Trivia:
-- Q54872, https://www.wikidata.org/wiki/Q54872
-  - Resource Description Framework
-  - "formal language for describing data models (...)"
+{0} Draft!
 """.format(__file__)
 
 __EPILOGUM__ = """
@@ -84,26 +72,7 @@ __EPILOGUM__ = """
                             EXEMPLŌRUM GRATIĀ
 ------------------------------------------------------------------------------
 
-    cat 999999/0/ibge_un_adm2.tm.hxl.csv | \
-{0} --objectivum-formato=text/csv \
---archivum-configurationi-ex-fonti=999999999/0/999999999_268072.meta.yml \
---praefixum-configurationi-ex-fonti=methodus,ibge_un_adm2 \
-> 999999/0/ibge_un_adm2.no1.tm.hxl.csv
-
-    cat 999999/0/ibge_un_adm2.tm.hxl.csv | \
-{0} --objectivum-formato=application/x-turtle \
---archivum-configurationi-ex-fonti=999999999/0/999999999_268072.meta.yml \
---praefixum-configurationi-ex-fonti=methodus,ibge_un_adm2 \
-> 999999/0/ibge_un_adm2.no1.skos.ttl
-
-    cat 999999/0/ibge_un_adm2.tm.hxl.csv | \
-{0} --objectivum-formato=application/x-turtle \
---archivum-configurationi-ex-fonti=999999999/0/999999999_268072.meta.yml \
---praefixum-configurationi-ex-fonti=methodus,ibge_un_adm2 \
-| rapper --quiet --input=turtle --output=ntriples /dev/fd/0
-
-    rapper --quiet --input=turtle --output=ntriples \
-999999/0/ibge_un_adm2.no1.skos.ttl > 999999/0/ibge_un_adm2.no1.skos.nt
+    # TODO: this is a draft. not implemented
 
 
 Temporary tests . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -319,53 +288,60 @@ class Cli:
             _infile = None
             _stdin = True
 
-        # rdf_namespace_archivo
-        if pyargs.rdf_namespace_archivo:
-            rdf_namespaces_extras(pyargs.rdf_namespace_archivo)
-            # print(RDF_NAMESPACES_EXTRAS)
-            # pass
 
-        # @TODO remove thsi temporary part
-        if pyargs.objectivum_formato == '_temp_bcp47':
-            caput, data = hxltm_carricato(
-                _infile, _stdin, punctum_separato="\t")
-            # print(caput, data)
-            # print('')
-            meta = bcp47_rdf_extension_poc(
-                caput, data, objective_bag=pyargs.rdf_bag)
-            # print(json.dumps(meta, sort_keys=True ,ensure_ascii=False))
-            # return self.EXIT_OK
+        go = owlready2.get_ontology("http://purl.obolibrary.org/obo/go.owl").load()
+        obo = owlready2.get_namespace("http://purl.obolibrary.org/obo/")
+        print(obo.GO_0000001.label)
 
-            for prefix, iri in meta['prefixes'].items():
-                print('@prefix {0}: <{1}> .'.format(prefix, iri))
+        return self.EXIT_OK
 
-            for triple in meta['triples']:
-                print('{0} {1} {2} .'.format(triple[0], triple[1], triple[2]))
+        # # rdf_namespace_archivo
+        # if pyargs.rdf_namespace_archivo:
+        #     rdf_namespaces_extras(pyargs.rdf_namespace_archivo)
+        #     # print(RDF_NAMESPACES_EXTRAS)
+        #     # pass
 
-            return self.EXIT_OK
+        # # @TODO remove thsi temporary part
+        # if pyargs.objectivum_formato == '_temp_bcp47':
+        #     caput, data = hxltm_carricato(
+        #         _infile, _stdin, punctum_separato="\t")
+        #     # print(caput, data)
+        #     # print('')
+        #     meta = bcp47_rdf_extension_poc(
+        #         caput, data, objective_bag=pyargs.rdf_bag)
+        #     # print(json.dumps(meta, sort_keys=True ,ensure_ascii=False))
+        #     # return self.EXIT_OK
 
-        # _infile = None
-        # _stdin = None
-        configuratio = self.quod_configuratio(
-            pyargs.archivum_configurationi, pyargs.praefixum_configurationi)
-        if pyargs.venandum_insectum or VENANDUM_INSECTUM:
-            self.venandum_insectum = True
+        #     for prefix, iri in meta['prefixes'].items():
+        #         print('@prefix {0}: <{1}> .'.format(prefix, iri))
 
-        climain = CliMain(
-            infile=_infile, stdin=_stdin,
-            pyargs=pyargs,
-            configuratio=configuratio,
-            venandum_insectum=self.venandum_insectum
-        )
+        #     for triple in meta['triples']:
+        #         print('{0} {1} {2} .'.format(triple[0], triple[1], triple[2]))
 
-        if pyargs.objectivum_formato == 'text/csv':
-            return climain.actio()
-        if pyargs.objectivum_formato == 'application/x-turtle':
-            return climain.actio()
-            # return self.EXIT_OK
-        if pyargs.objectivum_formato == 'application/n-triples':
-            return climain.actio()
-            # return self.EXIT_OK
+        #     return self.EXIT_OK
+
+        # # _infile = None
+        # # _stdin = None
+        # configuratio = self.quod_configuratio(
+        #     pyargs.archivum_configurationi, pyargs.praefixum_configurationi)
+        # if pyargs.venandum_insectum or VENANDUM_INSECTUM:
+        #     self.venandum_insectum = True
+
+        # climain = CliMain(
+        #     infile=_infile, stdin=_stdin,
+        #     pyargs=pyargs,
+        #     configuratio=configuratio,
+        #     venandum_insectum=self.venandum_insectum
+        # )
+
+        # if pyargs.objectivum_formato == 'text/csv':
+        #     return climain.actio()
+        # if pyargs.objectivum_formato == 'application/x-turtle':
+        #     return climain.actio()
+        #     # return self.EXIT_OK
+        # if pyargs.objectivum_formato == 'application/n-triples':
+        #     return climain.actio()
+        #     # return self.EXIT_OK
 
         # if pyargs.objectivum_formato == 'uri_fonti':
         #     print(METHODUS_FONTI[pyargs.methodus])
@@ -398,133 +374,133 @@ class Cli:
         print('Unknow option.')
         return self.EXIT_ERROR
 
-    def quod_configuratio(
-        self,
-        archivum_configurationi: str = None,
-        praefixum_configurationi: str = None
-    ) -> dict:
-        """quod_configuratio
+    # def quod_configuratio(
+    #     self,
+    #     archivum_configurationi: str = None,
+    #     praefixum_configurationi: str = None
+    # ) -> dict:
+    #     """quod_configuratio
 
-        Args:
-            archivum_configurationi (str, optional):
+    #     Args:
+    #         archivum_configurationi (str, optional):
 
-        Returns:
-            (dict):
-        """
-        praefixum = []
-        if praefixum_configurationi:
-            praefixum = praefixum_configurationi.split(',')
+    #     Returns:
+    #         (dict):
+    #     """
+    #     praefixum = []
+    #     if praefixum_configurationi:
+    #         praefixum = praefixum_configurationi.split(',')
 
-        if exists(archivum_configurationi):
-            with open(archivum_configurationi, "r") as read_file:
-                datum = yaml.safe_load(read_file)
-                while len(praefixum) > 0:
-                    ad_hoc = praefixum.pop(0)
-                    if ad_hoc in datum:
-                        datum = datum[ad_hoc]
-                    else:
-                        raise ValueError('{0} [{1}]: [{2}?]'.format(
-                            archivum_configurationi,
-                            praefixum_configurationi,
-                            ad_hoc,
-                        ))
-                return datum
+    #     if exists(archivum_configurationi):
+    #         with open(archivum_configurationi, "r") as read_file:
+    #             datum = yaml.safe_load(read_file)
+    #             while len(praefixum) > 0:
+    #                 ad_hoc = praefixum.pop(0)
+    #                 if ad_hoc in datum:
+    #                     datum = datum[ad_hoc]
+    #                 else:
+    #                     raise ValueError('{0} [{1}]: [{2}?]'.format(
+    #                         archivum_configurationi,
+    #                         praefixum_configurationi,
+    #                         ad_hoc,
+    #                     ))
+    #             return datum
 
-        raise FileNotFoundError(
-            'archivum_configurationi {0}'.format(
-                str(archivum_configurationi)))
-
-
-class CliMain:
-    """Remove .0 at the end of CSVs from data exported from XLSX and likely
-    to have numeric values (and trigger weird bugs)
-    """
-
-    delimiter = ','
-
-    hxltm_ad_rdf: Type['HXLTMAdRDFSimplicis'] = None
-    pyargs: dict = None
-    venandum_insectum: bool = False  # noqa
-
-    def __init__(
-            self, infile: str = None, stdin: bool = None,
-            pyargs: dict = None, configuratio: dict = None,
-            venandum_insectum: bool = False  # noqa
-    ):
-        """
-        Constructs all the necessary attributes for the Cli object.
-        """
-        self.infile = infile
-        self.stdin = stdin
-        self.pyargs = pyargs
-        self.objectivum_formato = pyargs.objectivum_formato
-        # self.methodus = pyargs.methodus
-        self.configuratio = configuratio
-        self.venandum_insectum = venandum_insectum
-
-        caput, datum = hxltm_carricato(infile, stdin)
-
-        # delimiter = ','
-        if self.objectivum_formato in ['tsv', 'hxltm_tsv', 'hxl_tsv']:
-            self.delimiter = "\t"
-        # print('oi HXLTMAdRDFSimplicis')
-        self.hxltm_ad_rdf = HXLTMAdRDFSimplicis(
-            configuratio, pyargs.objectivum_formato, caput, datum,
-            venandum_insectum=self.venandum_insectum
-        )
-
-        # methodus_ex_tabulae = configuratio['methodus'][self.methodus]
-
-        # self.tabula = TabulaAdHXLTM(
-        #     methodus_ex_tabulae=methodus_ex_tabulae,
-        #     methodus=self.methodus,
-        #     objectivum_formato=self.objectivum_formato
-        # )
-
-        # self.outfile = outfile
-        # self.header = []
-        # self.header_index_fix = []
-
-    def actio(self):
-        # āctiō, f, s, nominativus, https://en.wiktionary.org/wiki/actio#Latin
-        if self.pyargs.objectivum_formato == 'text/csv':
-            return self.hxltm_ad_rdf.resultatum_ad_csv()
-        if self.pyargs.objectivum_formato == 'application/x-turtle':
-            return self.hxltm_ad_rdf.resultatum_ad_turtle()
-        if self.pyargs.objectivum_formato == 'application/n-triples':
-            raise NotImplementedError(
-                'Use turtle output and pipe to rapper '
-                '(raptor2-utils) or similar')
-            return self.hxltm_ad_rdf.resultatum_ad_ntriples()
-            # print('oi actio')
-            # numerordinatio_neo_separatum
-        # print('failed')
+    #     raise FileNotFoundError(
+    #         'archivum_configurationi {0}'.format(
+    #             str(archivum_configurationi)))
 
 
-def numerordinatio_neo_separatum(
-        numerordinatio: str, separatum: str = "_") -> str:
-    resultatum = ''
-    resultatum = numerordinatio.replace('_', separatum)
-    resultatum = resultatum.replace('/', separatum)
-    resultatum = resultatum.replace(':', separatum)
-    # TODO: add more as need
-    return resultatum
+# class CliMain:
+#     """Remove .0 at the end of CSVs from data exported from XLSX and likely
+#     to have numeric values (and trigger weird bugs)
+#     """
+
+#     delimiter = ','
+
+#     hxltm_ad_rdf: Type['HXLTMAdRDFSimplicis'] = None
+#     pyargs: dict = None
+#     venandum_insectum: bool = False  # noqa
+
+#     def __init__(
+#             self, infile: str = None, stdin: bool = None,
+#             pyargs: dict = None, configuratio: dict = None,
+#             venandum_insectum: bool = False  # noqa
+#     ):
+#         """
+#         Constructs all the necessary attributes for the Cli object.
+#         """
+#         self.infile = infile
+#         self.stdin = stdin
+#         self.pyargs = pyargs
+#         self.objectivum_formato = pyargs.objectivum_formato
+#         # self.methodus = pyargs.methodus
+#         self.configuratio = configuratio
+#         self.venandum_insectum = venandum_insectum
+
+#         caput, datum = hxltm_carricato(infile, stdin)
+
+#         # delimiter = ','
+#         if self.objectivum_formato in ['tsv', 'hxltm_tsv', 'hxl_tsv']:
+#             self.delimiter = "\t"
+#         # print('oi HXLTMAdRDFSimplicis')
+#         self.hxltm_ad_rdf = HXLTMAdRDFSimplicis(
+#             configuratio, pyargs.objectivum_formato, caput, datum,
+#             venandum_insectum=self.venandum_insectum
+#         )
+
+#         # methodus_ex_tabulae = configuratio['methodus'][self.methodus]
+
+#         # self.tabula = TabulaAdHXLTM(
+#         #     methodus_ex_tabulae=methodus_ex_tabulae,
+#         #     methodus=self.methodus,
+#         #     objectivum_formato=self.objectivum_formato
+#         # )
+
+#         # self.outfile = outfile
+#         # self.header = []
+#         # self.header_index_fix = []
+
+#     def actio(self):
+#         # āctiō, f, s, nominativus, https://en.wiktionary.org/wiki/actio#Latin
+#         if self.pyargs.objectivum_formato == 'text/csv':
+#             return self.hxltm_ad_rdf.resultatum_ad_csv()
+#         if self.pyargs.objectivum_formato == 'application/x-turtle':
+#             return self.hxltm_ad_rdf.resultatum_ad_turtle()
+#         if self.pyargs.objectivum_formato == 'application/n-triples':
+#             raise NotImplementedError(
+#                 'Use turtle output and pipe to rapper '
+#                 '(raptor2-utils) or similar')
+#             return self.hxltm_ad_rdf.resultatum_ad_ntriples()
+#             # print('oi actio')
+#             # numerordinatio_neo_separatum
+#         # print('failed')
 
 
-def numerordinatio_ordo(numerordinatio: str) -> int:
-    normale = numerordinatio_neo_separatum(numerordinatio, '_')
-    return (normale.count('_') + 1)
+# def numerordinatio_neo_separatum(
+#         numerordinatio: str, separatum: str = "_") -> str:
+#     resultatum = ''
+#     resultatum = numerordinatio.replace('_', separatum)
+#     resultatum = resultatum.replace('/', separatum)
+#     resultatum = resultatum.replace(':', separatum)
+#     # TODO: add more as need
+#     return resultatum
 
 
-def numerordinatio_progenitori(
-        numerordinatio: str, separatum: str = "_") -> int:
-    # prōgenitōrī, s, m, dativus, https://en.wiktionary.org/wiki/progenitor
-    normale = numerordinatio_neo_separatum(numerordinatio, separatum)
-    _parts = normale.split(separatum)
-    _parts = _parts[:-1]
-    if len(_parts) == 0:
-        return "0"
-    return separatum.join(_parts)
+# def numerordinatio_ordo(numerordinatio: str) -> int:
+#     normale = numerordinatio_neo_separatum(numerordinatio, '_')
+#     return (normale.count('_') + 1)
+
+
+# def numerordinatio_progenitori(
+#         numerordinatio: str, separatum: str = "_") -> int:
+#     # prōgenitōrī, s, m, dativus, https://en.wiktionary.org/wiki/progenitor
+#     normale = numerordinatio_neo_separatum(numerordinatio, separatum)
+#     _parts = normale.split(separatum)
+#     _parts = _parts[:-1]
+#     if len(_parts) == 0:
+#         return "0"
+#     return separatum.join(_parts)
 
 
 if __name__ == "__main__":
