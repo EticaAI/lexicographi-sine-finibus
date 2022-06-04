@@ -95,6 +95,17 @@ BCP47_LANGTAG_EXTENSIONS = {
     'r': lambda r, strictum: bcp47_rdf_extension(r, strictum=strictum)
 }
 
+# @TODO allow non hardcoded CSV_SEPARATORS
+# Hacky way to have inline cell separators.
+CSVW_SEPARATORS = {
+    # HXL: +rdf_ycsvwseparator_u007c, BCP47, (...)-r-yCSVWseparator-u007c
+    'u007c': '|',
+    'u007cu007c': '||',
+    'u0020': ' ',
+    'u003b': ';',
+    'u0009': '	'  # tab
+}
+
 RDF_NAMESPACES = {
     'rdf': 'http://www.w3.org/2000/01/rdf-schema#',
     'rdfs': 'http://www.w3.org/2000/01/rdf-schema#',
@@ -590,12 +601,21 @@ def bcp47_langtag_callback_hxl(
             prefix, term = _r['rdfs:Datatype'].lower().split(':')
             resultatum.append('+rdf_t_{0}_{1}'.format(prefix, term))
 
-        # if _r['csvw:separator'] and len(_r['csvw:separator']) > 0:
-        #     # separaor = _r['csvw:separator'].encode().decode('utf-8')
-        #     # separaor = _r['csvw:separator'].encode('utf-8').decode('utf-8')
-        #     separators = _r['csvw:separator'].encode('utf-16')
-        #     raise ValueError(separators)
-        #     resultatum.append('+csvw_separator_{0}'.format(separaor))
+        if 'csvw:separator' in _r and \
+                _r['csvw:separator'] and len(_r['csvw:separator']) > 0:
+            decoded_separator = None
+            for decoded, value in CSVW_SEPARATORS.items():
+                if _r['csvw:separator'] == value:
+                    decoded_separator = decoded
+                    break
+            if decoded_separator is None:
+                raise NotImplementedError(
+                    '[{0}] [{1}] not implemented in <{2}>'.format(
+                        _r['csvw:separator'], langtag_meta, CSVW_SEPARATORS
+                    ))
+
+            resultatum.append(
+                '+rdf_y_csvwseparator_{0}'.format(decoded_separator))
 
     resultatum = sorted(resultatum)
 
@@ -759,7 +779,7 @@ def bcp47_rdf_extension(
             elif r_item_key.startswith('t'):
                 if result['rdfs:Datatype'] is None:
                     result['rdfs:Datatype'] = '{0}:{1}'.format(
-                        r_item_key.lstrip('t'),
+                        r_item_key.lstrip('t').lower(),
                         r_item_value
                     )
                 else:
@@ -775,21 +795,15 @@ def bcp47_rdf_extension(
                     r_item_value_enc = '__error__'
                     # @TODO implement in pure python encode/decode. This is
                     #       an obvious ugly hacky
-                    if r_item_value == 'u007c':
-                        r_item_value_enc = '|'
-                    elif r_item_value == 'u007cu007c':
-                        r_item_value_enc = '||'
-                    elif r_item_value == 'u0020':
-                        r_item_value_enc = ' '
-                    elif r_item_value == 'u003b':
-                        r_item_value_enc = ';'
-                    elif r_item_value == 'u0009':
-                        r_item_value_enc = '	'  # tab
+                    if r_item_value in CSVW_SEPARATORS:
+                        r_item_value_enc = CSVW_SEPARATORS[r_item_value]
+
                     else:
                         raise NotImplementedError(
-                            'Sorry, separator [{0}] '
-                            'not implemented. This may be a bug. '.format(
-                                r_item_value))
+                            'Sorry, separator [{0}] of [{1}] not implemented. '
+                            'This may be a bug. '
+                            'Hardcoded options <{2}> '.format(
+                                r_item_value, rem, CSVW_SEPARATORS))
 
                     result['csvw:separator'] = '{0}'.format(
                         # r_item_value
@@ -848,6 +862,7 @@ def bcp47_rdf_extension(
 
 def bcp47_rdf_extension_relationship(
         header: List[str],
+        namespaces: List[dict] = None,
         strictum: bool = True
 ) -> dict:
     """""Metadata processing of the bcp47_rdf_extension version
@@ -870,17 +885,24 @@ def bcp47_rdf_extension_relationship(
         # 'rdfs:Datatype': None,
         # '_unknown': [],
         'rdfs:Container': {},
-        'prefixes': {
-            'rdf': RDF_NAMESPACES['rdf'],
-            'rdfs': RDF_NAMESPACES['rdfs'],
-            'xsd': RDF_NAMESPACES['xsd'],
-            'owl': RDF_NAMESPACES['owl'],
-            'obo': RDF_NAMESPACES['obo'],
-            'skos': RDF_NAMESPACES['skos'],
-            'wdata': RDF_NAMESPACES['wdata'],
-        },
+        'prefixes': RDF_NAMESPACES,
+        # 'prefixes': {
+        #     'rdf': RDF_NAMESPACES['rdf'],
+        #     'rdfs': RDF_NAMESPACES['rdfs'],
+        #     'xsd': RDF_NAMESPACES['xsd'],
+        #     'owl': RDF_NAMESPACES['owl'],
+        #     'obo': RDF_NAMESPACES['obo'],
+        #     'skos': RDF_NAMESPACES['skos'],
+        #     'wdata': RDF_NAMESPACES['wdata'],
+        # },
         '_error': [],
     }
+
+    result['prefixes'] = RDF_NAMESPACES
+
+    if namespaces is not None and len(namespaces) > 0:
+        for item in namespaces:
+            result['prefixes'][item['prefix']] = item['iri']
 
     # print('header', header)
 
@@ -993,7 +1015,7 @@ def bcp47_rdf_extension_relationship(
 def bcp47_rdf_extension_poc(
         header: List[str],
         data: List[List],
-        objective_bag: str = '2',
+        objective_bag: str = '1',
         _auxiliary_bags: List[str] = None,
         namespaces: List[dict] = None,
         strictum: bool = True
@@ -1019,9 +1041,9 @@ def bcp47_rdf_extension_poc(
     ... ]
 
     >>> header_1 = ['qcc-Zxxx-r-sRDF-subject',
-    ...             'eng-Latn-r-pdc-contributor-pdc-creator-pdc-publisher']
+    ...             'eng-Latn-r-pDC-contributor-pDC-creator-pDC-publisher']
     >>> header_2 = ['qcc-Zxxx-r-sU2200-s1',
-    ...             'eng-Latn-r-pdc-contributor-pdc-creator-pdc-publisher']
+    ...             'eng-Latn-r-pDC-contributor-pDC-creator-pDC-publisher']
     >>> data_1 = [['<http://vocabularies.unesco.org/thesaurus>',
     ...             'UNESCO']]
     >>> poc1 = bcp47_rdf_extension_poc(header_2, data_1, namespaces=namespaces)
@@ -1050,7 +1072,8 @@ def bcp47_rdf_extension_poc(
 
     # header.pop()
 
-    meta = bcp47_rdf_extension_relationship(header, strictum=strictum)
+    meta = bcp47_rdf_extension_relationship(
+        header, namespaces=namespaces, strictum=strictum)
     meta['data'] = data
     # raise ValueError(meta)
     # raise ValueError(objective_bag, meta['rdfs:Container'])
@@ -1083,9 +1106,36 @@ def bcp47_rdf_extension_poc(
         triples_delayed = []
         # This obviously is simplistic, because we can reference multiple
         # columns for same hashtags.
+
+        value_separator = None
+        if 'csvw:separator' in bag_meta and \
+            len(bag_meta['csvw:separator']) > 0:
+            value_separator = bag_meta['csvw:separator']
+
         for predicate in bag_meta['rdf:predicate']:
             if not object_literal:
                 continue
+
+            if value_separator is not None and \
+                object_literal.find(value_separator) > -1 and \
+                    object_literal.find('\\' + value_separator) == -1:
+                # @TODO: if a field have both separator and escaped separator
+                #        we will fail. This would require a regex split, but
+                #        but not implementing for now for performance reasons.
+                object_results = object_literal.split(value_separator)
+                # pass
+            else:
+                object_results = [object_literal]
+    
+            for item in object_results:
+                if not bcp47_lang.startswith('qcc'):
+                    object_result = '"{0}"@{1}'.format(item, bcp47_lang)
+                else:
+                    # TODO: implement other data types
+                    object_result = '"{0}"'.format(item)
+
+                triples.append([subject, predicate, object_result])
+            continue
             object_result = object_literal
             if not bcp47_lang.startswith('qcc'):
                 object_result = '"{0}"@{1}'.format(object_result, bcp47_lang)
@@ -1094,6 +1144,7 @@ def bcp47_rdf_extension_poc(
 
             triples.append([subject, predicate, object_result])
 
+        # print('bag_meta', bag_meta)
         # raise ValueError(bag_meta)
 
         return triples, triples_delayed
@@ -2378,6 +2429,31 @@ def hxl_hashtag_to_bcp47(hashtag: str) -> str:
                 _bpc47_g_parts.append('p{0}-{1}'.format(
                     _predicate_key.upper(), _object
                 ))
+
+            elif item.startswith('y_'):
+                _cell_transformer = item.replace('y_', '').lower()
+                _tkey, _tvalue = _cell_transformer.split('_')
+                if _tkey == 'csvwseparator':
+                    # _cell_separator = CSVW_SEPARATORS[_tvalue]
+                    decoded_separator = None
+                    if _tvalue in CSVW_SEPARATORS:
+                        decoded_separator = _tvalue
+                        # encoded_separator = CSVW_SEPARATORS[_tvalue]
+
+                    if decoded_separator is None:
+                        raise NotImplementedError(
+                            '[{0}] [{1}] not implemented in <{2}>'.format(
+                                _tvalue, hashtag, CSVW_SEPARATORS
+                            ))
+
+                    result['extension']['r']['csvw:separator'] = \
+                        decoded_separator
+                    # _predicate_key, _object = _predicate.split(':')
+                    _bpc47_g_parts.append('yCSVWseparator-{0}'.format(
+                        decoded_separator
+                    ))
+                else:
+                    result['_unknown'].append('rdf_parts [{0}]'.format(item))
 
             elif item.startswith('o_'):
                 _object = item.replace('o_', '').replace('_', ':')
