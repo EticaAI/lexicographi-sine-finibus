@@ -113,7 +113,7 @@ EXTRA_OPERATORS = {
     'STX': {
         'eng-Latn': '(start of text)',
         # 'hxl': 'u02',
-        'hxl': 'U0002',
+        'hxl': 'u0002',
         'wikidata': 'Q10366650',  # https://www.wikidata.org/wiki/Q10366650
         # 'unicode': 'U+0002',
         'unicode': u"\x02"
@@ -121,7 +121,7 @@ EXTRA_OPERATORS = {
     # Used to explain what separator the cell value may use
     'GS': {
         'eng-Latn': '(group separator)',  # Also: information separator three
-        'hxl': 'U001D',
+        'hxl': 'u001d',
         # 'hxl': 'u001d',
         'wikidata': 'Q10366650',  # https://www.wikidata.org/wiki/Q110028713
         # 'unicode': 'U+001D',
@@ -629,8 +629,9 @@ def bcp47_langtag_callback_hxl(
 
         if _r['rdf:predicate'] and len(_r['rdf:predicate']) > 0:
             for item in _r['rdf:predicate']:
-                prefix, term, _nop, _nop2 = item.lower().split(':')
-                resultatum.append('+rdf_p_{0}_{1}'.format(prefix, term))
+                prefix, term, subject_domain, _nop2 = item.lower().split(':')
+                resultatum.append('+rdf_p_{0}_{1}_s{2}'.format(
+                    prefix, term, subject_domain))
 
         if _r['rdf:subject'] and len(_r['rdf:subject']) > 0:
             for item in _r['rdf:subject']:
@@ -646,27 +647,59 @@ def bcp47_langtag_callback_hxl(
                 # resultatum.append(
                 #     '+rdf_s_{0}_{1}'.format(item_prefix, item_num))
                 resultatum.append(
-                    '+rdf_s_{0}_{1}'.format(subject_key, subject_namespace))
+                    '+rdf_s_{0}_s{1}'.format(subject_key, subject_namespace))
 
         if _r['rdfs:Datatype'] and len(_r['rdfs:Datatype']) > 0:
-            prefix, term = _r['rdfs:Datatype'].lower().split(':')
+            prefix, term, _nop = _r['rdfs:Datatype'].lower().split(':')
             resultatum.append('+rdf_t_{0}_{1}'.format(prefix, term))
 
-        if 'csvw:separator' in _r and \
-                _r['csvw:separator'] and len(_r['csvw:separator']) > 0:
-            decoded_separator = None
-            for decoded, value in CSVW_SEPARATORS.items():
-                if _r['csvw:separator'] == value:
-                    decoded_separator = decoded
-                    break
-            if decoded_separator is None:
-                raise NotImplementedError(
-                    '[{0}] [{1}] not implemented in <{2}>'.format(
-                        _r['csvw:separator'], langtag_meta, CSVW_SEPARATORS
-                    ))
+        if len(_r["xsl:transform"]) > 0:
+            value_prefixes = None
+            for titem in _r["xsl:transform"]:
+                tverb, tval_1, _nop_tval_2 = titem.split(':')
 
-            resultatum.append(
-                '+rdf_y_csvwseparator_{0}'.format(decoded_separator))
+                if tverb.lower() == EXTRA_OPERATORS['STX']['hxl']:
+                    if value_prefixes is None:
+                        value_prefixes = []
+                    value_prefixes.append(tval_1)
+
+                elif tverb.lower() == EXTRA_OPERATORS['GS']['hxl']:
+                    # @TODO: check this at compile time
+                    if tval_1 in CSVW_SEPARATORS:
+                        value_separator = tval_1
+                    else:
+                        raise NotImplementedError(
+                            'Separator [{0}] not implemented '
+                            'Context: [{1}] ; Options <{2}>'.format(
+                                tval_1, langtag_meta, CSVW_SEPARATORS
+                            ))
+
+                    # value_separator = CSVW_SEPARATORS[tval_1]
+
+            if value_prefixes is not None:
+                for titem in value_prefixes:
+                    resultatum.append('+rdf_y_{0}_{1}'.format(
+                        EXTRA_OPERATORS['STX']['hxl'], titem))
+
+            if value_separator is not None:
+                resultatum.append('+rdf_y_{0}_{1}'.format(
+                    EXTRA_OPERATORS['GS']['hxl'], value_separator))
+
+        # if 'csvw:separator' in _r and \
+        #         _r['csvw:separator'] and len(_r['csvw:separator']) > 0:
+        #     decoded_separator = None
+        #     for decoded, value in CSVW_SEPARATORS.items():
+        #         if _r['csvw:separator'] == value:
+        #             decoded_separator = decoded
+        #             break
+        #     if decoded_separator is None:
+        #         raise NotImplementedError(
+        #             '[{0}] [{1}] not implemented in <{2}>'.format(
+        #                 _r['csvw:separator'], langtag_meta, CSVW_SEPARATORS
+        #             ))
+
+        #     resultatum.append(
+        #         '+rdf_y_csvwseparator_{0}'.format(decoded_separator))
 
     resultatum = sorted(resultatum)
 
@@ -785,7 +818,15 @@ def bcp47_rdf_extension(
         r_parts = rem.split('-')
         r_parts_tot = len(r_parts)
         r_rest = r_parts_tot
-        while r_rest > 0:
+        is_disbalanced = False
+
+        if len(r_parts) % 3 != 0:
+            is_disbalanced = True
+            result['_error'].append('G extension not groups of 3: {0}'.format(
+                len(r_parts)
+            ))
+
+        while (r_rest > 0) and (is_disbalanced is False):
             r_verb = r_parts[r_parts_tot - r_rest]
             r_op_1 = r_parts[r_parts_tot - r_rest + 1]
             r_op_2 = r_parts[r_parts_tot - r_rest + 2]
@@ -832,9 +873,26 @@ def bcp47_rdf_extension(
                     r_verb.upper(), r_op_1.lower(), r_op_2
                 ))
             elif r_op == 'o':
-                pass
+                result['_error'].append(
+                    'rdf:object not implemented yet.'
+                    'Used: [{0}{1}-{0}{2}{0}-{3}]'.format(
+                        r_op,
+                        r_verb,
+                        r_op_1,
+                        r_op_2,
+                    ))
+                # continue
             elif r_op == 't':
-                pass
+                if result['rdfs:Datatype'] is None:
+                    result['rdfs:Datatype'] = '{0}:{1}:{2}'.format(
+                        r_verb.lower(), r_op_1, 'NOP'
+                    )
+                else:
+                    result['_error'].append(
+                        'rdfs:Datatype duplicated [{0}]-[{1}]'.format(
+                            r_verb.lower(),
+                            r_op_1
+                        ))
             elif r_op == 'y':
                 result['xsl:transform'].append('{0}:{1}:{2}'.format(
                     r_verb.upper(), r_op_1.lower(), r_op_2,
@@ -969,10 +1027,10 @@ def bcp47_rdf_extension(
     else:
         result['_error'].append('G extension do not have -')
 
-    if len(r_parts) % 3 == 0:
-        pass
-    else:
-        result['_error'].append('G extension not groups of 3')
+    # if len(r_parts) % 3 == 0:
+    #     pass
+    # else:
+    #     result['_error'].append('G extension not groups of 3')
 
     # if len(r_parts) % 2 == 0:
     #     pass
@@ -1276,14 +1334,27 @@ def bcp47_rdf_extension_poc(
         is_literal = True
 
         value_separator = None
-        if 'csvw:separator' in bag_meta and \
-                len(bag_meta['csvw:separator']) > 0:
-            value_separator = bag_meta['csvw:separator']
-
         value_prefixes = None
-        if 'prefix' in bag_meta and \
-                len(bag_meta['prefix']) > 0:
-            value_prefixes = bag_meta['prefix']
+        if len(bag_meta["xsl:transform"]) > 0:
+            for titem in bag_meta["xsl:transform"]:
+                tverb, tval_1, _nop_tval_2 = titem.split(':')
+
+                if tverb == EXTRA_OPERATORS['STX']['hxl']:
+                    if value_prefixes is None:
+                        value_prefixes = []
+                    value_prefixes.append(tval_1)
+
+                elif tverb == EXTRA_OPERATORS['GS']['hxl']:
+                    # @TODO: check this at compile time
+                    value_separator = CSVW_SEPARATORS[tval_1]
+
+        # if 'csvw:separator' in bag_meta and \
+        #         len(bag_meta['csvw:separator']) > 0:
+        #     value_separator = bag_meta['csvw:separator']
+
+        # if 'prefix' in bag_meta and \
+        #         len(bag_meta['prefix']) > 0:
+        #     value_prefixes = bag_meta['prefix']
 
         for predicate in bag_meta['rdf:predicate']:
             if not object_literal:
@@ -2611,9 +2682,12 @@ def hxl_hashtag_to_bcp47(hashtag: str) -> str:
                 ))
 
             elif item.startswith('y_'):
-                _cell_transformer = item.replace('y_', '').lower()
+                # _cell_transformer = item.replace('y_', '').lower()
+                _cell_transformer = item[2:]
                 _tkey, _tvalue = _cell_transformer.split('_')
-                if _tkey == 'csvwseparator':
+                # if _tkey == 'csvwseparator':
+                # print('oi', _tkey, _tvalue)
+                if _tkey == EXTRA_OPERATORS['GS']['hxl']:
                     # _cell_separator = CSVW_SEPARATORS[_tvalue]
                     decoded_separator = None
                     if _tvalue in CSVW_SEPARATORS:
