@@ -623,7 +623,6 @@ def bcp47_langtag_callback_hxl(
         str: return HXL attributes (without HXL hashtag)
     """
 
-
     resultatum = []
     # resultatum.append('+todo')
     resultatum.append('+i_{0}'.format(langtag_meta['language'].lower()))
@@ -2537,6 +2536,7 @@ def hxl_hashtag_to_bcp47(hashtag: str) -> str:
 
     if len(rdf_parts) > 0:
         result['_callbacks']['rdf_parts'] = rdf_parts
+        # value_prefixes = None
         for item in rdf_parts:
             if item.startswith('s_'):
                 # _subject= item.replace('s_', '').replace('_', ':')
@@ -2557,7 +2557,7 @@ def hxl_hashtag_to_bcp47(hashtag: str) -> str:
             elif item.startswith('p_'):
                 _predicate = item.replace('p_', '').replace('_', ':')
                 result['extension']['r']['rdf:predicate'].append(_predicate)
-                _predicate_key, _object, _subject= _predicate.split(':')
+                _predicate_key, _object, _subject = _predicate.split(':')
                 _bpc47_g_parts.append('p{0}-p{1}-p{2}'.format(
                     _predicate_key.upper(), _object, _subject
                 ))
@@ -2565,38 +2565,46 @@ def hxl_hashtag_to_bcp47(hashtag: str) -> str:
             elif item.startswith('y_'):
                 # _cell_transformer = item.replace('y_', '').lower()
                 _cell_transformer = item[2:]
-                _tkey, _tvalue = _cell_transformer.split('_')
+                tverb, tval_1 = _cell_transformer.split('_')
                 # if _tkey == 'csvwseparator':
                 # print('oi', _tkey, _tvalue)
-                if _tkey == EXTRA_OPERATORS['GS']['hxl']:
+                if tverb.lower() == EXTRA_OPERATORS['GS']['hxl']:
                     # _cell_separator = CSVW_SEPARATORS[_tvalue]
                     decoded_separator = None
-                    if _tvalue in CSVW_SEPARATORS:
-                        decoded_separator = _tvalue
+                    if tval_1 in CSVW_SEPARATORS:
+                        decoded_separator = tval_1
                         # encoded_separator = CSVW_SEPARATORS[_tvalue]
 
                     if decoded_separator is None:
                         raise NotImplementedError(
                             '[{0}] [{1}] not implemented in <{2}>'.format(
-                                _tvalue, hashtag, CSVW_SEPARATORS
+                                tval_1, hashtag, CSVW_SEPARATORS
                             ))
 
                     # result['extension']['r']['csvw:separator'] = \
                     #     decoded_separator
                     # _predicate_key, _object = _predicate.split(':')
-                    _bpc47_g_parts.append('y{0}-y{1}'.format(
+                    _bpc47_g_parts.append('y{0}-y{1}-ynop'.format(
                         EXTRA_OPERATORS['GS']['hxl'].upper(), decoded_separator
                     ))
-                elif _tkey == 'prefix':
-                    if 'prefix' not in result['extension']['r']:
-                        result['extension']['r']['prefix'] = []
-                    result['extension']['r']['prefix'].append(_tvalue.lower())
-                    # _predicate_key, _object = _predicate.split(':')
-                    _bpc47_g_parts.append('yPREFIX-{0}'.format(
-                        _tvalue.lower()
+                elif tverb == EXTRA_OPERATORS['STX']['hxl']:
+                    # if value_prefixes is None:
+                    #     value_prefixes = []
+                    # value_prefixes.append(tval_1)
+                    _bpc47_g_parts.append('y{0}-y{1}-ynop'.format(
+                        tverb.upper(), tval_1.lower()
                     ))
                 else:
                     result['_unknown'].append('rdf_parts [{0}]'.format(item))
+
+            elif item.startswith('t_'):
+                # _cell_transformer = item.replace('y_', '').lower()
+                _cell_transformer = item[2:]
+                tverb, tval_1 = _cell_transformer.split('_')
+                # raise ValueError(item)
+                _bpc47_g_parts.append('t{0}-t{1}-ynop'.format(
+                    tverb.upper(), tval_1.lower()
+                ))
 
             elif item.startswith('o_'):
                 _object = item.replace('o_', '').replace('_', ':')

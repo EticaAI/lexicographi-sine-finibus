@@ -124,7 +124,7 @@ test_unesco_thesaurus() {
 }
 
 #######################################
-# test_unesco_thesaurus
+# bcp47_and_hxlrdf_roundtrip item
 #
 # Globals:
 #   ROOTDIR
@@ -136,13 +136,18 @@ test_unesco_thesaurus() {
 bcp47_and_hxlrdf_roundtrip() {
   bpc47="${1-""}"
   hxlattr="${2-""}"
-  bpc47_final="${4-""}"
-  hxlattr_final="${3-""}"
+  bpc47_final="${3-""}"
+  hxlattr_final="${4-""}"
 
   hxlattr_discovered=""
   hxlattr_discovered_2nd=""
   bpc47_discovered=""
   bpc47_discovered_2nd=""
+
+  stype_blue=$(tput setaf 4)
+  stype_green=$(tput setaf 2)
+  style_red=$(tput setaf 1)
+  style_normal=$(tput sgr0)
 
   if [ -n "$bpc47" ]; then
     echo "[$bpc47] bpc47 input"
@@ -160,8 +165,19 @@ bcp47_and_hxlrdf_roundtrip() {
 
     bpc47_discovered_2nd=${bpc47_discovered_2nd//\"/}
     echo "[$bpc47_discovered_2nd] bpc47_discovered_2nd"
-  else
-    echo "noop bpc47"
+
+    if [ -n "$bpc47_final" ]; then
+      if [ "$bpc47_final" = "$bpc47_discovered_2nd" ]; then
+        echo "${stype_green}OK [$bpc47_final]${style_normal}"
+        # printf "$STARTCOLOR%b$ENDCOLOR" "$1";
+      else
+        echo "${style_red}FAILED [$bpc47_final]${style_normal}"
+      fi
+    else
+      echo "${stype_blue}INFO: No enforced expected result${style_normal}"
+    fi
+  # else
+  #   echo "noop bpc47"
   fi
 
   if [ -n "$hxlattr" ]; then
@@ -181,11 +197,57 @@ bcp47_and_hxlrdf_roundtrip() {
     hxlattr_discovered_2nd=${hxlattr_discovered_2nd//\"/}
     echo "[$hxlattr_discovered_2nd] hxlattr_discovered_2nd"
 
-  else
-    echo "noop hxlattr"
+    if [ -n "$hxlattr_final" ]; then
+      if [ "$hxlattr_final" = "$hxlattr_discovered_2nd" ]; then
+        echo "${stype_green}OK [$hxlattr_final]${style_normal}"
+      else
+        echo "${style_red}FAILED [$hxlattr_final]${style_normal}"
+      fi
+    else
+      echo "${stype_blue}INFO: No enforced expected result${style_normal}"
+    fi
+
+  # else
+  #   echo "noop hxlattr"
   fi
   return 0
 
+}
+
+#######################################
+# bcp47_and_hxlrdf_roundtrip item
+#
+# Globals:
+#   ROOTDIR
+# Arguments:
+#   None
+# Outputs:
+#   Test result
+#######################################
+bcp47_and_hxlrdf_roundtrip__drill() {
+  echo ""
+  echo "    test1"
+  bcp47_and_hxlrdf_roundtrip \
+    "qcc-Zxxx-r-sU2203-s2-snop" \
+    "" \
+    "qcc-Zxxx-r-sU2203-s2-snop" \
+    ""
+
+  echo ""
+  echo "    test2"
+  bcp47_and_hxlrdf_roundtrip \
+    "" \
+    "+i_qcc+is_zxxx+rdf_s_u2203_s2" \
+    "" \
+    ""
+
+  echo ""
+  echo "    test3"
+  bcp47_and_hxlrdf_roundtrip \
+    "qcc-Zxxx-r-sU2203-s2-snop-yU001D-yu007c-ynop-yU0002-yunescothes-ynop-pSKOS-pbroader-ps2-tXSD-tdatetime-tnop" \
+    "" \
+    "qcc-Zxxx-r-pSKOS-pbroader-ps2-sU2203-s2-snop-tXSD-tdatetime-ynop-yU0002-yunescothes-ynop-yU001D-yu007c-ynop" \
+    ""
 }
 
 # echo "test"
@@ -193,12 +255,4 @@ bcp47_and_hxlrdf_roundtrip() {
 # bcp47_to_hxl_to_rdf__tests
 # test_unesco_thesaurus
 
-echo ""
-echo "    test1"
-bcp47_and_hxlrdf_roundtrip "qcc-Zxxx-r-sU2203-s2-snop" ""
-echo ""
-echo "    test2"
-bcp47_and_hxlrdf_roundtrip "" "+i_qcc+is_zxxx+rdf_s_u2203_s2"
-echo ""
-echo "    test3"
-bcp47_and_hxlrdf_roundtrip "qcc-Zxxx-r-sU2203-s2-snop-yU001D-yu007c-ynop-yU0002-yunescothes-ynop-pSKOS-pbroader-ps2-tXSD-tdatetime-tnop" ""
+bcp47_and_hxlrdf_roundtrip__drill
