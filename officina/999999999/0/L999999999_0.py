@@ -612,7 +612,18 @@ def bcp47_langtag(
 def bcp47_langtag_callback_hxl(
         langtag_meta: dict,
         strictum: bool = True
-) -> dict:
+) -> str:
+    """bcp47_langtag_callback_hxl convert a bcp47_langtag meta to hxl attributes
+
+    Args:
+        langtag_meta (dict): a bcp47_langtag compatible metadata
+        strictum (bool, optional): (not implemented yet). Defaults to True.
+
+    Returns:
+        str: return HXL attributes (without HXL hashtag)
+    """
+
+
     resultatum = []
     # resultatum.append('+todo')
     resultatum.append('+i_{0}'.format(langtag_meta['language'].lower()))
@@ -636,16 +647,6 @@ def bcp47_langtag_callback_hxl(
         if _r['rdf:subject'] and len(_r['rdf:subject']) > 0:
             for item in _r['rdf:subject']:
                 subject_key, subject_namespace, _nop = item.lower().split(':')
-                # raise ValueError(item)
-                # item_num = int(''.join(filter(str.isdigit, item)))
-                # # item_prefix = ''.join(filter(str.isdigit, item, ))
-                # item_prefix = item.replace(str(item_num), '')
-                # item_prefix = item_prefix.encode("unicode_escape").decode()
-                # item_prefix = item_prefix.replace('\\', '')
-                # # item_prefix = item_prefix.encode().decode()
-                # # prefix, term = item.lower().split(':')
-                # resultatum.append(
-                #     '+rdf_s_{0}_{1}'.format(item_prefix, item_num))
                 resultatum.append(
                     '+rdf_s_{0}_s{1}'.format(subject_key, subject_namespace))
 
@@ -684,22 +685,6 @@ def bcp47_langtag_callback_hxl(
             if value_separator is not None:
                 resultatum.append('+rdf_y_{0}_{1}'.format(
                     EXTRA_OPERATORS['GS']['hxl'], value_separator))
-
-        # if 'csvw:separator' in _r and \
-        #         _r['csvw:separator'] and len(_r['csvw:separator']) > 0:
-        #     decoded_separator = None
-        #     for decoded, value in CSVW_SEPARATORS.items():
-        #         if _r['csvw:separator'] == value:
-        #             decoded_separator = decoded
-        #             break
-        #     if decoded_separator is None:
-        #         raise NotImplementedError(
-        #             '[{0}] [{1}] not implemented in <{2}>'.format(
-        #                 _r['csvw:separator'], langtag_meta, CSVW_SEPARATORS
-        #             ))
-
-        #     resultatum.append(
-        #         '+rdf_y_csvwseparator_{0}'.format(decoded_separator))
 
     resultatum = sorted(resultatum)
 
@@ -910,101 +895,6 @@ def bcp47_rdf_extension(
             r_op_2 = r_op_2.lower()
 
             r_rest = r_rest - 3
-            continue
-            r_item_key = r_parts[r_parts_tot - r_rest]
-            r_item_value = r_parts[r_parts_tot - r_rest + 1]
-            if r_item_key.startswith('p'):
-                _predicates.append('{0}:{1}'.format(
-                    r_item_key.lstrip('p').lower(),
-                    r_item_value
-                ))
-
-            # sU2200
-            # elif r_item_key.lower().startswith('su'):
-            #     _subjects.append('∀{0}'.format(
-            #         r_item_value.lstrip('s')
-            #     ))
-            # elif r_item_key.lower().startswith('ss'):
-            #     _subjects.append('{0}'.format(
-            #         r_item_value.lstrip('s')
-            #     ))
-
-            # # oU1F517
-            # elif r_item_key.lower().startswith('ou'):
-            #     _objects.append('🔗{0}'.format(
-            #         r_item_value.lstrip('o')
-            #     ))
-
-            # exemplum: sU2200 (if using unicode as prefix, assume is key)
-            elif r_item_key.lower().startswith('su'):
-                _subjects.append('{0}:{1}'.format(
-                    r_item_key.lstrip('s'), r_item_value.lstrip('s')
-                ))
-            # exemplum: sS (not using unicode as key, assuming is just
-            #           a pointer, not the pivoct column)
-            elif r_item_key.lower().startswith('ss'):
-                _subjects.append('{0}:{1}'.format(
-                    '_' + r_item_key.lower().lstrip(
-                        's'), r_item_value.lstrip('s')
-                ))
-
-            # exemplum: oU1F517
-            # @TODO removing test data for this. Maybe re-add later
-            elif r_item_key.lower().startswith('ou'):
-                _objects.append('{0}:{1}'.format(
-                    r_item_key.lstrip('o'), r_item_value.lstrip('o')
-                ))
-
-            elif r_item_key.startswith('t'):
-                if result['rdfs:Datatype'] is None:
-                    result['rdfs:Datatype'] = '{0}:{1}'.format(
-                        r_item_key.lstrip('t').lower(),
-                        r_item_value
-                    )
-                else:
-                    result['_error'].append(
-                        'rdfs:Datatype [{0}]-[{1}]'.format(
-                            r_item_key,
-                            r_item_value
-                        ))
-
-            elif r_item_key.lower().startswith('ycsvw'):
-                if r_item_key.lower() == 'ycsvwseparator':
-                    r_item_value = r_item_value.lower()
-                    r_item_value_enc = '__error__'
-                    # @TODO implement in pure python encode/decode. This is
-                    #       an obvious ugly hacky
-                    if r_item_value in CSVW_SEPARATORS:
-                        r_item_value_enc = CSVW_SEPARATORS[r_item_value]
-
-                    else:
-                        raise NotImplementedError(
-                            'Sorry, separator [{0}] of [{1}] not implemented. '
-                            'This may be a bug. '
-                            'Hardcoded options <{2}> '.format(
-                                r_item_value, rem, CSVW_SEPARATORS))
-
-                    result['csvw:separator'] = '{0}'.format(
-                        # r_item_value
-                        r_item_value_enc
-                    )
-                    # result['_error'].append(
-                    #     'csvw:??? [{0}]-[{1}]'.format(
-                    #         r_item_key,
-                    #         r_item_value
-                    #     ))
-
-            elif r_item_key.lower() == 'yprefix':
-                if 'prefix' not in result:
-                    result['prefix'] = []
-                result['prefix'].append(r_item_value.lower())
-
-            else:
-                result['_error'].append('Unknown [{0}-{1}]'.format(
-                    r_item_key,
-                    r_item_value
-                ))
-            r_rest = r_rest - 2
 
         # if len(_predicates) > 0:
         #     _predicates.sort()
@@ -2594,6 +2484,7 @@ def hxl_hashtag_to_bcp47(hashtag: str) -> str:
                 'rdf:predicate': [],
                 'rdf:object': [],
                 'rdfs:Datatype': None,
+                'xsl:transform': [],
                 '_unknown': [],
                 '_error': [],
                 # 'csvw:separator': '', # Added only if necessary
@@ -2654,31 +2545,21 @@ def hxl_hashtag_to_bcp47(hashtag: str) -> str:
                 _subject_code = _subject_code.upper()
                 _subjec_value = _subjec_value.replace('s', '')
 
-                # @TODO get a value like '∀0' instead of 'u2200:0'
-                # _subject_code = ("\u2200").encode().decode('utf-8')
-                # _subject_code = ("\u2200")
-                # _subject_code = ("\u2200")
-                # _subject_code = str(ord("\u2200"))
-                # _subject_code = str(ord("\u2200"))
-                # _subject_code = ("\\u{0}".format(str(2200)))
-                # _subject_code = (r"\u2200").encode().decode('utf-8')
-                # _subject_code = ("\u2200").encode().decode('utf-8')
                 _subjec_value = _subjec_value.replace('s', '')
-                # result['extension']['r']['rdf:subject'].append(_subject)
                 result['extension']['r']['rdf:subject'].append('{0}:{1}'.format(
                     _subject_code, _subjec_value
                 ))
 
-                _bpc47_g_parts.append('s{0}-s{1}'.format(
+                _bpc47_g_parts.append('s{0}-s{1}-snop'.format(
                     _subject_code, _subjec_value
                 ))
 
             elif item.startswith('p_'):
                 _predicate = item.replace('p_', '').replace('_', ':')
                 result['extension']['r']['rdf:predicate'].append(_predicate)
-                _predicate_key, _object = _predicate.split(':')
-                _bpc47_g_parts.append('p{0}-{1}'.format(
-                    _predicate_key.upper(), _object
+                _predicate_key, _object, _subject= _predicate.split(':')
+                _bpc47_g_parts.append('p{0}-p{1}-p{2}'.format(
+                    _predicate_key.upper(), _object, _subject
                 ))
 
             elif item.startswith('y_'):
@@ -2700,11 +2581,11 @@ def hxl_hashtag_to_bcp47(hashtag: str) -> str:
                                 _tvalue, hashtag, CSVW_SEPARATORS
                             ))
 
-                    result['extension']['r']['csvw:separator'] = \
-                        decoded_separator
+                    # result['extension']['r']['csvw:separator'] = \
+                    #     decoded_separator
                     # _predicate_key, _object = _predicate.split(':')
-                    _bpc47_g_parts.append('yCSVWseparator-{0}'.format(
-                        decoded_separator
+                    _bpc47_g_parts.append('y{0}-y{1}'.format(
+                        EXTRA_OPERATORS['GS']['hxl'].upper(), decoded_separator
                     ))
                 elif _tkey == 'prefix':
                     if 'prefix' not in result['extension']['r']:

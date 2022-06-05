@@ -298,12 +298,17 @@ EXEMPLUM
 
 5. Extras from EticaAI/lexicographi-sine-finibus application
    {0} --de_bcp47_simplex \
---de_codex=qcc-Zxxx-r-pDCT-modified-txsd-datetime
+--de_codex=qcc-Zxxx-r-pDCT-pmodified-ps1-txsd-tdatetime-tnop \
+--quod=.Language-Tag_normalized
 
 (Non-sense attribute and hashtag, but all options)
-   {0} --de_bcp47_simplex \
---de_codex=qcc-Zxxx-r-sU2203-s2-snop-yU001D-yu007c-ynop-yU0002-yunescothes\
--ynop-pSKOS-pbroader-ps2-tXSD-tdatetime-tnop
+   {0} --de_bcp47_simplex --de_codex=qcc-Zxxx-r-sU2203-s2-snop-\
+yU001D-yu007c-ynop-yU0002-yunescothes-ynop-pSKOS-pbroader-ps2-\
+tXSD-tdatetime-tnop
+
+   {0} --de_hxl_simplex --de_hxlhashtag=\
+'#item+i_qcc+is_zxxx+rdf_p_skos_broader_s2+rdf_s_u2203_s2+rdf_t_xsd_datetime\
++rdf_y_u0002_unescothes+rdf_y_u001d_u007c'
 
    {0} --de_hxl_simplex --de_hxlhashtag=\
 '#item+i_qcc+is_zxxx+rdf_s_u2200_s0+rdf_p_SKOS_related+ix_wikip123' \

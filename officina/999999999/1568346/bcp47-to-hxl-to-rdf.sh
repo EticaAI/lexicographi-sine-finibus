@@ -77,7 +77,7 @@ bcp47_to_hxl_to_rdf__tests() {
 }
 
 #######################################
-# bcp47_to_hxl_to_rdf__tests
+# test_unesco_thesaurus
 #
 # Globals:
 #   ROOTDIR
@@ -100,7 +100,7 @@ test_unesco_thesaurus() {
     --rdf-namespaces-archivo="${archivum__namespace}" \
     "${archivum__unesco_thesaurus_bcp47}" |
     rapper --quiet --input=turtle --output=turtle /dev/fd/0 \
-    > "${archivum__resultata_bag1}"
+      >"${archivum__resultata_bag1}"
 
   "${ROOTDIR}/999999999/0/999999999_54872.py" \
     --objectivum-formato=_temp_bcp47 \
@@ -108,22 +108,97 @@ test_unesco_thesaurus() {
     --rdf-namespaces-archivo="${archivum__namespace}" \
     "${archivum__unesco_thesaurus_bcp47}" |
     rapper --quiet --input=turtle --output=turtle /dev/fd/0 \
-    > "${archivum__resultata_bag2}"
+      >"${archivum__resultata_bag2}"
 
-    # riot --output=Turtle \
-    riot --time --output=RDF/XML \
-      "${archivum__resultata_bag1}" \
-      "${archivum__resultata_bag2}" \
-      > "${archivum__resultata_xml}"
+  # riot --output=Turtle \
+  riot --time --output=RDF/XML \
+    "${archivum__resultata_bag1}" \
+    "${archivum__resultata_bag2}" \
+    >"${archivum__resultata_xml}"
 
-    riot --time --output=Turtle \
-      "${archivum__resultata_xml}" \
-      > "${archivum__resultata_ttl}"
+  riot --time --output=Turtle \
+    "${archivum__resultata_xml}" \
+    >"${archivum__resultata_ttl}"
 
-    riot --validate "${archivum__resultata_ttl}"
+  riot --validate "${archivum__resultata_ttl}"
+}
+
+#######################################
+# test_unesco_thesaurus
+#
+# Globals:
+#   ROOTDIR
+# Arguments:
+#   None
+# Outputs:
+#   Test result
+#######################################
+bcp47_and_hxlrdf_roundtrip() {
+  bpc47="${1-""}"
+  hxlattr="${2-""}"
+  bpc47_final="${4-""}"
+  hxlattr_final="${3-""}"
+
+  hxlattr_discovered=""
+  hxlattr_discovered_2nd=""
+  bpc47_discovered=""
+  bpc47_discovered_2nd=""
+
+  if [ -n "$bpc47" ]; then
+    echo "[$bpc47] bpc47 input"
+
+    hxlattr_discovered=$("${ROOTDIR}/999999999/0/linguacodex.py" \
+      --de_bcp47_simplex --de_codex="$bpc47" \
+      --quod=._callbacks.hxl_attrs)
+
+    hxlattr_discovered=${hxlattr_discovered//\"/}
+    echo "[$hxlattr_discovered] hxlattr_discovered"
+
+    bpc47_discovered_2nd=$("${ROOTDIR}/999999999/0/linguacodex.py" \
+      --de_hxl_simplex --de_hxlhashtag="#item${hxlattr_discovered}" \
+      --quod=.Language-Tag_normalized)
+
+    bpc47_discovered_2nd=${bpc47_discovered_2nd//\"/}
+    echo "[$bpc47_discovered_2nd] bpc47_discovered_2nd"
+  else
+    echo "noop bpc47"
+  fi
+
+  if [ -n "$hxlattr" ]; then
+    echo "[$hxlattr] hxlattr input"
+
+    bpc47_discovered=$("${ROOTDIR}/999999999/0/linguacodex.py" \
+      --de_hxl_simplex --de_hxlhashtag="#item${hxlattr}" \
+      --quod=.Language-Tag_normalized)
+
+    bpc47_discovered=${bpc47_discovered//\"/}
+    echo "[$bpc47_discovered] bpc47_discovered"
+
+    hxlattr_discovered_2nd=$("${ROOTDIR}/999999999/0/linguacodex.py" \
+      --de_bcp47_simplex --de_codex="$bpc47_discovered" \
+      --quod=._callbacks.hxl_attrs)
+
+    hxlattr_discovered_2nd=${hxlattr_discovered_2nd//\"/}
+    echo "[$hxlattr_discovered_2nd] hxlattr_discovered_2nd"
+
+  else
+    echo "noop hxlattr"
+  fi
+  return 0
+
 }
 
 # echo "test"
 
 # bcp47_to_hxl_to_rdf__tests
-test_unesco_thesaurus
+# test_unesco_thesaurus
+
+echo ""
+echo "    test1"
+bcp47_and_hxlrdf_roundtrip "qcc-Zxxx-r-sU2203-s2-snop" ""
+echo ""
+echo "    test2"
+bcp47_and_hxlrdf_roundtrip "" "+i_qcc+is_zxxx+rdf_s_u2203_s2"
+echo ""
+echo "    test3"
+bcp47_and_hxlrdf_roundtrip "qcc-Zxxx-r-sU2203-s2-snop-yU001D-yu007c-ynop-yU0002-yunescothes-ynop-pSKOS-pbroader-ps2-tXSD-tdatetime-tnop" ""
