@@ -225,6 +225,9 @@ bcp47_and_hxlrdf_roundtrip() {
 #   Test result
 #######################################
 bcp47_and_hxlrdf_roundtrip__drill() {
+
+  archivum__regulae_exemplis="${ROOTDIR}/999999999/1568346/bcp47-to-hxl-to-rdf.hxl.tsv"
+
   echo ""
   echo "    test1"
   bcp47_and_hxlrdf_roundtrip \
@@ -242,12 +245,45 @@ bcp47_and_hxlrdf_roundtrip__drill() {
     ""
 
   echo ""
-  echo "    test3"
+  echo "    test3 (sort output)"
   bcp47_and_hxlrdf_roundtrip \
     "qcc-Zxxx-r-sU2203-s2-snop-yU001D-yu007c-ynop-yU0002-yunescothes-ynop-pSKOS-pbroader-ps2-tXSD-tdatetime-tnop" \
     "" \
-    "qcc-Zxxx-r-pSKOS-pbroader-ps2-sU2203-s2-snop-tXSD-tdatetime-ynop-yU0002-yunescothes-ynop-yU001D-yu007c-ynop" \
+    "qcc-Zxxx-r-pSKOS-pbroader-ps2-sU2203-s2-snop-tXSD-tdatetime-tnop-yU0002-yunescothes-ynop-yU001D-yu007c-ynop" \
     ""
+
+  index_now=$(( 4 ))
+
+  # Will fail without manual ajusts:
+  #  - lat-Latn-r-pSKOS-pprefLabel-ps1
+
+  # while IFS=, read -r iso3 source_url; do
+  {
+    # remove read -r to not skip first line
+    read -r
+    while IFS=$'\t' read -r -a linea; do
+      bpc47="${linea[0]}"
+      hxl="${linea[1]}"
+      rdf="${linea[2]}"
+      # namespace="${linea[3]}"
+
+      echo ""
+      echo "    test ${index_now}"
+
+      bcp47_and_hxlrdf_roundtrip \
+        "${bpc47}" \
+        "${hxl}" \
+        "${bpc47}" \
+        "${hxl}"
+
+      # # echo "numerordinatio_praefixo $numerordinatio_praefixo"
+      # # bootstrap_1603_45_16__item "1603_45_16_24" "24" "AGO" "AO" "3" "1" "0"
+      # bootstrap_1603_45_16__item "$numerordinatio_praefixo" "$unm49" "$v_iso3" "$v_iso2" "$cod_ab_level_max" "1" "0"
+      # # bootstrap_1603_45_16__item "$numerordinatio_praefixo" "$unm49" "$v_iso3" "$v_iso2" "1" "0"
+      # sleep 5
+      index_now=$(( index_now + 1 ))
+    done
+  } <"${archivum__regulae_exemplis}"
 }
 
 # echo "test"

@@ -655,6 +655,7 @@ def bcp47_langtag_callback_hxl(
 
         if len(_r["xsl:transform"]) > 0:
             value_prefixes = None
+            value_separator = None
             for titem in _r["xsl:transform"]:
                 tverb, tval_1, _nop_tval_2 = titem.split(':')
 
@@ -2602,7 +2603,7 @@ def hxl_hashtag_to_bcp47(hashtag: str) -> str:
                 _cell_transformer = item[2:]
                 tverb, tval_1 = _cell_transformer.split('_')
                 # raise ValueError(item)
-                _bpc47_g_parts.append('t{0}-t{1}-ynop'.format(
+                _bpc47_g_parts.append('t{0}-t{1}-tnop'.format(
                     tverb.upper(), tval_1.lower()
                 ))
 
