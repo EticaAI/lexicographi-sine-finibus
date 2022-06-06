@@ -1356,6 +1356,10 @@ def bcp47_rdf_extension_relationship(
             for subject in item_meta['extension']['r']['rdf:subject']:
                 # is_pivot_key = False
                 subject_key, subject_value = subject.split(':')
+                _temp1, _temp2 = subject.split('||')
+                subject_key = _temp1
+                subject_value = _temp2.replace(':NOP', '')
+                # raise ValueError(subject)
                 # if subject.startswith('∀'):
                 #     is_pivot_key = True
                 #     subject = subject.replace('∀', '')
@@ -1434,6 +1438,7 @@ def bcp47_rdf_extension_poc(
         objective_bag: str = '1',
         _auxiliary_bags: List[str] = None,
         namespaces: List[dict] = None,
+        est_meta: bool = False,
         strictum: bool = True
 ) -> dict:
     """bcp47_rdf_extension_poc _summary_
@@ -1472,7 +1477,6 @@ def bcp47_rdf_extension_poc(
     result = {
         'header': header,
         'header_result': [],
-        'data': data,
         # 'rdf:subject': None,
         # 'rdf:predicate': [],
         # 'rdf:object': None,
@@ -1481,6 +1485,7 @@ def bcp47_rdf_extension_poc(
         'triples': [],
         # We always start with default prefixes
         'prefixes': RDF_NAMESPACES,
+        'data': data,
         '_error': [],
     }
     # return {}
@@ -1568,9 +1573,12 @@ def bcp47_rdf_extension_poc(
         #         len(bag_meta['prefix']) > 0:
         #     value_prefixes = bag_meta['prefix']
 
-        for predicate in bag_meta['rdf:predicate']:
+        for predicate_and_subject in bag_meta['rdf:predicate']:
             if not object_literal:
                 continue
+
+            _temp1, _temp2 = predicate_and_subject.split('||')
+            predicate = _temp1
 
             if value_separator is not None and \
                 object_literal.find(value_separator) > -1 and \
@@ -1641,10 +1649,9 @@ def bcp47_rdf_extension_poc(
             if len(aux_triples) > 0:
                 result['triples'].extend(aux_triples)
 
-    # raise ValueError(meta)
-
-    # result['prefixes'] = RDF_NAMESPACES
-    # result['prefixes'] = meta['prefixes']
+    if est_meta:
+        # return bag_meta
+        return result
 
     return result
     # return result['triples']
@@ -3860,6 +3867,69 @@ def hxltm_carricato(
 
     # _reader = csv.reader(_data)
     # return caput, list(_reader)
+    return caput, data
+
+
+def hxltm_carricato_brevibus(
+    archivum_trivio: str = None,
+    est_stdin: bool = False,
+    punctum_separato: str = ",",
+    data_lineis: int = 3,
+    est_hxl: bool = False
+) -> list:
+    """hxltm_carricato_brevibus read only header and part of the data
+
+    Note: this helper is not as efficent as read line by line. But some
+    operations already require such task.
+
+    Trivia:
+    - carricātō, n, s, dativus, https://en.wiktionary.org/wiki/carricatus#Latin
+      - verbum: https://en.wiktionary.org/wiki/carricatus#Latin
+    - capitī, s, n, https://en.wiktionary.org/wiki/caput#Latin
+    - brevibus, pl, m/f/n, https://en.wiktionary.org/wiki/brevis#Latin
+
+    Args:
+        archivum_trivio (str, optional): Path to file. Defaults to None.
+        est_stdin (bool, optional): Is the file stdin?. Defaults to False.
+
+    Returns:
+        list: list of [caput, data], where data is array of lines
+    """
+    caput = []
+
+    if est_stdin:
+        _data = []
+        for linea in sys.stdin:
+            if len(caput) == 0:
+                # caput = linea
+                # _reader_caput = csv.reader(linea)
+                _gambi = [linea, linea]
+                _reader_caput = csv.reader(_gambi, delimiter=punctum_separato)
+                caput = next(_reader_caput)
+            else:
+                if data_lineis <= 0:
+                    pass
+                else:
+                    data_lineis -= 1
+                    _data.append(linea)
+        _reader = csv.reader(_data)
+        return caput, list(_reader)
+        # return caput
+    # else:
+    #     fons = archivum_trivio
+    data = []
+    with open(archivum_trivio, 'r') as _fons:
+        _csv_reader = csv.reader(_fons, delimiter=punctum_separato)
+        for linea in _csv_reader:
+            if len(caput) == 0:
+                caput = linea
+            else:
+                if data_lineis <= 0:
+                    break
+                else:
+                    data_lineis -= 1
+                    data.append(linea)
+
     return caput, data
 
 

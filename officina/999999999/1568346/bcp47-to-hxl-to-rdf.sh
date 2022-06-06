@@ -290,7 +290,7 @@ bcp47_and_hxlrdf_roundtrip__drill() {
 
 # echo "test"
 
-# bcp47_to_hxl_to_rdf__tests
+bcp47_to_hxl_to_rdf__tests
 # test_unesco_thesaurus
 
 bcp47_and_hxlrdf_roundtrip__drill
