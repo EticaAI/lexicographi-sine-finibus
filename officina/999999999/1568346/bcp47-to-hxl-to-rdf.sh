@@ -315,3 +315,29 @@ bcp47_and_hxlrdf_roundtrip__drill
 # ./999999999/0/999999999_54872.py --objectivum-formato=_temp_bcp47_meta_in_json --rdf-namespaces-archivo=999999999/1568346/data/hxlstandard-rdf-namespaces-example.hxl.csv 999999999/1568346/data/unesco-thesaurus.bcp47g.tsv | jq > 999999/0/unesco-thesaurus.meta.json
 
 # ./999999999/0/999999999_54872.py --objectivum-formato=_temp_bcp47_meta_in_json --rdf-namespaces-archivo=999999999/1568346/data/hxlstandard-rdf-namespaces-example.hxl.csv 999999999/1568346/data/unesco-thesaurus.bcp47g.tsv | jq > 999999/1568346/data/unesco-thesaurus.meta.json
+
+#### BFO _______________________________________________________________________
+# @see https://standards.iso.org/iso-iec/21838/-2/ed-1/en/
+# @see https://basic-formal-ontology.org/
+
+# rdfdiff 999999/0/bfo_classes_only.owl 999999/0/BFO-PT.owl
+
+# riot --validate 999999/0/bfo_classes_only.owl
+# riot --validate 999999/0/BFO-PT.owl
+# riot --validate 999999/0/BFO-PT.owl.xml
+
+# rdfdiff 999999/0/bfo_classes_only.owl 999999/0/BFO-PT.owl.xml RDF/XML RDF/XML http://purl.obolibrary.org/obo/ http://purl.obolibrary.org/obo/
+
+# rdfdiff 999999/0/bfo_classes_only.owl 999999/0/BFO-PT.owl.xml RDF/XML RDF/XML http://purl.obolibrary.org/obo/ http://purl.obolibrary.org/obo/ > 999999/0/diff-obo-source-vs-pt.diff
+
+
+# riot --quiet --output=ntriples 999999/0/BFO-PT.owl.xml > 999999/0/BFO-PT.owl.n3
+# riot --quiet --output=ntriples 999999/0/bfo_classes_only.owl > 999999/0/bfo_classes_only.owl.n3
+
+# rdfdiff 999999/0/bfo_classes_only.owl.n3 999999/0/BFO-PT.owl.n3 ntriples ntriples http://purl.obolibrary.org/obo/ http://purl.obolibrary.org/obo/
+# rdfdiff 999999/0/bfo_classes_only.owl.n3 999999/0/BFO-PT.owl.n3 ntriples ntriples http://purl.obolibrary.org/obo/ http://purl.obolibrary.org/obo/ > 999999/0/diff-obo-source-vs-pt.diff
+
+# rdfcompare 999999/0/bfo_classes_only.owl.n3 999999/0/BFO-PT.owl.n3 ntriples ntriples http://purl.obolibrary.org/obo/ http://purl.obolibrary.org/obo/
+
+
+# 999999/0/21838-2/owl/bfo-2020.owl

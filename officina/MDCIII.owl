@@ -1,18 +1,20 @@
 <?xml version="1.0"?>
-<Ontology xmlns="http://www.w3.org/2002/07/owl#"
-     xml:base="urn:1603"
+<rdf:RDF xmlns="urn:mdciii:#"
+     xml:base="urn:mdciii:"
+     xmlns:dc="http://purl.org/dc/elements/1.1/"
+     xmlns:obo="http://purl.obolibrary.org/obo/"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
      xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
      xmlns:xml="http://www.w3.org/XML/1998/namespace"
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:foaf="http://xmlns.com/foaf/0.1/"
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
-     ontologyIRI="urn:1603"
-     versionIRI="https://github.com/EticaAI/lexicographi-sine-finibus/blob/main/officina/MDCII.owl">
-    <Prefix name="owl" IRI="http://www.w3.org/2002/07/owl#"/>
-    <Prefix name="rdf" IRI="http://www.w3.org/1999/02/22-rdf-syntax-ns#"/>
-    <Prefix name="xml" IRI="http://www.w3.org/XML/1998/namespace"/>
-    <Prefix name="xsd" IRI="http://www.w3.org/2001/XMLSchema#"/>
-    <Prefix name="rdfs" IRI="http://www.w3.org/2000/01/rdf-schema#"/>
-</Ontology>
+     xmlns:terms="http://purl.org/dc/terms/">
+    <owl:Ontology rdf:about="urn:mdciii:">
+        <owl:versionIRI rdf:resource="https://github.com/EticaAI/lexicographi-sine-finibus/blob/main/officina/MDCIII.owl"/>
+        <owl:imports rdf:resource="http://purl.obolibrary.org/obo/bfo/2019-08-26/bfo.owl"/>
+    </owl:Ontology>
+</rdf:RDF>
 
 
 
