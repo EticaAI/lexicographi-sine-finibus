@@ -1475,28 +1475,37 @@ def bcp47_rdf_extension_poc(
     """
     # raise NotImplementedError(header)
     result = {
-        'header': header,
-        'header_result': [],
+        # 'caput': header,
+        'caput_asa': {},
         # 'rdf:subject': None,
         # 'rdf:predicate': [],
         # 'rdf:object': None,
         # 'rdfs:Datatype': None,
         # '_unknown': [],
-        'triples': [],
         # We always start with default prefixes
         'prefixes': RDF_NAMESPACES,
         'data': data,
+        'triples': [],
         '_error': [],
     }
+
     # return {}
 
     # print('header', header)
 
     # header.pop()
 
+    if est_meta:
+        # Try harder to discover issues
+        strictum = False
+
     meta = bcp47_rdf_extension_relationship(
         header, namespaces=namespaces, strictum=strictum)
+    result['caput_asa'] = meta
     meta['data'] = data
+
+    # if len(result['caput_asa']['_error']) > 0:
+    #     result['caput_asa']
     # raise ValueError(meta)
     # raise ValueError(objective_bag, meta['rdfs:Container'])
     # return meta
@@ -1504,10 +1513,21 @@ def bcp47_rdf_extension_poc(
 
     if objective_bag not in meta['rdfs:Container']:
         possible_bags = meta['rdfs:Container'].keys()
-        raise SyntaxError(
-            'objective_bag({0})? possible <{1}>: '
-            'header <{2}> Meta <{3}>'.format(
-                objective_bag, possible_bags, header, meta))
+        if est_meta:
+            result['_error'].append(
+                'objective_bag({0})? possible <{1}>'.format(
+                    objective_bag, possible_bags
+                ))
+            return result
+        else:
+            if len(meta['data']) > 2:
+                # meta['data'] = meta['data'][0:1]
+                meta['data'] = meta['data'][0]
+
+            raise SyntaxError(
+                'objective_bag({0})? possible <{1}>: '
+                'header <{2}> Meta <{3}>'.format(
+                    objective_bag, possible_bags, header, meta))
 
     # print(meta)
     # print('')
@@ -1650,6 +1670,7 @@ def bcp47_rdf_extension_poc(
                 result['triples'].extend(aux_triples)
 
     if est_meta:
+        # @TODO: annex extra information
         # return bag_meta
         return result
 
