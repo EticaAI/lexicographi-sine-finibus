@@ -883,7 +883,11 @@ def bcp47_langtag_callback_hxl(
 
         if _r['rdf:subject'] and len(_r['rdf:subject']) > 0:
             for item in _r['rdf:subject']:
-                subject_key, subject_namespace, _nop = item.lower().split(':')
+                # subject_key, subject_namespace, _nop = item.lower().split(':')
+                _temp1, temp2 = item.lower().split('||')
+                subject_key = _temp1
+                subject_namespace = temp2
+                subject_namespace = subject_namespace.replace(':nop', '')
                 resultatum.append(
                     '+rdf_s_{0}_s{1}'.format(subject_key, subject_namespace))
 
@@ -893,11 +897,15 @@ def bcp47_langtag_callback_hxl(
             prefix, term = _temp1.split(':')
             resultatum.append('+rdf_t_{0}_{1}'.format(prefix, term))
 
-        if len(_r["xsl:transform"]) > 0:
+        if _r["xsl:transform"] and len(_r["xsl:transform"]) > 0:
             value_prefixes = None
             value_separator = None
             for titem in _r["xsl:transform"]:
-                tverb, tval_1, _nop_tval_2 = titem.split(':')
+                # tverb, tval_1, _nop_tval_2 = titem.split(':')
+
+                _temp1, temp2 = titem.split('||')
+                tverb = _temp1
+                tval_1, _nop_tval_2 = temp2.split(':')
 
                 if tverb.lower() == EXTRA_OPERATORS['STX']['hxl']:
                     if value_prefixes is None:
@@ -1094,7 +1102,7 @@ def bcp47_rdf_extension(
                         r_verb.lower(), r_op_1, r_op_2, 'NOP'
                     ))
             elif r_op == 's':
-                _subjects.append('{0}:{1}:{2}'.format(
+                _subjects.append('{0}||{1}:{2}'.format(
                     r_verb.upper(), r_op_1.lower(), r_op_2
                 ))
             elif r_op == 'o':
@@ -1119,7 +1127,7 @@ def bcp47_rdf_extension(
                             r_op_1
                         ))
             elif r_op == 'y':
-                result['xsl:transform'].append('{0}:{1}:{2}'.format(
+                result['xsl:transform'].append('{0}||{1}:{2}'.format(
                     r_verb.upper(), r_op_1.lower(), r_op_2,
                 ))
             else:
@@ -1214,6 +1222,7 @@ def bcp47_rdf_extension(
 
         if len(result['xsl:transform']) > 0:
             result['xsl:transform'].sort()
+
             # result['rdf:subject'] = _subjects
 
     else:
@@ -1394,17 +1403,21 @@ def bcp47_rdf_extension_relationship(
         # RDFStatement: Subject -> [[ Predicate ]] -> Object
         if 'r' in item_meta['extension'] and \
                 len(item_meta['extension']['r']['rdf:predicate']) > 0:
-            for predicate in item_meta['extension']['r']['rdf:predicate']:
-                prefix, suffix = predicate.split(':')
-                if prefix not in result['prefixes']:
+            for item in item_meta['extension']['r']['rdf:predicate']:
+                # raise ValueError(predicate)
+                # prefix, suffix = predicate.split(':')
+                predicate, subject = item.split('||')
+                predicate_namespce, _ignore = predicate.split(':')
+                subject = subject.replace(':NOP', '')  # Not used... yet
+                if predicate_namespce not in result['prefixes']:
                     # if prefix not in RDF_NAMESPACES:
-                    if prefix not in RDF_NAMESPACES_EXTRAS:
+                    if predicate_namespce not in RDF_NAMESPACES_EXTRAS:
                         raise SyntaxError(
                             'prefix [{0}]? <{1}> <{2}>'.format(
-                                prefix, header, RDF_NAMESPACES_EXTRAS
+                                predicate_namespce, header, RDF_NAMESPACES_EXTRAS
                             ))
-                    result['prefixes'][prefix] = \
-                        RDF_NAMESPACES_EXTRAS[prefix]
+                    result['prefixes'][predicate_namespce] = \
+                        RDF_NAMESPACES_EXTRAS[predicate_namespce]
 
         result['columns'].append(item_meta)
     # raise ValueError(result['rdfs:Container'])
@@ -1485,8 +1498,11 @@ def bcp47_rdf_extension_poc(
     # print(meta['rdfs:Container'])
 
     if objective_bag not in meta['rdfs:Container']:
-        raise SyntaxError('objective_bag({0})? {1} <{2}>'.format(
-            objective_bag, header, meta))
+        possible_bags = meta['rdfs:Container'].keys()
+        raise SyntaxError(
+            'objective_bag({0})? possible <{1}>: '
+            'header <{2}> Meta <{3}>'.format(
+                objective_bag, possible_bags, header, meta))
 
     # print(meta)
     # print('')
@@ -1529,7 +1545,11 @@ def bcp47_rdf_extension_poc(
         value_prefixes = None
         if len(bag_meta["xsl:transform"]) > 0:
             for titem in bag_meta["xsl:transform"]:
-                tverb, tval_1, _nop_tval_2 = titem.split(':')
+
+                # tverb, tval_1, _nop_tval_2 = titem.split(':')
+                _temp1, temp2 = titem.split('||')
+                tverb = _temp1
+                tval_1, _nop_tval_2 = temp2.split(':')
 
                 if tverb == EXTRA_OPERATORS['STX']['hxl']:
                     if value_prefixes is None:
@@ -2849,9 +2869,10 @@ def hxl_hashtag_to_bcp47(hashtag: str) -> str:
                 _subjec_value = _subjec_value.replace('s', '')
 
                 _subjec_value = _subjec_value.replace('s', '')
-                result['extension']['r']['rdf:subject'].append('{0}:{1}'.format(
-                    _subject_code, _subjec_value
-                ))
+                result['extension']['r']['rdf:subject'].append(
+                    '{0}||{1}:NOP'.format(
+                        _subject_code, _subjec_value
+                    ))
 
                 _bpc47_g_parts.append('s{0}-s{1}-snop'.format(
                     _subject_code, _subjec_value
@@ -2905,6 +2926,11 @@ def hxl_hashtag_to_bcp47(hashtag: str) -> str:
                         '{0}||{1}:{2}'.format(
                         RDF_NAMESPACES_PREFIX[raw_predicate],
                         _subject, _subject_nop)
+                else:
+                    result['extension']['r']['rdf:predicate'][_index_p] = \
+                        '{0}||{1}:{2}'.format(
+                        raw_predicate,
+                        _subject, _subject_nop)
 
                 _bpc47_g_parts.append('p{0}-p{1}-ps{2}'.format(
                     _predicate_ns.upper(), _predicate_item, _subject,
@@ -2933,21 +2959,26 @@ def hxl_hashtag_to_bcp47(hashtag: str) -> str:
                                 tval_1, hashtag, CSVW_SEPARATORS
                             ))
 
-                    # result['extension']['r']['csvw:separator'] = \
-                    #     decoded_separator
-                    # _predicate_key, _object = _predicate.split(':')
+                    result['extension']['r']['xsl:transform'].append(
+                        '{0}||{1}:NOP'.format(tverb.upper(), tval_1.lower()))
+
                     _bpc47_g_parts.append('y{0}-y{1}-ynop'.format(
                         EXTRA_OPERATORS['GS']['hxl'].upper(), decoded_separator
                     ))
                 elif tverb == EXTRA_OPERATORS['STX']['hxl']:
-                    # if value_prefixes is None:
-                    #     value_prefixes = []
-                    # value_prefixes.append(tval_1)
+                    result['extension']['r']['xsl:transform'].append(
+                        '{0}||{1}:NOP'.format(tverb.upper(), tval_1.lower()))
+
                     _bpc47_g_parts.append('y{0}-y{1}-ynop'.format(
                         tverb.upper(), tval_1.lower()
                     ))
                 else:
                     result['_unknown'].append('rdf_parts [{0}]'.format(item))
+
+                # result['extension']['r']['xsl:transform'].append(_item_parts)
+                # _index_p = result['extension']['r']['rdf:predicate'].index(
+                #     _item_parts
+                # )
 
             elif item.startswith('t_'):
                 # _cell_transformer = item.replace('y_', '').lower()

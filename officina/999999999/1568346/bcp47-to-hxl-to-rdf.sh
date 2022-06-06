@@ -94,6 +94,7 @@ test_unesco_thesaurus() {
   archivum__resultata_ttl="${ROOTDIR}/999999/0/unesco-thesaurus.rdf.ttl"
   archivum__resultata_xml="${ROOTDIR}/999999/0/unesco-thesaurus.rdf.xml"
 
+  set -x
   "${ROOTDIR}/999999999/0/999999999_54872.py" \
     --objectivum-formato=_temp_bcp47 \
     --rdf-bag=1 \
@@ -121,6 +122,7 @@ test_unesco_thesaurus() {
     >"${archivum__resultata_ttl}"
 
   riot --validate "${archivum__resultata_ttl}"
+  set -x
 }
 
 #######################################
@@ -171,7 +173,7 @@ bcp47_and_hxlrdf_roundtrip() {
         echo "${stype_green}OK [$bpc47_final]${style_normal}"
         # printf "$STARTCOLOR%b$ENDCOLOR" "$1";
       else
-        echo "${style_red}FAILED [$bpc47_final]${style_normal}"
+        echo "${style_red}FAILED [$bpc47_final] != [$bpc47_discovered_2nd] ${style_normal}"
       fi
     else
       echo "${stype_blue}INFO: No enforced expected result${style_normal}"
@@ -201,7 +203,7 @@ bcp47_and_hxlrdf_roundtrip() {
       if [ "$hxlattr_final" = "$hxlattr_discovered_2nd" ]; then
         echo "${stype_green}OK [$hxlattr_final]${style_normal}"
       else
-        echo "${style_red}FAILED [$hxlattr_final]${style_normal}"
+        echo "${style_red}FAILED [$hxlattr_final] != [$hxlattr_discovered_2nd] ${style_normal}"
       fi
     else
       echo "${stype_blue}INFO: No enforced expected result${style_normal}"
