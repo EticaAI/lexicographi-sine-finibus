@@ -341,3 +341,10 @@ bcp47_and_hxlrdf_roundtrip__drill
 
 
 # 999999/0/21838-2/owl/bfo-2020.owl
+# riot --quiet --output=ntriples 999999/0/21838-2/owl/bfo-2020.owl > 999999/0/21838-2/owl/bfo-2020.owl.n3
+
+# rdfcompare 999999/0/bfo_classes_only.owl.n3 999999/0/21838-2/owl/bfo-2020.owl.n3 ntriples ntriples http://purl.obolibrary.org/obo/ http://purl.obolibrary.org/obo/
+
+# rdfcompare 999999/0/bfo_classes_only.owl 999999/0/21838-2/owl/bfo-2020.owl
+
+# rdfdiff 999999/0/bfo_classes_only.owl 999999/0/21838-2/owl/bfo-2020.owl RDF/XML RDF/XML
