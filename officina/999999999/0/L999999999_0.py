@@ -844,7 +844,40 @@ def bcp47_langtag_callback_hxl(
 
         if _r['rdf:predicate'] and len(_r['rdf:predicate']) > 0:
             for item in _r['rdf:predicate']:
-                prefix, term, subject_domain, _nop2 = item.lower().split(':')
+                # prefix, term, subject_domain, _nop2 = item.lower().split(':')
+                # raise ValueError(item)
+                # print(item)
+                normalized_predicate, _subject_part = item.lower().split('||')
+                subject_domain = _subject_part
+
+                # discarting not yet implemented additional subject meta :NOP
+                _subject_part = _subject_part.replace(':nop', '')
+
+                # SPECIAL CASE: OBO prefix we remove leading zeroes and _
+                if normalized_predicate.startswith('obo:'):
+                    normalized_predicate = normalized_predicate.lower()
+                    _predicate_ns = 'obo'
+                    _predicate_item_raw = \
+                        normalized_predicate.replace('obo:', '')
+                    _predicate_item_raw_digits = ''.join(
+                        filter(str.isdigit, _predicate_item_raw))
+                    _predicate_item_raw_alpha = \
+                        _predicate_item_raw.replace(
+                            _predicate_item_raw_digits, '').replace(
+                                '_', '')
+                    _predicate_item = '{0}{1}'.format(
+                        _predicate_item_raw_alpha,
+                        _predicate_item_raw_digits.lstrip('0')
+                    )
+                    # prefix, term = _predicate_item.split(':')
+                    subject_domain = _subject_part.lstrip('0')
+                    prefix = _predicate_ns
+                    # term = _predicate_item_raw_digits
+                    term = _predicate_item
+                else:
+                    subject_domain, _nop = subject_domain.split(':')
+                    prefix, term = normalized_predicate.split(':')
+                # raise ValueError(_predicate_part)
                 resultatum.append('+rdf_p_{0}_{1}_s{2}'.format(
                     prefix, term, subject_domain))
 
@@ -855,7 +888,9 @@ def bcp47_langtag_callback_hxl(
                     '+rdf_s_{0}_s{1}'.format(subject_key, subject_namespace))
 
         if _r['rdfs:Datatype'] and len(_r['rdfs:Datatype']) > 0:
-            prefix, term, _nop = _r['rdfs:Datatype'].lower().split(':')
+            # prefix, term, _nop = _r['rdfs:Datatype'].lower().split(':')
+            _temp1, _temp2 = _r['rdfs:Datatype'].lower().split('||')
+            prefix, term = _temp1.split(':')
             resultatum.append('+rdf_t_{0}_{1}'.format(prefix, term))
 
         if len(_r["xsl:transform"]) > 0:
@@ -1055,7 +1090,7 @@ def bcp47_rdf_extension(
                 else:
                     r_op_2 = r_op_2[1:]
 
-                    result['rdf:predicate'].append('{0}:{1}:{2}:{3}'.format(
+                    result['rdf:predicate'].append('{0}:{1}||{2}:{3}'.format(
                         r_verb.lower(), r_op_1, r_op_2, 'NOP'
                     ))
             elif r_op == 's':
@@ -1074,7 +1109,7 @@ def bcp47_rdf_extension(
                 # continue
             elif r_op == 't':
                 if result['rdfs:Datatype'] is None:
-                    result['rdfs:Datatype'] = '{0}:{1}:{2}'.format(
+                    result['rdfs:Datatype'] = '{0}:{1}||{2}'.format(
                         r_verb.lower(), r_op_1, 'NOP'
                     )
                 else:
@@ -1108,46 +1143,61 @@ def bcp47_rdf_extension(
             result['rdf:predicate'].sort()
             # raise ValueError(result['rdf:predicate'])
             # print('all', result['rdf:predicate'])
-            # for index in range(len(result['rdf:predicate'])):
-            #     _item_parts = result['rdf:predicate'][index]
+            for index in range(len(result['rdf:predicate'])):
+                _item_parts = result['rdf:predicate'][index]
 
-            #     _predicate_ns, _predicate_item, _subject, _subject_nop = \
-            #         _item_parts.split(':')
+                # print(_item_parts)
 
-            #     raw_predicate = f'{_predicate_ns}:{_predicate_item}'
-            #     normalized_predicate = None
+                # _predicate_ns, _predicate_item, _subject, _subject_nop = \
+                #     _item_parts.split(':')
+                _temp1, _temp2 = _item_parts.split('||')
+                _predicate_ns, _predicate_item = _temp1.split(':')
+                _subject, _subject_nop = _temp2.split(':')
 
-            #     if raw_predicate in RDF_NAMESPACES_PREFIX:
-            #         normalized_predicate = RDF_NAMESPACES_PREFIX[raw_predicate]
-            #     elif raw_predicate in RDF_NAMESPACES_PREFIX_EXTRAS:
-            #         normalized_predicate = \
-            #             RDF_NAMESPACES_PREFIX_EXTRAS[raw_predicate]
+                raw_predicate = f'{_predicate_ns}:{_predicate_item}'
+                normalized_predicate = None
 
-            #     if normalized_predicate is not None:
-            #         if normalized_predicate.startswith('obo:'):
-            #             normalized_predicate = normalized_predicate.lower()
-            #             _predicate_ns = 'obo'
-            #             _predicate_item_raw = \
-            #                 normalized_predicate.replace('obo:', '')
-            #             _predicate_item_raw_digits = ''.join(
-            #                 filter(str.isdigit, _predicate_item_raw))
-            #             _predicate_item_raw_alpha = \
-            #                 _predicate_item_raw.replace(\
-            #                     _predicate_item_raw_digits, '').replace(
-            #                         '_', '')
-            #             _predicate_item = '{0}{1}'.format(
-            #                 _predicate_item_raw_alpha,
-            #                 _predicate_item_raw_digits.lstrip('0')
-            #             )
-            #         else:
-            #             _predicate_ns, _predicate_item = \
-            #                 normalized_predicate.split(':')
-            #             # pass
+                if raw_predicate in RDF_NAMESPACES_PREFIX:
+                    normalized_predicate = RDF_NAMESPACES_PREFIX[raw_predicate]
+                elif raw_predicate in RDF_NAMESPACES_PREFIX_EXTRAS:
+                    normalized_predicate = \
+                        RDF_NAMESPACES_PREFIX_EXTRAS[raw_predicate]
 
-            #         result['rdf:predicate'][index] = \
-            #             '{0}||{1}:{2}'.format(
-            #             RDF_NAMESPACES_PREFIX[raw_predicate],
-            #             _subject, _subject_nop)
+                if normalized_predicate is not None:
+                    if normalized_predicate.startswith('obo:'):
+                        normalized_predicate = normalized_predicate.lower()
+                        _predicate_ns = 'obo'
+                        _predicate_item_raw = \
+                            normalized_predicate.replace('obo:', '')
+                        _predicate_item_raw_digits = ''.join(
+                            filter(str.isdigit, _predicate_item_raw))
+                        _predicate_item_raw_alpha = \
+                            _predicate_item_raw.replace(
+                                _predicate_item_raw_digits, '').replace(
+                                    '_', '')
+                        _predicate_item = '{0}{1}'.format(
+                            _predicate_item_raw_alpha,
+                            _predicate_item_raw_digits.lstrip('0')
+                        )
+                    else:
+                        _predicate_ns, _predicate_item = \
+                            normalized_predicate.split(':')
+                        # pass
+
+                    result['rdf:predicate'][index] = \
+                        '{0}||{1}:{2}'.format(
+                        RDF_NAMESPACES_PREFIX[raw_predicate],
+                        _subject, _subject_nop)
+                else:
+                    # _p1, _p2, _s1, _s2 = \
+                    #     result['rdf:predicate'][index].split(':')
+                    # result['rdf:predicate'][index] = '{0}:{1}||{2}:{3}'.format(
+                    #     _p1, _p2, _s1, _s2
+                    # )
+                    result['rdf:predicate'][index] = '{0}:{1}||{2}:{3}'.format(
+                        _predicate_ns, _predicate_item, _subject, _subject_nop
+                    )
+                    # pass
 
                 # if raw_predicate in RDF_NAMESPACES_PREFIX:
                 #     result['rdf:predicate'][index] = '{0}:{1}'.format(
@@ -2819,7 +2869,7 @@ def hxl_hashtag_to_bcp47(hashtag: str) -> str:
                 _predicate_ns, _predicate_item, _subject, _subject_nop = \
                     _item_parts.split(':')
 
-                _subject = ''.join( filter(str.isdigit, _subject))
+                _subject = ''.join(filter(str.isdigit, _subject))
 
                 raw_predicate = f'{_predicate_ns}:{_predicate_item}'
                 normalized_predicate = None
@@ -2839,7 +2889,7 @@ def hxl_hashtag_to_bcp47(hashtag: str) -> str:
                         _predicate_item_raw_digits = ''.join(
                             filter(str.isdigit, _predicate_item_raw))
                         _predicate_item_raw_alpha = \
-                            _predicate_item_raw.replace(\
+                            _predicate_item_raw.replace(
                                 _predicate_item_raw_digits, '').replace(
                                     '_', '')
                         _predicate_item = '{0}{1}'.format(
@@ -2856,7 +2906,7 @@ def hxl_hashtag_to_bcp47(hashtag: str) -> str:
                         RDF_NAMESPACES_PREFIX[raw_predicate],
                         _subject, _subject_nop)
 
-                _bpc47_g_parts.append('p{0}-p{1}-p{2}'.format(
+                _bpc47_g_parts.append('p{0}-p{1}-ps{2}'.format(
                     _predicate_ns.upper(), _predicate_item, _subject,
                 ))
                 # _bpc47_g_parts.append('p{0}-p{1}-p{2}'.format(
