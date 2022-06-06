@@ -1107,14 +1107,52 @@ def bcp47_rdf_extension(
         if len(result['rdf:predicate']) > 0:
             result['rdf:predicate'].sort()
             # raise ValueError(result['rdf:predicate'])
+            # print('all', result['rdf:predicate'])
             # for index in range(len(result['rdf:predicate'])):
-            #     predicate_prefix, predicate, subject = \
-            #         result['rdf:predicate'][index].split(':')
-            #     raw_predicate = f'{predicate_prefix}:{predicate}'
+            #     _item_parts = result['rdf:predicate'][index]
+
+            #     _predicate_ns, _predicate_item, _subject, _subject_nop = \
+            #         _item_parts.split(':')
+
+            #     raw_predicate = f'{_predicate_ns}:{_predicate_item}'
+            #     normalized_predicate = None
+
             #     if raw_predicate in RDF_NAMESPACES_PREFIX:
-            #         result['rdf:predicate'] = '{0}:{1}'.format(
-            #             RDF_NAMESPACES_PREFIX[raw_predicate], subject)
-            #     # pass
+            #         normalized_predicate = RDF_NAMESPACES_PREFIX[raw_predicate]
+            #     elif raw_predicate in RDF_NAMESPACES_PREFIX_EXTRAS:
+            #         normalized_predicate = \
+            #             RDF_NAMESPACES_PREFIX_EXTRAS[raw_predicate]
+
+            #     if normalized_predicate is not None:
+            #         if normalized_predicate.startswith('obo:'):
+            #             normalized_predicate = normalized_predicate.lower()
+            #             _predicate_ns = 'obo'
+            #             _predicate_item_raw = \
+            #                 normalized_predicate.replace('obo:', '')
+            #             _predicate_item_raw_digits = ''.join(
+            #                 filter(str.isdigit, _predicate_item_raw))
+            #             _predicate_item_raw_alpha = \
+            #                 _predicate_item_raw.replace(\
+            #                     _predicate_item_raw_digits, '').replace(
+            #                         '_', '')
+            #             _predicate_item = '{0}{1}'.format(
+            #                 _predicate_item_raw_alpha,
+            #                 _predicate_item_raw_digits.lstrip('0')
+            #             )
+            #         else:
+            #             _predicate_ns, _predicate_item = \
+            #                 normalized_predicate.split(':')
+            #             # pass
+
+            #         result['rdf:predicate'][index] = \
+            #             '{0}||{1}:{2}'.format(
+            #             RDF_NAMESPACES_PREFIX[raw_predicate],
+            #             _subject, _subject_nop)
+
+                # if raw_predicate in RDF_NAMESPACES_PREFIX:
+                #     result['rdf:predicate'][index] = '{0}:{1}'.format(
+                #         RDF_NAMESPACES_PREFIX[raw_predicate], subject)
+                # pass
 
         if len(_objects) > 0:
             _objects.sort()
@@ -2771,12 +2809,17 @@ def hxl_hashtag_to_bcp47(hashtag: str) -> str:
 
             elif item.startswith('p_'):
                 _item_parts = item.replace('p_', '').replace('_', ':')
+                _item_parts = _item_parts + ':NOP'
                 result['extension']['r']['rdf:predicate'].append(_item_parts)
                 _index_p = result['extension']['r']['rdf:predicate'].index(
                     _item_parts
                 )
-                _predicate_ns, _predicate_item, _subject = \
+
+                # _subject_nop = 'NOP' reserved for potential future use
+                _predicate_ns, _predicate_item, _subject, _subject_nop = \
                     _item_parts.split(':')
+
+                _subject = ''.join( filter(str.isdigit, _subject))
 
                 raw_predicate = f'{_predicate_ns}:{_predicate_item}'
                 normalized_predicate = None
@@ -2809,12 +2852,17 @@ def hxl_hashtag_to_bcp47(hashtag: str) -> str:
                         # pass
 
                     result['extension']['r']['rdf:predicate'][_index_p] = \
-                        '{0}:{1}'.format(
-                        RDF_NAMESPACES_PREFIX[raw_predicate], _subject)
+                        '{0}||{1}:{2}'.format(
+                        RDF_NAMESPACES_PREFIX[raw_predicate],
+                        _subject, _subject_nop)
 
                 _bpc47_g_parts.append('p{0}-p{1}-p{2}'.format(
-                    _predicate_ns.upper(), _predicate_item, _subject
+                    _predicate_ns.upper(), _predicate_item, _subject,
                 ))
+                # _bpc47_g_parts.append('p{0}-p{1}-p{2}'.format(
+                #     _predicate_ns.upper(), _predicate_item,
+                #     _subject, _subject_nop.lower()
+                # ))
 
             elif item.startswith('y_'):
                 # _cell_transformer = item.replace('y_', '').lower()
