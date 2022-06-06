@@ -158,7 +158,7 @@ FIRST_ORDER_LOGIC = {
 
 
 RDF_NAMESPACES = {
-    'rdf': 'http://www.w3.org/2000/01/rdf-schema#',
+    'rdf': 'https://www.w3.org/1999/02/22-rdf-syntax-ns#',
     'rdfs': 'http://www.w3.org/2000/01/rdf-schema#',
     'xsd': 'http://www.w3.org/2001/XMLSchema#',
     'owl': 'http://www.w3.org/2002/07/owl#',
@@ -181,6 +181,209 @@ RDF_NAMESPACES = {
 RDF_NAMESPACES_EXTRAS = {
 
 }
+
+# Note: prefixes that already are lower case do not be here
+RDF_NAMESPACES_PREFIX = {
+
+    # From https://www.w3.org/1999/02/22-rdf-syntax-ns# ______________________
+    # 'rdf:type': 'rdf:type',
+    # 'rdf:subject': 'rdf:subject',
+    # 'rdf:predicate': 'rdf:predicate',
+    # 'rdf:object': 'rdf:object',
+    # 'rdf:rest': 'rdf:rest',
+    # 'rdf:language': 'rdf:language',
+    # 'rdf:direction': 'rdf:direction',
+    # 'rdf:nil': 'rdf:nil',
+    'rdf:alt': 'rdf:Alt',
+    'rdf:bag': 'rdf:Bag',
+    'rdf:compoundliteral': 'rdf:CompoundLiteral',
+    'rdf:html': 'rdf:HTML',  # www.w3.org/TR/rdf11-concepts/#h3_section-html
+    'rdf:json': 'rdf:JSON',
+    'rdf:langstring': 'rdf:langString',
+    'rdf:list': 'rdf:List',
+    'rdf:plainliteral': 'rdf:PlainLiteral',
+    'rdf:property': 'rdf:Property',
+    'rdf:seq': 'rdf:Seq',
+    'rdf:statement': 'rdf:Statement',
+    'rdf:xmlliteral': 'rdf:XMLLiteral',
+
+    # From http://www.w3.org/2000/01/rdf-schema# _____________________________
+    'rdfs:class': 'rdfs:Class',
+    'rdfs:container': 'rdfs:Container',
+    # 'rdfs:member': 'rdfs:member',
+    # 'rdfs:label': 'rdfs:label',
+    # 'rdfs:domain': 'rdfs:domain',
+    # 'rdfs:range': 'rdfs:range',
+    'rdfs:containermembershipproperty': 'rdfs:ContainerMembershipProperty',
+    'rdfs:datatype': 'rdfs:Datatype',
+    'rdfs:isdefinedby': 'rdfs:isDefinedBy',
+    'rdfs:literal': 'rdfs:Literal',
+    'rdfs:resource': 'rdfs:Resource',
+    'rdfs:seealso': 'rdfs:seeAlso',
+    'rdfs:subclassof': 'rdfs:subClassOf',
+    'rdfs:subpropertyof': 'rdfs:subPropertyOf',
+
+    # From https://www.w3.org/TR/rdf11-concepts/#h3_xsd-datatypes ____________
+    'xsd:datetime': 'xsd:dateTime',
+    'xsd:datetimestamp': 'xsd:dateTimeStamp',
+    'xsd:gyear': 'xsd:gYear',
+    'xsd:gmonth': 'xsd:gMonth',
+    'xsd:gday': 'xsd:gDay',
+    'xsd:gyearmonth': 'xsd:gYearMonth',
+    'xsd:gmonthday': 'xsd:gMonthDay',
+    'xsd:yearmonthduration': 'xsd:yearMonthDuration',
+    'xsd:daytimeduration': 'xsd:dayTimeDuration',
+    'xsd:unsignedbyte': 'xsd:unsignedByte',
+    'xsd:unsignedshort': 'xsd:unsignedShort',
+    'xsd:unsignedint': 'xsd:unsignedInt',
+    'xsd:unsignedlong': 'xsd:unsignedLong',
+    'xsd:positiveinteger': 'xsd:positiveInteger',
+    'xsd:nonnegativeinteger': 'xsd:nonNegativeInteger',
+    'xsd:negativeinteger': 'xsd:negativeInteger',
+    'xsd:nonpositiveinteger': 'xsd:nonPositiveInteger',
+    'xsd:hexbinary': 'xsd:hexBinary',
+    'xsd:base64binary': 'xsd:base64Binary',
+    'xsd:anyuri': 'xsd:anyURI',
+    'xsd:normalizedstring': 'xsd:normalizedString',
+    'xsd:nmtoken': 'xsd:NMTOKEN',
+    'xsd:name': 'xsd:Name',
+    'xsd:ncname': 'xsd:NCName',
+    # xsd:ID and xsd:IDREF are for cross references within an XML document.
+    'xsd:id': 'xsd:ID',  # https://www.w3.org/TR/xmlschema11-2/#ID
+    'xsd:idref': 'xsd:IDREF',  # https://www.w3.org/TR/xmlschema11-2/#IDREF
+    'xsd:idrefs': 'xsd:IDREFS',  # https://www.w3.org/TR/xmlschema11-2/#IDREFS
+
+    # From http://www.w3.org/2002/07/owl# ____________________________________
+    # 'owl:imports': 'owl:imports',
+    # 'owl:cardinality': 'owl:cardinality',
+    # 'owl:deprecated': 'owl:deprecated',
+    # 'owl:members': 'owl:members',
+    'owl:alldifferent': 'owl:AllDifferent',
+    'owl:alldisjointclasses': 'owl:AllDisjointClasses',
+    'owl:alldisjointproperties': 'owl:AllDisjointProperties',
+    'owl:annotation': 'owl:Annotation',
+    'owl:annotationproperty': 'owl:AnnotationProperty',
+    'owl:asymmetricproperty': 'owl:AsymmetricProperty',
+    'owl:axiom': 'owl:Axiom',
+    'owl:class': 'owl:Class',
+    'owl:datarange': 'owl:DataRange',
+    'owl:datatypeproperty': 'owl:DatatypeProperty',
+    'owl:deprecatedclass': 'owl:DeprecatedClass',
+    'owl:deprecatedproperty': 'owl:DeprecatedProperty',
+    'owl:functionalproperty': 'owl:FunctionalProperty',
+    'owl:inversefunctionalproperty': 'owl:InverseFunctionalProperty',
+    'owl:irreflexiveproperty': 'owl:IrreflexiveProperty',
+    'owl:namedindividual': 'owl:NamedIndividual',
+    'owl:negativepropertyassertion': 'owl:NegativePropertyAssertion',
+    'owl:nothing': 'owl:Nothing',
+    'owl:objectproperty': 'owl:ObjectProperty',
+    'owl:ontology': 'owl:Ontology',
+    'owl:ontologyproperty': 'owl:OntologyProperty',
+    'owl:reflexiveproperty': 'owl:ReflexiveProperty',
+    'owl:restriction': 'owl:Restriction',
+    'owl:symmetricproperty': 'owl:SymmetricProperty',
+    'owl:transitiveproperty': 'owl:TransitiveProperty',
+    'owl:thing': 'owl:Thing',
+    'owl:allvaluesfrom': 'owl:allValuesFrom',
+    'owl:annotatedproperty': 'owl:annotatedProperty',
+    'owl:annotatedsource': 'owl:annotatedSource',
+    'owl:annotatedtarget': 'owl:annotatedTarget',
+    'owl:assertionproperty': 'owl:assertionProperty',
+    'owl:backwardcompatiblewith': 'owl:backwardCompatibleWith',
+    'owl:bottomdataproperty': 'owl:bottomDataProperty',
+    'owl:bottomobjectproperty': 'owl:bottomObjectProperty',
+    'owl:complementof': 'owl:complementOf',
+    'owl:datatypecomplementof': 'owl:datatypeComplementOf',
+    'owl:differentfrom': 'owl:differentFrom',
+    'owl:disjointunionof': 'owl:disjointUnionOf',
+    'owl:disjointwith': 'owl:disjointwith',
+    'owl:distinctmembers': 'owl:distinctMembers',
+    'owl:equivalentclass': 'owl:equivalentClass',
+    'owl:equivalentproperty': 'owl:equivalentProperty',
+    'owl:haskey': 'owl:hasKey',
+    'owl:hasself': 'owl:hasSelf',
+    'owl:hasvalue': 'owl:hasValue',
+    'owl:incompatiblewith': 'owl:incompatibleWith',
+    'owl:intersectionof': 'owl:intersectionOf',
+    'owl:inverseof': 'owl:inverseOf',
+    'owl:maxcardinality': 'owl:maxCardinality',
+    'owl:maxqualifiedcardinality': 'owl:maxQualifiedCardinality',
+    'owl:mincardinality': 'owl:minCardinality',
+    'owl:minqualifiedcardinality': 'owl:minQualifiedCardinality',
+    'owl:onclass': 'owl:onClass',
+    'owl:ondatarange': 'owl:onDataRange',
+    'owl:ondatatype': 'owl:onDatatype',
+    'owl:oneof': 'owl:oneOf',
+    'owl:onproperties': 'owl:onProperties',
+    'owl:onproperty': 'owl:onProperty',
+    'owl:priorversion': 'owl:priorVersion',
+    'owl:propertychainaxiom': 'owl:propertyChainAxiom',
+    'owl:propertydisjointwith': 'owl:propertyDisjointWith',
+    'owl:qualifiedcardinality': 'owl:qualifiedCardinality',
+    'owl:sameas': 'owl:sameAs',
+    'owl:somevaluesfrom': 'owl:someValuesFrom',
+    'owl:sourceindividual': 'owl:sourceIndividual',
+    'owl:targetindividual': 'owl:targetIndividual',
+    'owl:targetvalue': 'owl:targetValue',
+    'owl:topdataproperty': 'owl:topDataProperty',
+    'owl:topobjectproperty': 'owl:topObjectProperty',
+    'owl:unionof': 'owl:unionOf',
+    'owl:versioninfo': 'owl:versionInfo',
+    'owl:versioniri': 'owl:versionIRI',
+    'owl:withrestrictions': 'owl:withRestrictions',
+
+    # @SEE http://www.w3.org/2004/02/skos/core# ______________________________
+
+    'skos:collection': 'skos:Collection',
+    'skos:concept': 'skos:Concept',
+    'skos:concept': 'skos:Concept',
+    'skos:conceptscheme': 'skos:ConceptScheme',
+    'skos:orderedcollection': 'skos:OrderedCollection',
+    'skos:altlabel': 'skos:altLabel',
+    'skos:broadmatch': 'skos:broadMatch',
+    # 'skos:broader': 'skos:broader',
+    'skos:broadertransitive': 'skos:broaderTransitive',
+    'skos:changenote': 'skos:changeNote',
+    'skos:closematch': 'skos:closeMatch',
+    # 'skos:definition': 'skos:definition',
+    'skos:editorialnote': 'skos:editorialNote',
+    'skos:exactmatch': 'skos:exactMatch',
+    'skos:exactmatch': 'skos:exactMatch',
+    # 'skos:example': 'skos:example',
+    'skos:hastopconcept': 'skos:hasTopConcept',
+    'skos:hiddenlabel': 'skos:hiddenLabel',
+    'skos:historynote': 'skos:historyNote',
+    'skos:inscheme': 'skos:inScheme',
+    'skos:mappingrelation': 'skos:mappingRelation',
+    # 'skos:member': 'skos:member',
+    'skos:memberlist': 'skos:memberList',
+    'skos:narrowmatch': 'skos:narrowMatch',
+    # 'skos:narrower': 'skos:narrower',
+    # 'skos:notation': 'skos:notation',
+    # 'skos:note': 'skos:note',
+    'skos:preflabel': 'skos:prefLabel',
+    # 'skos:related': 'skos:related',
+    'skos:relatedmatch': 'skos:relatedMatch',
+    'skos:scopenote': 'skos:scopeNote',
+    'skos:semanticrelation': 'skos:semanticRelation',
+    'skos:topconceptof': 'skos:topConceptOf',
+
+    # @SEE https://oborel.github.io/ _________________________________________
+    # https://www.ebi.ac.uk/ols/ontologies/ro
+    # ------------------------------- Entities -------------------------------
+    # continuant
+    'obo:bfo2': 'obo:BFO_0000002',  # purl.obolibrary.org/obo/BFO_0000002
+    # occurrent
+    'obo:bfo3': 'obo:BFO_0000003',  # purl.obolibrary.org/obo/BFO_0000003
+    # ------------------------------- Relations -------------------------------
+    # @TODO https://www.ebi.ac.uk/ols/ontologies/ro
+    'obo:bfopartof': 'obo:BFO_0000050',  # purl.obolibrary.org/obo/BFO_0000050
+    'obo:bfo50': 'obo:BFO_0000050',
+    # bfo_part_of <- ro_located_in
+    'obo:ro1025': 'obo:RO_0001025',  # purl.obolibrary.org/obo/RO_0001025
+    'obo:rolocatedin': 'obo:BFO_0000002',
+}
+# @TODO https://protegeproject.github.io/owl2lpg/
 
 
 def bcp47_langtag(
