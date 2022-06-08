@@ -2933,6 +2933,7 @@ def hxl_hashtag_to_bcp47(hashtag: str) -> str:
                 'rdf:subject': [],
                 'rdf:predicate': [],
                 'rdf:object': [],
+                'rdf:type': [],
                 'rdfs:Datatype': None,
                 'xsl:transform': [],
                 '_unknown': [],
@@ -3004,6 +3005,17 @@ def hxl_hashtag_to_bcp47(hashtag: str) -> str:
 
                 _bpc47_g_parts.append('s{0}-s{1}-snop'.format(
                     _subject_code, _subjec_value
+                ))
+
+            elif item.startswith('a_'):
+                prefix = item.replace('a_', '').replace('_', ':')
+                prefix_normali = _rdf_spatia_nominalibus_prefix_simplici(prefix)
+                # raise ValueError(item, prefix_normali)
+                type_prefix, type_item = prefix_normali.split(':')
+                type_meta = prefix_normali + '||NOP'
+                result['extension']['r']['rdf:type'].append(type_meta)
+                _bpc47_g_parts.append('a{0}-a{1}-anop'.format(
+                    type_prefix.upper(), type_item.lower()
                 ))
 
             elif item.startswith('p_'):
