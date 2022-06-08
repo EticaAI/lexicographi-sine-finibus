@@ -409,6 +409,57 @@ RDF_SPATIA_NOMINALIBUS_PREFIX = {
 RDF_SPATIA_NOMINALIBUS_PREFIX_EXTRAS = {
 }
 
+# ------- Needs refactoring later, START -------
+
+# def _rdf_spatia_nominalibus_prefix(rem: str, methodos: str = 'asa') -> dict:
+
+
+def _rdf_spatia_nominalibus_prefix_normali(rem: str) -> dict:
+    # exemplum: obo:bfo29 -> obo:BFO_0000029
+    rem_l = rem.lower()
+    if rem_l in RDF_SPATIA_NOMINALIBUS_PREFIX:
+        return RDF_SPATIA_NOMINALIBUS_PREFIX[rem_l]
+    elif rem in RDF_SPATIA_NOMINALIBUS_PREFIX.values():
+        # already normalized; redundant function call
+        return rem
+
+    if rem_l.startswith('obo:'):
+        rem_ls = rem_l.replace('obo:', ''). replace('_', '')
+        rem_digits = ''.join(filter(str.isdigit, rem_ls))
+        rem_item_alpha = rem_ls.replace(rem_digits, '').upper()
+        rem_digits_full = rem_digits.zfill(7)
+        return 'obo:{0}_{1}'.format(rem_item_alpha, rem_digits_full)
+
+    # Worst case: assume input already is normalized
+    return rem
+
+
+def _rdf_spatia_nominalibus_prefix_simplici(rem: str) -> dict:
+    # exemplum: obo:BFO_0000029 -> obo:bfo29
+    # exemplum: obo:BFO_0098765 -> obo:bfo98765
+    # rem = 'obo:BFO_0000129'
+    rem_l = rem.lower()
+    # raise ValueError('oi')
+    if rem_l in RDF_SPATIA_NOMINALIBUS_PREFIX:
+        return rem_l
+    elif rem in RDF_SPATIA_NOMINALIBUS_PREFIX.values():
+        # already normalized; redundant function call
+        # raise ValueError('oi2')
+        clavem = list(RDF_SPATIA_NOMINALIBUS_PREFIX.keys())
+        index = list(RDF_SPATIA_NOMINALIBUS_PREFIX.values()).index(rem)
+        return clavem[index]
+
+    if rem_l.startswith('obo:'):
+        rem_ls = rem_l.replace('obo:', ''). replace('_', '')
+        rem_digits = ''.join(filter(str.isdigit, rem_ls))
+        rem_item_alpha = rem_ls.replace(rem_digits, '').lower()
+        # rem_digits_full = rem_digits.zfill(7)
+        return 'obo:{0}{1}'.format(rem_item_alpha, rem_digits)
+
+    return rem
+
+# ------- Needs refactoring later, END -------
+
 
 def bcp47_langtag(
         rem: str,
@@ -864,6 +915,21 @@ def bcp47_langtag_callback_hxl(
     if langtag_meta['extension'] and 'r' in langtag_meta['extension']:
         _r = langtag_meta['extension']['r']
 
+        if 'rdf:type' in _r and len(_r['rdf:type']) > 0:
+            for item in _r['rdf:type']:
+
+                _temp1, temp2 = item.split('||')
+                subject_key = _temp1
+                subject_namespace = temp2
+                # _predicate = _rdf_spatia_nominalibus_prefix_normali(_temp1)
+                _predicate = _rdf_spatia_nominalibus_prefix_simplici(_temp1)
+                # raise ValueError(_predicate)
+                __predicate_prefix, _predicate_item = _predicate.split(':')
+                subject_namespace = subject_namespace.replace(':nop', '')
+                resultatum.append(
+                    '+rdf_a_{0}_{1}'.format(
+                        __predicate_prefix, _predicate_item))
+
         if _r['rdf:predicate'] and len(_r['rdf:predicate']) > 0:
             for item in _r['rdf:predicate']:
                 # prefix, term, subject_domain, _nop2 = item.lower().split(':')
@@ -903,7 +969,7 @@ def bcp47_langtag_callback_hxl(
                 resultatum.append('+rdf_p_{0}_{1}_s{2}'.format(
                     prefix, term, subject_domain))
 
-        if _r['rdf:subject'] and len(_r['rdf:subject']) > 0:
+        if 'rdf:subject' in _r and len(_r['rdf:subject']) > 0:
             for item in _r['rdf:subject']:
                 # subject_key, subject_namespace, _nop = item.lower().split(':')
                 _temp1, temp2 = item.lower().split('||')
@@ -1110,8 +1176,13 @@ def bcp47_rdf_extension(
 
             if r_op == 'a':
 
-                result['rdf:type'].append('{0}:{1}||{2}'.format(
-                    r_verb.lower(), r_op_1, r_op_2
+                verb = r_verb.lower() + ':' + r_op_1
+
+                if verb in RDF_SPATIA_NOMINALIBUS_PREFIX:
+                    verb = RDF_SPATIA_NOMINALIBUS_PREFIX[verb]
+
+                result['rdf:type'].append('{0}||{1}'.format(
+                    verb, r_op_2
                 ))
                 # pass
 
