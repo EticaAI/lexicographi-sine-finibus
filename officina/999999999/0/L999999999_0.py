@@ -1057,6 +1057,7 @@ def bcp47_rdf_extension(
         'rdf:subject': [],
         'rdf:predicate': [],
         'rdf:object': [],
+        'rdf:type': [],
         'rdfs:Datatype': None,
         'xsl:transform': [],
         '_unknown': [],
@@ -1107,7 +1108,14 @@ def bcp47_rdf_extension(
             if r_op_2 == 'nop':
                 r_op_2 = 'NOP'
 
-            if r_op == 'p':
+            if r_op == 'a':
+
+                result['rdf:type'].append('{0}:{1}||{2}'.format(
+                    r_verb.lower(), r_op_1, r_op_2
+                ))
+                # pass
+
+            elif r_op == 'p':
                 if r_op_2[0].lower() != 's':
                     result['_error'].append(
                         '[{3}] only implemented for reference subject. '
