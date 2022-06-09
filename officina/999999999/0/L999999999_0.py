@@ -1232,8 +1232,16 @@ def bcp47_rdf_extension(
                 # continue
             elif r_op == 't':
                 if result['rdfs:Datatype'] is None:
-                    result['rdfs:Datatype'] = '{0}:{1}||{2}'.format(
-                        r_verb.lower(), r_op_1, 'NOP'
+                    datatype = _rdf_spatia_nominalibus_prefix_normali(
+                        '{0}:{1}'.format(r_verb, r_op_1)
+                    )
+                    # raise ValueError(r_verb, datatype)
+                    # r_verb = r_verb.lower()
+                    # result['rdfs:Datatype'] = '{0}:{1}||{2}'.format(
+                    #     r_verb, r_op_1, 'NOP'
+                    # )
+                    result['rdfs:Datatype'] = '{0}||{1}'.format(
+                        datatype, 'NOP'
                     )
                 else:
                     result['_error'].append(
@@ -1418,6 +1426,24 @@ def bcp47_rdf_extension_relationship(
 
     # print('header', header)
 
+    def _aux_init_container(result: dict, subject: str) -> dict:
+        result['rdfs:Container'][subject] = {
+            'trivium': {
+                'index': -1,
+                # 'iri': inline_namespace_iri,
+                # 'rdf_praefixum': 'urn',
+                'rdf_praefixum': 'urnmdciii',
+                # We will fallback the pivots as generic classes
+                # We should enable later override this behavior
+                # via language tag on the pivot
+                'rdf:predicate': [],
+                # @TODO: implement the semantics of is_a
+                'rdf:type': [],
+            },
+            'indices_columnis': []
+        }
+        return result
+
     for index, item in enumerate(header):
         item_meta = bcp47_langtag(
             item, ['language', 'script', 'extension'], strictum=False)
@@ -1490,27 +1516,29 @@ def bcp47_rdf_extension_relationship(
                     # raise ValueError('deu', is_pivot_key)
 
                 if subject_value not in result['rdfs:Container']:
-                    # result['rdfs:Container'][subject] = {
-                    result['rdfs:Container'][subject_value] = {
-                        'trivium': {
-                            'index': -1,
-                            # 'iri': inline_namespace_iri,
-                            # 'rdf_praefixum': 'urn',
-                            'rdf_praefixum': 'urnmdciii',
-                            # We will fallback the pivots as generic classes
-                            # We should enable later override this behavior
-                            # via language tag on the pivot
-                            'rdf:predicate': [],
-                            # @TODO: implement the semantics of is_a
-                            'rdf:type': [],
-                        },
-                        'indices_columnis': []
-                    }
+                    result = _aux_init_container(result, subject_value)
+                    # result['rdfs:Container'][subject_value] = {
+                    #     'trivium': {
+                    #         'index': -1,
+                    #         # 'iri': inline_namespace_iri,
+                    #         # 'rdf_praefixum': 'urn',
+                    #         'rdf_praefixum': 'urnmdciii',
+                    #         # We will fallback the pivots as generic classes
+                    #         # We should enable later override this behavior
+                    #         # via language tag on the pivot
+                    #         'rdf:predicate': [],
+                    #         # @TODO: implement the semantics of is_a
+                    #         'rdf:type': [],
+                    #     },
+                    #     'indices_columnis': []
+                    # }
 
                 if inline_namespace is not None:
                     result['rdfs:Container'][subject_value][
                         'trivium']['rdf_praefixum'] = inline_namespace
 
+                # Add itself.
+                # @TODO test better corner cases
                 result['rdfs:Container'][subject_value][
                     'indices_columnis'].append(
                     index)
@@ -1532,12 +1560,12 @@ def bcp47_rdf_extension_relationship(
         # RDFStatement: Subject -> [[ Predicate ]] -> Object
         if 'r' in item_meta['extension'] and \
                 len(item_meta['extension']['r']['rdf:predicate']) > 0:
-            for item in item_meta['extension']['r']['rdf:predicate']:
+            for item_p in item_meta['extension']['r']['rdf:predicate']:
                 # raise ValueError(predicate)
                 # prefix, suffix = predicate.split(':')
-                predicate, subject = item.split('||')
+                predicate, subject = item_p.split('||')
                 predicate_namespce, _ignore = predicate.split(':')
-                subject = subject.replace(':NOP', '')  # Not used... yet
+                subject_value = subject.replace(':NOP', '')  # Not used... yet
                 if predicate_namespce not in result['rdf_spatia_nominalibus']:
                     # if prefix not in RDF_SPATIA_NOMINALIBUS:
                     if predicate_namespce not in RDF_SPATIA_NOMINALIBUS_EXTRAS:
@@ -1551,7 +1579,10 @@ def bcp47_rdf_extension_relationship(
 
                 # print(item, item_meta)
                 # print(item_meta)
-                # print(item_meta['_index_ex_tabula'])
+                # print(item_meta['_index_ex_tabula'], subject, result['rdfs:Container'].keys())
+                if subject_value not in result['rdfs:Container']:
+                    result = _aux_init_container(result, subject_value)
+
                 result['rdfs:Container'][subject_value][
                     'indices_columnis'].append(
                     item_meta['_index_ex_tabula'])
@@ -1584,7 +1615,6 @@ def bcp47_rdf_extension_relationship(
             indices_columnis_unicus = list(set(indices_columnis_unicus))
             result['rdfs:Container'][item]['indices_columnis'] = \
                 indices_columnis_unicus
-
 
     return result
 
@@ -1711,13 +1741,14 @@ def bcp47_rdf_extension_poc(
     index_id = bag_meta['trivium']['index']
     triples_delayed = []
 
-    def _helper_aux(
+    def _helper_aux_triple(
         bag_meta, bcp47_lang=None, subject=None,
-        object_literal=None, linea=[]
+        object_literal=None, object_tabula_indici: int = None
     ) -> Tuple:
         triples = []
 
         # raise ValueError(bag_meta)
+        # print(bag_meta)
 
         # @TODO: implement some way to discover implicit relations
         #        (up to one level). Would need scan table twice
@@ -1731,6 +1762,8 @@ def bcp47_rdf_extension_poc(
         value_prefixes = None
         if len(bag_meta["xsl:transform"]) > 0:
             for titem in bag_meta["xsl:transform"]:
+
+                # print(titem)
 
                 # tverb, tval_1, _nop_tval_2 = titem.split(':')
                 _temp1, temp2 = titem.split('||')
@@ -1782,13 +1815,18 @@ def bcp47_rdf_extension_poc(
                             )
 
             for item in object_results:
+                # object_result = _helper_aux_object(item)
+
                 if not bcp47_lang.startswith('qcc'):
+                    # @TODO escape " on item (if any)
                     object_result = '"{0}"@{1}'.format(item, bcp47_lang)
                 elif not is_literal:
                     # Example: prefixed result
                     object_result = item
                 else:
                     # TODO: implement other data types
+                    # object_result = _helper_aux_object(
+                    #     item, object_tabula_indici)
                     object_result = '"{0}"'.format(item)
 
                 triples.append([subject, predicate, object_result])
@@ -1798,6 +1836,23 @@ def bcp47_rdf_extension_poc(
         # raise ValueError(bag_meta)
 
         return triples, triples_delayed
+
+    def _helper_aux_object(
+        object_value: str,
+        object_tabula_indici: int,
+        # trivium: str,
+    ) -> Tuple:
+        # result
+        # triples = []
+        # trivium
+        # return object_value
+        # @TODO make it non-harcoded
+        # return '<urn:mdciii:{0}>'.format(object_value)
+
+        # @TODO implement object separator
+
+        object_result = '"{0}"'.format(object_value)
+        return object_value
 
     # raise ValueError(data, bag_meta)
     for linea in data:
@@ -1813,7 +1868,7 @@ def bcp47_rdf_extension_poc(
         for ego_typus in bag_meta['trivium']['rdf:type']:
             if not ego_typus.endswith('||0:NOP'):
                 raise NotImplementedError('[{0}] <{1}>'.format(
-                    ego_typus, bag_meta ))
+                    ego_typus, bag_meta))
             _ego_typus = ego_typus.replace('||0:NOP', '')
             triple = [triple_subject, 'a', _ego_typus]
             result['rdf_triplis'].append(triple)
@@ -1833,12 +1888,18 @@ def bcp47_rdf_extension_poc(
                 meta['caput_originali_asa'][referenced_by]['script'],
             )
             object_literal = linea[referenced_by]
-            aux_triples, triples_delayed = _helper_aux(
+            object_tabula_indici = linea.index(object_literal)
+
+            # _objects_parsed = _helper_aux_object(
+            #     object_literal, bcp47lang=_bcp47lang, trivium=objective_bag)
+
+            aux_triples, triples_delayed = _helper_aux_triple(
                 meta['caput_originali_asa'][referenced_by]['extension']['r'],
                 bcp47_lang=_bcp47lang,
                 subject=triple_subject,
                 object_literal=object_literal,
-                linea=linea)
+                object_tabula_indici=object_tabula_indici)
+
             if len(aux_triples) > 0:
                 result['rdf_triplis'].extend(aux_triples)
 
