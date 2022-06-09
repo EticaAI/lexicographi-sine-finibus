@@ -1738,6 +1738,41 @@ def bcp47_rdf_extension_poc(
             result['rdf_spatia_nominalibus'][prefix_pivot] = \
                 RDF_SPATIA_NOMINALIBUS_EXTRAS[prefix_pivot]
 
+    xsl_transform_prefix = EXTRA_OPERATORS['STX']['hxl'].upper()
+    xsl_transform_prefix_missing = set()
+    for caput_originali_asa in result['caput_asa']['caput_originali_asa']:
+        # print(caput_originali_asa)
+        # print(caput_originali_asa['extension']['r']['xsl:transform'])
+        xsl_items = caput_originali_asa['extension']['r']['xsl:transform']
+        if not xsl_items or len(xsl_items) == 0:
+            continue
+        # Example: ['U0002||unescothes:NOP', 'U001D||u007c:NOP']
+        for xsx_item_meta in xsl_items:
+            if not xsx_item_meta.startswith(xsl_transform_prefix):
+                continue
+            _temp1, _temp2 = xsx_item_meta.split('||')
+            xsl_transform_prefix_missing.add(_temp2.split(':').pop(0))
+        pass
+        # print(xsl_transform_prefix_missing)
+
+    if len(xsl_transform_prefix_missing) > 0:
+        for xsl_item in xsl_transform_prefix_missing:
+            # print('todo', xsl_item,
+            #       result['caput_asa']['rdf_spatia_nominalibus'])
+            if xsl_item in result['caput_asa']['rdf_spatia_nominalibus']:
+                continue
+            if xsl_item in RDF_SPATIA_NOMINALIBUS:
+                result['caput_asa']['rdf_spatia_nominalibus'][xsl_item] = \
+                    RDF_SPATIA_NOMINALIBUS[xsl_item]
+            elif xsl_item in RDF_SPATIA_NOMINALIBUS_EXTRAS:
+                result['caput_asa']['rdf_spatia_nominalibus'][xsl_item] = \
+                    RDF_SPATIA_NOMINALIBUS_EXTRAS[xsl_item]
+            else:
+                raise ValueError('prefix [{0}] not in <{1}> or <{2}>'.format(
+                    prefix_pivot, RDF_SPATIA_NOMINALIBUS_EXTRAS,
+                    RDF_SPATIA_NOMINALIBUS_EXTRAS
+                ))
+
     index_id = bag_meta['trivium']['index']
     triples_delayed = []
 
@@ -1770,6 +1805,8 @@ def bcp47_rdf_extension_poc(
                 tverb = _temp1
                 tval_1, _nop_tval_2 = temp2.split(':')
 
+                tverb = tverb.lower()
+
                 if tverb == EXTRA_OPERATORS['STX']['hxl']:
                     if value_prefixes is None:
                         value_prefixes = []
@@ -1778,6 +1815,10 @@ def bcp47_rdf_extension_poc(
                 elif tverb == EXTRA_OPERATORS['GS']['hxl']:
                     # @TODO: check this at compile time
                     value_separator = CSVW_SEPARATORS[tval_1]
+                else:
+                    raise SyntaxError('{0} not in [{1}] context <{2}>'.format(
+                        tverb, EXTRA_OPERATORS, [bag_meta, object_literal]
+                    ))
 
         # if 'csvw:separator' in bag_meta and \
         #         len(bag_meta['csvw:separator']) > 0:
@@ -1817,7 +1858,11 @@ def bcp47_rdf_extension_poc(
             for item in object_results:
                 # object_result = _helper_aux_object(item)
 
-                if not bcp47_lang.startswith('qcc'):
+                if 'rdfs:Datatype' in bag_meta and \
+                        bag_meta['rdfs:Datatype']:
+                    _temp1, _temp2 = bag_meta['rdfs:Datatype'].split('||')
+                    object_result = '"{0}"^^{1}'.format(item, _temp1)
+                elif not bcp47_lang.startswith('qcc'):
                     # @TODO escape " on item (if any)
                     object_result = '"{0}"@{1}'.format(item, bcp47_lang)
                 elif not is_literal:
