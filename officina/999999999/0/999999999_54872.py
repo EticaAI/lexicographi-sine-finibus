@@ -114,17 +114,27 @@ Temporary tests . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
     {0} --objectivum-formato=_temp_bcp47 --rdf-namespaces-archivo=\
 999999999/1568346/data/hxlstandard-rdf-namespaces-example.hxl.csv \
-999999999/1568346/data/unesco-thesaurus.bcp47g.tsv
+999999999/1568346/data/unesco-thesaurus.bcp47g.tsv --rdf-bag=1
 
     {0} --objectivum-formato=_temp_bcp47 --rdf-namespaces-archivo=\
 999999999/1568346/data/hxlstandard-rdf-namespaces-example.hxl.csv \
---rdf-bag=2 \
-999999999/1568346/data/unesco-thesaurus.bcp47g.tsv
+999999999/1568346/data/unesco-thesaurus.bcp47g.tsv --rdf-bag=2
 
     {0} --objectivum-formato=_temp_bcp47 --rdf-namespaces-archivo=\
 999999999/1568346/data/hxlstandard-rdf-namespaces-example.hxl.csv \
 999999999/1568346/data/unesco-thesaurus.bcp47g.tsv \
 | rapper --quiet --input=turtle --output=turtle /dev/fd/0
+
+(Data operation; example of "SKOS version" without OWL/OBO assertions)
+    {0} --objectivum-formato=_temp_bcp47 \
+999999999/1568346/data/cod-ab-example1-with-inferences.bcp47.tsv \
+--rdf-sine-spatia-nominalibus=owl,obo --rdf-bag=2
+
+(Data operation; example of "OWL + OBO" without SKOS linguistic metadata)
+    {0} --objectivum-formato=_temp_bcp47 \
+999999999/1568346/data/cod-ab-example1-with-inferences.bcp47.tsv \
+--rdf-sine-spatia-nominalibus=skos,wdata --rdf-bag=2
+
 
 ------------------------------------------------------------------------------
                             EXEMPLŌRUM GRATIĀ
@@ -257,11 +267,6 @@ class Cli:
             default='application/x-turtle'
         )
 
-        # archīvum, n, s, nominativus, https://en.wiktionary.org/wiki/archivum
-        # cōnfigūrātiōnī, f, s, dativus,
-        #                      https://en.wiktionary.org/wiki/configuratio#Latin
-        # ex
-        # fontī, m, s, dativus, https://en.wiktionary.org/wiki/fons#Latin
         parser.add_argument(
             '--rdf-bag',
             help='(Advanced) RDF bag; extract triples from tabular data from '
@@ -270,6 +275,22 @@ class Cli:
             nargs='?',
             # required=True,
             default='1'
+        )
+
+        # - spatium, s, n, nominativus, https://en.wiktionary.org/wiki/spatium#Latin
+        # - nōminālī, s, n, dativus, https://en.wiktionary.org/wiki/nominalis#Latin
+        # - ... /spatium nominali/ (s, n)
+        #   - /spatia nōminālibus/ (pl, n)
+        #
+        parser.add_argument(
+            '--rdf-sine-spatia-nominalibus',
+            help='Even if source tabular data document how to export to a new '
+            'RDF namespace, ignore it. Useful to generate SKOS and OWL '
+            'by excluding each other prefixes.',
+            dest='rdf_sine_spatia_nominalibus',
+            nargs='?',
+            # required=True,
+            type=lambda x: x.split(',')
         )
 
         parser.add_argument(
@@ -352,7 +373,9 @@ class Cli:
                 _infile, _stdin, punctum_separato="\t")
 
             meta = bcp47_rdf_extension_poc(
-                caput, data, objective_bag=pyargs.rdf_bag, est_meta=True)
+                caput, data, objective_bag=pyargs.rdf_bag,
+                rdf_sine_spatia_nominalibus=pyargs.rdf_sine_spatia_nominalibus,
+                est_meta=True)
             print(json.dumps(meta, sort_keys=False, ensure_ascii=False))
             return self.EXIT_OK
 
@@ -363,7 +386,8 @@ class Cli:
             # print(caput, data)
             # print('')
             meta = bcp47_rdf_extension_poc(
-                caput, data, objective_bag=pyargs.rdf_bag)
+                caput, data, objective_bag=pyargs.rdf_bag,
+                rdf_sine_spatia_nominalibus=pyargs.rdf_sine_spatia_nominalibus)
             # print(json.dumps(meta, sort_keys=True ,ensure_ascii=False))
             # return self.EXIT_OK
 

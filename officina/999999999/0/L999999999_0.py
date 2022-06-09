@@ -1194,7 +1194,7 @@ def bcp47_rdf_extension(
                 if verb in RDF_SPATIA_NOMINALIBUS_PREFIX:
                     verb = RDF_SPATIA_NOMINALIBUS_PREFIX[verb]
 
-                result['rdf:type'].append('{0}||{1}'.format(
+                result['rdf:type'].append('{0}||0:{1}'.format(
                     verb, r_op_2
                 ))
                 # pass
@@ -1396,6 +1396,8 @@ def bcp47_rdf_extension_relationship(
     Returns:
         dict: _description_
     """
+    # @TODO: this function is obviously doing too much at once. Eventually
+    #        can be refactored. (rocha, 2022-06-09 10:50 UTC)
     result = {
         'caput_originali': header,
         'caput_originali_asa': [],
@@ -1445,6 +1447,7 @@ def bcp47_rdf_extension_relationship(
         }
         return result
 
+    # ========= Fist iteration over each column, START =========
     for index, item in enumerate(header):
         item_meta = bcp47_langtag(
             item, ['language', 'script', 'extension'], strictum=False)
@@ -1570,7 +1573,9 @@ def bcp47_rdf_extension_relationship(
                     item_meta['_index_ex_tabula'])
 
         result['caput_originali_asa'].append(item_meta)
-    # raise ValueError(result['rdfs:Container'])
+
+    # ========= Fist iteration over each column, END =========
+    # Note: after here still necessary do some additional checks
 
     # Clean up, general changes, etc on rdfs:Container
     for item in result['rdfs:Container']:
@@ -1609,21 +1614,26 @@ def bcp47_rdf_extension_relationship(
         if _trivum_xsl and len(_trivum_xsl) > 0:
             for _itemxls in _trivum_xsl:
                 # Exemplum: U0002||unescothes:NOP
-                _temp1, temp2 = _itemxls.split('||')
+                _temp1, _temp2 = _itemxls.split('||')
                 tverb = _temp1
-                tval_1, _nop_tval_2 = temp2.split(':')
+                tval_1, _nop_tval_2 = _temp2.split(':')
                 if tverb.lower() == EXTRA_OPERATORS['STX']['hxl']:
                     # print('tval_1', tval_1)
                     result['rdfs:Container'][item]['trivium'][
                         'rdf_praefixum'] = tval_1
 
-        # _trivum_rdftypes = result['caput_originali_asa'][
-        #     _trivium_indici]['extension']['r']['xsl:transform']
-                # print('_itemxls', _itemxls)
-        # print(item, result['rdfs:Container'])
-        # print(item, _trivum_xsl)
-        # print(item_meta)
-        # print(item_meta['extension']['r']['xsl:transform'])
+        _trivum_rdftypes = result['caput_originali_asa'][
+            _trivium_indici]['extension']['r']['rdf:type']
+        if _trivum_rdftypes and len(_trivum_rdftypes) > 0:
+            # Exemplum: ['obo:BFO_0000029||0:NOP']
+            for _itemtype in _trivum_rdftypes:
+                # _temp1, _temp2 = _itemtype.split('||')
+                # tverb = _temp1
+                # tval_1, _nop_tval_2 = _temp2.split(':')
+                if _itemtype not in \
+                        result['rdfs:Container'][item]['trivium']['rdf:type']:
+                    result['rdfs:Container'][item]['trivium'][
+                        'rdf:type'].append(_itemtype)
 
     return result
 
@@ -1637,6 +1647,7 @@ def bcp47_rdf_extension_poc(
         objective_bag: str = '1',
         _auxiliary_bags: List[str] = None,
         namespaces: List[dict] = None,
+        rdf_sine_spatia_nominalibus: List = None,
         est_meta: bool = False,
         strictum: bool = True
 ) -> dict:
@@ -1691,6 +1702,9 @@ def bcp47_rdf_extension_poc(
         'rdf_triplis': [],
         '_error': [],
     }
+
+    if not rdf_sine_spatia_nominalibus or len(rdf_sine_spatia_nominalibus) == 0:
+        rdf_sine_spatia_nominalibus = None
 
     # return {}
 
@@ -1891,12 +1905,14 @@ def bcp47_rdf_extension_poc(
 
             for item in object_results:
                 # object_result = _helper_aux_object(item)
+                is_namespaced_object = False
 
                 if is_object_also_a_key and is_object_also_urnmcdiii:
                     object_result = '<urn:mcdiii:{0}>'.format(item)
                 elif is_object_also_a_key and len(prefix_object_also_a_key) > 0:
-                    bject_result = '{0}:{1}'.format(
+                    object_result = '{0}:{1}'.format(
                         prefix_object_also_a_key, item)
+                    is_namespaced_object = True
                 elif 'rdfs:Datatype' in bag_meta and \
                         bag_meta['rdfs:Datatype']:
                     _temp1, _temp2 = bag_meta['rdfs:Datatype'].split('||')
@@ -1913,6 +1929,20 @@ def bcp47_rdf_extension_poc(
                     #     item, object_tabula_indici)
                     object_result = '"{0}"'.format(item)
 
+                # raise ValueError(item)
+                if rdf_sine_spatia_nominalibus is not None \
+                        and predicate.find(':') > -1:
+                    _item_p_ns = predicate.split(':').pop(0)
+                    if _item_p_ns in rdf_sine_spatia_nominalibus:
+                        continue
+                # raise ValueError(item, is_namespaced_object)
+                if rdf_sine_spatia_nominalibus is not None \
+                        and is_namespaced_object is True:
+                    # raise ValueError(item)
+                    _item_o_ns = object_result.split(':').pop(0)
+                    if _item_o_ns in rdf_sine_spatia_nominalibus:
+                        continue
+                # raise ValueError(item)
                 triples.append([subject, predicate, object_result])
                 # continue
 
@@ -1920,23 +1950,6 @@ def bcp47_rdf_extension_poc(
         # raise ValueError(bag_meta)
 
         return triples, triples_delayed
-
-    def _helper_aux_object(
-        object_value: str,
-        object_tabula_indici: int,
-        # trivium: str,
-    ) -> Tuple:
-        # result
-        # triples = []
-        # trivium
-        # return object_value
-        # @TODO make it non-harcoded
-        # return '<urn:mdciii:{0}>'.format(object_value)
-
-        # @TODO implement object separator
-
-        object_result = '"{0}"'.format(object_value)
-        return object_value
 
     # raise ValueError(data, bag_meta)
     for linea in data:
@@ -1947,6 +1960,9 @@ def bcp47_rdf_extension_poc(
         elif is_urn:
             triple_subject = '<urn:{0}>'.format(linea[index_id])
         else:
+            if rdf_sine_spatia_nominalibus is not None and \
+                    prefix_pivot in rdf_sine_spatia_nominalibus:
+                continue
             triple_subject = '{0}:{1}'.format(prefix_pivot, linea[index_id])
 
         for ego_typus in bag_meta['trivium']['rdf:type']:
@@ -1954,6 +1970,10 @@ def bcp47_rdf_extension_poc(
                 raise NotImplementedError('[{0}] <{1}>'.format(
                     ego_typus, bag_meta))
             _ego_typus = ego_typus.replace('||0:NOP', '')
+            if rdf_sine_spatia_nominalibus is not None:
+                _ego_typus.split(':').pop(0)
+                if _ego_typus.split(':').pop(0) in rdf_sine_spatia_nominalibus:
+                    continue
             triple = [triple_subject, 'a', _ego_typus]
             result['rdf_triplis'].append(triple)
 
@@ -1986,6 +2006,20 @@ def bcp47_rdf_extension_poc(
 
             if len(aux_triples) > 0:
                 result['rdf_triplis'].extend(aux_triples)
+
+    if rdf_sine_spatia_nominalibus is not None:
+        _temp1 = {}
+        for item_ns, item_iri in result['caput_asa']['rdf_spatia_nominalibus'].items():
+            if item_ns not in rdf_sine_spatia_nominalibus:
+                _temp1[item_ns] = item_iri
+        result['caput_asa']['rdf_spatia_nominalibus'] = _temp1
+        # raise ValueError(result['rdf_spatia_nominalibus'])
+        # pass
+        # and is_namespaced_object is True:
+
+    if 'rdf_spatia_nominalibus' in result:
+        # @TODO remove this later.
+        del result['rdf_spatia_nominalibus']
 
     if est_meta:
         # @TODO: annex extra information
@@ -3222,7 +3256,7 @@ def hxl_hashtag_to_bcp47(hashtag: str) -> str:
                     prefix)
                 # raise ValueError(item, prefix_normali)
                 type_prefix, type_item = prefix_normali.split(':')
-                type_meta = prefix_normali + '||NOP'
+                type_meta = prefix_normali + '||0:NOP'
                 result['extension']['r']['rdf:type'].append(type_meta)
                 _bpc47_g_parts.append('a{0}-a{1}-anop'.format(
                     type_prefix.upper(), type_item.lower()
