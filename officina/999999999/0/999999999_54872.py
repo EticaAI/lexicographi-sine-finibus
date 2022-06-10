@@ -43,6 +43,7 @@ import yaml
 
 # l999999999_0 = __import__('999999999_0')
 from L999999999_0 import (
+    BCP47_AD_HXL,
     RDF_SPATIA_NOMINALIBUS_EXTRAS,
     bcp47_langtag,
     bcp47_rdf_extension_poc,
@@ -429,15 +430,40 @@ class Cli:
 
             caput = _infile.split(delimiter)
             caput_novo = []
+            errors = []
 
             for item in caput:
+                if item in BCP47_AD_HXL:
+                    # print(BCP47_AD_HXL[item])
+                    # item_meta = bcp47_langtag(BCP47_AD_HXL[item])
+                    caput_novo.append(BCP47_AD_HXL[item]['hxltm'])
+                    continue
+                # item_meta = bcp47_langtag(item,strictum=False)
                 item_meta = bcp47_langtag(item)
-                # print(item_meta)
-                # print(item_meta['_callbacks']['hxl_attrs'])
-                caput_novo.append('{0}{1}'.format(
-                    hxl_base,
-                    item_meta['_callbacks']['hxl_attrs']
-                ))
+
+                if len(item_meta['_error']) == 0 and \
+                        item_meta['Language-Tag_normalized']:
+                    caput_novo.append('{0}{1}'.format(
+                        hxl_base,
+                        item_meta['_callbacks']['hxl_attrs']
+                    ))
+                else:
+                    caput_novo.append('qcc-Zxxx-x-error')
+                    if len(item_meta['_error']) > 0:
+                        errors.append('ERROR: {0}'.format(item))
+                        errors.extend(item_meta['_error'])
+                    else:
+                        errors.append('ERROR: {0} <{1}>'.format(
+                            item, item_meta))
+
+                # caput_novo.append('{0}{1}'.format(
+                #     hxl_base,
+                #     item_meta['_callbacks']['hxl_attrs']
+                # ))
+
+            if len(errors) > 0:
+                print(errors)
+                return self.EXIT_ERROR
 
             print(delimiter.join(caput_novo))
 
@@ -463,17 +489,33 @@ class Cli:
 
             caput = _infile.split(delimiter)
             caput_novo = []
+            errors = []
 
             # print('TODO _temp_header_hxl_to_bcp47', caput)
 
             for item in caput:
                 item_meta = hxl_hashtag_to_bcp47(item)
-                # print(item_meta)
-                caput_novo.append(item_meta['Language-Tag_normalized'])
+                # print('')
+                # print(item, item_meta)
+                if len(item_meta['_error']) == 0 and \
+                        item_meta['Language-Tag_normalized']:
+                    caput_novo.append(item_meta['Language-Tag_normalized'])
+                else:
+                    caput_novo.append('qcc-Zxxx-x-error')
+                    if len(item_meta['_error']) > 0:
+                        errors.append('ERROR: {0}'.format(item))
+                        errors.extend(item_meta['_error'])
+                    else:
+                        errors.append('ERROR: {0} <{1}>'.format(
+                            item, item_meta))
                 # caput_novo.append('{0}{1}'.format(
                 #     hxl_base,
                 #     item_meta['_callbacks']['hxl_attrs']
                 # ))
+
+            if len(errors) > 0:
+                print(errors)
+                return self.EXIT_ERROR
 
             print(delimiter.join(caput_novo))
 
