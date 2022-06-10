@@ -2193,8 +2193,8 @@ class CodAbTabulae:
         # if formatum in ['hxltm', 'no1'] and self.identitas_locali_index < 0:
         #     self.praeparatio_identitas_locali()
 
-        if self.numerordinatio_indici < 0:
-            self.praeparatio_numerordinatio()
+            if self.numerordinatio_indici < 0:
+                self.praeparatio_numerordinatio()
 
         return self
 
