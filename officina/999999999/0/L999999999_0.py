@@ -198,9 +198,25 @@ HXL_ATTRIBUTES_AD_WIKIDATA = {
             # P1448: short name of a place, organisation, person, journal,
             #        Wikidata property, etc.
             'wdata': 'P1813'  # short name
-        }
+        },
         # [+code / +v_pcode] varies by context
         # '+code': {}
+        '+v_m49': {
+            'wdata': 'P2082'  # United Nations M.49 code for the subject item
+        },
+        '+v_iso3166p1a2': {
+            'wdata': 'P297'  # ISO 3166-1 alpha-2 code
+        },
+        '+v_iso3166p1a3': {
+            'wdata': 'P298'  # ISO 3166-1 alpha-3 code
+        },
+        # Consider using UN m49 code instead of the ISO one
+        '+v_iso3166p1n': {
+            'wdata': 'P299'  # ISO 3166-1 numeric code
+        },
+        '+v_iso3166p2': {
+            'wdata': 'P300'  # subdivision code ISO 3166-2
+        },
     },
     # Note: avoid use generic
     'zzzgeneric': {
@@ -218,22 +234,33 @@ HXL_HASHTAGS_AD_WIKIDATA = {
     '#country': {
         'wdata': 'Q6256'  # country
     },
+    # Not a valid HXL hashtag, but using anyway as alias to country
+    '#adm0': {
+        'hxlattrs': HXL_ATTRIBUTES_AD_WIKIDATA['geo'],
+        'wdata': 'Q6256'  # country
+    },
     '#adm1': {
+        'hxlattrs': HXL_ATTRIBUTES_AD_WIKIDATA['geo'],
         'wdata': 'Q10864048'  # first-level administrative country subdivisio
     },
     '#adm2': {
+        'hxlattrs': HXL_ATTRIBUTES_AD_WIKIDATA['geo'],
         'wdata': 'Q13220204'  # second-level administrative country subdivision
     },
     '#adm3': {
+        'hxlattrs': HXL_ATTRIBUTES_AD_WIKIDATA['geo'],
         'wdata': 'Q13221722'  # third-level administrative country subdivision
     },
     '#adm4': {
+        'hxlattrs': HXL_ATTRIBUTES_AD_WIKIDATA['geo'],
         'wdata': 'Q14757767'  # fourth-level administrative country subdivision
     },
     '#adm5': {
+        'hxlattrs': HXL_ATTRIBUTES_AD_WIKIDATA['geo'],
         'wdata': 'Q15640612'  # fifth-level administrative country subdivision
     },
     '#adm6': {
+        'hxlattrs': HXL_ATTRIBUTES_AD_WIKIDATA['geo'],
         'wdata': 'Q22927291'  # sixth-level administrative country subdivision
     },
 }
