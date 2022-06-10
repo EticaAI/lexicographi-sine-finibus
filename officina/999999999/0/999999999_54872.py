@@ -135,6 +135,14 @@ Temporary tests . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 999999999/1568346/data/cod-ab-example1-with-inferences.bcp47.tsv \
 --rdf-sine-spatia-nominalibus=skos,wdata --rdf-bag=2
 
+(Data operations, header conversion RDF+HXL -> RDF+BCP47)
+    varbcp47=$(head -n1 \
+999999999/1568346/data/cod-ab-example1-with-inferences.bcp47.tsv)
+    {0} --objectivum-formato=_temp_header_hxl_to_bcp47 "$varbcp47"
+
+(Data operations, header conversion RDF+BCP47 -> RDF+HXL)
+    {0} --objectivum-formato=_temp_header_bcp47_to_hxl \
+999999999/1568346/data/cod-ab-example1-with-inferences.bcp47.tsv
 
 ------------------------------------------------------------------------------
                             EXEMPLŌRUM GRATIĀ
@@ -262,6 +270,8 @@ class Cli:
                 # 'application/x-ndjson',
                 '_temp_bcp47',
                 '_temp_bcp47_meta_in_json',
+                '_temp_header_hxl_to_bcp47',
+                '_temp_header_bcp47_to_hxl',
             ],
             # required=True
             default='application/x-turtle'
@@ -402,6 +412,38 @@ class Cli:
             for triple in meta['rdf_triplis']:
                 print('{0} {1} {2} .'.format(triple[0], triple[1], triple[2]))
 
+            return self.EXIT_OK
+
+        if pyargs.objectivum_formato == '_temp_header_bcp47_to_hxl':
+            print('TODO _temp_header_bcp47_to_hxl')
+            # caput, data = hxltm_carricato_brevibus(
+            #     _infile, _stdin, punctum_separato="\t")
+
+            # meta = bcp47_rdf_extension_poc(
+            #     caput, data, objective_bag=pyargs.rdf_bag,
+            #     rdf_sine_spatia_nominalibus=pyargs.rdf_sine_spatia_nominalibus,
+            #     est_meta=True)
+            # print(json.dumps(meta, sort_keys=False, ensure_ascii=False))
+            return self.EXIT_OK
+
+        if pyargs.objectivum_formato == '_temp_header_hxl_to_bcp47':
+            delimiter = "\t"
+            if _stdin is True:
+                raise NotImplementedError
+            if _infile.find("\t") == -1:
+                if _infile.find(",") > -1:
+                    delimiter = ','
+                else:
+                    raise NotImplementedError
+            caput = _infile.split(delimiter)
+
+            print('TODO _temp_header_hxl_to_bcp47', caput)
+
+            # meta = bcp47_rdf_extension_poc(
+            #     caput, data, objective_bag=pyargs.rdf_bag,
+            #     rdf_sine_spatia_nominalibus=pyargs.rdf_sine_spatia_nominalibus,
+            #     est_meta=True)
+            # print(json.dumps(meta, sort_keys=False, ensure_ascii=False))
             return self.EXIT_OK
 
         # _infile = None
