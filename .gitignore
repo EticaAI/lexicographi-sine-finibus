@@ -35,6 +35,7 @@ officina/1603/1603.statum.yml
 !officina/999999999/1568346/data/cod-ab-example1.bcp47.tsv
 # !officina/999999999/1568346/data/cod-ab-example2.bcp47.tsv
 !officina/999999999/1568346/data/cod-ab-example1-with-inferences.bcp47.tsv
+!officina/999999999/1568346/data/cod-ab-example1-with-inferences.no1.hxl.tm.tsv
 !officina/999999999/1568346/data/hxlstandard-rdf-namespaces-hardcoded.hxl.csv
 !officina/999999999/1568346/data/hxlstandard-rdf-namespaces-example.hxl.csv
 # /officina/README.md

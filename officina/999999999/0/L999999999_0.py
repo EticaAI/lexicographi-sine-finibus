@@ -95,6 +95,15 @@ BCP47_LANGTAG_EXTENSIONS = {
     'r': lambda r, strictum: bcp47_rdf_extension(r, strictum=strictum)
 }
 
+BCP47_EX_HXL = {
+    'qcc-Zxxx-r-aMDCIII-alatcodicem-anop':
+    '#item+conceptum+codicem',
+    'qcc-Zxxx-r-aMDCIII-alatnumerordinatio-anop-sU2200-s1603-snop':
+    '#item+conceptum+numerordinatio',
+}
+
+BCP47_EX_HXL_EXTRAS = {}
+
 # @TODO allow non hardcoded CSV_SEPARATORS
 # Hacky way to have inline cell separators.
 CSVW_SEPARATORS = {

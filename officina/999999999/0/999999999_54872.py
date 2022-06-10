@@ -44,7 +44,9 @@ import yaml
 # l999999999_0 = __import__('999999999_0')
 from L999999999_0 import (
     RDF_SPATIA_NOMINALIBUS_EXTRAS,
+    bcp47_langtag,
     bcp47_rdf_extension_poc,
+    hxl_hashtag_to_bcp47,
     hxltm_carricato,
     HXLTMAdRDFSimplicis,
     hxltm_carricato_brevibus,
@@ -415,7 +417,30 @@ class Cli:
             return self.EXIT_OK
 
         if pyargs.objectivum_formato == '_temp_header_bcp47_to_hxl':
-            print('TODO _temp_header_bcp47_to_hxl')
+            delimiter = "\t"
+            hxl_base = '#item+rem'
+            if _stdin is True:
+                raise NotImplementedError
+            if _infile.find("\t") == -1:
+                if _infile.find(",") > -1:
+                    delimiter = ','
+                else:
+                    raise NotImplementedError
+
+            caput = _infile.split(delimiter)
+            caput_novo = []
+
+            for item in caput:
+                item_meta = bcp47_langtag(item)
+                # print(item_meta)
+                # print(item_meta['_callbacks']['hxl_attrs'])
+                caput_novo.append('{0}{1}'.format(
+                    hxl_base,
+                    item_meta['_callbacks']['hxl_attrs']
+                ))
+
+            print(delimiter.join(caput_novo))
+
             # caput, data = hxltm_carricato_brevibus(
             #     _infile, _stdin, punctum_separato="\t")
 
@@ -435,15 +460,23 @@ class Cli:
                     delimiter = ','
                 else:
                     raise NotImplementedError
+
             caput = _infile.split(delimiter)
+            caput_novo = []
 
-            print('TODO _temp_header_hxl_to_bcp47', caput)
+            # print('TODO _temp_header_hxl_to_bcp47', caput)
 
-            # meta = bcp47_rdf_extension_poc(
-            #     caput, data, objective_bag=pyargs.rdf_bag,
-            #     rdf_sine_spatia_nominalibus=pyargs.rdf_sine_spatia_nominalibus,
-            #     est_meta=True)
-            # print(json.dumps(meta, sort_keys=False, ensure_ascii=False))
+            for item in caput:
+                item_meta = hxl_hashtag_to_bcp47(item)
+                # print(item_meta)
+                caput_novo.append(item_meta['Language-Tag_normalized'])
+                # caput_novo.append('{0}{1}'.format(
+                #     hxl_base,
+                #     item_meta['_callbacks']['hxl_attrs']
+                # ))
+
+            print(delimiter.join(caput_novo))
+
             return self.EXIT_OK
 
         # _infile = None
