@@ -232,36 +232,45 @@ HXL_ATTRIBUTES_AD_WIKIDATA = {
 # wdtaxonomy Q6256 -P P131
 HXL_HASHTAGS_AD_WIKIDATA = {
     '#country': {
-        'wdata': 'Q6256'  # country
+        'hxlattrs': HXL_ATTRIBUTES_AD_WIKIDATA['geo'],
+        'wdata': 'Q6256',  # country
+        'rdftrivio': '5000'
     },
     # Not a valid HXL hashtag, but using anyway as alias to country
     '#adm0': {
         'hxlattrs': HXL_ATTRIBUTES_AD_WIKIDATA['geo'],
-        'wdata': 'Q6256'  # country
+        'wdata': 'Q6256',  # country
+        'rdftrivio': '5000'
     },
     '#adm1': {
         'hxlattrs': HXL_ATTRIBUTES_AD_WIKIDATA['geo'],
-        'wdata': 'Q10864048'  # first-level administrative country subdivisio
+        'wdata': 'Q10864048',  # first-level administrative country subdivisio
+        'rdftrivio': '5001'
     },
     '#adm2': {
         'hxlattrs': HXL_ATTRIBUTES_AD_WIKIDATA['geo'],
-        'wdata': 'Q13220204'  # second-level administrative country subdivision
+        'wdata': 'Q13220204',  # second-level administrative country subdivision
+        'rdftrivio': '5002'
     },
     '#adm3': {
         'hxlattrs': HXL_ATTRIBUTES_AD_WIKIDATA['geo'],
-        'wdata': 'Q13221722'  # third-level administrative country subdivision
+        'wdata': 'Q13221722',  # third-level administrative country subdivision
+        'rdftrivio': '5003'
     },
     '#adm4': {
         'hxlattrs': HXL_ATTRIBUTES_AD_WIKIDATA['geo'],
-        'wdata': 'Q14757767'  # fourth-level administrative country subdivision
+        'wdata': 'Q14757767',  # fourth-level administrative country subdivision
+        'rdftrivio': '5004'
     },
     '#adm5': {
         'hxlattrs': HXL_ATTRIBUTES_AD_WIKIDATA['geo'],
-        'wdata': 'Q15640612'  # fifth-level administrative country subdivision
+        'wdata': 'Q15640612',  # fifth-level administrative country subdivision
+        'rdftrivio': '5005'
     },
     '#adm6': {
         'hxlattrs': HXL_ATTRIBUTES_AD_WIKIDATA['geo'],
-        'wdata': 'Q22927291'  # sixth-level administrative country subdivision
+        'wdata': 'Q22927291',  # sixth-level administrative country subdivision
+        'rdftrivio': '5006'
     },
 }
 
@@ -2196,7 +2205,8 @@ def bcp47_rdf_extension_poc(
             triple = [triple_subject, 'a', predicate]
             result['rdf_triplis'].append(triple)
 
-        for referenced_by in bag_meta['indices_columnis']:
+        # for referenced_by in bag_meta['indices_columnis']:
+        for referenced_by in bag_meta['indices_cum_aliis']:
             if referenced_by == index_id:
                 continue
 
