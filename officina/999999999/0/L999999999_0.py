@@ -34,6 +34,7 @@
 
 
 import csv
+from functools import reduce
 from genericpath import exists
 import json
 from multiprocessing.sharedctypes import Value
@@ -45,6 +46,7 @@ import re
 import sys
 from datetime import date, datetime
 from typing import (
+    Any,
     Iterator,
     List,
     Tuple,
@@ -232,7 +234,8 @@ HXL_ATTRIBUTES_AD_RDF = {
 # wdtaxonomy Q6256 -P P131
 HXL_HASHTAGS_AD_RDF = {
     '#country': {
-        'hxlattrs': HXL_ATTRIBUTES_AD_RDF['geo'],
+        '__hxlattrs': HXL_ATTRIBUTES_AD_RDF['geo'],
+        'hxlattrs': {},  # Requires processing ifer __hxlattrs better value
         'wdata': 'Q6256',  # country
         'rdftrivio': '5000',
         'rdftypis': {
@@ -254,7 +257,8 @@ HXL_HASHTAGS_AD_RDF = {
     #     ]
     # },
     '#adm1': {
-        'hxlattrs': HXL_ATTRIBUTES_AD_RDF['geo'],
+        '__hxlattrs': HXL_ATTRIBUTES_AD_RDF['geo'],
+        'hxlattrs': {},
         'wdata': 'Q10864048',  # first-level administrative country subdivision
         'rdftrivio': '5001',
         'rdftypis': {
@@ -270,7 +274,8 @@ HXL_HASHTAGS_AD_RDF = {
         ]
     },
     '#adm2': {
-        'hxlattrs': HXL_ATTRIBUTES_AD_RDF['geo'],
+        '__hxlattrs': HXL_ATTRIBUTES_AD_RDF['geo'],
+        'hxlattrs': {},
         'wdata': 'Q13220204',  # second-level administrative country subdivision
         'rdftrivio': '5002',
         'rdftypis': {
@@ -286,7 +291,8 @@ HXL_HASHTAGS_AD_RDF = {
         ]
     },
     '#adm3': {
-        'hxlattrs': HXL_ATTRIBUTES_AD_RDF['geo'],
+        '__hxlattrs': HXL_ATTRIBUTES_AD_RDF['geo'],
+        'hxlattrs': {},
         'wdata': 'Q13221722',  # third-level administrative country subdivision
         'rdftrivio': '5003',
         'rdftypis': {
@@ -302,7 +308,8 @@ HXL_HASHTAGS_AD_RDF = {
         ]
     },
     '#adm4': {
-        'hxlattrs': HXL_ATTRIBUTES_AD_RDF['geo'],
+        '__hxlattrs': HXL_ATTRIBUTES_AD_RDF['geo'],
+        'hxlattrs': {},
         'wdata': 'Q14757767',  # fourth-level administrative country subdivision
         'rdftrivio': '5004',
         'rdftypis': {
@@ -318,7 +325,8 @@ HXL_HASHTAGS_AD_RDF = {
         ]
     },
     '#adm5': {
-        'hxlattrs': HXL_ATTRIBUTES_AD_RDF['geo'],
+        '__hxlattrs': HXL_ATTRIBUTES_AD_RDF['geo'],
+        'hxlattrs': {},
         'wdata': 'Q15640612',  # fifth-level administrative country subdivision
         'rdftrivio': '5005',
         'rdftypis': {
@@ -334,7 +342,8 @@ HXL_HASHTAGS_AD_RDF = {
         ]
     },
     '#adm6': {
-        'hxlattrs': HXL_ATTRIBUTES_AD_RDF['geo'],
+        '__hxlattrs': HXL_ATTRIBUTES_AD_RDF['geo'],
+        'hxlattrs': {},
         'wdata': 'Q22927291',  # sixth-level administrative country subdivision
         'rdftrivio': '5006',
         'rdftypis': {
@@ -2506,8 +2515,11 @@ class CodAbTabulae:
 
             # self.dictionaria_linguarum = DictionariaLinguarum()
 
+            caput = self.caput_hxltm
+            caput.insert(0, '#item+conceptum+numerordinatio')
+
             # for index, res in enumerate(self.caput_no1):
-            for index, res in enumerate(self.caput_hxltm):
+            for index, res in enumerate(caput):
                 caput_novi = self.quod_no1bcp47_de_hxltm_rei(res)
 
                 # if caput_novi == '#item+conceptum+codicem':
@@ -2885,14 +2897,30 @@ class CodAbTabulae:
         Returns:
             str:
         """
-        # lingua = ''
+        # @TODO this is no1 in HXL (change later for BCP47)
 
         if not hxlhashtag or len(hxlhashtag) == 0 or \
                 not hxlhashtag.startswith('#'):
             return ''
 
+        # if hxlhashtag in BCP47_EX_HXL:
+        #     return BCP47_EX_HXL[hxlhashtag]['bcp47']
+
         if hxlhashtag in BCP47_EX_HXL:
-            return BCP47_EX_HXL[hxlhashtag]['bcp47']
+            # 'hxl': '#item+rem+i_qcc+is_zxxx+rdf_a_mdciii_latcodicem',
+            # 'hxltm': '#item+conceptum+codicem'
+            return BCP47_EX_HXL[hxlhashtag]['hxltm']
+
+        _hxl = HXLHashtagSimplici(hxlhashtag).praeparatio()
+
+        print(hxlhashtag)
+        print("\t\t hashtag", _hxl.hashtag)
+        print("\t\t wdata", _hxl.quod_ad_rdf('wdata'))
+        print("\t\t hxlattrs", _hxl.quod_ad_rdf('hxlattrs'))
+
+        # raise ValueError( _hxl.hashtag)
+
+        return _hxl.hashtag
 
         # return hxlhashtag + '+oi'
         return hxlhashtag
@@ -3183,6 +3211,30 @@ class DictionariaLinguarum:
                     return linguam
 
         return None
+
+
+def de_dotted(dotted_key: str,  # pylint: disable=invalid-name
+              default: Any = None, fontem: dict = None) -> Any:
+    """
+    Trivia: dē, https://en.wiktionary.org/wiki/de#Latin
+    Examples:
+        >>> exemplum = {'a': {'a2': 123}, 'b': 456}
+        >>> otlg = HXLTMOntologia(exemplum)
+        >>> otlg.de('a.a2', fontem=exemplum)
+        123
+    Args:
+        dotted_key (str): Dotted key notation
+        default ([Any], optional): Value if not found. Defaults to None.
+        fontem (dict): An nested object to search
+    Returns:
+        [Any]: Return the result. Defaults to default
+    """
+
+    keys = dotted_key.split('.')
+    return reduce(
+        lambda d, key: d.get(
+            key) if d else default, keys, fontem
+    )
 
 
 class DictionariaInterlinguarum:
@@ -3528,9 +3580,10 @@ class HXLHashtagSimplici:
     """
     # orīgināle, s, n, nominativus, en.wiktionary.org/wiki/originalis#Latin
     originale: str
-    hashtag: str = ''
+    hashtag: str = None
     tag: str = None
     attributes: List[str] = []
+    ad_rdf: dict = None
 
     def __init__(
         self,
@@ -3540,12 +3593,45 @@ class HXLHashtagSimplici:
 
         self.originale = hashtag
 
+    def habeo_attributa(self, quaestio: Union[list, str]) -> bool:
+        # https://en.wiktionary.org/wiki/habeo#Latin
+        # attribūta, pl, nominativus, en.wiktionary.org/wiki/attributus#Latin
+        if not quaestio or len(quaestio) == 0:
+            return False
+
+        if not isinstance(quaestio, list):
+            quaestio = quaestio.lower()
+            quaestio = quaestio.split('+')
+        quaestio = list(filter(len, quaestio))
+
+        if len(quaestio) == 0:
+            return False
+
+        # print(quaestio)
+        for _item in quaestio:
+            if _item not in self.attributes:
+                # print('n foi', quaestio)
+                return False
+        # print('foi')
+        return True
+
+    def quod_ad_rdf(self, quaestio: str):
+        if self.ad_rdf is None:
+            return None
+
+        return de_dotted(quaestio, fontem=self.ad_rdf)
+
     def praeparatio(self):
         """praeparātiō
 
         Trivia:
         - praeparātiō, s, f, Nom., https://en.wiktionary.org/wiki/praeparatio
         """
+        self.hashtag = None
+        self.tag = None
+        self.attributes = []
+        self.ad_rdf = None
+
         _parts = self.originale.split('+')
         while len(_parts) > 0:
             if self.tag is None:
@@ -3554,12 +3640,26 @@ class HXLHashtagSimplici:
                     raise SyntaxError('# ad [{0}]? <{1}>'.format(
                         _part, self.originale))
                 self.tag = _part.lower()
+                continue
+
             _part = _parts.pop(0)
             self.attributes.append(_part.lower())
 
-        self.hashtag = self.tag
+        # self.hashtag = self.tag
         if len(self.attributes) > 0:
-            self.hashtag += '+'.join(self.attributes)
+            self.hashtag = '{0}+{1}'.format(
+                self.tag, '+'.join(self.attributes))
+        else:
+            self.hashtag = self.tag
+
+        if self.tag in HXL_HASHTAGS_AD_RDF:
+            self.ad_rdf = HXL_HASHTAGS_AD_RDF[self.tag]
+            if '__hxlattrs' in self.ad_rdf:
+                for _attr, _option in self.ad_rdf['__hxlattrs'].items():
+                    if self.habeo_attributa(_attr):
+                        self.ad_rdf['hxlattrs'] = _option
+                        break
+                # pass
 
         return self
 
@@ -4230,6 +4330,7 @@ def hxltm__quaestio_significatis_x(
     # }
     # for regex_str, _lambda in HXLTM_OPERA_X.items():
     #     # print(regex_str)
+    #     _regex_result = re.search(regex_str, quaestio)
     #     _regex_result = re.search(regex_str, quaestio)
     #     if _regex_result:
     #         # print('foi', _regex_result)
