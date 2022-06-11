@@ -1555,8 +1555,12 @@ def bcp47_rdf_extension_relationship(
                 'rdf:predicate': [],
                 # @TODO: implement the semantics of is_a
                 'rdf:type': [],
+                # aliīs, pl, m/f/n, dativus, en.wiktionary.org/wiki/alius#Latin
+                'trivium_aliis': []
             },
-            'indices_columnis': []
+            'indices_columnis': [],
+            # alia, pl, n, accusativus, en.wiktionary.org/wiki/alius#Latin
+            'indices_columnis_per_alia': {}
         }
         return result
 
