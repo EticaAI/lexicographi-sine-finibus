@@ -1553,6 +1553,10 @@ def bcp47_rdf_extension_relationship(
         """
         result['rdfs:Container'][subject] = {
             'trivium': {
+                # 'alia': (str(subject), str(subject)),
+                # 'alia': {str(subject)},
+                'alia': [str(subject)],
+                # 'alia': [str(subject)],
                 'index': -1,
                 # 'iri': inline_namespace_iri,
                 # 'rdf_praefixum': 'urn',
@@ -1563,12 +1567,12 @@ def bcp47_rdf_extension_relationship(
                 'rdf:predicate': [],
                 # @TODO: implement the semantics of is_a
                 'rdf:type': [],
-                # aliīs, pl, m/f/n, dativus, en.wiktionary.org/wiki/alius#Latin
-                'trivium_aliis': []
+                # # aliīs, pl, m/f/n, dativus, en.wiktionary.org/wiki/alius#Latin
+                # 'trivium_aliis': []
             },
             'indices_columnis': [],
             # aliīs, pl, n, ablativus, en.wiktionary.org/wiki/alius#Latin
-            'indices_columnis_cum_aliis': []
+            'indices_cum_aliis': []
         }
         return result
 
@@ -1581,14 +1585,9 @@ def bcp47_rdf_extension_relationship(
         and use these names to create more focused relations
         """
         trivium_aliis = {}
-        # print(result.keys())
+
+        # First pass
         for item_caput_asa in result['caput_originali_asa']:
-            # print('oi keys', item_caput_asa.keys())
-            # print('oi extension in', 'extension' in item_caput_asa.keys())
-            # print('oi extension in', 'extension' in item_caput_asa)
-            # # print('oi', 'extension' not in result.keys())
-            # # print('oi', 'extension' in result.keys(), 'extension' in result)
-            # # print('oi',  result['extension'])
             if 'extension' not in item_caput_asa or \
                     'r' not in item_caput_asa['extension']:
                 continue
@@ -1604,30 +1603,51 @@ def bcp47_rdf_extension_relationship(
                 _temp1, _temp2 = item_subject.split('||')
                 aliud = _temp2.split(':').pop(0)
                 if index_ex_tabula not in trivium_aliis:
-                    trivium_aliis[index_ex_tabula] = []
-                trivium_aliis[int(index_ex_tabula)].append(aliud)
+                    trivium_aliis[index_ex_tabula] = set()
+                trivium_aliis[int(index_ex_tabula)].add(aliud)
 
-            pass
-        # _r = result[]
-        # result['rdfs:Container'][subject] = {
-        #     'trivium': {
-        #         'index': -1,
-        #         # 'iri': inline_namespace_iri,
-        #         # 'rdf_praefixum': 'urn',
-        #         'rdf_praefixum': 'urnmdciii',
-        #         # We will fallback the pivots as generic classes
-        #         # We should enable later override this behavior
-        #         # via language tag on the pivot
-        #         'rdf:predicate': [],
-        #         # @TODO: implement the semantics of is_a
-        #         'rdf:type': [],
-        #         # aliīs, pl, m/f/n, dativus, en.wiktionary.org/wiki/alius#Latin
-        #         'trivium_aliis': []
-        #     },
-        #     'indices_columnis': [],
-        #     # alia, pl, n, accusativus, en.wiktionary.org/wiki/alius#Latin
-        #     'indices_columnis_per_alia': {}
-        # }
+        # Second pass
+        _trivium_aliis = []
+        for trivium_alii, _item in result['rdfs:Container'].items():
+            _trivium_aliis.append(trivium_alii)
+            _trivium_indici = _item['trivium']['index']
+            _cum_aliis = []
+
+            for _item in trivium_aliis[_trivium_indici]:
+                _cum_aliis.extend(
+                    result['rdfs:Container'][_item]['indices_columnis'])
+
+            # trivium_aliis[_trivium_indici] = \
+            #     set(list(trivium_aliis[_trivium_indici]).sort())
+            # trivium_aliis[_trivium_indici].sort()
+            trivium_aliis[_trivium_indici] = \
+                list(trivium_aliis[_trivium_indici])
+            trivium_aliis[_trivium_indici].sort(key=int)
+
+            result['rdfs:Container'][trivium_alii]['trivium']['alia'] = \
+                trivium_aliis[_trivium_indici]
+
+            _cum_aliis = list(set(_cum_aliis))
+            _cum_aliis.sort(key=int)
+
+            result['rdfs:Container'][trivium_alii]['indices_cum_aliis'] = \
+                _cum_aliis
+            # print(trivium_alii, _item)
+            # if 'extension' not in item_caput_asa or \
+            #         'r' not in item_caput_asa['extension']:
+            #     continue
+
+        # Third pass; mostly to re-order rdfs:Container to generate same
+        # abstract syntax tree even if order of columns change
+        _trivium_aliis.sort(key=int)
+        rdfs_container_novo = {}
+        for trivium_alii in _trivium_aliis:
+            rdfs_container_novo[trivium_alii] = \
+                result['rdfs:Container'][trivium_alii]
+            # pass
+
+        result['rdfs:Container'] = rdfs_container_novo
+
         result['trivium_aliis_per_indicem'] = trivium_aliis
         return result
 
@@ -5041,6 +5061,13 @@ def rdf_namespaces_extras(archivum: str) -> dict:
     # print(index_prefix, index_iri, RDF_SPATIA_NOMINALIBUS_EXTRAS)
     # pass
     return RDF_SPATIA_NOMINALIBUS_EXTRAS
+
+
+class SetEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, set):
+            return list(obj)
+        return json.JSONEncoder.default(self, obj)
 
 
 def numerordinatio_descendentibus(
