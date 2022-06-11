@@ -190,13 +190,21 @@ FIRST_ORDER_LOGIC = {
 # @see https://docs.google.com/spreadsheets
 #      /d/1NjSI2LaS3SqbgYc0HdD8oIb7lofGtiHgoKKATCpwVdY/edit#gid=1088874596
 # @see https://www.wikidata.org/wiki/Wikidata:List_of_properties/name
+# prefix 'wdata' = ttp://www.wikidata.org/wiki/Special:EntityData/
 HXL_ATTRIBUTES_AD_RDF = {
     'geo': {
+        # Aliases
+        '__alia__': {
+            '+name+alt1': '+name+alt',
+            '+name+alt2': '+name+alt',
+            '+v_iso2': '+v_iso3166p1a2',
+            '+v_iso3': '+v_iso3166p1a3',
+        },
         '+name+v_unterm': {
             # P1448: official name of the subject in its official language(s)
             'wdata': 'P1448',  # official name
-            'rdf:type': [
-                'skos:BFO_0000029',
+            'rdftypisegolinguis': [
+                # 'skos:BFO_0000029',
                 'skos:prefLabel'
             ]
         },
@@ -205,19 +213,19 @@ HXL_ATTRIBUTES_AD_RDF = {
                 'skos:altLabel'
             ]
         },
-        '+name+alt1': {
-            '___': '+name+alt'
-        },
-        '+name+alt2': {
-            '___': '+name+alt'
-        },
+        # '+name+alt1': {
+        #     '___': '+name+alt'
+        # },
+        # '+name+alt2': {
+        #     '___': '+name+alt'
+        # },
         # '+name+alt1': HXL_ATTRIBUTES_AD_RDF['geo']['+name+alt'],
         '+name': {
             # P1448: short name of a place, organisation, person, journal,
             #        Wikidata property, etc.
             'wdata': 'P1813',  # short name
-            'rdf:type': [
-                'skos:BFO_0000029',
+            'rdftypisegolinguis': [
+                # 'skos:BFO_0000029',
                 'skos:prefLabel'
             ]
         },
@@ -258,7 +266,7 @@ HXL_ATTRIBUTES_AD_RDF = {
 # wdtaxonomy Q6256 -P P131
 HXL_HASHTAGS_AD_RDF = {
     '#country': {
-        '__hxlattrs': HXL_ATTRIBUTES_AD_RDF['geo'],
+        '__hxlattrs': 'geo',
         'hxlattrs': {},  # Requires processing ifer __hxlattrs better value
         'wdata': 'Q6256',  # country
         'rdftrivio': '5000',
@@ -281,7 +289,7 @@ HXL_HASHTAGS_AD_RDF = {
     #     ]
     # },
     '#adm1': {
-        '__hxlattrs': HXL_ATTRIBUTES_AD_RDF['geo'],
+        '__hxlattrs': 'geo',
         'hxlattrs': {},
         'wdata': 'Q10864048',  # first-level administrative country subdivision
         'rdftrivio': '5001',
@@ -298,7 +306,7 @@ HXL_HASHTAGS_AD_RDF = {
         ]
     },
     '#adm2': {
-        '__hxlattrs': HXL_ATTRIBUTES_AD_RDF['geo'],
+        '__hxlattrs': 'geo',
         'hxlattrs': {},
         'wdata': 'Q13220204',  # second-level administrative country subdivision
         'rdftrivio': '5002',
@@ -315,7 +323,7 @@ HXL_HASHTAGS_AD_RDF = {
         ]
     },
     '#adm3': {
-        '__hxlattrs': HXL_ATTRIBUTES_AD_RDF['geo'],
+        '__hxlattrs': 'geo',
         'hxlattrs': {},
         'wdata': 'Q13221722',  # third-level administrative country subdivision
         'rdftrivio': '5003',
@@ -332,7 +340,7 @@ HXL_HASHTAGS_AD_RDF = {
         ]
     },
     '#adm4': {
-        '__hxlattrs': HXL_ATTRIBUTES_AD_RDF['geo'],
+        '__hxlattrs': 'geo',
         'hxlattrs': {},
         'wdata': 'Q14757767',  # fourth-level administrative country subdivision
         'rdftrivio': '5004',
@@ -349,7 +357,7 @@ HXL_HASHTAGS_AD_RDF = {
         ]
     },
     '#adm5': {
-        '__hxlattrs': HXL_ATTRIBUTES_AD_RDF['geo'],
+        '__hxlattrs': 'geo',
         'hxlattrs': {},
         'wdata': 'Q15640612',  # fifth-level administrative country subdivision
         'rdftrivio': '5005',
@@ -366,7 +374,7 @@ HXL_HASHTAGS_AD_RDF = {
         ]
     },
     '#adm6': {
-        '__hxlattrs': HXL_ATTRIBUTES_AD_RDF['geo'],
+        '__hxlattrs': 'geo',
         'hxlattrs': {},
         'wdata': 'Q22927291',  # sixth-level administrative country subdivision
         'rdftrivio': '5006',
@@ -381,6 +389,22 @@ HXL_HASHTAGS_AD_RDF = {
     },
 }
 
+
+# @TODO reorganize this
+def _expand_hxl_ad_rdf():
+    global HXL_ATTRIBUTES_AD_RDF
+    global HXL_HASHTAGS_AD_RDF
+    if '__alia__' in HXL_ATTRIBUTES_AD_RDF['geo']:
+        # print('starting _prepare_HXL_HASHTAGS_AD_RDF')
+        for aliud, referens in \
+                HXL_ATTRIBUTES_AD_RDF['geo']['__alia__'].items():
+            HXL_ATTRIBUTES_AD_RDF['geo'][aliud] = \
+                HXL_ATTRIBUTES_AD_RDF['geo'][referens]
+        del HXL_ATTRIBUTES_AD_RDF['geo']['__alia__']
+        # print(HXL_ATTRIBUTES_AD_RDF)
+    # else:
+    #     print('already ready _prepare_HXL_HASHTAGS_AD_RDF')
+
 # @TODO RDF_TYPUS_AD_TRIVIUM_INCOGNITA: test the implications of mixing
 #       SKOS (use case: the translations) and
 #       OWL (use case: data used for inferences) and how bad 'skos:Concept'
@@ -389,6 +413,7 @@ HXL_HASHTAGS_AD_RDF = {
 #       user to not import SKOS (or change mapping from owl:Class to
 #       owl:Thing) to not break the inferences and instanceOf's
 #       (rocha, 2022-06-08 10:17 UTC)
+
 
 # @see https://www.w3.org/TR/skos-reference/#concepts
 RDF_TYPUS_AD_TRIVIUM_INCOGNITA = 'skos:Concept'
@@ -2652,8 +2677,6 @@ class CodAbTabulae:
             linea_novae = [_numerordinatio, _numerordinatio]
             linea_novae.extend(linea)
 
-
-
             data_novis.append(linea_novae)
 
         self.data = data_novis
@@ -2956,11 +2979,14 @@ class CodAbTabulae:
 
         _hxl = HXLHashtagSimplici(hxlhashtag).praeparatio()
 
-        # print(hxlhashtag)
+        # @TODO make exported formats of higher admX also export previous
+        #       levels (so the RDF would work to make the relations)
+
+        print(hxlhashtag)
         # print("\t\t hashtag", _hxl.hashtag)
-        # print("\t\t wdata", _hxl.quod_ad_rdf(''))
+        print("\t\t quod_ad_rdf", _hxl.quod_ad_rdf(''))
         # print("\t\t hxlattrs", _hxl.quod_ad_rdf('hxlattrs'))
-        # print("\t\t quod_numerordinatio", _hxl.quod_numerordinatio())
+        print("\t\t quod_numerordinatio", _hxl.quod_numerordinatio())
 
         # raise ValueError( _hxl.hashtag)
 
@@ -3636,8 +3662,28 @@ class HXLHashtagSimplici:
         """__init__"""
 
         self.originale = hashtag
+        _expand_hxl_ad_rdf()
 
-    def habeo_attributa(self, quaestio: Union[list, str]) -> bool:
+    def habeo_attributa(
+            self,
+            quaestio: Union[list, str],
+            ignorationes: list = None,
+            minimae: int = None) -> bool:
+        """habeo_attributa _summary_
+
+        Have these attributes?
+
+        Args:
+            quaestio (Union[list, str]): _description_
+            minimae (int, optional): How many must have. Defaults to all items.
+                                     Use 1 to something equivalent to 'OR'
+            ignōrātiōnēs (list, optional): Ignore self attributes if start with
+                                           these prefixes
+
+        Returns:
+            bool: _description_
+        """
+
         # https://en.wiktionary.org/wiki/habeo#Latin
         # attribūta, pl, nominativus, en.wiktionary.org/wiki/attributus#Latin
         if not quaestio or len(quaestio) == 0:
@@ -3651,13 +3697,25 @@ class HXLHashtagSimplici:
         if len(quaestio) == 0:
             return False
 
+        if minimae is None:
+            minimae = len(quaestio)
+            if ignorationes is not None:
+                for _item_ignoration in ignorationes:
+                    for _item in self.attributes:
+                        if _item.startswith(_item_ignoration):
+                            minimae -= 1
+
+        _habeo_attributa_total = 0
         # print(quaestio)
         for _item in quaestio:
-            if _item not in self.attributes:
-                # print('n foi', quaestio)
-                return False
+            if _item in self.attributes:
+                _habeo_attributa_total += 1
+            # if _item not in self.attributes:
+            #     # print('n foi', quaestio)
+            #     return False
         # print('foi')
-        return True
+        # return True
+        return (_habeo_attributa_total >= minimae)
 
     def quod_ad_rdf(self, quaestio: str, default: Any = None):
         if self.ad_rdf is None:
@@ -3689,15 +3747,32 @@ class HXLHashtagSimplici:
         rdf_parts = []
         # if self.ad_rdf is None:
         #     return None
+        _ignorationes = ['i_', 'is_']
         _linguae = self.quod_attributa('i_')
         _script = self.quod_attributa('is_')
         est_linguae = len(_linguae) > 0 and 'i_qcc' not in _linguae
 
-        # Initialize assuming if already is language content, can't be key
-        est_trivium = not est_linguae
+        # # Initialize assuming if already is language content, can't be key
+        # est_trivium = not est_linguae
         rdftrivio = self.quod_ad_rdf('rdftrivio')
         rdftypisego = self.quod_ad_rdf('rdftypisego')
+        rdftypisegolinguis = self.quod_ad_rdf('hxlattrs.rdftypisegolinguis')
         # print('rdftrivio', rdftrivio)
+        # print('rdftypisegolinguis', rdftypisegolinguis)
+
+        est_trivium = False
+        if not est_linguae:
+            if self.habeo_attributa('v_numerordinatio', _ignorationes):
+                est_trivium = True
+                # TODO: implement check if input already was encoded with
+                #       full normalized form.
+        else:
+            if rdftrivio is not None and rdftypisegolinguis is not None:
+                for _item in rdftypisegolinguis:
+                    _item2 = _item.lower().replace(':', '_')
+                    rdf_parts.append('rdf_p_{0}_s{1}'.format(
+                        _item2, rdftrivio
+                    ))
 
         contextus = []
         if caput_contextui is not None and len(caput_contextui) > 0:
@@ -3710,11 +3785,17 @@ class HXLHashtagSimplici:
         # _rdf_spatia_nominalibus_prefix_simplici('aaa')
         _rdf_parts = ''
 
-        if rdftypisego is not None:
+        # if rdftypisego is not None:
+        if rdftypisego is not None and est_trivium is True:
+            # print('fooooi')
             for _item in rdftypisego:
                 _item2 = _rdf_spatia_nominalibus_prefix_simplici(_item)
                 rdf_parts.append('rdf_a_{0}'.format(
                     _item2.replace(':', '_')
+                ))
+            if rdftrivio:
+                rdf_parts.append('rdf_s_u2200_s{0}'.format(
+                    rdftrivio
                 ))
 
         if len(rdf_parts) > 0:
@@ -3723,6 +3804,10 @@ class HXLHashtagSimplici:
         if est_linguae:
             return '#item+rem+{0}+{1}{2}'.format(
                 _linguae[0], _script[0], _rdf_parts
+            )
+        else:
+            return '#item+rem+i_qcc+is_zxxx{0}'.format(
+                _rdf_parts
             )
 
         return '@todo ' + self.hashtag
@@ -3761,7 +3846,10 @@ class HXLHashtagSimplici:
         if self.tag in HXL_HASHTAGS_AD_RDF:
             self.ad_rdf = HXL_HASHTAGS_AD_RDF[self.tag]
             if '__hxlattrs' in self.ad_rdf:
-                for _attr, _option in self.ad_rdf['__hxlattrs'].items():
+                referentia = HXL_ATTRIBUTES_AD_RDF[self.ad_rdf['__hxlattrs']]
+                # for _attr, _option in self.ad_rdf['__hxlattrs'].items():
+                for _attr, _option in referentia.items():
+                    # print(_attr)
                     if self.habeo_attributa(_attr):
                         self.ad_rdf['hxlattrs'] = _option
                         break
