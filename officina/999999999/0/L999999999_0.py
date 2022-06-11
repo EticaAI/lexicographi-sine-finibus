@@ -188,7 +188,7 @@ FIRST_ORDER_LOGIC = {
 # @see https://docs.google.com/spreadsheets
 #      /d/1NjSI2LaS3SqbgYc0HdD8oIb7lofGtiHgoKKATCpwVdY/edit#gid=1088874596
 # @see https://www.wikidata.org/wiki/Wikidata:List_of_properties/name
-HXL_ATTRIBUTES_AD_WIKIDATA = {
+HXL_ATTRIBUTES_AD_RDF = {
     'geo': {
         '+name+v_unterm': {
             # P1448: official name of the subject in its official language(s)
@@ -230,47 +230,121 @@ HXL_ATTRIBUTES_AD_WIKIDATA = {
 
 
 # wdtaxonomy Q6256 -P P131
-HXL_HASHTAGS_AD_WIKIDATA = {
+HXL_HASHTAGS_AD_RDF = {
     '#country': {
-        'hxlattrs': HXL_ATTRIBUTES_AD_WIKIDATA['geo'],
+        'hxlattrs': HXL_ATTRIBUTES_AD_RDF['geo'],
         'wdata': 'Q6256',  # country
-        'rdftrivio': '5000'
+        'rdftrivio': '5000',
+        'rdftypis': {
+            '#adm1': [
+                'obo:BFO_0000170'  # BFO_0000170: location of at all times
+            ]
+        },
+        'rdf:type': [
+            'obo:BFO_0000029'
+        ]
     },
-    # Not a valid HXL hashtag, but using anyway as alias to country
-    '#adm0': {
-        'hxlattrs': HXL_ATTRIBUTES_AD_WIKIDATA['geo'],
-        'wdata': 'Q6256',  # country
-        'rdftrivio': '5000'
-    },
+    # # Not a valid HXL hashtag, but using anyway as alias to country
+    # '#adm0': {
+    #     'hxlattrs': HXL_ATTRIBUTES_AD_RDF['geo'],
+    #     'wdata': 'Q6256',  # country
+    #     'rdftrivio': '5000',
+    #     'rdf:type': [
+    #         'obo:BFO_0000029'
+    #     ]
+    # },
     '#adm1': {
-        'hxlattrs': HXL_ATTRIBUTES_AD_WIKIDATA['geo'],
-        'wdata': 'Q10864048',  # first-level administrative country subdivisio
-        'rdftrivio': '5001'
+        'hxlattrs': HXL_ATTRIBUTES_AD_RDF['geo'],
+        'wdata': 'Q10864048',  # first-level administrative country subdivision
+        'rdftrivio': '5001',
+        'rdftypis': {
+            '#adm2': [
+                'obo:BFO_0000082'  # BFO_0000082: located in at all times
+            ],
+            '#country': [
+                'obo:BFO_0000170'  # BFO_0000170: location of at all times
+            ],
+        },
+        'rdf:type': [
+            'obo:BFO_0000029'
+        ]
     },
     '#adm2': {
-        'hxlattrs': HXL_ATTRIBUTES_AD_WIKIDATA['geo'],
+        'hxlattrs': HXL_ATTRIBUTES_AD_RDF['geo'],
         'wdata': 'Q13220204',  # second-level administrative country subdivision
-        'rdftrivio': '5002'
+        'rdftrivio': '5002',
+        'rdftypis': {
+            '#adm1': [
+                'obo:BFO_0000082'
+            ],
+            '#adm3': [
+                'obo:BFO_0000170'
+            ],
+        },
+        'rdftypisego': [
+            'obo:BFO_0000029'
+        ]
     },
     '#adm3': {
-        'hxlattrs': HXL_ATTRIBUTES_AD_WIKIDATA['geo'],
+        'hxlattrs': HXL_ATTRIBUTES_AD_RDF['geo'],
         'wdata': 'Q13221722',  # third-level administrative country subdivision
-        'rdftrivio': '5003'
+        'rdftrivio': '5003',
+        'rdftypis': {
+            '#adm2': [
+                'obo:BFO_0000082'
+            ],
+            '#adm4': [
+                'obo:BFO_0000170'
+            ],
+        },
+        'rdf:type': [
+            'obo:BFO_0000029'
+        ]
     },
     '#adm4': {
-        'hxlattrs': HXL_ATTRIBUTES_AD_WIKIDATA['geo'],
+        'hxlattrs': HXL_ATTRIBUTES_AD_RDF['geo'],
         'wdata': 'Q14757767',  # fourth-level administrative country subdivision
-        'rdftrivio': '5004'
+        'rdftrivio': '5004',
+        'rdftypis': {
+            '#adm3': [
+                'obo:BFO_0000082'
+            ],
+            '#adm5': [
+                'obo:BFO_0000170'
+            ],
+        },
+        'rdf:type': [
+            'obo:BFO_0000029'
+        ]
     },
     '#adm5': {
-        'hxlattrs': HXL_ATTRIBUTES_AD_WIKIDATA['geo'],
+        'hxlattrs': HXL_ATTRIBUTES_AD_RDF['geo'],
         'wdata': 'Q15640612',  # fifth-level administrative country subdivision
-        'rdftrivio': '5005'
+        'rdftrivio': '5005',
+        'rdftypis': {
+            '#adm4': [
+                'obo:BFO_0000082'
+            ],
+            '#adm6': [
+                'obo:BFO_0000170'
+            ],
+        },
+        'rdf:type': [
+            'obo:BFO_0000029'
+        ]
     },
     '#adm6': {
-        'hxlattrs': HXL_ATTRIBUTES_AD_WIKIDATA['geo'],
+        'hxlattrs': HXL_ATTRIBUTES_AD_RDF['geo'],
         'wdata': 'Q22927291',  # sixth-level administrative country subdivision
-        'rdftrivio': '5006'
+        'rdftrivio': '5006',
+        'rdftypis': {
+            '#adm5': [
+                'obo:BFO_0000082'
+            ]
+        },
+        'rdf:type': [
+            'obo:BFO_0000029'
+        ]
     },
 }
 
@@ -2432,7 +2506,8 @@ class CodAbTabulae:
 
             # self.dictionaria_linguarum = DictionariaLinguarum()
 
-            for index, res in enumerate(self.caput_no1):
+            # for index, res in enumerate(self.caput_no1):
+            for index, res in enumerate(self.caput_hxltm):
                 caput_novi = self.quod_no1bcp47_de_hxltm_rei(res)
 
                 # if caput_novi == '#item+conceptum+codicem':
@@ -3447,7 +3522,51 @@ def descriptio_tabulae_de_lingua(
     return paginae
 
 
-def hxl_hashtag_to_bcp47(hashtag: str) -> str:
+class HXLHashtagSimplici:
+    """HXLHashtagSimplici very primitive parse of single HXL hashtag.
+
+    """
+    # orīgināle, s, n, nominativus, en.wiktionary.org/wiki/originalis#Latin
+    originale: str
+    hashtag: str = ''
+    tag: str = None
+    attributes: List[str] = []
+
+    def __init__(
+        self,
+        hashtag: str = None
+    ):
+        """__init__"""
+
+        self.originale = hashtag
+
+    def praeparatio(self):
+        """praeparātiō
+
+        Trivia:
+        - praeparātiō, s, f, Nom., https://en.wiktionary.org/wiki/praeparatio
+        """
+        _parts = self.originale.split('+')
+        while len(_parts) > 0:
+            if self.tag is None:
+                _part = _parts.pop(0)
+                if not _part.startswith('#'):
+                    raise SyntaxError('# ad [{0}]? <{1}>'.format(
+                        _part, self.originale))
+                self.tag = _part.lower()
+            _part = _parts.pop(0)
+            self.attributes.append(_part.lower())
+
+        self.hashtag = self.tag
+        if len(self.attributes) > 0:
+            self.hashtag += '+'.join(self.attributes)
+
+        return self
+
+
+def hxl_hashtag_to_bcp47(
+    hashtag: str,
+) -> str:
     """hxl_hashtag_to_bcp47 _summary_
 
     _extended_summary_
