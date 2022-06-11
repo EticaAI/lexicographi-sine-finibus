@@ -194,12 +194,32 @@ HXL_ATTRIBUTES_AD_RDF = {
     'geo': {
         '+name+v_unterm': {
             # P1448: official name of the subject in its official language(s)
-            'wdata': 'P1448'  # official name
+            'wdata': 'P1448',  # official name
+            'rdf:type': [
+                'skos:BFO_0000029',
+                'skos:prefLabel'
+            ]
         },
+        '+name+alt': {
+            'rdf:type': [
+                'skos:altLabel'
+            ]
+        },
+        '+name+alt1': {
+            '___': '+name+alt'
+        },
+        '+name+alt2': {
+            '___': '+name+alt'
+        },
+        # '+name+alt1': HXL_ATTRIBUTES_AD_RDF['geo']['+name+alt'],
         '+name': {
             # P1448: short name of a place, organisation, person, journal,
             #        Wikidata property, etc.
-            'wdata': 'P1813'  # short name
+            'wdata': 'P1813',  # short name
+            'rdf:type': [
+                'skos:BFO_0000029',
+                'skos:prefLabel'
+            ]
         },
         # [+code / +v_pcode] varies by context
         # '+code': {}
@@ -230,6 +250,10 @@ HXL_ATTRIBUTES_AD_RDF = {
     },
 }
 
+# HXL_ATTRIBUTES_AD_RDF['geo']['+name+alt1'] = \
+#     HXL_ATTRIBUTES_AD_RDF['geo']['+name+alt']
+# HXL_ATTRIBUTES_AD_RDF['geo']['+name+alt2'] = \
+#     HXL_ATTRIBUTES_AD_RDF['geo']['+name+alt']
 
 # wdtaxonomy Q6256 -P P131
 HXL_HASHTAGS_AD_RDF = {
@@ -243,7 +267,7 @@ HXL_HASHTAGS_AD_RDF = {
                 'obo:BFO_0000170'  # BFO_0000170: location of at all times
             ]
         },
-        'rdf:type': [
+        'rdftypisego': [
             'obo:BFO_0000029'
         ]
     },
@@ -269,7 +293,7 @@ HXL_HASHTAGS_AD_RDF = {
                 'obo:BFO_0000170'  # BFO_0000170: location of at all times
             ],
         },
-        'rdf:type': [
+        'rdftypisego': [
             'obo:BFO_0000029'
         ]
     },
@@ -303,7 +327,7 @@ HXL_HASHTAGS_AD_RDF = {
                 'obo:BFO_0000170'
             ],
         },
-        'rdf:type': [
+        'rdftypisego': [
             'obo:BFO_0000029'
         ]
     },
@@ -320,7 +344,7 @@ HXL_HASHTAGS_AD_RDF = {
                 'obo:BFO_0000170'
             ],
         },
-        'rdf:type': [
+        'rdftypisego': [
             'obo:BFO_0000029'
         ]
     },
@@ -337,7 +361,7 @@ HXL_HASHTAGS_AD_RDF = {
                 'obo:BFO_0000170'
             ],
         },
-        'rdf:type': [
+        'rdftypisego': [
             'obo:BFO_0000029'
         ]
     },
@@ -351,7 +375,7 @@ HXL_HASHTAGS_AD_RDF = {
                 'obo:BFO_0000082'
             ]
         },
-        'rdf:type': [
+        'rdftypisego': [
             'obo:BFO_0000029'
         ]
     },
@@ -2516,11 +2540,17 @@ class CodAbTabulae:
             # self.dictionaria_linguarum = DictionariaLinguarum()
 
             caput = self.caput_hxltm
+
+            hashtag_numerordinatio = '#country+v_numerordinatio'
+            if self.ordo > 0:
+                hashtag_numerordinatio = '#adm{0}+v_numerordinatio'.format(
+                    self.ordo)
+            caput.insert(0, hashtag_numerordinatio)
             caput.insert(0, '#item+conceptum+numerordinatio')
 
             # for index, res in enumerate(self.caput_no1):
             for index, res in enumerate(caput):
-                caput_novi = self.quod_no1bcp47_de_hxltm_rei(res)
+                caput_novi = self.quod_no1bcp47_de_hxltm_rei(res, caput)
 
                 # if caput_novi == '#item+conceptum+codicem':
                 #     self.identitas_locali_index = index
@@ -2599,18 +2629,31 @@ class CodAbTabulae:
         """
         identitas_locali_index = self.caput_hxltm.index(
             '#item+conceptum+codicem')
+        hashtag_numerordinatio = '#country+v_numerordinatio'
+        if self.ordo > 0:
+            hashtag_numerordinatio = '#adm{0}+v_numerordinatio'.format(
+                self.ordo)
+        self.caput_no1.insert(0, hashtag_numerordinatio)
         self.caput_no1.insert(0, '#item+conceptum+numerordinatio')
         data_novis = []
 
         for linea in self.data:
-            linea_novae = ['{0}:{1}:{2}:{3}'.format(
+            _identitas_locali = linea[identitas_locali_index]
+            # Special case: replace ISO2/ISO3 with UN m49 if is country
+            if self.ordo == 0:
+                _identitas_locali = self.unm49
+
+            _numerordinatio = '{0}:{1}:{2}:{3}'.format(
                 self.numerordinatio_praefixo,
                 self.unm49,
                 str(self.ordo),
-                linea[identitas_locali_index],
-
-            )]
+                _identitas_locali,
+            )
+            linea_novae = [_numerordinatio, _numerordinatio]
             linea_novae.extend(linea)
+
+
+
             data_novis.append(linea_novae)
 
         self.data = data_novis
@@ -2888,7 +2931,7 @@ class CodAbTabulae:
         return self.quod_hxltm_de_hxl_rei(hxlhashtag)
 
     @staticmethod
-    def quod_no1bcp47_de_hxltm_rei(hxlhashtag: str) -> str:
+    def quod_no1bcp47_de_hxltm_rei(hxlhashtag: str, caput: List) -> str:
         """quod_no1bcp47_de_hxltm_rei
 
         Args:
@@ -2913,10 +2956,11 @@ class CodAbTabulae:
 
         _hxl = HXLHashtagSimplici(hxlhashtag).praeparatio()
 
-        print(hxlhashtag)
-        print("\t\t hashtag", _hxl.hashtag)
-        print("\t\t wdata", _hxl.quod_ad_rdf('wdata'))
-        print("\t\t hxlattrs", _hxl.quod_ad_rdf('hxlattrs'))
+        # print(hxlhashtag)
+        # print("\t\t hashtag", _hxl.hashtag)
+        # print("\t\t wdata", _hxl.quod_ad_rdf(''))
+        # print("\t\t hxlattrs", _hxl.quod_ad_rdf('hxlattrs'))
+        # print("\t\t quod_numerordinatio", _hxl.quod_numerordinatio())
 
         # raise ValueError( _hxl.hashtag)
 
@@ -3615,11 +3659,73 @@ class HXLHashtagSimplici:
         # print('foi')
         return True
 
-    def quod_ad_rdf(self, quaestio: str):
+    def quod_ad_rdf(self, quaestio: str, default: Any = None):
         if self.ad_rdf is None:
             return None
 
-        return de_dotted(quaestio, fontem=self.ad_rdf)
+        if quaestio == '' and self.ad_rdf is not None:
+            # empty strying is 'debug', but lets ommit verbose __hxlattrs
+            ad_rdf = self.ad_rdf
+            if '__hxlattrs' in ad_rdf:
+                del ad_rdf['__hxlattrs']
+            # return self.ad_rdf
+            return ad_rdf
+
+        return de_dotted(quaestio, default=default, fontem=self.ad_rdf)
+
+    def quod_attributa(self, praefixa: str) -> list:
+        resultatum = []
+        for _item in self.attributes:
+            if _item.startswith(praefixa):
+                resultatum.append(_item)
+
+        return resultatum
+
+    def quod_numerordinatio(self, caput_contextui: List[str] = None):
+        if self.hashtag in BCP47_EX_HXL:
+            # Already '#item+conceptum+codicem'/'#item+conceptum+numerordinatio'
+            return self.hashtag
+        resultatum = []
+        rdf_parts = []
+        # if self.ad_rdf is None:
+        #     return None
+        _linguae = self.quod_attributa('i_')
+        _script = self.quod_attributa('is_')
+        est_linguae = len(_linguae) > 0 and 'i_qcc' not in _linguae
+
+        # Initialize assuming if already is language content, can't be key
+        est_trivium = not est_linguae
+        rdftrivio = self.quod_ad_rdf('rdftrivio')
+        rdftypisego = self.quod_ad_rdf('rdftypisego')
+        # print('rdftrivio', rdftrivio)
+
+        contextus = []
+        if caput_contextui is not None and len(caput_contextui) > 0:
+            for _res in caput_contextui:
+                if _res and len(_res) > 0:
+                    _item = _res.split('+')[0]
+                    contextus.append(_item)
+
+        # obo:BFO_0000029 -> obo:bfo29
+        # _rdf_spatia_nominalibus_prefix_simplici('aaa')
+        _rdf_parts = ''
+
+        if rdftypisego is not None:
+            for _item in rdftypisego:
+                _item2 = _rdf_spatia_nominalibus_prefix_simplici(_item)
+                rdf_parts.append('rdf_a_{0}'.format(
+                    _item2.replace(':', '_')
+                ))
+
+        if len(rdf_parts) > 0:
+            rdf_parts.sort()
+            _rdf_parts = '+' + '+'.join(rdf_parts)
+        if est_linguae:
+            return '#item+rem+{0}+{1}{2}'.format(
+                _linguae[0], _script[0], _rdf_parts
+            )
+
+        return '@todo ' + self.hashtag
 
     def praeparatio(self):
         """praeparātiō
