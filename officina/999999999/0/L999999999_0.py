@@ -522,6 +522,7 @@ RDF_SPATIA_NOMINALIBUS_EXTRAS = {
     # 'p': 'http://www.wikidata.org/prop/',
     'wdt': 'http://www.wikidata.org/prop/direct/',
     'wdv': 'http://www.wikidata.org/value/',
+    'p': 'http://www.wikidata.org/prop/',
 }
 # For "Base OWL" of Wikidata, download link: http://wikiba.se/ontology
 
@@ -1817,12 +1818,18 @@ def bcp47_rdf_extension_relationship(
                     trivium_aliis[index_ex_tabula] = set()
                 trivium_aliis[int(index_ex_tabula)].add(aliud)
 
+        # print(trivium_aliis, result['rdfs:Container'])
+
         # Second pass
         _trivium_aliis = []
         for trivium_alii, _item in result['rdfs:Container'].items():
             _trivium_aliis.append(trivium_alii)
             _trivium_indici = _item['trivium']['index']
             _cum_aliis = []
+
+            if _trivium_indici == -1:
+                # Item is referenced by others, but does not explicitly exist
+                continue
 
             for _item in trivium_aliis[_trivium_indici]:
                 _cum_aliis.extend(
@@ -2184,6 +2191,10 @@ def bcp47_rdf_extension_poc(
     for caput_originali_asa in result['caput_asa']['caput_originali_asa']:
         # print(caput_originali_asa)
         # print(caput_originali_asa['extension']['r']['xsl:transform'])
+
+        if 'r' not in caput_originali_asa['extension']:
+            continue
+
         xsl_items = caput_originali_asa['extension']['r']['xsl:transform']
         if not xsl_items or len(xsl_items) == 0:
             continue
@@ -3947,6 +3958,38 @@ class HXLHashtagSimplici:
 
         return resultatum
 
+    def quod_bcp47(self, caput_contextui: List[str] = None,
+                   strictum=True) -> str:
+
+        if self.hashtag in BCP47_EX_HXL:
+            # Already '#item+conceptum+codicem'/'#item+conceptum+numerordinatio'
+            return BCP47_EX_HXL[self.hashtag]['bcp47']
+
+        if self.hashtag in HXL_HASH_ET_ATTRIBUTA_AD_RDF:
+            return HXL_HASH_ET_ATTRIBUTA_AD_RDF[self.hashtag]['__no1bpc47__']
+
+
+        hxl_base = '#item+rem'
+        numerordinatio = self.quod_numerordinatio(caput_contextui)
+        item_meta = hxl_hashtag_to_bcp47(numerordinatio)
+
+        if len(item_meta['_error']) == 0 and \
+                item_meta['Language-Tag_normalized']:
+            return item_meta['Language-Tag_normalized']
+            # print('item_meta    ', item_meta)
+            # bcp47 = '{0}{1}'.format(
+            #     hxl_base,
+            #     item_meta['_callbacks']['hxl_attrs']
+            # )
+            return bcp47
+        else:
+            # print('item_meta    ', item_meta)
+            if strictum:
+                raise SyntaxError('{0} <{1}> <{2}>'.format(
+                    self.hashtag, numerordinatio, item_meta)
+                )
+            return 'qcc-Zxxx-r-aDEVNULL-abnop-anop-x-error'
+
     def quod_numerordinatio(self, caput_contextui: List[str] = None):
         if self.hashtag in BCP47_EX_HXL:
             # Already '#item+conceptum+codicem'/'#item+conceptum+numerordinatio'
@@ -4211,7 +4254,10 @@ def hxl_hashtag_to_bcp47(
                 ))
 
             elif item.startswith('p_'):
-                _item_parts = item.replace('p_', '').replace('_', ':')
+                # print('item', item)
+                # _item_parts = item.replace('p_', '').replace('_', ':')
+                # _item_parts = item.lstrip('p_').replace('_', ':')
+                _item_parts = item[2:].replace('_', ':')
                 _item_parts = _item_parts + ':NOP'
                 result['extension']['r']['rdf:predicate'].append(_item_parts)
                 _index_p = result['extension']['r']['rdf:predicate'].index(
@@ -4219,6 +4265,7 @@ def hxl_hashtag_to_bcp47(
                 )
 
                 # _subject_nop = 'NOP' reserved for potential future use
+                # print('_item_parts', _item_parts)
                 _predicate_ns, _predicate_item, _subject, _subject_nop = \
                     _item_parts.split(':')
 
