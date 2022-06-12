@@ -404,6 +404,13 @@ HXL_HASH_ET_ATTRIBUTA_AD_RDF = {
         '__no1bpc47__': 'qcc-Zxxx-r-aOBO-abfo29-anop-sU2200-s5001-snop-pOBO-pbfo124-ps5002-pOBO-pbfo171-ps5000',
         '__no1hxl__': '#item+rem+i_qcc+is_zxxx+rdf_a_obo_bfo29+rdf_p_obo_bfo124_s5002+rdf_p_obo_bfo171_s5000+rdf_s_u2200_s5001'
     },
+    # @TODO make P-Codes using "instance of (P31)" like > p:P31 Q7200235
+    # @see https://en.wikipedia.org/wiki/Place_code
+    # @see https://www.wikidata.org/wiki/Q7200235 Q7200235
+    # '#adm1+code+v_pcode': {
+    #     '__no1bpc47__': '',
+    #     '__no1hxl__': ''
+    # },
     '#adm2+code+v_numerodinatio': {
         '__no1bpc47__': 'qcc-Zxxx-r-aOBO-abfo29-anop-sU2200-s5002-snop-pOBO-pbfo124-ps5002-pOBO-pbfo171-ps5001',
         '__no1hxl__': '#item+rem+i_qcc+is_zxxx+rdf_a_obo_bfo29+rdf_p_obo_bfo124_s5002+rdf_p_obo_bfo171_s5001+rdf_s_u2200_s5002'
@@ -2619,6 +2626,43 @@ class CodAbTabulae:
                     self.numerordinatio_indici = index
 
                 self.caput_no1.append(caput_novi)
+
+            if len(self.caput_no1) != len(set(self.caput_no1)):
+
+                caput_novi__reversed = []
+                # caput_no1 = list(self.caput_no1)
+                caput_no1 = self.caput_no1[:]
+                _len_caput = len(caput_no1)
+                _index = _len_caput - 1
+                _done = []
+                while _index > -1:
+                    # print('oi', _index, _totale)
+                    _res = caput_no1[_index]
+                    _totale = caput_no1.count(_res)
+                    # print(self.caput_no1[_index])
+                    if _totale > 1:
+                        _done.append(_res)
+                        # print('  >>repeated', _res, caput_no1)
+                        # @TODO make a more semantic way to have duplicated
+                        #       items than ix_altN
+                        _res_novo = '{0}+ix_alt{1}'.format(
+                            _res, (_totale - _done.count(_res))
+                        )
+                        # caput_no1[caput_no1.index(_res)] = '__done' + str(index)
+                        # caput_no1[caput_no1.index(_res)] = None
+                        caput_novi__reversed.append(_res_novo)
+                        # print('   > > repeated neo', _res, caput_no1)
+                    else:
+                        caput_novi__reversed.append(_res)
+                    # _index += 1
+                    _index = _index - 1
+                # for _index in range(len(self.caput_no1)):
+                # for _item in self.caput_no1:
+
+                caput_novi__reversed.reverse()
+                self.caput_no1 = caput_novi__reversed
+
+            # self.caput_no1
 
         # if formatum in ['hxltm', 'no1'] and self.identitas_locali_index < 0:
         #     self.praeparatio_identitas_locali()
