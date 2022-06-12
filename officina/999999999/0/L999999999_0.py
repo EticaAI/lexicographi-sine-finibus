@@ -197,8 +197,8 @@ HXL_ATTRIBUTES_AD_RDF = {
         '__alia__': {
             '+name+alt1': '+name+alt',
             '+name+alt2': '+name+alt',
-            '+v_iso2': '+v_iso3166p1a2',
-            '+v_iso3': '+v_iso3166p1a3',
+            '+v_iso2': '+code+v_iso3166p1a2',
+            '+v_iso3': '+code+v_iso3166p1a3',
         },
         '+code+v_numerodinatio': {
             'numerodinatio_est': True
@@ -234,20 +234,20 @@ HXL_ATTRIBUTES_AD_RDF = {
         },
         # [+code / +v_pcode] varies by context
         # '+code': {}
-        '+v_m49': {
+        '+code+v_m49': {
             'wdata': 'P2082'  # United Nations M.49 code for the subject item
         },
-        '+v_iso3166p1a2': {
+        '+code+v_iso3166p1a2': {
             'wdata': 'P297'  # ISO 3166-1 alpha-2 code
         },
-        '+v_iso3166p1a3': {
+        '+code+v_iso3166p1a3': {
             'wdata': 'P298'  # ISO 3166-1 alpha-3 code
         },
         # Consider using UN m49 code instead of the ISO one
-        '+v_iso3166p1n': {
+        '+code+v_iso3166p1n': {
             'wdata': 'P299'  # ISO 3166-1 numeric code
         },
-        '+v_iso3166p2': {
+        '+code+v_iso3166p2': {
             'wdata': 'P300'  # subdivision code ISO 3166-2
         },
     },
@@ -389,6 +389,36 @@ HXL_HASHTAGS_AD_RDF = {
         'rdftypisego': [
             'obo:BFO_0000029'
         ]
+    },
+}
+
+# @TODO this part is somewhat hardcoded
+HXL_HASH_ET_ATTRIBUTA_AD_RDF = {
+    # @see https://www.wikidata.org/wiki/EntitySchema:E49
+    # publication date (P577)
+    # date or point in time when a work was first published or released
+    # https://www.wikidata.org/wiki/Property:P577
+    '#date+start': {
+        '__no1bpc47__': 'qcc-Zxxx-r-pP-pp577-ps1603-txsd-tdatetime-tnop',
+        '__no1hxl__':
+        '#item+rem+i_qcc+is_zxxx+rdf_p_p_p577_s1603+rdf_t_xsd_datetime'
+    },
+    # discontinued date (P2669)
+    # date that the availability of a product was discontinued;
+    # see also "dissolved, abolished or demolished" (P576)
+    # https://www.wikidata.org/wiki/Property:P2669
+    '#date+end': {
+        '__no1bpc47__': 'qcc-Zxxx-r-pP-pp2699-ps1603-txsd-tdatetime-tnop',
+        '__no1hxl__':
+        '#item+rem+i_qcc+is_zxxx+rdf_p_p_p2699_s1603+rdf_t_xsd_datetime'
+    },
+    ## retrieved (P813)
+    # - https://www.wikidata.org/wiki/Property:P813
+    # - https://wiki.openstreetmap.org/wiki/Key:check_date
+    '#date+updated': {
+        '__no1bpc47__': 'qcc-Zxxx-r-pP-pp813-ps1603-txsd-tdatetime-tnop',
+        '__no1hxl__':
+        '#item+rem+i_qcc+is_zxxx+rdf_p_p_p813_s1603+rdf_t_xsd_datetime'
     },
 }
 
@@ -2749,6 +2779,7 @@ class CodAbTabulae:
     def praeparatio_numerordinatio(self):
         """numerordinatio
         """
+        # print('oi')
         identitas_locali_index = self.caput_hxltm.index(
             '#item+conceptum+codicem')
         hashtag_numerordinatio = '#country+v_numerordinatio'
