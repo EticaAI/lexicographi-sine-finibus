@@ -2592,17 +2592,20 @@ class CodAbTabulae:
 
         return self
 
-    def praeparatio_identitas_locali(self):
+    def praeparatio_identitas_locali(
+            self, ordo: int = None, hxl_hashtag: str = '#item+conceptum+codicem'):
         """praeparatio_identitas_locali
         """
+        if ordo is None:
+            ordo = self.ordo
         pcode_index = None
         pcode_hashtag_de_facto = ''
-        if self.ordo == 0:
+        if ordo == 0:
             pcode_hashtag = [
                 '#country+code+v_pcode', '#country+code+v_iso2',
                 '#country+code+v_iso3166p1a2']
         else:
-            pcode_hashtag = ['#adm{0}+code+v_pcode'.format(self.ordo)]
+            pcode_hashtag = ['#adm{0}+code+v_pcode'.format(ordo)]
 
         for item in pcode_hashtag:
             if item in self.caput_hxltm:
@@ -2618,13 +2621,76 @@ class CodAbTabulae:
                 ))
         # pcode_index = self.caput_hxltm.index(pcode_hashtag)
 
-        self.caput_hxltm.insert(0, '#item+conceptum+codicem')
+        # self.caput_hxltm.insert(0, '#item+conceptum+codicem')
+        self.caput_hxltm.insert(0, hxl_hashtag)
         data_novis = []
 
         for linea in self.data:
             linea_novae = []
             pcode_completo = linea[pcode_index]
-            if self.ordo == 0:
+            if ordo == 0:
+                linea_novae.append(pcode_completo)  # Ex. BR
+            else:
+
+                # Ex. 31 ad BR31
+                pcode_numeri = pcode_completo.replace(self.pcode_praefixo, '')
+
+                # Ex: Haiti admin3Pcode HT0111-01, HT0111-02, HT0111-03
+                pcode_numeri = re.sub('[^0-9]', '', pcode_numeri)
+
+                try:
+                    linea_novae.append(int(pcode_numeri))
+                except ValueError as err:
+                    raise ValueError('<{0}:{1}> -> int({2})?? [{3}]'.format(
+                        pcode_hashtag_de_facto,
+                        pcode_completo,
+                        pcode_numeri,
+                        err
+                    ))
+
+            linea_novae.extend(linea)
+            data_novis.append(linea_novae)
+
+        self.data = data_novis
+
+    def praeparatio_identitas_numerodinatio(
+            self, ordo: int = None):
+        """praeparatio_identitas_locali
+        """
+        raise NotImplementedError
+        if ordo is None:
+            ordo = self.ordo
+        pcode_index = None
+        pcode_hashtag_de_facto = ''
+        if ordo == 0:
+            pcode_hashtag = [
+                '#country+code+v_pcode', '#country+code+v_iso2',
+                '#country+code+v_iso3166p1a2']
+        else:
+            pcode_hashtag = ['#adm{0}+code+v_pcode'.format(ordo)]
+
+        for item in pcode_hashtag:
+            if item in self.caput_hxltm:
+                pcode_hashtag_de_facto = item
+                pcode_index = self.caput_hxltm.index(item)
+                break
+
+        if pcode_index is None:
+            raise SyntaxError(
+                '{0} not in (hxltm)<{1}>/(hxl)<{2}>(csv){3}'.format(
+                    pcode_hashtag, self.caput_hxltm,
+                    self.caput_hxl, self.caput_originali
+                ))
+        # pcode_index = self.caput_hxltm.index(pcode_hashtag)
+
+        # self.caput_hxltm.insert(0, '#item+conceptum+codicem')
+        self.caput_hxltm.insert(0, hxl_hashtag)
+        data_novis = []
+
+        for linea in self.data:
+            linea_novae = []
+            pcode_completo = linea[pcode_index]
+            if ordo == 0:
                 linea_novae.append(pcode_completo)  # Ex. BR
             else:
 
@@ -2982,11 +3048,11 @@ class CodAbTabulae:
         # @TODO make exported formats of higher admX also export previous
         #       levels (so the RDF would work to make the relations)
 
-        print(hxlhashtag)
+        # print(hxlhashtag)
         # print("\t\t hashtag", _hxl.hashtag)
-        print("\t\t quod_ad_rdf", _hxl.quod_ad_rdf(''))
+        # print("\t\t quod_ad_rdf", _hxl.quod_ad_rdf(''))
         # print("\t\t hxlattrs", _hxl.quod_ad_rdf('hxlattrs'))
-        print("\t\t quod_numerordinatio", _hxl.quod_numerordinatio())
+        # print("\t\t quod_numerordinatio", _hxl.quod_numerordinatio())
 
         # raise ValueError( _hxl.hashtag)
 
