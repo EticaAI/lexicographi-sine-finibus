@@ -200,6 +200,9 @@ HXL_ATTRIBUTES_AD_RDF = {
             '+v_iso2': '+v_iso3166p1a2',
             '+v_iso3': '+v_iso3166p1a3',
         },
+        '+code+v_numerodinatio': {
+            'numerodinatio_est': True
+        },
         '+name+v_unterm': {
             # P1448: official name of the subject in its official language(s)
             'wdata': 'P1448',  # official name
@@ -2930,6 +2933,7 @@ class CodAbTabulae:
                 suffīxum = suffīxum + '+' + _item.lower()
 
             # Something weird happened
+
         return '{0}{1}{2}'.format(praefīxum, suffīxum, lingua)
 
     def quod_hxltm_de_hxl_rei(self, hxlhashtag: str) -> str:
