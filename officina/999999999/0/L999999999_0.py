@@ -394,6 +394,36 @@ HXL_HASHTAGS_AD_RDF = {
 
 # @TODO this part is somewhat hardcoded
 HXL_HASH_ET_ATTRIBUTA_AD_RDF = {
+    # @TODO
+    #      - #country+code+v_iso3166p1a2
+    '#country+code+v_numerodinatio': {
+        '__no1bpc47__': 'qcc-Zxxx-r-aOBO-abfo29-anop-sU2200-s5000-snop-pOBO-pbfo124-ps5001',
+        '__no1hxl__': '#item+rem+i_qcc+is_zxxx+rdf_a_obo_bfo29+rdf_p_obo_bfo124_s5001+rdf_s_u2200_s5000'
+    },
+    '#adm1+code+v_numerodinatio': {
+        '__no1bpc47__': 'qcc-Zxxx-r-aOBO-abfo29-anop-sU2200-s5001-snop-pOBO-pbfo124-ps5002-pOBO-pbfo171-ps5000',
+        '__no1hxl__': '#item+rem+i_qcc+is_zxxx+rdf_a_obo_bfo29+rdf_p_obo_bfo124_s5002+rdf_p_obo_bfo171_s5000+rdf_s_u2200_s5001'
+    },
+    '#adm2+code+v_numerodinatio': {
+        '__no1bpc47__': 'qcc-Zxxx-r-aOBO-abfo29-anop-sU2200-s5002-snop-pOBO-pbfo124-ps5002-pOBO-pbfo171-ps5001',
+        '__no1hxl__': '#item+rem+i_qcc+is_zxxx+rdf_a_obo_bfo29+rdf_p_obo_bfo124_s5002+rdf_p_obo_bfo171_s5001+rdf_s_u2200_s5002'
+    },
+    '#adm3+code+v_numerodinatio': {
+        '__no1bpc47__': 'qcc-Zxxx-r-aOBO-abfo29-anop-sU2200-s5003-snop-pOBO-pbfo124-ps5003-pOBO-pbfo171-ps5002',
+        '__no1hxl__': '#item+rem+i_qcc+is_zxxx+rdf_a_obo_bfo29+rdf_p_obo_bfo124_s5003+rdf_p_obo_bfo171_s5002+rdf_s_u2200_s5003'
+    },
+    '#adm4+code+v_numerodinatio': {
+        '__no1bpc47__': 'qcc-Zxxx-r-aOBO-abfo29-anop-sU2200-s5004-snop-pOBO-pbfo124-ps5004-pOBO-pbfo171-ps5003',
+        '__no1hxl__': '#item+rem+i_qcc+is_zxxx+rdf_a_obo_bfo29+rdf_p_obo_bfo124_s5004+rdf_p_obo_bfo171_s5003+rdf_s_u2200_s5004'
+    },
+    '#adm5+code+v_numerodinatio': {
+        '__no1bpc47__': 'qcc-Zxxx-r-aOBO-abfo29-anop-sU2200-s5005-snop-pOBO-pbfo124-ps5005-pOBO-pbfo171-ps5004',
+        '__no1hxl__': '#item+rem+i_qcc+is_zxxx+rdf_a_obo_bfo29+rdf_p_obo_bfo124_s5005+rdf_p_obo_bfo171_s5004+rdf_s_u2200_s5005'
+    },
+    '#adm6+code+v_numerodinatio': {
+        '__no1bpc47__': 'qcc-Zxxx-r-aOBO-abfo29-anop-sU2200-s5006-snop-pOBO-pbfo124-ps5005-pOBO-pbfo171-ps5004',
+        '__no1hxl__': '#item+rem+i_qcc+is_zxxx+rdf_a_obo_bfo29+rdf_p_obo_bfo124_s5005+rdf_p_obo_bfo171_s5004+rdf_s_u2200_s5005'
+    },
     # @see https://www.wikidata.org/wiki/EntitySchema:E49
     # publication date (P577)
     # date or point in time when a work was first published or released
@@ -3029,6 +3059,10 @@ class CodAbTabulae:
                 not hxlhashtag.startswith('#'):
             return ''
 
+        _hxl = HXLHashtagSimplici(hxlhashtag).praeparatio()
+
+        return _hxl.quod_numerordinatio()
+
         # print('hxlhashtag', hxlhashtag)
         # Time-related hashtags
         # @see https://www.wikidata.org/wiki/Wikidata:List_of_properties/time
@@ -3873,6 +3907,10 @@ class HXLHashtagSimplici:
         if self.hashtag in BCP47_EX_HXL:
             # Already '#item+conceptum+codicem'/'#item+conceptum+numerordinatio'
             return self.hashtag
+
+        if self.hashtag in HXL_HASH_ET_ATTRIBUTA_AD_RDF:
+            return HXL_HASH_ET_ATTRIBUTA_AD_RDF[self.hashtag]['__no1hxl__']
+
         resultatum = []
         rdf_parts = []
         # if self.ad_rdf is None:
@@ -3936,6 +3974,10 @@ class HXLHashtagSimplici:
                 _linguae[0], _script[0], _rdf_parts
             )
         else:
+            if len(_rdf_parts) == 0:
+                return '#meta+ERROR+{0}'.format(
+                    self.hashtag.replace('#', '')
+                )
             return '#item+rem+i_qcc+is_zxxx{0}'.format(
                 _rdf_parts
             )
@@ -4053,6 +4095,11 @@ def hxl_hashtag_to_bcp47(
         result['_callbacks']['hxl_original'] = hashtag
         # raise ValueError(hashtag, _hashtag)
         hashtag = _hashtag
+
+    if hashtag in HXL_HASH_ET_ATTRIBUTA_AD_RDF:
+        _hashtag = _know_hardcoded[hashtag]['hxl']
+        result['_callbacks']['hxl_original'] = hashtag
+        hashtag = HXL_HASH_ET_ATTRIBUTA_AD_RDF[hashtag]['__no1hxl__']
 
     parts = hashtag.split('+')
     # bash_hashtag = parts.pop(0)
