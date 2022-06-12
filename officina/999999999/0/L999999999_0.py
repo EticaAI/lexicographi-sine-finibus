@@ -2535,6 +2535,10 @@ class CodAbTabulae:
             self.caput_hxltm.append(caput_novi)
 
         if self.identitas_locali_index < 0:
+            ōrdinēs = range(self.ordo + 1)
+            for ordo in reversed(ōrdinēs):
+                self.praeparatio_identitas_numerodinatio(ordo)
+            # self.praeparatio_identitas_numerodinatio(0)
             self.praeparatio_identitas_locali()
 
         # if formatum == 'no1':
@@ -2629,7 +2633,8 @@ class CodAbTabulae:
             linea_novae = []
             pcode_completo = linea[pcode_index]
             if ordo == 0:
-                linea_novae.append(pcode_completo)  # Ex. BR
+                # linea_novae.append(pcode_completo)  # Ex. BR
+                linea_novae.append(self.unm49)  # Ex. 76 ex BR
             else:
 
                 # Ex. 31 ad BR31
@@ -2655,14 +2660,22 @@ class CodAbTabulae:
 
     def praeparatio_identitas_numerodinatio(
             self, ordo: int = None):
-        """praeparatio_identitas_locali
+        """praeparatio_identitas_numerodinatio
+
+        Change self.data and self.caput_hxltm
+
+        Args:
+            ordo (int, optional): _description_. Defaults to None.
+
         """
-        raise NotImplementedError
-        if ordo is None:
-            ordo = self.ordo
+        # raise NotImplementedError
+        hxl_hashtag = '#adm{0}+code+v_numerodinatio'.format(ordo)
+        # if ordo is None:
+        #     ordo = self.ordo
         pcode_index = None
         pcode_hashtag_de_facto = ''
         if ordo == 0:
+            hxl_hashtag = '#country+code+v_numerodinatio'
             pcode_hashtag = [
                 '#country+code+v_pcode', '#country+code+v_iso2',
                 '#country+code+v_iso3166p1a2']
@@ -2691,7 +2704,14 @@ class CodAbTabulae:
             linea_novae = []
             pcode_completo = linea[pcode_index]
             if ordo == 0:
-                linea_novae.append(pcode_completo)  # Ex. BR
+                # raise ValueError(ordo)
+                _numerordinatio = '{0}:{1}:{2}'.format(
+                    self.numerordinatio_praefixo,
+                    self.unm49,
+                    "0",
+                )
+                # linea_novae.append(pcode_completo)  # Ex. 76 for BR
+                linea_novae.append(_numerordinatio)  # Ex. 76 for BR
             else:
 
                 # Ex. 31 ad BR31
@@ -2701,7 +2721,15 @@ class CodAbTabulae:
                 pcode_numeri = re.sub('[^0-9]', '', pcode_numeri)
 
                 try:
-                    linea_novae.append(int(pcode_numeri))
+                    pcode_numeri = int(pcode_numeri)
+                    _numerordinatio = '{0}:{1}:{2}:{3}'.format(
+                        self.numerordinatio_praefixo,
+                        self.unm49,
+                        ordo,
+                        str(pcode_numeri),
+                    )
+
+                    linea_novae.append(_numerordinatio)
                 except ValueError as err:
                     raise ValueError('<{0}:{1}> -> int({2})?? [{3}]'.format(
                         pcode_hashtag_de_facto,
@@ -2724,7 +2752,7 @@ class CodAbTabulae:
         if self.ordo > 0:
             hashtag_numerordinatio = '#adm{0}+v_numerordinatio'.format(
                 self.ordo)
-        self.caput_no1.insert(0, hashtag_numerordinatio)
+        # self.caput_no1.insert(0, hashtag_numerordinatio)
         self.caput_no1.insert(0, '#item+conceptum+numerordinatio')
         data_novis = []
 
@@ -2740,7 +2768,8 @@ class CodAbTabulae:
                 str(self.ordo),
                 _identitas_locali,
             )
-            linea_novae = [_numerordinatio, _numerordinatio]
+            # linea_novae = [_numerordinatio, _numerordinatio]
+            linea_novae = [_numerordinatio]
             linea_novae.extend(linea)
 
             data_novis.append(linea_novae)
