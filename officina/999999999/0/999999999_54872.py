@@ -274,6 +274,7 @@ class Cli:
                 # #    - Uses '.ndjson' as extension
                 # 'application/x-ndjson',
                 '_temp_bcp47',
+                '_temp_no1',
                 '_temp_bcp47_meta_in_json',
                 '_temp_hxl_meta_in_json',
                 '_temp_header_hxl_to_bcp47',
@@ -438,9 +439,23 @@ class Cli:
             return self.EXIT_OK
 
         # @TODO remove thsi temporary part
-        if pyargs.objectivum_formato == '_temp_bcp47':
+        # if pyargs.objectivum_formato == '_temp_bcp47':
+        if pyargs.objectivum_formato in ['_temp_bcp47', '_temp_no1']:
+
             caput, data = hxltm_carricato(
                 _infile, _stdin, punctum_separato=fontem_separato)
+
+            if pyargs.objectivum_formato == '_temp_no1':
+                caput_novo = []
+                for _item in caput:
+                    # print('hxl item     > ', _item)
+                    _hxl = HXLHashtagSimplici(_item).praeparatio()
+                    _item_bcp47 = _hxl.quod_bcp47(strictum=False)
+                    # print('_item_bcp47  > ', _item_bcp47)
+                    caput_novo.append(_item_bcp47)
+                caput = caput_novo
+                # print('caput', caput)
+
             # print(caput, data)
             # print('')
             meta = bcp47_rdf_extension_poc(
@@ -755,5 +770,7 @@ if __name__ == "__main__":
 
     est_cli = Cli()
     args = est_cli.make_args()
+    # print('  >>>>  args', args)
+    # raise ValueError(args)
 
     est_cli.execute_cli(args)
