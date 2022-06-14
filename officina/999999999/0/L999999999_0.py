@@ -6017,6 +6017,33 @@ class OntologiaSimpliciAdOWL(OntologiaSimplici):
         ttl_imprimendo(paginae)
 
 
+def owl_index() -> str:
+    """Just an quick test
+    """
+    resultatum = """
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://www.semanticweb.org/fititnt/ontologies/2022/5/untitled-ontology-123456#"
+     xml:base="http://www.semanticweb.org/fititnt/ontologies/2022/5/untitled-ontology-123456"
+     xmlns:dc="http://purl.org/dc/elements/1.1/"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:skos="http://www.w3.org/2004/02/skos/core#">
+    <owl:Ontology rdf:about="http://www.semanticweb.org/fititnt/ontologies/2022/5/untitled-ontology-123456">
+        <owl:imports rdf:resource="https://github.com/EticaAI/lexicographi-sine-finibus/blob/main/officina/MDCIII.owl"/>
+        <owl:imports rdf:resource="file:/workspace/git/EticaAI/lexicographi-sine-finibus/officina/1603/45/16/24/0/1603_45_16_24_0.no1.owl.ttl"/>
+        <owl:imports rdf:resource="file:/workspace/git/EticaAI/lexicographi-sine-finibus/officina/1603/45/16/24/1/1603_45_16_24_1.no1.owl.ttl"/>
+        <owl:imports rdf:resource="file:/workspace/git/EticaAI/lexicographi-sine-finibus/officina/1603/45/16/24/2/1603_45_16_24_2.no1.owl.ttl"/>
+        <owl:imports rdf:resource="file:/workspace/git/EticaAI/lexicographi-sine-finibus/officina/1603/45/16/24/3/1603_45_16_24_3.no1.owl.ttl"/>
+    </owl:Ontology>
+</rdf:RDF>
+    """
+    return resultatum
+
+
+
 def qhxl(rem: dict, query: Union[str, list]):
     if isinstance(query, str):
         query = [query]

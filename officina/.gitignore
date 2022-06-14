@@ -27,6 +27,7 @@ node_modules
 catalog-v001.xml
 MDCIII.devel.owl
 *.devel.owl
+*.devel.owl.ttl
 
 # *.xml
 # *.tmx
