@@ -106,18 +106,23 @@ __EPILOGUM__ = """
 Temporary tests . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 (Debug information in JSON)
     {0} --objectivum-formato=_temp_bcp47_meta_in_json \
+--punctum-separato-de-fontem=$'\\t' \
 999999999/1568346/data/cod-ab-example1-with-inferences.bcp47.tsv --rdf-trivio=2
 
     {0} --objectivum-formato=_temp_bcp47_meta_in_json \
+--punctum-separato-de-fontem=$'\\t' \
 --rdf-namespaces-archivo=\
 999999999/1568346/data/hxlstandard-rdf-namespaces-example.hxl.csv \
 999999999/1568346/data/unesco-thesaurus.bcp47g.tsv
 
 (Data operations)
     {0} --objectivum-formato=_temp_bcp47 \
+--punctum-separato-de-fontem=$'\\t' \
 999999999/1568346/data/cod-ab-example1-with-inferences.bcp47.tsv --rdf-trivio=2
 
-    {0} --objectivum-formato=_temp_bcp47 --rdf-namespaces-archivo=\
+    {0} --objectivum-formato=_temp_bcp47
+--punctum-separato-de-fontem=$'\\t' \
+--rdf-namespaces-archivo=\
 999999999/1568346/data/hxlstandard-rdf-namespaces-example.hxl.csv \
 999999999/1568346/data/unesco-thesaurus.bcp47g.tsv --rdf-trivio=1
 
@@ -125,18 +130,22 @@ Temporary tests . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 999999999/1568346/data/hxlstandard-rdf-namespaces-example.hxl.csv \
 999999999/1568346/data/unesco-thesaurus.bcp47g.tsv --rdf-trivio=2
 
-    {0} --objectivum-formato=_temp_bcp47 --rdf-namespaces-archivo=\
+    {0} --objectivum-formato=_temp_bcp47 \
+--punctum-separato-de-fontem=$'\\t' \
+--rdf-namespaces-archivo=\
 999999999/1568346/data/hxlstandard-rdf-namespaces-example.hxl.csv \
 999999999/1568346/data/unesco-thesaurus.bcp47g.tsv \
 | rapper --quiet --input=turtle --output=turtle /dev/fd/0
 
 (Data operation; example of "SKOS version" without OWL/OBO assertions)
     {0} --objectivum-formato=_temp_bcp47 \
+--punctum-separato-de-fontem=$'\\t' \
 999999999/1568346/data/cod-ab-example1-with-inferences.bcp47.tsv \
 --rdf-sine-spatia-nominalibus=owl,obo,devnull --rdf-trivio=2
 
 (Data operation; example of "OWL + OBO" without SKOS linguistic metadata)
     {0} --objectivum-formato=_temp_bcp47 \
+--punctum-separato-de-fontem=$'\\t' \
 999999999/1568346/data/cod-ab-example1-with-inferences.bcp47.tsv \
 --rdf-sine-spatia-nominalibus=skos,wdata,devnull --rdf-trivio=2
 
