@@ -680,7 +680,6 @@ RDF_SPATIA_NOMINALIBUS_PREFIX = {
 
     'skos:collection': 'skos:Collection',
     'skos:concept': 'skos:Concept',
-    'skos:concept': 'skos:Concept',
     'skos:conceptscheme': 'skos:ConceptScheme',
     'skos:orderedcollection': 'skos:OrderedCollection',
     'skos:altlabel': 'skos:altLabel',
@@ -2072,6 +2071,7 @@ def bcp47_rdf_extension_poc(
         _auxiliary_bags: List[str] = None,
         namespaces: List[dict] = None,
         rdf_sine_spatia_nominalibus: List = None,
+        cum_antecessoribus: bool = False,
         est_meta: bool = False,
         strictum: bool = True
 ) -> dict:

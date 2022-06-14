@@ -319,6 +319,20 @@ class Cli:
             default=None
         )
 
+        # numerordinatio
+        # cum (+ ablativus) https://en.wiktionary.org/wiki/cum#Latin
+        # antecessōribus, pl, m, ablativus, en.wiktionary.org/wiki/antecessor
+        parser.add_argument(
+            '--numerordinatio-cum-antecessoribus',
+            help='If RDF output should generate implicily Numerordinatio '
+            'antecessors',
+            metavar="cum_antecessoribus",
+            dest="cum_antecessoribus",
+            action='store_const',
+            const=True,
+            default=False
+        )
+
         # archīvum, n, s, nominativus, https://en.wiktionary.org/wiki/archivum
         # cōnfigūrātiōnī, f, s, dativus,
         #                      https://en.wiktionary.org/wiki/configuratio#Latin
@@ -433,6 +447,7 @@ class Cli:
             meta = bcp47_rdf_extension_poc(
                 caput, data, objective_bag=pyargs.rdf_bag,
                 rdf_sine_spatia_nominalibus=rdf_sine_spatia_nominalibus,
+                cum_antecessoribus=pyargs.cum_antecessoribus,
                 est_meta=True)
             print(json.dumps(
                 meta, sort_keys=False, ensure_ascii=False, cls=SetEncoder))
@@ -460,7 +475,8 @@ class Cli:
             # print('')
             meta = bcp47_rdf_extension_poc(
                 caput, data, objective_bag=pyargs.rdf_bag,
-                rdf_sine_spatia_nominalibus=pyargs.rdf_sine_spatia_nominalibus)
+                rdf_sine_spatia_nominalibus=pyargs.rdf_sine_spatia_nominalibus,
+                cum_antecessoribus=pyargs.cum_antecessoribus)
             # print(json.dumps(meta, sort_keys=True ,ensure_ascii=False))
             # return self.EXIT_OK
 
