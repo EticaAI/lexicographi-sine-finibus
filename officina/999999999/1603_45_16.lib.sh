@@ -39,7 +39,9 @@ DATA_UN_PCode_ZIP="https://drive.google.com/uc?export=download&id=1jRshR0Mywd_w8
 #   - https://drive.google.com/file/d/1jRshR0Mywd_w8r6W2njUFWv7oDVLgKQi/view?usp=sharing
 #     - https://drive.google.com/uc?export=download&id=1jRshR0Mywd_w8r6W2njUFWv7oDVLgKQi
 
-ROOTDIR="$(pwd)"
+__ROOTDIR="$(pwd)"
+ROOTDIR="${ROOTDIR:-__ROOTDIR}"
+DESTDIR="${DESTDIR:-$ROOTDIR}"
 # shellcheck source=999999999.lib.sh
 . "$ROOTDIR"/999999999/999999999.lib.sh
 
@@ -135,7 +137,7 @@ bootstrap_1603_45_16__all() {
       bootstrap_1603_45_16__item_no1 "$numerordinatio_praefixo" "$unm49" "$v_iso3" "$v_iso2" "$cod_ab_level_max" "1" "0"
       bootstrap_1603_45_16__item_rdf "$numerordinatio_praefixo" "$unm49" "$v_iso3" "$v_iso2" "$cod_ab_level_max" "1" "0"
 
-      echo "Sleep 5 (disable me later)"
+      printf "\t%40s\n" "${tty_red} DEBUG: [Sleep 5 (@TODO disable me later)] ${tty_normal}"
       sleep 5
     done
   } <"${opus_temporibus_temporarium}"
@@ -252,6 +254,7 @@ bootstrap_1603_45_16__apothecae() {
 #
 # Globals:
 #   ROOTDIR
+#   DESTDIR
 #
 # Arguments:
 #   numerordinatio_praefixo
@@ -280,9 +283,9 @@ bootstrap_1603_45_16__item_no1() {
     _basim_fontem="${ROOTDIR}"
   fi
   if [ "$est_temporarium_objectivum" -eq "1" ]; then
-    _basim_objectivum="${ROOTDIR}/999999"
+    _basim_objectivum="${DESTDIR}/999999"
   else
-    _basim_objectivum="${ROOTDIR}"
+    _basim_objectivum="${DESTDIR}"
   fi
 
   # 1603_45_16 -> 1603/45/16
@@ -293,9 +296,10 @@ bootstrap_1603_45_16__item_no1() {
   fontem_archivum="${_basim_fontem}/1603/45/16/xlsx/${_iso3661p1a3_lower}.xlsx"
   # objectivum_archivum_basi="${_basim_objectivum}/1603/45/16/${unm49}"
   objectivum_archivum_basi="${_basim_objectivum}/${__group_path}/${unm49}"
-  opus_temporibus_temporarium="${ROOTDIR}/999999/0/${unm49}~lvl.tsv"
+  opus_temporibus_temporarium="${DESTDIR}/999999/0/${unm49}~lvl.tsv"
 
-  echo "${FUNCNAME[0]} ... [$numerordinatio_praefixo] [$unm49] [$iso3661p1a3] [$pcode_praefixo]"
+  printf "\t%40s\n" "${tty_blue}${FUNCNAME[0]} STARTED [$numerordinatio_praefixo] [$unm49] [$iso3661p1a3] [$pcode_praefixo]${tty_normal}"
+  # echo "${FUNCNAME[0]} ... [$numerordinatio_praefixo] [$unm49] [$iso3661p1a3] [$pcode_praefixo]"
 
   # for file_path in "${ROOTDIR}"/999999/1603/45/16/xlsx/*.xlsx; do
   # ISO3166p1a3_original=$(basename --suffix=.xlsx "$file_path")
@@ -347,6 +351,7 @@ bootstrap_1603_45_16__item_no1() {
   done
   # return 0
   # done
+  printf "\t%40s\n" "${tty_green}${FUNCNAME[0]} FINISHED OKAY ${tty_normal}"
 }
 
 #######################################
@@ -358,6 +363,7 @@ bootstrap_1603_45_16__item_no1() {
 #
 # Globals:
 #   ROOTDIR
+#   DESTDIR
 #
 # Arguments:
 #   numerordinatio_praefixo
@@ -386,9 +392,9 @@ bootstrap_1603_45_16__item_rdf() {
     _basim_fontem="${ROOTDIR}"
   fi
   if [ "$est_temporarium_objectivum" -eq "1" ]; then
-    _basim_objectivum="${ROOTDIR}/999999"
+    _basim_objectivum="${DESTDIR}/999999"
   else
-    _basim_objectivum="${ROOTDIR}"
+    _basim_objectivum="${DESTDIR}"
   fi
 
   # 1603_45_16 -> 1603/45/16
@@ -400,9 +406,9 @@ bootstrap_1603_45_16__item_rdf() {
   # objectivum_archivum_basi="${_basim_objectivum}/1603/45/16/${unm49}"
   objectivum_archivum_basi="${_basim_objectivum}/${__group_path}/${unm49}"
   # opus_temporibus_temporarium="${ROOTDIR}/999999/0/${unm49}~lvl.tsv"
-  opus_temporibus_temporarium="${ROOTDIR}/999999/0/${unm49}.ttl"
+  opus_temporibus_temporarium="${DESTDIR}/999999/0/${unm49}.ttl"
 
-  echo "${FUNCNAME[0]} ... [$numerordinatio_praefixo] [$unm49] [$iso3661p1a3] [$pcode_praefixo]"
+  printf "\t%40s\n" "${tty_blue}${FUNCNAME[0]} STARTED [$numerordinatio_praefixo] [$unm49] [$iso3661p1a3] [$pcode_praefixo]${tty_normal}"
 
   # for file_path in "${ROOTDIR}"/999999/1603/45/16/xlsx/*.xlsx; do
   # ISO3166p1a3_original=$(basename --suffix=.xlsx "$file_path")
@@ -506,6 +512,7 @@ bootstrap_1603_45_16__item_rdf() {
 
   # return 0
   # done
+  printf "\t%40s\n" "${tty_green}${FUNCNAME[0]} FINISHED OKAY ${tty_normal}"
 }
 
 #######################################
@@ -602,7 +609,7 @@ bootstrap_999999_1603_45_16_neo() {
 
   echo "${FUNCNAME[0]} ... [$objectivum_iso3661p1a3]"
 
-  echo "NOTE: this entire function is deprecated." Use bootstrap_1603_45_16__item_no1
+  echo "NOTE: this entire function is deprecated."
   echo "  Use bootstrap_1603_45_16__item_no1 (called by bootstrap_1603_45_16__all)"
   echo "  or at least call 999999999_7200235.py with correct --pcode-praefixo="
   sleep 3
@@ -666,6 +673,8 @@ bootstrap_999999_1603_45_16_neo() {
 
 #######################################
 # Convert the XLSXs to intermediate formats on 999999/1603/45/16
+#
+# @DEPRECATED
 #
 # Globals:
 #   ROOTDIR
