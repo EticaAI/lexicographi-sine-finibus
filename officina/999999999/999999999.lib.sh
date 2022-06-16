@@ -130,14 +130,17 @@ stale_archive() {
 }
 
 #######################################
-# Return if a path (or a file) don't exist or if did not changed recently.
-# Use case: reload functions that depend on action of older ones
+# Simpler optional validation of source file and update destiny file if already
+# not the same. It will MOVE or delete source file.
+#
+# @see archivum_copiae for copy only
 #
 # Globals:
 #   None
 # Arguments:
-#   path_or_file
-#   maximum_time (default: 5 minutes)
+#   formatum_archivum        (Example: "csv")
+#   fontem_archivum          full path to source file
+#   objectivum_archivum      full path to source file
 # Outputs:
 #   1 (if need reload, Void if no reload need)
 #######################################
@@ -205,7 +208,7 @@ file_update_if_necessary() {
 }
 
 #######################################
-# Copy file
+# Copy file if destiny already does not have one with same hash
 #
 # Globals:
 #   ROOTDIR
@@ -261,6 +264,46 @@ archivum_copiae() {
     fontem_archivum_hash=$(sha256sum "$fontem_archivum" | cut -d ' ' -f 1)
     if [[ "$fontem_archivum_hash" != "$objectivum_archivum_hash" ]]; then
       echo "INFO: Not equal. Copy now..."
+      # echo "Not equal. Copy now... [$fontem_archivum] --> [$objectivum_archivum]"
+      # sha256sum "$objectivum_archivum"
+      # sha256sum "$fontem_archivum"
+      rm "$objectivum_archivum"
+      cp "$fontem_archivum" "$objectivum_archivum"
+    else
+      echo "INFO: already equal. No need to copy"
+    fi
+  else
+    echo "INFO: copy for the first time"
+    cp "$fontem_archivum" "$objectivum_archivum"
+  fi
+
+  return 0
+}
+
+#######################################
+# Copy file from source to destiny if hashs are not equal. Simpler version
+# than archivum_copiae since will do no validation checks
+#
+# Globals:
+#
+# Arguments:
+#   fontem_archivum
+#   objectivum_archivum
+#
+# Outputs:
+#
+#######################################
+archivum_copiae_simplici() {
+  fontem_archivum="$1"
+  objectivum_archivum="$2"
+
+  echo "${FUNCNAME[0]} ... [$fontem_archivum] --> [$objectivum_archivum]"
+
+  if [ -f "$objectivum_archivum" ]; then
+    objectivum_archivum_hash=$(sha256sum "$objectivum_archivum" | cut -d ' ' -f 1)
+    fontem_archivum_hash=$(sha256sum "$fontem_archivum" | cut -d ' ' -f 1)
+    if [[ "$fontem_archivum_hash" != "$objectivum_archivum_hash" ]]; then
+      echo "INFO: Not equal. Replacing now..."
       # echo "Not equal. Copy now... [$fontem_archivum] --> [$objectivum_archivum]"
       # sha256sum "$objectivum_archivum"
       # sha256sum "$fontem_archivum"
