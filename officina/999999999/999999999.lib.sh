@@ -53,9 +53,13 @@ NUMERORDINATIO_STATUS_CONCEPTUM_CODICEM_MINIMAM="${NUMERORDINATIO_STATUS_CONCEPT
 NUMERORDINATIO_DATUM="${ROOTDIR}/999999/999999"
 
 #### Fancy colors constants - - - - - - - - - - - - - - - - - - - - - - - - - -
+# shellcheck disable=SC2034
 tty_blue=$(tput setaf 4)
+# shellcheck disable=SC2034
 tty_green=$(tput setaf 2)
+# shellcheck disable=SC2034
 tty_red=$(tput setaf 1)
+# shellcheck disable=SC2034
 tty_normal=$(tput sgr0)
 
 ## Example
@@ -297,23 +301,23 @@ archivum_copiae_simplici() {
   fontem_archivum="$1"
   objectivum_archivum="$2"
 
-  echo "${FUNCNAME[0]} ... [$fontem_archivum] --> [$objectivum_archivum]"
+  # echo "${FUNCNAME[0]} ... [$fontem_archivum] --> [$objectivum_archivum]"
 
   if [ -f "$objectivum_archivum" ]; then
     objectivum_archivum_hash=$(sha256sum "$objectivum_archivum" | cut -d ' ' -f 1)
     fontem_archivum_hash=$(sha256sum "$fontem_archivum" | cut -d ' ' -f 1)
     if [[ "$fontem_archivum_hash" != "$objectivum_archivum_hash" ]]; then
-      echo "INFO: Not equal. Replacing now..."
+      echo "INFO: Not equal. Replacing now... [$fontem_archivum] --> [$objectivum_archivum]"
       # echo "Not equal. Copy now... [$fontem_archivum] --> [$objectivum_archivum]"
       # sha256sum "$objectivum_archivum"
       # sha256sum "$fontem_archivum"
       rm "$objectivum_archivum"
       cp "$fontem_archivum" "$objectivum_archivum"
     else
-      echo "INFO: already equal. No need to copy"
+      echo "${FUNCNAME[0]} INFO: already equal. No need to override"
     fi
   else
-    echo "INFO: copy for the first time"
+    echo "${FUNCNAME[0]} INFO: copy for the first time [$fontem_archivum] --> [$objectivum_archivum]"
     cp "$fontem_archivum" "$objectivum_archivum"
   fi
 

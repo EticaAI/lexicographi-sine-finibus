@@ -54,6 +54,7 @@
 
 # @see https://www.w3.org/2001/sw/BestPractices/OEP/SimplePartWhole
 
+from ast import Try
 from genericpath import exists
 import sys
 import os
@@ -220,6 +221,12 @@ Opus temporibus . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 # In Python2, sys.stdin is a byte stream; in Python3, it's a text stream
 STDIN = sys.stdin.buffer
 
+# Example
+# CODEX_AD_HOC_NUMERORDINATIO='{"#item+rem+i_qcc+is_zxxx+ix_n1603":
+#    "1603_16_24_0", "#item+rem+i_mul+is_zyyy":
+#     "1603_16_24_0 Angola 0"}' ./999999999/0/1603_1.py
+#     --methodus='status-quo' --status-quo-in-json --codex-de 1603_16_24_0
+CODEX_AD_HOC_NUMERORDINATIO = os.getenv('CODEX_AD_HOC_NUMERORDINATIO', None)
 
 # a b aa bb
 # printf "30160\n31161\n1830260\n1891267\n" | \
@@ -813,8 +820,16 @@ class Codex:
                     self.m1603_1_1__de_codex = lineam
 
         if not self.m1603_1_1__de_codex:
-            raise ValueError("{0} not defined on 1603_1_1 [{1}]".format(
-                self.de_codex, fullpath))
+            if CODEX_AD_HOC_NUMERORDINATIO is not None:
+                codex_ad_hoc = json.loads(CODEX_AD_HOC_NUMERORDINATIO)
+                if not '#item+rem+i_qcc+is_zxxx+ix_n1603' in codex_ad_hoc or \
+                        not '#item+rem+i_mul+is_zyyy' in codex_ad_hoc:
+                    raise SyntaxError("bad CODEX_AD_HOC_NUMERORDINATIO [{1}]".format(
+                        self.de_codex, CODEX_AD_HOC_NUMERORDINATIO))
+                self.m1603_1_1__de_codex = codex_ad_hoc
+            else:
+                raise ValueError("{0} not defined on 1603_1_1 [{1}]".format(
+                    self.de_codex, fullpath))
 
     def _init_codex(self):
         # numerordinatio = numerordinatio_neo_separatum(self.de_codex, ':')
