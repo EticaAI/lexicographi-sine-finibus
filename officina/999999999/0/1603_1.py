@@ -228,6 +228,9 @@ STDIN = sys.stdin.buffer
 #     --methodus='status-quo' --status-quo-in-json --codex-de 1603_16_24_0
 CODEX_AD_HOC_NUMERORDINATIO = os.getenv('CODEX_AD_HOC_NUMERORDINATIO', None)
 
+# DATA_APOTHECAE_MINIMIS="1" disable implicit import of 1603_1_1 and 1603_1_51
+DATA_APOTHECAE_MINIMIS = os.getenv('DATA_APOTHECAE_MINIMIS', "")
+
 # a b aa bb
 # printf "30160\n31161\n1830260\n1891267\n" | \
 # ./999999999/0/2600.py --actionem-decifram
@@ -4080,14 +4083,22 @@ class DataApothecae:
             'resources': []
         }
 
-        sarcina['resources'].append(DataApothecae.quod_tabula('1603_1_1'))
-        sarcina['resources'].append(DataApothecae.quod_tabula('1603_1_51'))
+        # raise ValueError(DATA_APOTHECAE_MINIMIS, bool(DATA_APOTHECAE_MINIMIS))
 
-        for codex in self.data_apothecae_ex:
-            if codex in ['1603_1_1', '1603_1_51']:
-                continue
-            sarcina['resources'].append(
-                DataApothecae.quod_tabula(codex))
+        # if bool(DATA_APOTHECAE_MINIMIS) is True:
+        if DATA_APOTHECAE_MINIMIS.lower() in ("yes", "true", "t", "1"):
+            for codex in self.data_apothecae_ex:
+                sarcina['resources'].append(
+                    DataApothecae.quod_tabula(codex))
+        else:
+            sarcina['resources'].append(DataApothecae.quod_tabula('1603_1_1'))
+            sarcina['resources'].append(DataApothecae.quod_tabula('1603_1_51'))
+
+            for codex in self.data_apothecae_ex:
+                if codex in ['1603_1_1', '1603_1_51']:
+                    continue
+                sarcina['resources'].append(
+                    DataApothecae.quod_tabula(codex))
 
         paginae.append(json.dumps(
             sarcina, indent=2, ensure_ascii=False, sort_keys=False))
