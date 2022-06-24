@@ -4015,9 +4015,17 @@ class DataApothecae:
     def __init__(
         self,
         data_apothecae_ex: list,
-        data_apothecae_ad: str = 'apothecae.datapackage.json',
+        data_apothecae_ad: Union[bool, str] = 'apothecae.datapackage.json',
         data_apothecae_formato: str = None
     ):
+
+        # NOTE: the command line options for strout and to auto detect
+        #       numerordinatios from paths is done outsite DataApothecae
+
+        if not data_apothecae_ad and data_apothecae_formato is None:
+            raise SyntaxError(
+                'data_apothecae_ad et data_apothecae_formato nullus? '
+                '--data-apothecae-formato="<data-apothecae-formato>"')
 
         self.data_apothecae_ex = data_apothecae_ex
         self.data_apothecae_ad = data_apothecae_ad
@@ -4030,9 +4038,13 @@ class DataApothecae:
             elif data_apothecae_ad.endswith('.json'):
                 self.data_apothecae_formato = 'datapackage'
             elif data_apothecae_ad.endswith('.xml'):
-                self.data_apothecae_formato = 'catalog_v001'
+                self.data_apothecae_formato = 'catalog'
             else:
                 raise ValueError('--data-apothecae-formato ?')
+
+        if not data_apothecae_ad and self.data_apothecae_formato == 'sqlite':
+            raise SyntaxError(
+                'sqlite not work with stdout. Please specify a path')
 
         self.initiari()
 
@@ -4069,7 +4081,7 @@ class DataApothecae:
             # return self.praeparatio_datapackage(libraria)
             return self.praeparatio_datapackage()
 
-        if self.data_apothecae_formato == 'catalog_v001':
+        if self.data_apothecae_formato == 'catalog':
             # return self.praeparatio_datapackage(libraria)
             return self.praeparatio_catalog_v001()
 
@@ -4156,14 +4168,19 @@ class DataApothecae:
                 for lineam in paginae:
                     archivum.write(lineam + "\n")
         else:
-            _path_archivum = NUMERORDINATIO_BASIM + '/' + self.data_apothecae_ad
-            # self.resultatum.append('TODO praeparatio_datapackage')
-            self.resultatum.append(_path_archivum)
-
-            with open(_path_archivum, 'w') as archivum:
-                # Further file processing goes here
+            if self.data_apothecae_ad is False:
                 for lineam in paginae:
-                    archivum.write(lineam + "\n")
+                    print(lineam)
+            else:
+                _path_archivum = \
+                    NUMERORDINATIO_BASIM + '/' + self.data_apothecae_ad
+                # self.resultatum.append('TODO praeparatio_datapackage')
+                self.resultatum.append(_path_archivum)
+
+                with open(_path_archivum, 'w') as archivum:
+                    # Further file processing goes here
+                    for lineam in paginae:
+                        archivum.write(lineam + "\n")
 
     def praeparatio_datapackage(
             self,
@@ -4205,14 +4222,18 @@ class DataApothecae:
                 for lineam in paginae:
                     archivum.write(lineam)
         else:
-            _path_archivum = NUMERORDINATIO_BASIM + '/' + self.data_apothecae_ad
-            # self.resultatum.append('TODO praeparatio_datapackage')
-            self.resultatum.append(_path_archivum)
-
-            with open(_path_archivum, 'w') as archivum:
-                # Further file processing goes here
+            if self.data_apothecae_ad is False:
                 for lineam in paginae:
-                    archivum.write(lineam)
+                    print(lineam)
+            else:
+                _path_archivum = NUMERORDINATIO_BASIM + '/' + self.data_apothecae_ad
+                # self.resultatum.append('TODO praeparatio_datapackage')
+                self.resultatum.append(_path_archivum)
+
+                with open(_path_archivum, 'w') as archivum:
+                    # Further file processing goes here
+                    for lineam in paginae:
+                        archivum.write(lineam)
 
     def praeparatio_sqlite(self):
         """praeparatio_sqlite
@@ -5080,10 +5101,29 @@ class CLI_2600:
         )
 
         data_apothecae.add_argument(
+            '--data-apothecae-ad-stdout',
+            help='Print data-apothecae result. '
+            'Requires --data-apothecae-formato',
+            dest='data_apothecae_ad_stdout',
+            # nargs='?',
+            default=False,
+            action='store_true'
+        )
+
+        data_apothecae.add_argument(
             '--data-apothecae-ex',
             help='Comma-separated list of dictionaries to initialize '
             'the data warehouse. ',
             dest='data_apothecae_ex',
+            type=lambda x: x.split(',')
+        )
+
+        data_apothecae.add_argument(
+            '--data-apothecae-ex-praefixis',
+            help='Comma-separated list of prefixes of dictionaries '
+            'to initialize the data warehouse. Will search by paths and load'
+            'the ones which de facto exist ',
+            dest='data_apothecae_ex_praefixis',
             type=lambda x: x.split(',')
         )
 
@@ -5101,7 +5141,7 @@ class CLI_2600:
             '--data-apothecae-ad pattern.',
             dest='data_apothecae_formato',
             nargs='?',
-            choices=['datapackage', 'sqlite'],
+            choices=['datapackage', 'sqlite', 'catalog'],
             default=None
         )
 
@@ -5468,10 +5508,14 @@ class CLI_2600:
 
             # libraria.imprimere_in_datapackage_sqlite()
 
+            data_apothecae_ad = self.pyargs.data_apothecae_ad
+            if self.pyargs.data_apothecae_ad_stdout:
+                data_apothecae_ad = False
+
             data_apothecae = DataApothecae(
                 # self.pyargs.data_apothecae_ex,
                 data_apothecae_ex,
-                data_apothecae_ad=self.pyargs.data_apothecae_ad,
+                data_apothecae_ad=data_apothecae_ad,
                 data_apothecae_formato=self.pyargs.data_apothecae_formato,
             )
 

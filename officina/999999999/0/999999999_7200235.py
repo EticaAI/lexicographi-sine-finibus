@@ -1338,29 +1338,29 @@ def hxltm_carricato__cod_ab_levels_ttl(
             _paginae_quartus.append(
                 f'<urn:mdciii:{numerodiatio_re}:4> a skos:Collection')
             _paginae_quartus.append(
-                f'  rdfs:label "{numerodiatio_re}:4()"')
+                f'  rdfs:label "({numerodiatio_re}:4)"')
             # _paginae_quartus.append(
             #     f'  skos:related <urn:mdciii:{numerodiatio_re}:3>')
 
         if ordo_maximo >= 5:
-            _paginae_quartus.append(
-                f'  skos:related <urn:mdciii:{numerodiatio_re}:5>')
+            # _paginae_quartus.append(
+            #     f'  skos:related <urn:mdciii:{numerodiatio_re}:5>')
 
             _paginae_quintus.append(
                 f'<urn:mdciii:{numerodiatio_re}:5> a skos:Collection')
             _paginae_quintus.append(
-                f'  rdfs:label "{numerodiatio_re}:5()"')
+                f'  rdfs:label "({numerodiatio_re}:5)"')
             # _paginae_quintus.append(
             #     f'  skos:related <urn:mdciii:{numerodiatio_re}:4>')
 
         if ordo_maximo == 6:
-            _paginae_quintus.append(
-                f'  skos:related <urn:mdciii:{numerodiatio_re}:6>')
+            # _paginae_quintus.append(
+            #     f'  skos:related <urn:mdciii:{numerodiatio_re}:6>')
 
             _paginae_sextus.append(
                 f'<urn:mdciii:{numerodiatio_re}:6()> a skos:Collection')
             _paginae_sextus.append(
-                f'  rdfs:label "{numerodiatio_re}:6"')
+                f'  rdfs:label "({numerodiatio_re}:6)"')
             # _paginae_sextus.append(
             #     f'  skos:related <urn:mdciii:{numerodiatio_re}:5>')
 
