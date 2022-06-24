@@ -56,6 +56,8 @@
 
 from ast import Try
 from genericpath import exists
+import glob
+from multiprocessing.sharedctypes import Value
 import sys
 import os
 import argparse
@@ -172,6 +174,18 @@ Data apothēcae . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
     {0} --methodus='data-apothecae' \
 --data-apothecae-ex-archivo='999999/0/apothecae-list.txt' \
 --data-apothecae-ad='apothecae.sqlite'
+
+(Data catalog / Datapackage, ex-suffixis, ex-praefixis)
+
+    {0} --methodus='data-apothecae' --data-apothecae-ad-stdout \
+--data-apothecae-formato='catalog' \
+--data-apothecae-ex-suffixis='no1.owl.ttl,no11.owl.ttl,no1.skos.ttl,\
+no11.skos.ttl' --data-apothecae-ex-praefixis='1603'
+
+    {0} --methodus='data-apothecae' --data-apothecae-ad-stdout \
+--data-apothecae-formato='datapackage' \
+--data-apothecae-ex-suffixis='no1.tm.hxl.csv,no11.tm.hxl.csv' \
+--data-apothecae-ex-praefixis='1603_1_1,1603_16_1'
 
 Dictionaria Numerordĭnātĭo (deprecated) . . . . . . . . . . . . . . . . . . . .
     {0} --methodus='deprecatum-dictionaria-numerordinatio'
@@ -347,55 +361,42 @@ def numerordinatio_ex_praefixis(
     for item in ex_praefixis:
         _pattern = item.replace('_', '/').replace(':', '/')
         _pattern.strip('_')
-        _ex_praefixis.append(_pattern)
+        _ex_praefixis.append(_pattern + '/')
     _ex_praefixis = tuple(filter(len, _ex_praefixis))
     _ex_suffixis = tuple(filter(len, ex_suffixis))
 
-    print(ex_suffixis, len(ex_suffixis))
-    print(_ex_suffixis, len(_ex_suffixis))
-
-    print('__', _ex_praefixis, _ex_suffixis)
-
-    import fnmatch
-    import os
-    import glob
-
-    # for file in os.listdir(numerordinatio_basim):
-    #     # print(file)
-    #     if fnmatch.fnmatch(file, '**/*.csv'):
-    #         print(file)
-
-    print('')
-    print('')
-    print('')
-    print('')
-
-    for file in glob.iglob(r'{0}/**/.*'.format(
+    for file in glob.iglob(r'{0}/**/*.*'.format(
             numerordinatio_basim), recursive=True):
-        file_without_prefix = file.replace(numerordinatio_basim + '/', '')
-        # if file_without_prefix.endswith('.gitkeep'):
-        #     continue
-        # print(_ex_praefixis, file_without_prefix)
-        if not file_without_prefix.startswith(_ex_praefixis):
-            continue
-
-        print(file_without_prefix)
         # print(file)
-        # if fnmatch.fnmatch(file, '**/*.csv'):
-        #     print(file)
+        file_without_prefix = file.replace(numerordinatio_basim + '/', '')
+        # print(file_without_prefix)
+        if not file_without_prefix.startswith(_ex_praefixis):
+            # print('Skip out of prefix directories', file_without_prefix)
+            continue
+        if not file_without_prefix.endswith(_ex_suffixis):
+            # print('Skip out of suffix files', file_without_prefix)
+            continue
+        _filename = os.path.basename(file)
+        _numerodinatio = _filename.split('.')[0]
+        # print('foi', file_without_prefix)
+        # print(os.path.basename(file))
+        # print(_numerodinatio)
+        _resultatum.append(_numerodinatio)
 
-    # import glob
-    # glob.glob('./[0-9].*')
+    def _sort_numerodinatio_clavem_neo(item):
+        parts = item.split('_')
+        for i in range(len(parts)):
+            parts[i] = int(parts[i])
+        return tuple(parts)
 
-    # _temp2 = sorted(Path(numerordinatio_basim + '/1603/1').glob('**/*.csv'))
-    # print(_temp2)
+    resultatum = sorted(
+        list(set(_resultatum)), key=_sort_numerodinatio_clavem_neo)
+    # resultatum = sorted(list(set(_resultatum)), reverse=False)
 
-    # Path(numerordinatio_basim + '/1603/1').glob()
+    # for item in resultatum:
+    #     print(item)
 
-    # @see https://docs.python.org/3/library/glob.html
-    # @see https://docs.python.org/3/library/pathlib.html
-
-    raise NotImplementedError(ex_praefixis, _ex_praefixis)
+    # raise NotImplementedError(ex_praefixis, _ex_praefixis)
 
     return resultatum
 
@@ -612,6 +613,14 @@ def sort_numerodinatio_clavem(item):
     Returns:
         _type_: _description_
     """
+    # @TODO this next function is simpler and seems to work better. Needs more
+    #        testing. But already used with numerordinatio_ex_praefixis()
+    # def _sort_numerodinatio_clavem_neo(item):
+    #     parts = item.split('_')
+    #     for i in range(len(parts)):
+    #         parts[i] = int(parts[i])
+    #     return tuple(parts)
+
     # Use case status['librarium'].items()
     ordo_simples = 0
     # codex_crudum = item[0]
