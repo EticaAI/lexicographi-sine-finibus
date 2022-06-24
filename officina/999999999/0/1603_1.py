@@ -337,6 +337,69 @@ def numerordinatio_lineam_hxml5_details(rem: dict, title: str = None) -> str:
 #     return resultatum
 
 
+def numerordinatio_ex_praefixis(
+        ex_praefixis: list, ex_suffixis: list,
+        numerordinatio_basim: str) -> list:
+
+    _ex_praefixis = []
+    resultatum = []
+    _resultatum = []
+    for item in ex_praefixis:
+        _pattern = item.replace('_', '/').replace(':', '/')
+        _pattern.strip('_')
+        _ex_praefixis.append(_pattern)
+    _ex_praefixis = tuple(filter(len, _ex_praefixis))
+    _ex_suffixis = tuple(filter(len, ex_suffixis))
+
+    print(ex_suffixis, len(ex_suffixis))
+    print(_ex_suffixis, len(_ex_suffixis))
+
+    print('__', _ex_praefixis, _ex_suffixis)
+
+    import fnmatch
+    import os
+    import glob
+
+    # for file in os.listdir(numerordinatio_basim):
+    #     # print(file)
+    #     if fnmatch.fnmatch(file, '**/*.csv'):
+    #         print(file)
+
+    print('')
+    print('')
+    print('')
+    print('')
+
+    for file in glob.iglob(r'{0}/**/.*'.format(
+            numerordinatio_basim), recursive=True):
+        file_without_prefix = file.replace(numerordinatio_basim + '/', '')
+        # if file_without_prefix.endswith('.gitkeep'):
+        #     continue
+        # print(_ex_praefixis, file_without_prefix)
+        if not file_without_prefix.startswith(_ex_praefixis):
+            continue
+
+        print(file_without_prefix)
+        # print(file)
+        # if fnmatch.fnmatch(file, '**/*.csv'):
+        #     print(file)
+
+    # import glob
+    # glob.glob('./[0-9].*')
+
+    # _temp2 = sorted(Path(numerordinatio_basim + '/1603/1').glob('**/*.csv'))
+    # print(_temp2)
+
+    # Path(numerordinatio_basim + '/1603/1').glob()
+
+    # @see https://docs.python.org/3/library/glob.html
+    # @see https://docs.python.org/3/library/pathlib.html
+
+    raise NotImplementedError(ex_praefixis, _ex_praefixis)
+
+    return resultatum
+
+
 def numerordinatio_nomen(
         rem: dict, objectivum_linguam: str = None,
         auxilium_linguam: list = None) -> str:
@@ -5122,8 +5185,18 @@ class CLI_2600:
             '--data-apothecae-ex-praefixis',
             help='Comma-separated list of prefixes of dictionaries '
             'to initialize the data warehouse. Will search by paths and load'
-            'the ones which de facto exist ',
+            'the ones which de facto exist . Example: "1603_1_1,1603_16_1"',
             dest='data_apothecae_ex_praefixis',
+            type=lambda x: x.split(',')
+        )
+
+        data_apothecae.add_argument(
+            '--data-apothecae-ex-suffixis',
+            help='Comma-separated list of file suffixes of dictionaries '
+            'to initialize the data warehouse. Used with '
+            '--data-apothecae-ex-praefixis. '
+            'Example: "no1.tm.hxl.csv,no1.owl.ttl"',
+            dest='data_apothecae_ex_suffix',
             type=lambda x: x.split(',')
         )
 
@@ -5486,7 +5559,24 @@ class CLI_2600:
         #       avoid override something
         if pyargs.methodus == 'data-apothecae':
 
-            if self.pyargs.data_apothecae_ex:
+            if self.pyargs.data_apothecae_ex_praefixis and \
+                    len(self.pyargs.data_apothecae_ex_praefixis) > 0:
+                if self.pyargs.data_apothecae_ex_suffix and \
+                        len(self.pyargs.data_apothecae_ex_suffix):
+                    data_apothecae_ex_suffix = \
+                        self.pyargs.data_apothecae_ex_suffix
+                else:
+                    data_apothecae_ex_suffix = [
+                        '.no1.tm.hxl.csv',
+                        '.no1.owl.ttl',
+                    ]
+
+                data_apothecae_ex = numerordinatio_ex_praefixis(
+                    self.pyargs.data_apothecae_ex_praefixis,
+                    data_apothecae_ex_suffix,
+                    NUMERORDINATIO_BASIM
+                )
+            elif self.pyargs.data_apothecae_ex:
                 data_apothecae_ex = self.pyargs.data_apothecae_ex
             else:
                 # f = open(self.pyargs.data_apothecae_ex_archivo, "r")
