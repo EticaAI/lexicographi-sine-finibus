@@ -43,7 +43,6 @@ ROOTDIR="$(pwd)"
 #  - UNDP country code (P2983)
 #    - This seems to be not used on last decade
 
-
 # TODO: https://w.wiki/4fMq
 # # organização estabelecida pelas Nações Unidas (Q15285626)
 # SELECT ?wikidataq  ?wikidataqLabel WHERE {
@@ -96,6 +95,50 @@ WHERE
   file_update_if_necessary csv "$objectivum_archivum_temporarium" "$objectivum_archivum"
 }
 
+#######################################
+# Return list of administrative level 0 codes ("country/territory" codes)
+#
+# Globals:
+#   None
+# Arguments:
+#   None
+# Outputs:
+#   csvfile (stdout)
+#######################################
+1603_3_12_wikipedia_adm0_v2() {
+  # fontem_archivum=
+  objectivum_archivum="${ROOTDIR}/1603/3/1603_3__adm0_v2.csv"
+  objectivum_archivum_temporarium="${ROOTDIR}/1603/3/1603_3__adm0_v2.TEMP.csv"
+
+  if [ -z "$(stale_archive "$objectivum_archivum")" ]; then return 0; fi
+
+  echo "${FUNCNAME[0]} stale data on [$objectivum_archivum], refreshing..."
+
+  curl --header "Accept: text/csv" --silent --show-error \
+    --get https://query.wikidata.org/sparql --data-urlencode query='
+SELECT (xsd:integer(?iso3166n) AS ?item__conceptum__codicem) (STRAFTER(STR(?item), "entity/") AS ?item__rem__i_qcc__is_zxxx__ix_wikiq) ?unm49 ?iso3166n ?iso3166p1a2 ?iso3166p1a3 ?osmrelid ?unescot ?usciafb
+WHERE
+{
+  ?item wdt:P31 wd:Q6256 ;
+  #?item wdt:P17  ?wikidata_p_value .
+  OPTIONAL { ?item wdt:P2082 ?unm49. }
+  ?item wdt:P299 ?iso3166n.
+  # OPTIONAL { ?item wdt:P299 ?iso3166n. }
+  OPTIONAL { ?item wdt:P297 ?iso3166p1a2. }
+  OPTIONAL { ?item wdt:P298 ?iso3166p1a3. }
+  OPTIONAL { ?item wdt:P402 ?osmrelid. }
+  OPTIONAL { ?item wdt:P3916 ?unescot. }
+  OPTIONAL { ?item wdt:P9948 ?usciafb. }
+  # OPTIONAL { ?country wdt:P901 ?usfips4. }
+  # OPTIONAL { ?country wdt:P8714 ?gadm. }
+
+  #SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE]". }
+}
+ORDER BY ASC(?iso3166n)
+' >"$objectivum_archivum_temporarium"
+
+  file_update_if_necessary csv "$objectivum_archivum_temporarium" "$objectivum_archivum"
+}
 
 #######################################
 # Return Wikipedia/Wikidata language codes (used to know how many
@@ -161,19 +204,18 @@ order by (?wmCode)
   file_update_if_necessary csv "$objectivum_archivum_temporarium" "$objectivum_archivum"
 }
 
-
 1603_3_12_wikipedia_language_codes
 
 1603_3_12_wikipedia_adm0
 
-exit 0
+1603_3_12_wikipedia_adm0_v2
 
+exit 0
 
 # TODO: maybe check https://www.npmjs.com/package/wikidata-taxonomy
 #       npm install -g wikidata-taxonomy
 # Examples
 # wdtaxonomy P2082
-
 
 ### Current query for download translations (have bugs)
 # # Variant of
@@ -190,7 +232,7 @@ exit 0
 #   ?adm0 wdt:P31/wdt:P279* wd:Q3624078;
 #   rdfs:label ?label
 #   OPTIONAL { ?adm0 wdt:P2082|wdt:P299 ?iso3166p1n. }
-  
+
 #   #FILTER(?iso3166p1n > xsd:integer(0))
 # }
 # # order by ?adm0

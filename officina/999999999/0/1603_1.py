@@ -54,10 +54,10 @@
 
 # @see https://www.w3.org/2001/sw/BestPractices/OEP/SimplePartWhole
 
-from ast import Try
+# from ast import Try
 from genericpath import exists
 import glob
-from multiprocessing.sharedctypes import Value
+# from multiprocessing.sharedctypes import Value
 import sys
 import os
 import argparse
@@ -75,18 +75,24 @@ import fnmatch
 # import json
 import datetime
 # from datetime import datetime
-from pathlib import Path
+# from pathlib import Path
 
 import json
 from zlib import crc32
-
 
 # from itertools import permutations
 # from itertools import product
 # valueee = list(itertools.permutations([1, 2, 3]))
 import csv
 
-import yaml
+# Allow fail if user does not have, but just using part of the tools
+# import yaml
+try:
+    import yaml
+except ModuleNotFoundError:
+    # Error handling
+    pass
+
 
 from L999999999_0 import (
     OntologiaSimplici,
