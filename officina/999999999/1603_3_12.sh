@@ -220,11 +220,21 @@ order by (?wmCode)
   file_update_if_necessary csv "$objectivum_archivum_temporarium" "$objectivum_archivum"
 }
 
+caput_csvnormali_ad_hxltm "item__conceptum__codicem" ","
+caput_csvnormali_ad_hxltm "item__conceptum__codicem,item__rem__i_qcc__is_zxxx__ix_wikiq" ","
+
+exit 0
+
 1603_3_12_wikipedia_language_codes
 
 1603_3_12_wikipedia_adm0
 
 1603_3_12_wikipedia_adm0_v2
+
+# temp, see later
+# - https://www.wikidata.org/wiki/Help:Frequently_used_properties
+# - https://www.wikidata.org/wiki/Property:P3896
+# - https://www.wikidata.org/wiki/Wikidata:Map_data
 
 exit 0
 

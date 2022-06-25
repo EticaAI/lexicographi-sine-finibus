@@ -401,6 +401,42 @@ archivum_unzip() {
 }
 
 #######################################
+# [Pure shell bash] Convert normalized CSV header to HXL hashtags.
+#
+# Example:
+#  caput_csvnormali_ad_hxltm "item__conceptum__codicem" ","
+#  # #item+conceptum+codicem
+#
+# Globals:
+#   None
+# Arguments:
+#   numerordinatio
+#   separatum
+# Outputs:
+#   hxl
+#######################################
+caput_csvnormali_ad_hxltm() {
+  caput="$1"
+  separatum="$2"
+  echo "TODO [$caput]"
+  # items=($(echo "$caput" | tr "$separatum" '\n'))
+  # shellcheck disable=SC2086,SC2207
+  declare -a items=($(echo $caput | tr "$separatum" " "))
+
+  for i in "${!items[@]}"; do
+    echo "$i=>${items[i]}"
+  done
+
+  # string="1:2:3:4:5"
+  # set -f                      # avoid globbing (expansion of *).
+  # array=(${string//:/ })
+  # for i in "${!array[@]}"
+  # do
+  #     echo "$i=>${array[i]}"
+  # done
+}
+
+#######################################
 # What relative path from an numerordinatio string?
 #
 # Example:
