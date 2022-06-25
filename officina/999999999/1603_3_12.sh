@@ -110,31 +110,47 @@ WHERE
   objectivum_archivum="${ROOTDIR}/1603/3/1603_3__adm0_v2.csv"
   objectivum_archivum_temporarium="${ROOTDIR}/1603/3/1603_3__adm0_v2.TEMP.csv"
 
-  if [ -z "$(stale_archive "$objectivum_archivum")" ]; then return 0; fi
+  # if [ -z "$(stale_archive "$objectivum_archivum")" ]; then return 0; fi
 
   echo "${FUNCNAME[0]} stale data on [$objectivum_archivum], refreshing..."
 
   curl --header "Accept: text/csv" --silent --show-error \
     --get https://query.wikidata.org/sparql --data-urlencode query='
-SELECT (xsd:integer(?iso3166n) AS ?item__conceptum__codicem) (STRAFTER(STR(?item), "entity/") AS ?item__rem__i_qcc__is_zxxx__ix_wikiq) ?unm49 ?iso3166n ?iso3166p1a2 ?iso3166p1a3 ?osmrelid ?unescot ?usciafb
+SELECT
+  (xsd:integer(?ix_iso3166p1n) AS ?item__conceptum__codicem)
+  (STRAFTER(STR(?item), "entity/") AS ?item__rem__i_qcc__is_zxxx__ix_wikiq)
+  #?item__rem__i_qcc__is_zxxx__ix_iso3166p1n
+  (GROUP_CONCAT(DISTINCT ?ix_iso3166p1n; separator = "|") AS ?item__rem__i_qcc__is_zxxx__ix_iso3166p1n)
+  (GROUP_CONCAT(DISTINCT ?ix_unm49; separator = "|") AS ?item__rem__i_qcc__is_zxxx__ix_unm49)
+  (GROUP_CONCAT(DISTINCT ?ix_iso3166p1a2; separator = "|") AS ?item__rem__i_qcc__is_zxxx__ix_iso3166p1a2)
+  (GROUP_CONCAT(DISTINCT ?ix_iso3166p1a3; separator = "|") AS ?item__rem__i_qcc__is_zxxx__ix_iso3166p1a3)
+  (GROUP_CONCAT(DISTINCT ?ix_unescothes; separator = "|") AS ?item__rem__i_qcc__is_zxxx__ix_unescothes)
+  (GROUP_CONCAT(DISTINCT ?ix_unagrovoc; separator = "|") AS ?item__rem__i_qcc__is_zxxx__ix_unagrovoc)
+  (GROUP_CONCAT(DISTINCT ?ix_osmrelid; separator = "|") AS ?item__rem__i_qcc__is_zxxx__ix_osmrelid)
+  (GROUP_CONCAT(DISTINCT ?ix_geonames; separator = "|") AS ?item__rem__i_qcc__is_zxxx__ix_geonames)
+  (GROUP_CONCAT(DISTINCT ?ix_geonlp; separator = "|") AS ?item__rem__i_qcc__is_zxxx__ix_geonlp)
+  (GROUP_CONCAT(DISTINCT ?ix_worldnet; separator = "|") AS ?item__rem__i_qcc__is_zxxx__ix_worldnet)
+  (GROUP_CONCAT(DISTINCT ?ix_usciafb; separator = "|") AS ?item__rem__i_qcc__is_zxxx__ix_usciafb)
+  (GROUP_CONCAT(DISTINCT ?ix_githubtopic; separator = "|") AS ?item__rem__i_qcc__is_zxxx__ix_githubtopic)
+
 WHERE
 {
   ?item wdt:P31 wd:Q6256 ;
-  #?item wdt:P17  ?wikidata_p_value .
-  OPTIONAL { ?item wdt:P2082 ?unm49. }
-  ?item wdt:P299 ?iso3166n.
-  # OPTIONAL { ?item wdt:P299 ?iso3166n. }
-  OPTIONAL { ?item wdt:P297 ?iso3166p1a2. }
-  OPTIONAL { ?item wdt:P298 ?iso3166p1a3. }
-  OPTIONAL { ?item wdt:P402 ?osmrelid. }
-  OPTIONAL { ?item wdt:P3916 ?unescot. }
-  OPTIONAL { ?item wdt:P9948 ?usciafb. }
-  # OPTIONAL { ?country wdt:P901 ?usfips4. }
-  # OPTIONAL { ?country wdt:P8714 ?gadm. }
-
-  #SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE]". }
+  OPTIONAL { ?item wdt:P2082 ?ix_unm49. }
+  ?item wdt:P299 ?ix_iso3166p1n.
+  OPTIONAL { ?item wdt:P297 ?ix_iso3166p1a2. }
+  OPTIONAL { ?item wdt:P298 ?ix_iso3166p1a3. }
+  OPTIONAL { ?item wdt:P3916 ?ix_unescothes. }
+  OPTIONAL { ?item wdt:P8061 ?ix_unagrovoc. }
+  OPTIONAL { ?item wdt:P402 ?ix_osmrelid. }
+  OPTIONAL { ?item wdt:P9100 ?ix_geonames. }
+  OPTIONAL { ?item wdt:P5400 ?ix_geonlp. }
+  OPTIONAL { ?item wdt:P8814 ?ix_worldnet. }
+  OPTIONAL { ?item wdt:P9948 ?ix_usciafb. }
+  OPTIONAL { ?item wdt:P9100 ?ix_githubtopic. }
 }
-ORDER BY ASC(?iso3166n)
+GROUP BY ?item ?ix_iso3166p1n
+ORDER BY ASC(?item__rem__i_qcc__is_zxxx__ix_iso3166p1n)
 ' >"$objectivum_archivum_temporarium"
 
   file_update_if_necessary csv "$objectivum_archivum_temporarium" "$objectivum_archivum"
