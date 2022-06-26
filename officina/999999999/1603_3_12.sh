@@ -109,6 +109,8 @@ WHERE
   # fontem_archivum=
   objectivum_archivum="${ROOTDIR}/1603/3/1603_3__adm0_v2.csv"
   objectivum_archivum_temporarium="${ROOTDIR}/1603/3/1603_3__adm0_v2.TEMP.csv"
+  objectivum_archivum_temporarium_hxltm="${ROOTDIR}/1603/3/1603_3__adm0_v2.TEMP.tm.hxl.csv"
+  objectivum_archivum_hxltm="${ROOTDIR}/1603/3/1603_3__adm0.tm.hxl.csv"
 
   # if [ -z "$(stale_archive "$objectivum_archivum")" ]; then return 0; fi
 
@@ -153,7 +155,16 @@ GROUP BY ?item ?ix_iso3166p1n
 ORDER BY ASC(?item__rem__i_qcc__is_zxxx__ix_iso3166p1n)
 ' >"$objectivum_archivum_temporarium"
 
+  frictionless validate "$objectivum_archivum_temporarium"
+
+  caput_csvnormali=$(head -n1 "$objectivum_archivum_temporarium")
+  caput_hxltm=$(caput_csvnormali_ad_hxltm "${caput_csvnormali}" ",")
+
+  echo "$caput_hxltm" > "$objectivum_archivum_temporarium_hxltm"
+  tail -n +2 "$objectivum_archivum_temporarium" >> "$objectivum_archivum_temporarium_hxltm"
+
   file_update_if_necessary csv "$objectivum_archivum_temporarium" "$objectivum_archivum"
+  file_update_if_necessary csv "$objectivum_archivum_temporarium_hxltm" "$objectivum_archivum_hxltm"
 }
 
 #######################################
@@ -220,23 +231,27 @@ order by (?wmCode)
   file_update_if_necessary csv "$objectivum_archivum_temporarium" "$objectivum_archivum"
 }
 
-caput_csvnormali_ad_hxltm "item__conceptum__codicem" ","
-echo ""
-caput_csvnormali_ad_hxltm "item__conceptum__codicem,item__rem__i_qcc__is_zxxx__ix_wikiq" ","
-echo ""
-echo ""
-caput_hxltm_ad_csvnormali "#item+conceptum+codicem" ","
-echo ""
-caput_hxltm_ad_csvnormali "#item+conceptum+codicem,#item+rem+i_qcc+is_zxxx+ix_wikiq" ","
-echo ""
-echo ""
-caput_hxltm_ad_bcp47 "#item+conceptum+codicem,#item+rem+i_qcc+is_zxxx+ix_wikiq" ","
-echo ""
-# caput_hxltm_ad_bcp47 "#item+conceptum+codicem" ","
+# caput_csvnormali_ad_hxltm "item__conceptum__codicem" ","
 # echo ""
-# caput_hxltm_ad_bcp47 "#item+rem+i_qcc+is_zxxx+ix_wikiq" ","
+# caput_csvnormali_ad_hxltm "item__conceptum__codicem,item__rem__i_qcc__is_zxxx__ix_wikiq" ","
 # echo ""
-exit 0
+# echo ""
+# caput_hxltm_ad_csvnormali "#item+conceptum+codicem" ","
+# echo ""
+# caput_hxltm_ad_csvnormali "#item+conceptum+codicem,#item+rem+i_qcc+is_zxxx+ix_wikiq" ","
+# echo ""
+# echo ""
+# caput_hxltm_ad_bcp47 "#item+conceptum+codicem,#item+rem+i_qcc+is_zxxx+ix_wikiq" ","
+# echo ""
+# echo ""
+# echo ""
+# caput_bcp47_ad_hxltm_ad "qcc-Zxxx-r-aMDCIII-alatcodicem-anop,qcc-Zxxx-x-wikiq" ","
+# echo ""
+# # caput_hxltm_ad_bcp47 "#item+conceptum+codicem" ","
+# # echo ""
+# # caput_hxltm_ad_bcp47 "#item+rem+i_qcc+is_zxxx+ix_wikiq" ","
+# # echo ""
+# exit 0
 
 1603_3_12_wikipedia_language_codes
 
