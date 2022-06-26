@@ -221,8 +221,21 @@ order by (?wmCode)
 }
 
 caput_csvnormali_ad_hxltm "item__conceptum__codicem" ","
+echo ""
 caput_csvnormali_ad_hxltm "item__conceptum__codicem,item__rem__i_qcc__is_zxxx__ix_wikiq" ","
-
+echo ""
+echo ""
+caput_hxltm_ad_csvnormali "#item+conceptum+codicem" ","
+echo ""
+caput_hxltm_ad_csvnormali "#item+conceptum+codicem,#item+rem+i_qcc+is_zxxx+ix_wikiq" ","
+echo ""
+echo ""
+caput_hxltm_ad_bcp47 "#item+conceptum+codicem,#item+rem+i_qcc+is_zxxx+ix_wikiq" ","
+echo ""
+# caput_hxltm_ad_bcp47 "#item+conceptum+codicem" ","
+# echo ""
+# caput_hxltm_ad_bcp47 "#item+rem+i_qcc+is_zxxx+ix_wikiq" ","
+# echo ""
 exit 0
 
 1603_3_12_wikipedia_language_codes

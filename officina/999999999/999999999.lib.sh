@@ -410,7 +410,7 @@ archivum_unzip() {
 # Globals:
 #   None
 # Arguments:
-#   numerordinatio
+#   caput
 #   separatum
 # Outputs:
 #   hxl
@@ -418,22 +418,81 @@ archivum_unzip() {
 caput_csvnormali_ad_hxltm() {
   caput="$1"
   separatum="$2"
-  echo "TODO [$caput]"
-  # items=($(echo "$caput" | tr "$separatum" '\n'))
-  # shellcheck disable=SC2086,SC2207
-  declare -a items=($(echo $caput | tr "$separatum" " "))
+  resultatum=()
+
+  # shellcheck disable=SC2207
+  declare -a items=($(echo "$caput" | tr "$separatum" " "))
 
   for i in "${!items[@]}"; do
-    echo "$i=>${items[i]}"
+    # echo "$i=>${items[i]}"
+    resultatum+=("#${items[i]//__/+}")
   done
 
-  # string="1:2:3:4:5"
-  # set -f                      # avoid globbing (expansion of *).
-  # array=(${string//:/ })
-  # for i in "${!array[@]}"
-  # do
-  #     echo "$i=>${array[i]}"
-  # done
+  resultatum_sep=$(printf ",%s" "${resultatum[@]}")
+  printf "%s" "${resultatum_sep:1}"
+}
+
+#######################################
+# [Pure shell bash] Convert HXL hashtags to normalized CSV header
+#
+# Example:
+#  caput_hxltm_ad_csvnormali "#item+conceptum+codicem" ","
+#  # item__conceptum__codicem
+#
+# Globals:
+#   None
+# Arguments:
+#   caput
+#   separatum
+# Outputs:
+#   hxl
+#######################################
+caput_hxltm_ad_csvnormali() {
+  caput="$1"
+  separatum="$2"
+  resultatum=()
+  # shellcheck disable=SC2207
+  declare -a items=($(echo "$caput" | tr "$separatum" " "))
+
+  for i in "${!items[@]}"; do
+    varitem="${items[i]//+/__}"
+    resultatum+=("${varitem//#/}")
+  done
+
+  resultatum_sep=$(printf ",%s" "${resultatum[@]}")
+  printf "%s" "${resultatum_sep:1}"
+}
+
+#######################################
+# [Requires 999999999_54872.py] Convert HXL hashtags to normalized BCP47+RDF
+#
+# Example:
+#  caput_hxltm_ad_bcp47 \
+#    "item__conceptum__codicem,item__rem__i_qcc__is_zxxx__ix_wikiq" ","
+#  # qcc-Zxxx-r-aMDCIII-alatcodicem-anop,qcc-Zxxx-x-wikiq
+#
+# Globals:
+#   ROOTDIR
+# Arguments:
+#   caput
+#   separatum
+# Outputs:
+#   hxl
+#######################################
+caput_hxltm_ad_bcp47() {
+  caput="$1"
+  separatum="$2"
+  # Know issue: as 2022-06-25 the 999999999_54872.py may fail to autodetect
+  # delimiter if user test only a single column.
+
+  caput_tab=$(echo "$caput" | tr "$separatum" '\t')
+
+  resultatum_tab=$("${ROOTDIR}/999999999/0/999999999_54872.py" \
+    --objectivum-formato=_temp_header_hxl_to_bcp47 "$caput_tab")
+
+  resultatum_finali=$(echo "$resultatum_tab" | tr '\t' "$separatum")
+
+  printf "%s" "${resultatum_finali}"
 }
 
 #######################################
