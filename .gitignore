@@ -32,6 +32,7 @@ officina/1603/1603.statum.yml
 !officina/999999999/1568346/data/unesco-thesaurus.bcp47g.tsv
 !officina/999999999/1568346/data/unesco-thesaurus.tm.hxl.tsv
 !officina/999999999/1568346/data/unesco-thesaurus~statement.xrdf.hxl.csv
+!officina/999999999/1568346/data/wikidata-p17-without-typum.tm.hxl.csv
 !officina/999999999/1568346/data/cod-ab-example1.bcp47.tsv
 # !officina/999999999/1568346/data/cod-ab-example2.bcp47.tsv
 !officina/999999999/1568346/data/cod-ab-example1-with-inferences.bcp47.tsv
