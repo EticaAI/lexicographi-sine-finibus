@@ -51,6 +51,7 @@ officina/1603/1603.statum.yml
 
 /officina/**/**\.~[0-9]/*
 !/officina/**/**\.~[0-9]/.gitkeep
+csv-metadata.json
 
 #### The _de facto_ automation scripts _________________________________________
 # The script folder can be tracked freely

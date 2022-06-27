@@ -29,6 +29,7 @@
 import argparse
 import sys
 from frictionless import Package
+from openpyxl import Workbook
 
 PROGRAM = "frictionless_to_excel"
 DESCRIPTION = """
@@ -89,7 +90,6 @@ def frictionless_to_excel(
     """
     # from frictionless.plugins.excel import ExcelDialect
     # from frictionless import Resource
-    from openpyxl import Workbook
 
     supported_types = [
         "boolean",
@@ -104,9 +104,10 @@ def frictionless_to_excel(
 
     package = Package(datapackage)
 
-    wb = Workbook()
-    ws1 = wb.active
-    wb.remove(ws1)
+    # Without write_only=True, a >450 table (XLSX 18MB) would take
+    # > 1.900MB of RAM. But with write_only=True takes around in order of
+    # ~10 MB of ram
+    wb = Workbook(write_only=True)
 
     # for resource in list(package.resource_names()):
     for item in package.resources:
@@ -173,11 +174,10 @@ class CLI_2600:
             self, pyargs, stdin=STDIN, stdout=sys.stdout,
             stderr=sys.stderr
     ):
-        return frictionless_to_excel(
-            pyargs.datapackage, pyargs.excel)
+        frictionless_to_excel(pyargs.datapackage, pyargs.excel)
 
-        print('unknow option.')
-        return self.EXIT_ERROR
+        # print('unknow option.')
+        return self.EXIT_OK
 
 
 if __name__ == "__main__":

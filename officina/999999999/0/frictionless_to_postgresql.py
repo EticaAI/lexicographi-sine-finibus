@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 # ==============================================================================
 #
-#          FILE:  frictionless_to_sqlite.py
+#          FILE: frictionless_to_postgresql.py
 #
-#         USAGE:  ./999999999/0/frictionless_to_sqlite.py
-#                 ./999999999/0/frictionless_to_sqlite.py --help
+#         USAGE:  ./999999999/0/frictionless_to_postgresql.py
+#                 ./999999999/0/frictionless_to_postgresql.py --help
 #
 #   DESCRIPTION:  ---
 #
 #       OPTIONS:  ---
 #
 #  REQUIREMENTS:  - python3
-#                   - pip install frictionless[sql]
+#                   - pip install frictionless[excel]
 #          BUGS:  ---
 #         NOTES:  ---
 #       AUTHORS:  Emerson Rocha <rocha[at]ieee.org>
@@ -21,35 +21,22 @@
 #       LICENSE:  Public Domain dedication or Zero-Clause BSD
 #                 SPDX-License-Identifier: Unlicense OR 0BSD
 #       VERSION:  v1.0.0
-#       CREATED:  2022-06-27 03:22 UTC created.
+#       CREATED:  2022-06-27 04:43 UTC Created; Based on
+#                                      frictionless_to_sqlite.py
 #      REVISION:  ---
 # ==============================================================================
-
-# @TODO maybe implement other exporters, by using pandas as intermediate
-#       format. See pandas.pydata.org/docs/user_guide/io.html#stata-format
-
-################################### PROTIP  ####################################
-# if you ONLY need copy paste the core of this file, use this:
-#    # @see framework.frictionlessdata.io/docs/tutorials/formats/sql-tutorial
-#    from frictionless import Package
-#
-#    package = Package('datapackage.json')
-#    package.to_sql('sqlite:///mdciii.sqlite')
-################################### PROTIP  ####################################
-
-# ./999999999/0/frictionless_to_sqlite.py --datapackage='datapackage.json' --sqlite='999999/0/mdciii.sqlite'
 
 import argparse
 import sys
 from frictionless import Package
+from openpyxl import Workbook
 
-PROGRAM = "frictionless_to_sqlite"
+PROGRAM = "frictionless_to_postgresql"
 DESCRIPTION = """
 ------------------------------------------------------------------------------
-The {0} is a simpler wrapper to export frictionless to SQLite.
+The {0} is a simple wrapper for frictionless python library to save data
+documented with datapackage.json to PostgreSQL
 
-As 2022-06-27, no idea why they do not provide this by the community command
-like version. This entire like actually have quite few lines of code.
 ------------------------------------------------------------------------------
 """.format(__file__)
 
@@ -58,7 +45,12 @@ __EPILOGUM__ = """
                             EXEMPLŌRUM GRATIĀ
 ------------------------------------------------------------------------------
 Quickstart . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-    {0} --datapackage='datapackage.json' --sqlite='999999/0/mdciii.sqlite'
+    {0} --datapackage='datapackage.json' \
+--postgresql='user:pass@localhost/mdciii'
+
+Validate file with cli . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+(Use this if export does not work for some reason)
+    frictionless validate datapackage.json
 
 Create the datapackage.json (requires other tool) . . . . . . . . . . . . . . .
 (This command may be outdated eventually)
@@ -68,11 +60,11 @@ Create the datapackage.json (requires other tool) . . . . . . . . . . . . . . .
 --data-apothecae-ex-praefixis='1603_16,!1603_1_1,!1603_1_51' \
 > ./datapackage.json
 
-(same, but now all tables under 1603. Migth run out of memory except one)
+(same, but now all tables under 1603. Migth run out of memory) . . . . . . . . .
     ./999999999/0/1603_1.py --methodus='data-apothecae' \
 --data-apothecae-ad-stdout --data-apothecae-formato='datapackage' \
 --data-apothecae-ex-suffixis='no1.tm.hxl.csv' \
---data-apothecae-ex-praefixis='1603,!1603_45_46' \
+--data-apothecae-ex-praefixis='1603' \
 > ./datapackage.json
 
 (Use jq to print resources)
@@ -86,16 +78,16 @@ Create the datapackage.json (requires other tool) . . . . . . . . . . . . . . .
 STDIN = sys.stdin.buffer
 
 
-def frictionless_to_sqlite(
-        datapackage: str, sqlite_path: str = 'mdciii.sqlite'):
+def frictionless_to_postgresql(
+        datapackage: str, postgresql_conn: str = 'localhost/mdciii'):
     """frictionless_to_sqlite
 
     Args:
         datapackage (str): datapackage package path
-        sqlite_path (str, optional): The path. Defaults to 'mdciii.sqlite'.
+        postgresql_conn (str, optional): The path. Defaults to 'mdciii'.
     """
     package = Package(datapackage)
-    package.to_sql(f'sqlite:///{sqlite_path}')
+    package.to_sql('postgresql://{0}'.format(postgresql_conn))
 
 
 class CLI_2600:
@@ -132,11 +124,11 @@ class CLI_2600:
         )
 
         parser.add_argument(
-            '--sqlite',
-            help='Relative path and extension to the sqlite database.'
-            'Defaults to mdciii.sqlite on current directory',
-            dest='sqlite',
-            default='mdciii.sqlite',
+            '--postgresql',
+            help='PostgreSQL connection information. Defaults to '
+            '"localhost/mdciii" without any special credentials',
+            dest='postgresql_conn',
+            default='localhost/mdciii',
             nargs='?'
         )
         return parser.parse_args()
@@ -145,9 +137,10 @@ class CLI_2600:
             self, pyargs, stdin=STDIN, stdout=sys.stdout,
             stderr=sys.stderr
     ):
+        frictionless_to_postgresql(
+            pyargs.datapackage, pyargs.postgresql_conn)
 
-        frictionless_to_sqlite(pyargs.datapackage, pyargs.sqlite)
-
+        # print('unknow option.')
         return self.EXIT_OK
 
 
