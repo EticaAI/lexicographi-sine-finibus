@@ -3159,7 +3159,8 @@ class LibrariaStatusQuo:
     [eng-Latn]_
 
     Trivia:
-    - librāria, n, s, (Nominative), https://en.wiktionary.org/wiki/librarium#Latin
+    #Latin
+    - librāria, n, s, (Nominative), https://en.wiktionary.org/wiki/librarium
     - Status quo, ---, https://en.wikipedia.org/wiki/Status_quo
     - Cōdex, m, s, (Nominative), https://en.wiktionary.org/wiki/codex
     - https://latin.stackexchange.com/questions/2102
@@ -4141,6 +4142,8 @@ class DataApothecae:
             # 'NNNN_NN_NN.csv-metadata.json', 'csv-metadata.json'
             elif data_apothecae_ad.endswith('csv-metadata.json'):
                 self.data_apothecae_formato = 'csvw'
+            elif data_apothecae_ad.endswith('.r2rml.ttl'):
+                self.data_apothecae_formato = 'r2rml'
             elif data_apothecae_ad.endswith('.json'):
                 self.data_apothecae_formato = 'datapackage'
             elif data_apothecae_ad.endswith('.xml'):
@@ -4198,6 +4201,10 @@ class DataApothecae:
         if self.data_apothecae_formato == 'sqlite':
             # return self.praeparatio_sqlite(libraria)
             return self.praeparatio_sqlite()
+
+        if self.data_apothecae_formato == 'r2rml':
+            # return self.praeparatio_sqlite(libraria)
+            return self.praeparatio_r2rml()
 
         return True
 
@@ -4299,7 +4306,7 @@ class DataApothecae:
     def praeparatio_csvw(
             self,
             temporarium: str = None):
-        """praeparatio_datapackage
+        """praeparatio_csvw
 
         See:
             - https://www.w3.org/TR/tabular-metadata/
@@ -4313,17 +4320,18 @@ class DataApothecae:
         paginae = []
         sarcina = {
             '@context': ['http://www.w3.org/ns/csvw', {'@language': 'la'}],
-            '@TODO': 'CSVW',
-            'name': '1603',
-            'profile': 'data-package-catalog',
-            'resources': []
+            # '@TODO': 'CSVW',
+            # 'name': '1603',
+            # 'profile': 'data-package-catalog',
+            'tables': []
         }
 
-        # from csvw import TableGroup
-        # tg = TableGroup.from_frictionless_datapackage('csv-metadata.json')
+        # # Just quick test if validate
         # import csvw
         # tg = csvw.TableGroup.from_file('csv-metadata.json')
         # print(tg)
+        # print(tg.check_referential_integrity())
+        # print(tg.validate_schema())
         # raise NotImplementedError
 
         # raise ValueError(DATA_APOTHECAE_MINIMIS, bool(DATA_APOTHECAE_MINIMIS))
@@ -4331,17 +4339,19 @@ class DataApothecae:
         # if bool(DATA_APOTHECAE_MINIMIS) is True:
         if DATA_APOTHECAE_MINIMIS.lower() in ("yes", "true", "t", "1"):
             for codex in self.data_apothecae_ex:
-                sarcina['resources'].append(
-                    DataApothecae.quod_tabula(codex))
+                sarcina['tables'].append(
+                    DataApothecae.quod_tabula(codex, schema='csvw'))
         else:
-            sarcina['resources'].append(DataApothecae.quod_tabula('1603_1_1'))
-            sarcina['resources'].append(DataApothecae.quod_tabula('1603_1_51'))
+            sarcina['tables'].append(
+                DataApothecae.quod_tabula('1603_1_1', schema='csvw'))
+            sarcina['tables'].append(
+                DataApothecae.quod_tabula('1603_1_51', schema='csvw'))
 
             for codex in self.data_apothecae_ex:
                 if codex in ['1603_1_1', '1603_1_51']:
                     continue
-                sarcina['resources'].append(
-                    DataApothecae.quod_tabula(codex))
+                sarcina['tables'].append(
+                    DataApothecae.quod_tabula(codex, schema='csvw'))
 
         paginae.append(json.dumps(
             sarcina, indent=2, ensure_ascii=False, sort_keys=False))
@@ -4448,11 +4458,84 @@ class DataApothecae:
         # self.resultatum.append('TODO: create datapackage first; then sqlite.')
         self.resultatum.append(sqlite_path)
 
+    # ./999999999/0/1603_1.py --methodus='data-apothecae' --data-apothecae-ad-stdout --data-apothecae-formato='r2rml' --data-apothecae-ex-suffixis='no1.tm.hxl.csv,no11.tm.hxl.csv' --data-apothecae-ex-praefixis='1603_1_1'
+
+    def praeparatio_r2rml(
+            self,
+            temporarium: str = None):
+        """praeparatio_r2rml
+
+        See:
+            - https://www.w3.org/TR/r2rml/
+
+        Args:
+            libraria (LibrariaStatusQuo):
+        """
+        # raise NotImplementedError
+        paginae = []
+        paginae.append(
+            '@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .')
+        paginae.append(
+            '@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .')
+        paginae.append('@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .')
+        paginae.append('@prefix rr: <http://www.w3.org/ns/r2rml#> .')
+
+        # sarcina = {
+        #     '@context': ['http://www.w3.org/ns/csvw', {'@language': 'la'}],
+        #     # '@TODO': 'CSVW',
+        #     # 'name': '1603',
+        #     # 'profile': 'data-package-catalog',
+        #     'tables': []
+        # }
+
+        # # if bool(DATA_APOTHECAE_MINIMIS) is True:
+        # if DATA_APOTHECAE_MINIMIS.lower() in ("yes", "true", "t", "1"):
+        #     for codex in self.data_apothecae_ex:
+        #         sarcina['tables'].append(
+        #             DataApothecae.quod_tabula(codex, schema='csvw'))
+        # else:
+        #     sarcina['tables'].append(
+        #         DataApothecae.quod_tabula('1603_1_1', schema='csvw'))
+        #     sarcina['tables'].append(
+        #         DataApothecae.quod_tabula('1603_1_51', schema='csvw'))
+
+        #     for codex in self.data_apothecae_ex:
+        #         if codex in ['1603_1_1', '1603_1_51']:
+        #             continue
+        #         sarcina['tables'].append(
+        #             DataApothecae.quod_tabula(codex, schema='csvw'))
+
+        # paginae.append(json.dumps(
+        #     sarcina, indent=2, ensure_ascii=False, sort_keys=False))
+
+        paginae.append('')
+        paginae.append('# @TODO r2rml still working draft. This is a sample')
+
+        if temporarium:
+            with open(temporarium, 'w') as archivum:
+                for lineam in paginae:
+                    archivum.write(lineam)
+        else:
+            if self.data_apothecae_ad is False:
+                for lineam in paginae:
+                    print(lineam)
+            else:
+                _path_archivum = \
+                    NUMERORDINATIO_BASIM + '/' + self.data_apothecae_ad
+                # self.resultatum.append('TODO praeparatio_datapackage')
+                self.resultatum.append(_path_archivum)
+
+                with open(_path_archivum, 'w') as archivum:
+                    # Further file processing goes here
+                    for lineam in paginae:
+                        archivum.write(lineam)
+
     @staticmethod
     def quod_tabula(
         numerodination: str,
         strictum: bool = True,
-        abstractum=False
+        abstractum=False,
+        schema: str = 'datapackage'
     ):
 
         nomen = numerordinatio_neo_separatum(numerodination, '_')
@@ -4466,7 +4549,11 @@ class DataApothecae:
         if archivum_no11.praeparatio():
             if abstractum:
                 return archivum_no11
-            return archivum_no11.quod_datapackage()
+            # return archivum_no11.quod_datapackage()
+            if schema == 'datapackage':
+                return archivum_no11.quod_datapackage()
+            elif schema == 'csvw':
+                return archivum_no11.quod_csvw()
 
         archivum_no1 = TabulaSimplici(
             _path + '/' + nomen + '.no1.tm.hxl.csv',
@@ -4476,7 +4563,10 @@ class DataApothecae:
         if archivum_no1.praeparatio():
             if abstractum:
                 return archivum_no1
-            return archivum_no1.quod_datapackage()
+            if schema == 'datapackage':
+                return archivum_no1.quod_datapackage()
+            elif schema == 'csvw':
+                return archivum_no1.quod_csvw()
         # print('archivum_no11', archivum_no11)
         # print('archivum_no1', archivum_no1)
         if strictum:
@@ -5330,13 +5420,15 @@ class CLI_2600:
         )
 
         # fōrmātō, s, n, Dativus, https://en.wiktionary.org/wiki/formatus#Latin
+        # csvw, https://www.w3.org/TR/tabular-metadata
+        # r2rml, https://www.w3.org/TR/r2rml/
         data_apothecae.add_argument(
             '--data-apothecae-formato',
             help='Output format. Default will try make a guess from '
             '--data-apothecae-ad pattern.',
             dest='data_apothecae_formato',
             nargs='?',
-            choices=['catalog', 'csvw', 'datapackage', 'sqlite', ],
+            choices=['catalog', 'csvw', 'datapackage', 'sqlite', 'r2rml'],
             default=None
         )
 

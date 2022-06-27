@@ -6656,6 +6656,37 @@ class TabulaSimplici:
         self._initiari()
         return self.statum
 
+    def quod_csvw(self) -> dict:
+        if self.ex_radice is True:
+            _path = self.archivum_trivio_ex_radice
+        else:
+            _path = self.archivum_nomini
+
+        resultatum = {
+            # 'name': self.nomen,
+            # 'path': self.nomen,
+            'url': _path,
+            # 'profile': 'tabular-data-resource',
+            'tableSchema': {
+                'columns': [],
+                'foreignKeys': []
+            },
+            # 'stats': {
+            #     'fields': len(self.caput),
+            #     'rows': self.res_totali,
+            # }
+        }
+
+        for caput_rei in self.caput:
+            item = {
+                'name': caput_rei,
+                # TODO: actually get rigth type from reference dictionaries
+                'datatype': 'string',
+            }
+            resultatum['tableSchema']['columns'].append(item)
+
+        return resultatum
+
     def quod_datapackage(self) -> dict:
         if self.ex_radice is True:
             _path = self.archivum_trivio_ex_radice
