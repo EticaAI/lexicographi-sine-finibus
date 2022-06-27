@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 # ==============================================================================
 #
-#          FILE:  frictionless_to_sqlite.py
+#          FILE:  frictionless_to_excel.py
 #
-#         USAGE:  ./999999999/0/frictionless_to_sqlite.py
-#                 ./999999999/0/frictionless_to_sqlite.py --help
+#         USAGE:  ./999999999/0/frictionless_to_excel.py
+#                 ./999999999/0/frictionless_to_excel.py --help
 #
 #   DESCRIPTION:  ---
 #
 #       OPTIONS:  ---
 #
 #  REQUIREMENTS:  - python3
-#                   - pip install frictionless[sql]
+#                   - pip install frictionless[excel]
 #          BUGS:  ---
 #         NOTES:  ---
 #       AUTHORS:  Emerson Rocha <rocha[at]ieee.org>
@@ -21,32 +21,21 @@
 #       LICENSE:  Public Domain dedication or Zero-Clause BSD
 #                 SPDX-License-Identifier: Unlicense OR 0BSD
 #       VERSION:  v1.0.0
-#       CREATED:  2022-06-27 03:22 UTC created.
+#       CREATED:  2022-06-27 04:43 UTC Created; Based on
+#                                      frictionless_to_sqlite.py
 #      REVISION:  ---
 # ==============================================================================
-
-################################### PROTIP  ####################################
-# if you ONLY need copy paste the core of this file, use this:
-#    # @see framework.frictionlessdata.io/docs/tutorials/formats/sql-tutorial
-#    from frictionless import Package
-#
-#    package = Package('datapackage.json')
-#    package.to_sql('sqlite:///mdciii.sqlite')
-################################### PROTIP  ####################################
-
-# ./999999999/0/frictionless_to_sqlite.py --datapackage='datapackage.json' --sqlite='999999/0/mdciii.sqlite'
 
 import argparse
 import sys
 from frictionless import Package
 
-PROGRAM = "frictionless_to_sqlite"
+PROGRAM = "frictionless_to_excel"
 DESCRIPTION = """
 ------------------------------------------------------------------------------
-The {0} is a simpler wrapper to export frictionless to SQLite.
+The {0} is a simpler wrapper to export frictionless mapped data to Excel.
+After 1,048,576 rows it get even faster!
 
-As 2022-06-27, no idea why they do not provide this by the community command
-like version. This entire like actually have quite few lines of code.
 ------------------------------------------------------------------------------
 """.format(__file__)
 
@@ -55,7 +44,11 @@ __EPILOGUM__ = """
                             EXEMPLŌRUM GRATIĀ
 ------------------------------------------------------------------------------
 Quickstart . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-    {0} --datapackage='datapackage.json' --sqlite='999999/0/mdciii.sqlite'
+    {0} --datapackage='datapackage.json' --excel='999999/0/mdciii.xlsx'
+
+Validate file with cli . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+(Use this if export does not work for some reason)
+    frictionless validate datapackage.json
 
 Create the datapackage.json (requires other tool) . . . . . . . . . . . . . . .
 (This command may be outdated eventually)
@@ -65,7 +58,7 @@ Create the datapackage.json (requires other tool) . . . . . . . . . . . . . . .
 --data-apothecae-ex-praefixis='1603_16,!1603_1_1,!1603_1_51' \
 > ./datapackage.json
 
-(same, but now all tables under 1603. Migth run out of memory)
+(same, but now all tables under 1603. Migth run out of memory) . . . . . . . . .
     ./999999999/0/1603_1.py --methodus='data-apothecae' \
 --data-apothecae-ad-stdout --data-apothecae-formato='datapackage' \
 --data-apothecae-ex-suffixis='no1.tm.hxl.csv' \
@@ -83,16 +76,54 @@ Create the datapackage.json (requires other tool) . . . . . . . . . . . . . . .
 STDIN = sys.stdin.buffer
 
 
-def frictionless_to_sqlite(
-        datapackage: str, sqlite_path: str = 'mdciii.sqlite'):
-    """frictionless_to_sqlite
+def frictionless_to_excel(
+        datapackage: str, excel_path: str = 'mdciii.xlsx'):
+    """frictionless_to_excel
+
+    Requires:
+        pip install frictionless[excel]
 
     Args:
-        datapackage (str): datapackage package path
-        sqlite_path (str, optional): The path. Defaults to 'mdciii.sqlite'.
+        datapackage (str): _description_
+        sqlite_path (str, optional): _description_. Defaults to 'mdciii.sqlite'.
     """
+    # from frictionless.plugins.excel import ExcelDialect
+    # from frictionless import Resource
+    from openpyxl import Workbook
+
+    supported_types = [
+        "boolean",
+        "date",
+        "datetime",
+        "integer",
+        "number",
+        "string",
+        "time",
+        "year",
+    ]
+
     package = Package(datapackage)
-    package.to_sql(f'sqlite:///{sqlite_path}')
+
+    wb = Workbook()
+    ws1 = wb.active
+    wb.remove(ws1)
+
+    # for resource in list(package.resource_names()):
+    for item in package.resources:
+        resource = package.get_resource(item.name)
+        # print(resource)
+        # resource.write(excel_path, dialect=ExcelDialect(sheet=item.name))
+        wb_new = wb.create_sheet(title=item.name)
+
+        with resource:
+            for row in resource.row_stream:
+                cells = []
+                if row.row_number == 1:
+                    wb_new.append(row.field_names)
+                cells = row.to_list(types=supported_types)
+                wb_new.append(cells)
+
+    wb.save(filename=excel_path)
 
 
 class CLI_2600:
@@ -129,11 +160,11 @@ class CLI_2600:
         )
 
         parser.add_argument(
-            '--sqlite',
-            help='Relative path and extension to the sqlite database.'
-            'Defaults to mdciii.sqlite on current directory',
-            dest='sqlite',
-            default='mdciii.sqlite',
+            '--excel',
+            help='Relative path and extension to the excel file.'
+            'Defaults to mdciii.xlsx on current directory',
+            dest='excel',
+            default='mdciii.xlsx',
             nargs='?'
         )
         return parser.parse_args()
@@ -142,11 +173,11 @@ class CLI_2600:
             self, pyargs, stdin=STDIN, stdout=sys.stdout,
             stderr=sys.stderr
     ):
+        return frictionless_to_excel(
+            pyargs.datapackage, pyargs.excel)
 
-        frictionless_to_sqlite(pyargs.datapackage, pyargs.sqlite)
-
-        # print('unknow option.')
-        return self.EXIT_OK
+        print('unknow option.')
+        return self.EXIT_ERROR
 
 
 if __name__ == "__main__":
