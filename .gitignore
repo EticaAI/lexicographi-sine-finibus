@@ -26,6 +26,8 @@
 /officina/**/**.db
 /officina/**/**.sqlite
 /officina/**/**.skos.ttl
+/officina/**/**.csv-metadata.json
+/officina/**/csv-metadata.json
 /officina/**/**.ttl
 /officina/**/**.dot
 officina/1603/1603.statum.yml

@@ -4138,6 +4138,9 @@ class DataApothecae:
             if data_apothecae_ad.endswith('.db') or \
                     data_apothecae_ad.endswith('.sqlite'):
                 self.data_apothecae_formato = 'sqlite'
+            # 'NNNN_NN_NN.csv-metadata.json', 'csv-metadata.json'
+            elif data_apothecae_ad.endswith('csv-metadata.json'):
+                self.data_apothecae_formato = 'csvw'
             elif data_apothecae_ad.endswith('.json'):
                 self.data_apothecae_formato = 'datapackage'
             elif data_apothecae_ad.endswith('.xml'):
@@ -4179,6 +4182,10 @@ class DataApothecae:
         # libraria = LibrariaStatusQuo(
         #     codex,
         #     'locale')
+
+        if self.data_apothecae_formato == 'csvw':
+            # return self.praeparatio_datapackage(libraria)
+            return self.praeparatio_csvw()
 
         if self.data_apothecae_formato == 'datapackage':
             # return self.praeparatio_datapackage(libraria)
@@ -4284,6 +4291,78 @@ class DataApothecae:
                     # Further file processing goes here
                     for lineam in paginae:
                         archivum.write(lineam + "\n")
+
+    # ./999999999/0/1603_1.py --methodus='data-apothecae' --data-apothecae-ad-stdout --data-apothecae-formato='csvw' --data-apothecae-ex-suffixis='no1.tm.hxl.csv,no11.tm.hxl.csv' --data-apothecae-ex-praefixis='1603_1_1'
+
+    # ./999999999/0/1603_1.py --methodus='data-apothecae' --data-apothecae-ad-stdout --data-apothecae-formato='csvw' --data-apothecae-ex-suffixis='no1.tm.hxl.csv,no11.tm.hxl.csv' --data-apothecae-ex-praefixis='1603_1_1' > ./csv-metadata.json
+
+    def praeparatio_csvw(
+            self,
+            temporarium: str = None):
+        """praeparatio_datapackage
+
+        See:
+            - https://www.w3.org/TR/tabular-metadata/
+            - https://www.w3.org/TR/csv2rdf
+            - https://github.com/cldf/csvw
+            - https://pypi.org/project/cow-csvw/
+
+        Args:
+            libraria (LibrariaStatusQuo):
+        """
+        paginae = []
+        sarcina = {
+            '@context': ['http://www.w3.org/ns/csvw', {'@language': 'la'}],
+            '@TODO': 'CSVW',
+            'name': '1603',
+            'profile': 'data-package-catalog',
+            'resources': []
+        }
+
+        # from csvw import TableGroup
+        # tg = TableGroup.from_frictionless_datapackage('csv-metadata.json')
+        # import csvw
+        # tg = csvw.TableGroup.from_file('csv-metadata.json')
+        # print(tg)
+        # raise NotImplementedError
+
+        # raise ValueError(DATA_APOTHECAE_MINIMIS, bool(DATA_APOTHECAE_MINIMIS))
+
+        # if bool(DATA_APOTHECAE_MINIMIS) is True:
+        if DATA_APOTHECAE_MINIMIS.lower() in ("yes", "true", "t", "1"):
+            for codex in self.data_apothecae_ex:
+                sarcina['resources'].append(
+                    DataApothecae.quod_tabula(codex))
+        else:
+            sarcina['resources'].append(DataApothecae.quod_tabula('1603_1_1'))
+            sarcina['resources'].append(DataApothecae.quod_tabula('1603_1_51'))
+
+            for codex in self.data_apothecae_ex:
+                if codex in ['1603_1_1', '1603_1_51']:
+                    continue
+                sarcina['resources'].append(
+                    DataApothecae.quod_tabula(codex))
+
+        paginae.append(json.dumps(
+            sarcina, indent=2, ensure_ascii=False, sort_keys=False))
+
+        if temporarium:
+            with open(temporarium, 'w') as archivum:
+                for lineam in paginae:
+                    archivum.write(lineam)
+        else:
+            if self.data_apothecae_ad is False:
+                for lineam in paginae:
+                    print(lineam)
+            else:
+                _path_archivum = NUMERORDINATIO_BASIM + '/' + self.data_apothecae_ad
+                # self.resultatum.append('TODO praeparatio_datapackage')
+                self.resultatum.append(_path_archivum)
+
+                with open(_path_archivum, 'w') as archivum:
+                    # Further file processing goes here
+                    for lineam in paginae:
+                        archivum.write(lineam)
 
     def praeparatio_datapackage(
             self,
@@ -5257,7 +5336,7 @@ class CLI_2600:
             '--data-apothecae-ad pattern.',
             dest='data_apothecae_formato',
             nargs='?',
-            choices=['datapackage', 'sqlite', 'catalog'],
+            choices=['catalog', 'csvw', 'datapackage', 'sqlite', ],
             default=None
         )
 
