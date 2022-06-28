@@ -1391,6 +1391,7 @@ def bcp47_langtag_callback_hxl(
 
     return ''.join(resultatum)
 
+
 def bcp47_langtag_callback_hxl_minimal(
         langtag_meta: dict,
         strictum: bool = True
@@ -1406,10 +1407,33 @@ def bcp47_langtag_callback_hxl_minimal(
     """
     res = bcp47_langtag_callback_hxl(langtag_meta, strictum)
 
+    # raise ValueError(res)
+
     # We only try to compact concepts
-    if not res.startswith('+_qcc'):
+    if not res.startswith('+i_qcc+is_zxxx'):
         return None
-    return [res, None]
+
+    # If does not have an RDF tab about being a pivot key, we return False
+    # This may either signal a error OR a HXL tag that subject is implicit
+    # u2203
+    if res.find('+rdf_s_u2200_s') == -1 and res.find('+rdf_s_u2203_s') == -1:
+        return False
+
+    minimal_parts = []
+    extra_parts = []
+    parts = res.replace('+i_qcc+is_zxxx', '').split('+')
+    for item in parts:
+        if item.startswith('rdf_s_u2200_s') or item.startswith('rdf_s_u2203_s'):
+            minimal_parts.append(item)
+        else:
+            extra_parts.append(item)
+    if len(extra_parts) == 0:
+        return [res, None]
+
+    minimal = '+i_qcc+is_zxxx+' + '+'.join(minimal_parts)
+    extra = '+'.join(extra_parts)
+
+    return [minimal, extra]
 
 
 def bcp47_rdf_extension(
@@ -4254,6 +4278,7 @@ def hxl_hashtag_to_bcp47(
         'grandfathered': None,
         '_callbacks': {
             'hxl_attrs': None,
+            'hxl_minimal': None,
             'hxl_original': hashtag,
             'rdf_parts': None
         },
@@ -4510,6 +4535,17 @@ def hxl_hashtag_to_bcp47(
             norm.append('x-' + '-'.join(result['privateuse']))
 
         result['Language-Tag_normalized'] = '-'.join(norm)
+
+    _hxl_original = result['_callbacks']['hxl_original'].lower()
+
+    _hxl_attrs = _hxl_original.replace('#item+rem', '').replace(
+        '#item+status', '').replace('#item+conceptum', '').replace('#item', '')
+
+    result['_callbacks']['hxl_attrs'] = _hxl_attrs
+    # result['_callbacks']['hxl_minimal'] = bcp47_langtag_callback_hxl(
+    #     _hxl_attrs, False)
+    result['_callbacks']['hxl_minimal'] = bcp47_langtag_callback_hxl_minimal(
+        result, False)
 
     return result
 
