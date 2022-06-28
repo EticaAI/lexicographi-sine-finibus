@@ -6018,7 +6018,7 @@ class CLI_2600:
             # return self.output(tabulam_numerae)
             return self.output(quod_query)
 
-        print('unknow option.')
+        print('unknow option. --help ?')
         return self.EXIT_ERROR
 
     def output(self, output_collectiom):

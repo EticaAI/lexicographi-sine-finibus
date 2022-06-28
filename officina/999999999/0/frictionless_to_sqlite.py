@@ -75,6 +75,8 @@ Create the datapackage.json (requires other tool) . . . . . . . . . . . . . . .
 --data-apothecae-ex-praefixis='1603,!1603_45_46' \
 > ./datapackage.json
 
+# ex-praefixis='1603_16,1603_45_16,!1603_45_76,!1603_16_76,!1603_45_49'
+
 (Use jq to print resources)
     jq .resources[].name < datapackage.json
 

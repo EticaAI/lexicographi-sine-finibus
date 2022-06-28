@@ -1776,6 +1776,30 @@ def bcp47_rdf_extension(
     return result
 
 
+def bcp47_rdf_extension_caput_ad_columnae_i(
+        caput_originali: List[str],
+        caput_originali_asa: List[str],
+        namespaces: List[dict] = None,
+        strictum: bool = True
+) -> dict:
+    resultatum = []
+    extras = []
+    for index in range(len(caput_originali)):
+        _hxl_minimal = caput_originali_asa[index]['_callbacks']['hxl_minimal']
+        if not _hxl_minimal:
+            resultatum.append(caput_originali[index])
+        else:
+            resultatum.append(caput_originali[index])
+            resultatum.append(_hxl_minimal[0])
+            extras.append(_hxl_minimal)
+            # resultatum.append(caput_originali[index])
+        resultatum.append(caput_originali_asa[index])
+        # print(caput_originali_asa[index])
+        # break
+    # return caput_originali
+    return resultatum
+
+
 def bcp47_rdf_extension_relationship(
         header: List[str],
         namespaces: List[dict] = None,
@@ -1783,7 +1807,10 @@ def bcp47_rdf_extension_relationship(
 ) -> dict:
     """""Metadata processing of the bcp47_rdf_extension version
 
-    _extended_summary_
+    Note about caput_ad_columnae_i:
+    - We can generate an ASA about how would be if long column names
+      would be renamed and added as text value, (e.g. do it from a
+      wide dataset), but not designed to do it from narrow dataset
 
     Args:
         caput (List[str]): _description_
@@ -1792,10 +1819,17 @@ def bcp47_rdf_extension_relationship(
     Returns:
         dict: _description_
     """
+    # About caput_**, see
+    # - https://en.wikipedia.org/wiki/Wide_and_narrow_data
+    # - https://tidyr.tidyverse.org/
+    # - pandas.pydata.org/pandas-docs/stable/reference/api/pandas.melt.html
+    # - pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.pivot.html
+
     # @TODO: this function is obviously doing too much at once. Eventually
     #        can be refactored. (rocha, 2022-06-09 10:50 UTC)
     result = {
         'caput_originali': header,
+        'caput_ad_columnae_i': [],
         'caput_originali_asa': [],
         # 'rdf:subject': None,
         # 'rdf:predicate': [],
@@ -1943,7 +1977,8 @@ def bcp47_rdf_extension_relationship(
     # ========= Fist iteration over each column, START =========
     for index, item in enumerate(header):
         item_meta = bcp47_langtag(
-            item, ['language', 'script', 'extension'], strictum=False)
+            item, ['language', 'script', 'extension', '_callbacks'],
+            strictum=False)
         # @TODO; get erros and export them to upper level
         # item_meta['_column'] = index
         item_meta['_index_ex_tabula'] = index
@@ -2129,6 +2164,10 @@ def bcp47_rdf_extension_relationship(
                         'rdf:type'].append(_itemtype)
 
     result = _aux_recalc_containers(result)
+
+    result['caput_ad_columnae_i'] = bcp47_rdf_extension_caput_ad_columnae_i(
+        result['caput_originali'],
+        result['caput_originali_asa'])
 
     return result
 

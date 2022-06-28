@@ -117,6 +117,12 @@ Temporary tests . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 999999999/1568346/data/hxlstandard-rdf-namespaces-example.hxl.csv \
 999999999/1568346/data/unesco-thesaurus.bcp47g.tsv
 
+    {0} --objectivum-formato=_temp_hxl_meta_in_json \
+--punctum-separato-de-fontem=$'\\t' \
+999999999/1568346/data/cod-ab-example1-with-inferences.no1.hxl.tm.tsv \
+--numerordinatio-cum-antecessoribus \
+--rdf-ontologia-ordinibus=5 --rdf-trivio=5002
+
 (Data operations)
     {0} --objectivum-formato=_temp_bcp47 \
 --punctum-separato-de-fontem=$'\\t' \
