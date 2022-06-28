@@ -106,6 +106,8 @@ EXIT_SYNTAX = 2
 
 BCP47_LANGTAG_CALLBACKS = {
     'hxl_attrs': lambda lmeta, strictum: bcp47_langtag_callback_hxl(
+        lmeta, strictum=strictum),
+    'hxl_minimal': lambda lmeta, strictum: bcp47_langtag_callback_hxl_minimal(
         lmeta, strictum=strictum)
 }
 
@@ -990,8 +992,8 @@ def bcp47_langtag(
 'variant': ['lojban', 'gaulish'], \
 'extension': {'a': '12345678-ABCD', 'b': 'ABCDEFGH'}, \
 'privateuse': ['a', 'b', 'c', '12345678'], 'grandfathered': None, \
-'_callbacks': {'hxl_attrs': '+i_en+is_latn+ix_12345678+ix_a+ix_b+ix_c'}, \
-'_unknown': [], '_error': []}
+'_callbacks': {'hxl_attrs': '+i_en+is_latn+ix_12345678+ix_a+ix_b+ix_c', \
+'hxl_minimal': None}, '_unknown': [], '_error': []}
 
     # BCP47: "Example: The language tag "en-a-aaa-b-ccc-bbb-x-xyz" is in
     # canonical form, while "en-b-ccc-bbb-a-aaa-X-xyz" is well-formed (...)
@@ -1001,8 +1003,8 @@ def bcp47_langtag(
 'Language-Tag_normalized': 'en-a-aaa-b-ccc-bbb-x-xyz', \
 'language': 'en', 'script': None, 'region': None, 'variant': [], \
 'extension': {'a': 'aaa', 'b': 'ccc-bbb'}, 'privateuse': ['xyz'], \
-'grandfathered': None, '_callbacks': {'hxl_attrs': '+i_en+ix_xyz'}, \
-'_unknown': [], '_error': []}
+'grandfathered': None, '_callbacks': {'hxl_attrs': '+i_en+ix_xyz', \
+'hxl_minimal': None}, '_unknown': [], '_error': []}
     """
     # For sake of copy-and-paste portability, we ignore a few pylints:
     # pylint: disable=too-many-branches,too-many-statements,too-many-locals
@@ -1388,6 +1390,26 @@ def bcp47_langtag_callback_hxl(
     resultatum = sorted(resultatum)
 
     return ''.join(resultatum)
+
+def bcp47_langtag_callback_hxl_minimal(
+        langtag_meta: dict,
+        strictum: bool = True
+) -> str:
+    """bcp47_langtag_callback_hxl convert a bcp47_langtag meta to hxl attributes
+
+    Args:
+        langtag_meta (dict): a bcp47_langtag compatible metadata
+        strictum (bool, optional): (not implemented yet). Defaults to True.
+
+    Returns:
+        str: return HXL attributes (without HXL hashtag)
+    """
+    res = bcp47_langtag_callback_hxl(langtag_meta, strictum)
+
+    # We only try to compact concepts
+    if not res.startswith('+_qcc'):
+        return None
+    return [res, None]
 
 
 def bcp47_rdf_extension(
@@ -3571,9 +3593,9 @@ def de_dotted(dotted_key: str,  # pylint: disable=invalid-name
     Trivia: dē, https://en.wiktionary.org/wiki/de#Latin
     Examples:
         >>> exemplum = {'a': {'a2': 123}, 'b': 456}
-        >>> otlg = HXLTMOntologia(exemplum)
-        >>> otlg.de('a.a2', fontem=exemplum)
+        >>> de_dotted('a.a2', fontem=exemplum)
         123
+
     Args:
         dotted_key (str): Dotted key notation
         default ([Any], optional): Value if not found. Defaults to None.
@@ -6336,7 +6358,7 @@ def qhxl_bcp47_2_hxlattr(bcp47: str) -> str:
     >>> qhxl_bcp47_2_hxlattr('lat-Latn-x-private1-private2')
     '+i_lat+is_latn+ix_private1+ix_private2'
     >>> qhxl_bcp47_2_hxlattr('qcc-Zxxx-x-wikip')
-    '+i_qcc+is_zxxx+ix_wdatap'
+    '+i_qcc+is_zxxx+ix_wikip'
     """
     resultatum = ''
     bcp47_parsed = bcp47_langtag(bcp47)
