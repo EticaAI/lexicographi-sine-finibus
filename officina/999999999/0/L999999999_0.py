@@ -5846,7 +5846,7 @@ def hxltm_index_praeparationi(
 
 def qhxl_hxlhashtag_2_bcp47(
         hxlhashtag: str, hxlstd11_compat: bool = False) -> str:
-    """qhxl_hxlhashtag_2_bcp47
+    """qhxl_hxlhashtag_2_bcp47 (no -r- RDF extension support)
 
     (try) to convert full HXL hashtag to BCP47
 

@@ -49,6 +49,7 @@ from L999999999_0 import (
     HXLHashtagSimplici,
     SetEncoder,
     bcp47_langtag,
+    bcp47_langtag_callback_hxl,
     bcp47_rdf_extension_poc,
     hxl_hashtag_to_bcp47,
     hxltm_carricato,
@@ -171,6 +172,11 @@ Temporary tests . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
     varbcp47=$(head -n1 \
 999999999/1568346/data/cod-ab-example1-with-inferences.bcp47.tsv)
     {0} --objectivum-formato=_temp_header_bcp47_to_hxl "$varbcp47"
+
+(Create shorter column names; good for databases, less for command line)
+    {0} --objectivum-formato=_temp_bcp47_to_bcp47_shortnames \
+--punctum-separato-de-fontem=$'\\t' \
+999999999/1568346/data/cod-ab-example1-with-inferences.bcp47.tsv
 
 ------------------------------------------------------------------------------
                             EXEMPLŌRUM GRATIĀ
@@ -472,7 +478,9 @@ class Cli:
             caput, data = hxltm_carricato_brevibus(
                 _infile, _stdin, punctum_separato=fontem_separato)
 
+            est_bcp47 = True
             if pyargs.objectivum_formato == '_temp_no1_to_no1_shortnames':
+                est_bcp47 = False
                 caput_novo = []
                 for _item in caput:
                     # print('hxl item     > ', _item)
@@ -495,11 +503,11 @@ class Cli:
                 rdf_ontologia_ordinibus=pyargs.rdf_ontologia_ordinibus,
                 est_meta=True)
 
-            no1_to_no1_shortnames(
-                meta, _infile, punctum_separato=fontem_separato)
+            numerordinatio_data__sortnames(
+                meta['caput_asa'], _infile, est_bcp47=est_bcp47,
+                punctum_separato=fontem_separato)
 
             return self.EXIT_OK
-            pass
 
         # @TODO maybe refactor this temporary part
         # if pyargs.objectivum_formato == '_temp_bcp47_meta_in_json':
@@ -602,6 +610,7 @@ class Cli:
             errors = []
 
             # TODO: rework this funcion
+            # TODO: draft on numerordinatio_caput_bcp47_to_hxlhashtag()
             for item in caput:
                 if item in BCP47_AD_HXL:
                     # print(BCP47_AD_HXL[item])
@@ -851,25 +860,80 @@ class CliMain:
         # print('failed')
 
 
-def no1_to_no1_shortnames(
-    caput_asa, fontem, punctum_separato=","
+def numerordinatio_data__sortnames(
+    caput_asa: dict, fontem: str,
+    est_bcp47: bool = True, punctum_separato: str = ","
 ):
+    # json.dumps(caput_asa)
+    # print(json.dumps(caput_asa))
+    # return ''
+    # print(caput_asa['caput_originali'])
+    # print(caput_asa['caput_ad_columnae_i'])
 
-    # csv_imprimendo()
+    caput_novo = []
+    res_novae = []
+
+    for item in caput_asa['caput_ad_columnae_i']:
+        if isinstance(item, list):
+            caput_novo.append(item[0])
+            res_novae.append(item[1])
+        else:
+            caput_novo.append(item)
+
+    if not est_bcp47:
+        caput_novo = numerordinatio_caput_bcp47_to_hxlhashtag(caput_novo)
+
     with open(fontem, 'r') as _fons:
         _writer = csv.writer(sys.stdout, delimiter=punctum_separato)
         _csv_reader = csv.reader(_fons, delimiter=punctum_separato)
+
+        # discard original header
+        next(_csv_reader)
+        # _writer.writerow(_header_original)
+        _writer.writerow(caput_novo)
+
         for linea in _csv_reader:
-            _writer.writerow(linea)
-            # pass
-    #         if len(caput) == 0:
-    #             # caput = linea
-    #             # _reader_caput = csv.reader(linea)
-    #             # _gambi = [linea, linea]
-    #             # _reader_caput = csv.reader(_gambi)
-    #             # caput = next(_reader_caput)
-    #             caput = linea
-    # pass
+            linea_novae = linea
+            if len(res_novae) > 0:
+                linea_novae.extend(res_novae)
+            _writer.writerow(linea_novae)
+
+
+def numerordinatio_caput_bcp47_to_hxlhashtag(
+        caput: str, hxl_base: str = '#item+rem') -> str:
+
+    caput_novo = []
+    errors = []
+    for item in caput:
+        if item in BCP47_AD_HXL:
+            # print(BCP47_AD_HXL[item])
+            # item_meta = bcp47_langtag(BCP47_AD_HXL[item])
+            caput_novo.append(BCP47_AD_HXL[item]['hxltm'])
+            continue
+        # item_meta = bcp47_langtag(item,strictum=False)
+        item_meta = bcp47_langtag(item)
+
+        if len(item_meta['_error']) == 0 and \
+                item_meta['Language-Tag_normalized']:
+            caput_novo.append('{0}{1}'.format(
+                hxl_base,
+                item_meta['_callbacks']['hxl_attrs']
+            ))
+        else:
+            caput_novo.append('qcc-Zxxx-x-error')
+            if len(item_meta['_error']) > 0:
+                errors.append('ERROR: {0}'.format(item))
+                errors.extend(item_meta['_error'])
+            else:
+                errors.append('ERROR: {0} <{1}>'.format(
+                    item, item_meta))
+
+    if len(errors) > 0:
+        raise SyntaxError('<{0}>? <{1}>'.format(
+            caput, errors
+        ))
+
+    return caput_novo
 
 
 def numerordinatio_neo_separatum(
