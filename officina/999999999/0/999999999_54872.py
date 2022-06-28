@@ -26,6 +26,7 @@
 # ==============================================================================
 # /opt/Protege-5.5.0/run.sh
 
+import csv
 import json
 import sys
 import os
@@ -119,7 +120,7 @@ Temporary tests . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
     {0} --objectivum-formato=_temp_hxl_meta_in_json \
 --punctum-separato-de-fontem=$'\\t' \
-999999999/1568346/data/cod-ab-example1-with-inferences.no1.hxl.tm.tsv \
+999999999/1568346/data/cod-ab-example1-with-inferences.no1.tm.hxl.tsv \
 --numerordinatio-cum-antecessoribus \
 --rdf-ontologia-ordinibus=5 --rdf-trivio=5002
 
@@ -163,7 +164,7 @@ Temporary tests . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 
 (Data operations, header conversion RDF+HXL -> RDF+BCP47)
     varhxl=$(head -n1 \
-999999999/1568346/data/cod-ab-example1-with-inferences.no1.hxl.tm.tsv)
+999999999/1568346/data/cod-ab-example1-with-inferences.no1.tm.hxl.tsv)
     {0} --objectivum-formato=_temp_header_hxl_to_bcp47 "$varhxl"
 
 (Data operations, header conversion RDF+BCP47 -> RDF+HXL)
@@ -301,6 +302,8 @@ class Cli:
                 '_temp_hxl_meta_in_json',
                 '_temp_header_hxl_to_bcp47',
                 '_temp_header_bcp47_to_hxl',
+                '_temp_bcp47_to_bcp47_shortnames',
+                '_temp_no1_to_no1_shortnames',
             ],
             # required=True
             default='application/x-turtle'
@@ -456,6 +459,47 @@ class Cli:
             rdf_namespaces_extras(pyargs.rdf_namespace_archivo)
             # print(RDF_SPATIA_NOMINALIBUS_EXTRAS)
             # pass
+
+        if pyargs.objectivum_formato in [
+                '_temp_bcp47_to_bcp47_shortnames',
+                '_temp_no1_to_no1_shortnames']:
+            # if pyargs.objectivum_formato = '_temp_no1_to_no1_shortnames':
+
+            if _stdin:
+                raise NotImplementedError('{0} not with stdin'.format(
+                    pyargs.objectivum_formato))
+
+            caput, data = hxltm_carricato_brevibus(
+                _infile, _stdin, punctum_separato=fontem_separato)
+
+            if pyargs.objectivum_formato == '_temp_no1_to_no1_shortnames':
+                caput_novo = []
+                for _item in caput:
+                    # print('hxl item     > ', _item)
+                    _hxl = HXLHashtagSimplici(_item).praeparatio()
+                    _item_bcp47 = _hxl.quod_bcp47(strictum=False)
+                    # print('_item_bcp47  > ', _item_bcp47)
+                    caput_novo.append(_item_bcp47)
+                caput = caput_novo
+                # print('caput', caput)
+
+            rdf_sine_spatia_nominalibus = pyargs.rdf_sine_spatia_nominalibus
+            if not rdf_sine_spatia_nominalibus:
+                rdf_sine_spatia_nominalibus = []
+            rdf_sine_spatia_nominalibus.append('devnull')
+
+            meta = bcp47_rdf_extension_poc(
+                caput, data, objective_bag=pyargs.rdf_bag,
+                rdf_sine_spatia_nominalibus=rdf_sine_spatia_nominalibus,
+                cum_antecessoribus=pyargs.cum_antecessoribus,
+                rdf_ontologia_ordinibus=pyargs.rdf_ontologia_ordinibus,
+                est_meta=True)
+
+            no1_to_no1_shortnames(
+                meta, _infile, punctum_separato=fontem_separato)
+
+            return self.EXIT_OK
+            pass
 
         # @TODO maybe refactor this temporary part
         # if pyargs.objectivum_formato == '_temp_bcp47_meta_in_json':
@@ -805,6 +849,27 @@ class CliMain:
             # print('oi actio')
             # numerordinatio_neo_separatum
         # print('failed')
+
+
+def no1_to_no1_shortnames(
+    caput_asa, fontem, punctum_separato=","
+):
+
+    # csv_imprimendo()
+    with open(fontem, 'r') as _fons:
+        _writer = csv.writer(sys.stdout, delimiter=punctum_separato)
+        _csv_reader = csv.reader(_fons, delimiter=punctum_separato)
+        for linea in _csv_reader:
+            _writer.writerow(linea)
+            # pass
+    #         if len(caput) == 0:
+    #             # caput = linea
+    #             # _reader_caput = csv.reader(linea)
+    #             # _gambi = [linea, linea]
+    #             # _reader_caput = csv.reader(_gambi)
+    #             # caput = next(_reader_caput)
+    #             caput = linea
+    # pass
 
 
 def numerordinatio_neo_separatum(

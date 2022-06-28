@@ -1789,14 +1789,21 @@ def bcp47_rdf_extension_caput_ad_columnae_i(
         if not _hxl_minimal:
             resultatum.append(caput_originali[index])
         else:
-            resultatum.append(caput_originali[index])
-            resultatum.append(_hxl_minimal[0])
-            extras.append(_hxl_minimal)
             # resultatum.append(caput_originali[index])
-        resultatum.append(caput_originali_asa[index])
+            _meta = hxl_hashtag_to_bcp47('#item' + _hxl_minimal[0])
+            resultatum.append(_meta['Language-Tag_normalized'])
+            extras.append([
+                _meta['Language-Tag_normalized'] + '-x-hxlattrs',
+                _hxl_minimal[1]
+            ])
+            # resultatum.append(caput_originali[index])
+        # resultatum.append(caput_originali_asa[index])
         # print(caput_originali_asa[index])
         # break
     # return caput_originali
+    if len(extras):
+        resultatum.extend(extras)
+
     return resultatum
 
 
