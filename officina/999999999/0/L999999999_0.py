@@ -425,36 +425,62 @@ HXL_HASH_ET_ATTRIBUTA_AD_RDF = {
         '__no1bpc47__': 'qcc-Zxxx-r-aOBO-abfo29-anop-sU2200-s5000-snop-pOBO-pbfo124-ps5001',
         '__no1hxl__': '#item+rem+i_qcc+is_zxxx+rdf_a_obo_bfo29+rdf_p_obo_bfo124_s5001+rdf_s_u2200_s5000'
     },
+    # # P297 ISO 3166-1 alpha-2 code, https://www.wikidata.org/wiki/Property:P297
+    # '#country+code+v_iso3166p1a2': {
+    #     '__no1bpc47__': 'qcc-Zxxx-r-pWDATA-pq7200235-ps5001-x-wdataq7200235',
+    #     '__no1hxl__': '#item+rem+i_qcc+is_zxxx+ix_wdataq7200235+rdf_p_wdata_q7200235_s5001'
+    # },
     '#adm1+code+v_numerodinatio': {
         '__no1bpc47__': 'qcc-Zxxx-r-aOBO-abfo29-anop-sU2200-s5001-snop-pOBO-pbfo124-ps5002-pOBO-pbfo171-ps5000',
         '__no1hxl__': '#item+rem+i_qcc+is_zxxx+rdf_a_obo_bfo29+rdf_p_obo_bfo124_s5002+rdf_p_obo_bfo171_s5000+rdf_s_u2200_s5001'
     },
     # @TODO make P-Codes using "instance of (P31)" like > p:P31 Q7200235
+    #       (change for this TODO) drafted +v_pcode's
     # @see https://en.wikipedia.org/wiki/Place_code
     # @see https://www.wikidata.org/wiki/Q7200235 Q7200235
-    # '#adm1+code+v_pcode': {
-    #     '__no1bpc47__': '',
-    #     '__no1hxl__': ''
-    # },
+    '#adm1+code+v_pcode': {
+        '__no1bpc47__': 'qcc-Zxxx-r-pWDATA-pq7200235-ps5001-x-wdataq7200235',
+        '__no1hxl__': '#item+rem+i_qcc+is_zxxx+ix_wdataq7200235+rdf_p_wdata_q7200235_s5001'
+    },
     '#adm2+code+v_numerodinatio': {
         '__no1bpc47__': 'qcc-Zxxx-r-aOBO-abfo29-anop-sU2200-s5002-snop-pOBO-pbfo124-ps5002-pOBO-pbfo171-ps5001',
         '__no1hxl__': '#item+rem+i_qcc+is_zxxx+rdf_a_obo_bfo29+rdf_p_obo_bfo124_s5002+rdf_p_obo_bfo171_s5001+rdf_s_u2200_s5002'
+    },
+    '#adm2+code+v_pcode': {
+        '__no1bpc47__': 'qcc-Zxxx-r-pWDATA-pq7200235-ps5002-x-wdataq7200235',
+        '__no1hxl__': '#item+rem+i_qcc+is_zxxx+ix_wdataq7200235+rdf_p_wdata_q7200235_s5002'
     },
     '#adm3+code+v_numerodinatio': {
         '__no1bpc47__': 'qcc-Zxxx-r-aOBO-abfo29-anop-sU2200-s5003-snop-pOBO-pbfo124-ps5003-pOBO-pbfo171-ps5002',
         '__no1hxl__': '#item+rem+i_qcc+is_zxxx+rdf_a_obo_bfo29+rdf_p_obo_bfo124_s5003+rdf_p_obo_bfo171_s5002+rdf_s_u2200_s5003'
     },
+    '#adm3+code+v_pcode': {
+        '__no1bpc47__': 'qcc-Zxxx-r-pWDATA-pq7200235-ps5003-x-wdataq7200235',
+        '__no1hxl__': '#item+rem+i_qcc+is_zxxx+ix_wdataq7200235+rdf_p_wdata_q7200235_s5003'
+    },
     '#adm4+code+v_numerodinatio': {
         '__no1bpc47__': 'qcc-Zxxx-r-aOBO-abfo29-anop-sU2200-s5004-snop-pOBO-pbfo124-ps5004-pOBO-pbfo171-ps5003',
         '__no1hxl__': '#item+rem+i_qcc+is_zxxx+rdf_a_obo_bfo29+rdf_p_obo_bfo124_s5004+rdf_p_obo_bfo171_s5003+rdf_s_u2200_s5004'
+    },
+    '#adm4+code+v_pcode': {
+        '__no1bpc47__': 'qcc-Zxxx-r-pWDATA-pq7200235-ps5004-x-wdataq7200235',
+        '__no1hxl__': '#item+rem+i_qcc+is_zxxx+ix_wdataq7200235+rdf_p_wdata_q7200235_s5004'
     },
     '#adm5+code+v_numerodinatio': {
         '__no1bpc47__': 'qcc-Zxxx-r-aOBO-abfo29-anop-sU2200-s5005-snop-pOBO-pbfo124-ps5005-pOBO-pbfo171-ps5004',
         '__no1hxl__': '#item+rem+i_qcc+is_zxxx+rdf_a_obo_bfo29+rdf_p_obo_bfo124_s5005+rdf_p_obo_bfo171_s5004+rdf_s_u2200_s5005'
     },
+    '#adm5+code+v_pcode': {
+        '__no1bpc47__': 'qcc-Zxxx-r-pWDATA-pq7200235-ps5005-x-wdataq7200235',
+        '__no1hxl__': '#item+rem+i_qcc+is_zxxx+ix_wdataq7200235+rdf_p_wdata_q7200235_s5005'
+    },
     '#adm6+code+v_numerodinatio': {
         '__no1bpc47__': 'qcc-Zxxx-r-aOBO-abfo29-anop-sU2200-s5006-snop-pOBO-pbfo124-ps5005-pOBO-pbfo171-ps5004',
         '__no1hxl__': '#item+rem+i_qcc+is_zxxx+rdf_a_obo_bfo29+rdf_p_obo_bfo124_s5005+rdf_p_obo_bfo171_s5004+rdf_s_u2200_s5005'
+    },
+    '#adm6+code+v_pcode': {
+        '__no1bpc47__': 'qcc-Zxxx-r-pWDATA-pq7200235-ps5006-x-wdataq7200235',
+        '__no1hxl__': '#item+rem+i_qcc+is_zxxx+ix_wdataq7200235+rdf_p_wdata_q7200235_s5006'
     },
     # @see https://www.wikidata.org/wiki/EntitySchema:E49
     # publication date (P577)
@@ -2660,6 +2686,7 @@ class CodAbTabulae:
     numerordinatio_praefixo: str = None
     pcode_praefixo: str = None
     unm49: str = None
+    experimentum_est: bool = False
 
     # identitās, f, s, nom., https://en.wiktionary.org/wiki/identitas#Latin
     # ex (+ ablative), https://en.wiktionary.org/wiki/ex#Latin
@@ -2676,6 +2703,12 @@ class CodAbTabulae:
     # objectīvō, n, dativus, https://en.wiktionary.org/wiki/objectivus#Latin
     _objectivo_dictionario: str = None
 
+    # Columns marked merge from output
+    _column_merge: list = []
+
+    # Columns marked to discard from output
+    _column_devnull: list = []
+
     def __init__(
         self,
         caput: list,
@@ -2684,6 +2717,7 @@ class CodAbTabulae:
         numerordinatio_praefixo: str = None,
         pcode_praefixo: str = None,
         unm49: str = None,
+        experimentum_est: bool = False,
     ):
         """__init__"""
         self.caput_originali = caput
@@ -2692,6 +2726,7 @@ class CodAbTabulae:
         self.numerordinatio_praefixo = numerordinatio_praefixo
         self.pcode_praefixo = pcode_praefixo
         self.unm49 = unm49
+        self.experimentum_est = experimentum_est
 
     def imprimere(self) -> list:
         """imprimere /print/@eng-Latn
