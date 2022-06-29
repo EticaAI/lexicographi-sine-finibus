@@ -384,6 +384,16 @@ __temp_download_external_cod_data() {
 # __temp_preproces_quicktest_1603_16_24
 # exit 0
 
+# unm49=68
+# v_iso3="COL"
+# v_iso2="CO"
+# cod_ab_level_max=3
+# bootstrap_1603_45_16__item_bcp47 "1603_16" "${unm49}" "$v_iso3" "$v_iso2" "$cod_ab_level_max" "1" "0" "4"
+
+# exit 0
+
+# exit 0
+
 # bootstrap_1603_45_16__all "1603_45_16"
 # bootstrap_999999_1603_45_16_neo ""
 # bootstrap_999999_1603_45_16_neo "BRA"

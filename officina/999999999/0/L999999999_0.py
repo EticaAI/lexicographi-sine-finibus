@@ -425,11 +425,11 @@ HXL_HASH_ET_ATTRIBUTA_AD_RDF = {
         '__no1bpc47__': 'qcc-Zxxx-r-aOBO-abfo29-anop-sU2200-s5000-snop-pOBO-pbfo124-ps5001',
         '__no1hxl__': '#item+rem+i_qcc+is_zxxx+rdf_a_obo_bfo29+rdf_p_obo_bfo124_s5001+rdf_s_u2200_s5000'
     },
-    # # P297 ISO 3166-1 alpha-2 code, https://www.wikidata.org/wiki/Property:P297
-    # '#country+code+v_iso3166p1a2': {
-    #     '__no1bpc47__': 'qcc-Zxxx-r-pWDATA-pq7200235-ps5001-x-wdataq7200235',
-    #     '__no1hxl__': '#item+rem+i_qcc+is_zxxx+ix_wdataq7200235+rdf_p_wdata_q7200235_s5001'
-    # },
+    # P297 ISO 3166-1 alpha-2 code, https://www.wikidata.org/wiki/Property:P297
+    '#country+code+v_iso3166p1a2': {
+        '__no1bpc47__': 'qcc-Zxxx-r-pP-pp297-ps5000-x-p297',
+        '__no1hxl__': '#item+rem+i_qcc+is_zxxx+ix_p297+rdf_p_p_p297_s5000'
+    },
     '#adm1+code+v_numerodinatio': {
         '__no1bpc47__': 'qcc-Zxxx-r-aOBO-abfo29-anop-sU2200-s5001-snop-pOBO-pbfo124-ps5002-pOBO-pbfo171-ps5000',
         '__no1hxl__': '#item+rem+i_qcc+is_zxxx+rdf_a_obo_bfo29+rdf_p_obo_bfo124_s5002+rdf_p_obo_bfo171_s5000+rdf_s_u2200_s5001'
@@ -1442,7 +1442,7 @@ def bcp47_langtag_callback_hxl_minimal(
 
     # raise ValueError(res)
 
-    # We only try to compact concepts
+    # We only try to compact interlingual concepts, not linguistic
     if not res.startswith('+i_qcc+is_zxxx'):
         return None
 
