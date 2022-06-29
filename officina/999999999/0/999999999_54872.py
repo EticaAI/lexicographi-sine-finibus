@@ -308,6 +308,7 @@ class Cli:
                 '_temp_hxl_meta_in_json',
                 '_temp_header_hxl_to_bcp47',
                 '_temp_header_bcp47_to_hxl',
+                '_temp_data_hxl_to_bcp47',
                 '_temp_bcp47_to_bcp47_shortnames',
                 '_temp_no1_to_no1_shortnames',
             ],
@@ -503,9 +504,41 @@ class Cli:
                 rdf_ontologia_ordinibus=pyargs.rdf_ontologia_ordinibus,
                 est_meta=True)
 
+            # print('  aa', meta['caput_asa'])
+            # print('  bb', meta['caput_asa']['caput_originali'])
+            # print('  aa', meta['caput_asa']['caput_ad_columnae_i'])
+
             numerordinatio_data__sortnames(
                 meta['caput_asa'], _infile, est_bcp47=est_bcp47,
                 punctum_separato=fontem_separato)
+
+            return self.EXIT_OK
+
+        # _temp_data_hxl_to_bcp47
+        # Simplistic conversion of header
+        if pyargs.objectivum_formato == '_temp_data_hxl_to_bcp47':
+            if _stdin:
+                raise NotImplementedError('{0} not with stdin'.format(
+                    pyargs.objectivum_formato))
+            # print('oi')
+
+            numerordinatio_data__hxltm_to_bcp47(
+                fontem=_infile, punctum_separato=fontem_separato
+            )
+
+            # caput, data = hxltm_carricato_brevibus(
+            #     _infile, _stdin, punctum_separato=fontem_separato)
+
+            # caput_novo = []
+            # for _item in caput:
+            #     # print('hxl item     > ', _item)
+            #     _hxl = HXLHashtagSimplici(_item).praeparatio()
+            #     _item_bcp47 = _hxl.quod_bcp47(strictum=False)
+            #     # print('_item_bcp47  > ', _item_bcp47)
+            #     caput_novo.append(_item_bcp47)
+            # caput = caput_novo
+
+            # print('@TODO')
 
             return self.EXIT_OK
 
@@ -866,6 +899,44 @@ class CliMain:
         # print('failed')
 
 
+def numerordinatio_data__hxltm_to_bcp47(
+    fontem: str, punctum_separato: str = ","
+):
+    # json.dumps(caput_asa)
+    # print(json.dumps(caput_asa))
+    # return ''
+    # print(caput_asa['caput_originali'])
+    # print(caput_asa['caput_ad_columnae_i'])
+
+    caput, _data = hxltm_carricato_brevibus(
+        fontem, est_stdin=False, punctum_separato=punctum_separato)
+
+    caput_novo = []
+    for _item in caput:
+        # print('hxl item     > ', _item)
+        _hxl = HXLHashtagSimplici(_item).praeparatio()
+        _item_bcp47 = _hxl.quod_bcp47(strictum=False)
+        # print('_item_bcp47  > ', _item_bcp47)
+        caput_novo.append(_item_bcp47)
+
+    res_novae = []
+
+    with open(fontem, 'r') as _fons:
+        _writer = csv.writer(sys.stdout, delimiter=punctum_separato)
+        _csv_reader = csv.reader(_fons, delimiter=punctum_separato)
+
+        # discard original header
+        next(_csv_reader)
+        # _writer.writerow(_header_original)
+        _writer.writerow(caput_novo)
+
+        for linea in _csv_reader:
+            linea_novae = linea
+            if len(res_novae) > 0:
+                linea_novae.extend(res_novae)
+            _writer.writerow(linea_novae)
+
+
 def numerordinatio_data__sortnames(
     caput_asa: dict, fontem: str,
     est_bcp47: bool = True, punctum_separato: str = ","
@@ -888,6 +959,8 @@ def numerordinatio_data__sortnames(
 
     if not est_bcp47:
         caput_novo = numerordinatio_caput_bcp47_to_hxlhashtag(caput_novo)
+
+    # print('   oi', caput_novo)
 
     with open(fontem, 'r') as _fons:
         _writer = csv.writer(sys.stdout, delimiter=punctum_separato)
@@ -918,6 +991,8 @@ def numerordinatio_caput_bcp47_to_hxlhashtag(
             continue
         # item_meta = bcp47_langtag(item,strictum=False)
         item_meta = bcp47_langtag(item)
+
+        # print('   333', item_meta['_callbacks']['hxl_attrs'])
 
         if len(item_meta['_error']) == 0 and \
                 item_meta['Language-Tag_normalized']:
