@@ -132,7 +132,14 @@ BCP47_EX_HXL = {
         'hxl': '#item+rem+i_qcc+is_zxxx'
         '+rdf_a_mdciii_latnumerordinatio+rdf_s_u2200_s1603',
         'hxltm': '#item+conceptum+numerordinatio'
-    }
+    },
+    # # Make sure secondary roundtrip works
+    # '#item+rem+i_qcc+is_zxxx+rdf_a_mdciii_latnumerordinatio+rdf_s_u2200_s1603': {
+    #     'bcp47': 'qcc-Zxxx-r-aMDCIII-alatnumerordinatio-anop-sU2200-s1603-snop',
+    #     'hxl': '#item+rem+i_qcc+is_zxxx'
+    #     '+rdf_a_mdciii_latnumerordinatio+rdf_s_u2200_s1603',
+    #     'hxltm': '#item+conceptum+numerordinatio'
+    # }
 }
 
 BCP47_AD_HXL = {
@@ -454,7 +461,7 @@ HXL_HASH_ET_ATTRIBUTA_AD_RDF = {
     # date or point in time when a work was first published or released
     # https://www.wikidata.org/wiki/Property:P577
     '#date+start': {
-        '__no1bpc47__': 'qcc-Zxxx-r-pP-pp577-ps1603-txsd-tdatetime-tnop',
+        '__no1bpc47__': 'qcc-Zxxx-r-pP-pp577-ps1603-tXSD-tdatetime-tnop',
         '__no1hxl__':
         '#item+rem+i_qcc+is_zxxx+rdf_p_p_p577_s1603+rdf_t_xsd_datetime'
     },
@@ -463,7 +470,7 @@ HXL_HASH_ET_ATTRIBUTA_AD_RDF = {
     # see also "dissolved, abolished or demolished" (P576)
     # https://www.wikidata.org/wiki/Property:P2669
     '#date+end': {
-        '__no1bpc47__': 'qcc-Zxxx-r-pP-pp2699-ps1603-txsd-tdatetime-tnop',
+        '__no1bpc47__': 'qcc-Zxxx-r-pP-pp2699-ps1603-tXSD-tdatetime-tnop',
         '__no1hxl__':
         '#item+rem+i_qcc+is_zxxx+rdf_p_p_p2699_s1603+rdf_t_xsd_datetime'
     },
@@ -471,7 +478,7 @@ HXL_HASH_ET_ATTRIBUTA_AD_RDF = {
     # - https://www.wikidata.org/wiki/Property:P813
     # - https://wiki.openstreetmap.org/wiki/Key:check_date
     '#date+updated': {
-        '__no1bpc47__': 'qcc-Zxxx-r-pP-pp813-ps1603-txsd-tdatetime-tnop',
+        '__no1bpc47__': 'qcc-Zxxx-r-pP-pp813-ps1603-tXSD-tdatetime-tnop',
         '__no1hxl__':
         '#item+rem+i_qcc+is_zxxx+rdf_p_p_p813_s1603+rdf_t_xsd_datetime'
     },
@@ -4592,6 +4599,9 @@ def hxl_hashtag_to_bcp47(
     #     _hxl_attrs, False)
     result['_callbacks']['hxl_minimal'] = bcp47_langtag_callback_hxl_minimal(
         result, False)
+
+    # print(result['Language-Tag_normalized'] , result['_error'])
+    # print('[[{0}]]'.format(result['Language-Tag_normalized']))
 
     return result
 

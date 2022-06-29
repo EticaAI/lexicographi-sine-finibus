@@ -605,6 +605,9 @@ class Cli:
                     raise NotImplementedError(
                         "Delimiter [{0}]?? Single header item?".format(_infile))
 
+            # Use case: strip line breaks
+            _infile = _infile.strip()
+
             caput = _infile.split(delimiter)
             caput_novo = []
             errors = []
@@ -668,6 +671,9 @@ class Cli:
                     # fail to auto-detect
                     raise NotImplementedError(
                         "Delimiter [{0}]?? Single header item?".format(_infile))
+
+            # Use case: strip line breaks
+            _infile = _infile.strip()
 
             caput = _infile.split(delimiter)
             caput_novo = []
