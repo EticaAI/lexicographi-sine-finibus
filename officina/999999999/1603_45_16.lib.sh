@@ -91,13 +91,13 @@ bootstrap_1603_45_16__all() {
   echo "${FUNCNAME[0]} ... [@TODO]"
   opus_temporibus_temporarium="${ROOTDIR}/999999/0/1603_45_16.todo.tsv"
 
-  # set -x
-  "${ROOTDIR}/999999999/0/999999999_7200235.py" \
-    --methodus='cod_ab_index' \
-    --punctum-separato-ad-tab \
-    --cum-columnis='#country+code+v_unm49,#country+code+v_iso3,#country+code+v_iso2,#meta+source+cod_ab_level,#date+created,#date+updated' \
-    >"${opus_temporibus_temporarium}"
-  # set +x
+  # # set -x
+  # "${ROOTDIR}/999999999/0/999999999_7200235.py" \
+  #   --methodus='cod_ab_index' \
+  #   --punctum-separato-ad-tab \
+  #   --cum-columnis='#country+code+v_unm49,#country+code+v_iso3,#country+code+v_iso2,#meta+source+cod_ab_level,#date+created,#date+updated' \
+  #   >"${opus_temporibus_temporarium}"
+  # # set +x
 
   echo ""
   echo "  LIST HERE <${opus_temporibus_temporarium}>"
@@ -136,8 +136,55 @@ bootstrap_1603_45_16__all() {
       bootstrap_1603_45_16__item_bcp47 "$numerordinatio_praefixo" "${unm49}" "$v_iso3" "$v_iso2" "$cod_ab_level_max" "1" "0" "5"
       bootstrap_1603_45_16__item_rdf "$numerordinatio_praefixo" "$unm49" "$v_iso3" "$v_iso2" "$cod_ab_level_max" "1" "0" "5"
 
-      printf "\t%40s\n" "${tty_red} DEBUG: [Sleep 5 (@TODO disable me later)] ${tty_normal}"
-      sleep 5
+      for ((i = 0; i <= cod_ab_level_max; i++)); do
+        cod_level="$i"
+        gh_repo_name_et_level="${numerordinatio_praefixo}_${unm49}_${cod_level}"
+        __group_path=$(numerordinatio_neo_separatum "$gh_repo_name_et_level" "/")
+
+        # archivum_no1__relative="${__group_path}/${gh_repo_name_et_level}.no1.tm.hxl.csv"
+        # archivum_bcp47__relative="${__group_path}/${gh_repo_name_et_level}.no1.bcp47.csv"
+        # archivum_rdf_owl__relative="${__group_path}/${gh_repo_name_et_level}.no1.owl.ttl"
+        # archivum_rdf_skos__relative="${__group_path}/${gh_repo_name_et_level}.no1.skos.ttl"
+
+        # arr__numerodinatio_cod_ab+=("${gh_repo_name_et_level}")
+
+        # if [ "$_iso3661p1a3_lower" == "bra" ] && [ "$cod_level" == "2" ]; then
+        #   echo ""
+        #   echo "Skiping COD-AB-BR lvl 2"
+        #   echo ""
+        #   continue
+        # fi
+        # echo "loop $cod_level [${__group_path}/${gh_repo_name_et_level}.no1.tm.hxl.csv]"
+        # echo "loop $cod_level [${gh_repo_local}/${__group_path}/${gh_repo_name_et_level}.no1.tm.hxl.csv]"
+
+        # lsf1603_to_gh_repo_local_file "$gh_repo_name" "$archivum_no1__relative" "${ROOTDIR}"
+        # lsf1603_to_gh_repo_local_file "$gh_repo_name" "$archivum_bcp47__relative" "${ROOTDIR}"
+        # lsf1603_to_gh_repo_local_file "$gh_repo_name" "$archivum_rdf_owl__relative" "${ROOTDIR}"
+        # lsf1603_to_gh_repo_local_file "$gh_repo_name" "$archivum_rdf_skos__relative" "${ROOTDIR}"
+
+        _codex_meta="{\"#item+rem+i_qcc+is_zxxx+ix_n1603\": \"${gh_repo_name_et_level}\", \"#item+rem+i_mul+is_zyyy\": \"${gh_repo_name_et_level}\"}"
+
+        # _datapackage_cod_ab_lvl="${ROOTDIR}/${__group_path}/datapackage.json"
+        _datapackage_cod_ab_lvl="${__group_path}/datapackage.json"
+
+        # warning: this old method takes way too much time to compile
+        #          360	IDN	ID	4	2020-04-08	2020-04-08
+        #          (and most of this is not necessary at all, since
+        #          it is trying to compile asciidoctor version)
+        #          we already have better optimized ways to do it, but
+        #          letting this for now (Rocha, 2022-06-30)
+        CODEX_AD_HOC_NUMERORDINATIO="$_codex_meta" \
+          "${ROOTDIR}/999999999/0/1603_1.py" --methodus='status-quo' \
+          --status-quo-in-datapackage \
+          --codex-de="${gh_repo_name_et_level}" \
+          >"${ROOTDIR}/${_datapackage_cod_ab_lvl}"
+
+        frictionless validate "${ROOTDIR}/${_datapackage_cod_ab_lvl}"
+        # lsf1603_to_gh_repo_local_file "$gh_repo_name" "$_datapackage_cod_ab_lvl" "${ROOTDIR}"
+      done
+
+      # printf "\t%40s\n" "${tty_red} DEBUG: [Sleep 5 (@TODO disable me later)] ${tty_normal}"
+      # sleep 5
     done
   } <"${opus_temporibus_temporarium}"
 
@@ -605,7 +652,7 @@ bootstrap_1603_45_16__item_rdf() {
     rdf_trivio=$((5000 + cod_level))
 
     ##  Computational-like RDF serialization, "OWL version" --------------------
-
+    set -x
     # @TODO fix generation of invalid format if
     #       --rdf-sine-spatia-nominalibus=skos,devnull is enabled
 
