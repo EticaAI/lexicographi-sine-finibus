@@ -4541,6 +4541,20 @@ class DataApothecae:
         nomen = numerordinatio_neo_separatum(numerodination, '_')
         _path = numerordinatio_neo_separatum(numerodination, '/')
 
+        archivum_bpc47 = TabulaSimplici(
+            _path + '/' + nomen + '.no1.bcp47.csv',
+            nomen,
+            True
+        )
+        if archivum_bpc47.praeparatio():
+            if abstractum:
+                return archivum_bpc47
+            # return archivum_no11.quod_datapackage()
+            if schema == 'datapackage':
+                return archivum_bpc47.quod_datapackage()
+            elif schema == 'csvw':
+                return archivum_bpc47.quod_csvw()
+
         archivum_no11 = TabulaSimplici(
             _path + '/' + nomen + '.no11.tm.hxl.csv',
             nomen,
@@ -4570,7 +4584,8 @@ class DataApothecae:
         # print('archivum_no11', archivum_no11)
         # print('archivum_no1', archivum_no1)
         if strictum:
-            raise ValueError('quod_tabula {0}'.format(numerodination))
+            raise ValueError('quod_tabula [{0}] ad [{1}]?'.format(
+                numerodination, _path))
         return None
 
 
