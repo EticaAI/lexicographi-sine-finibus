@@ -198,6 +198,17 @@ bootstrap_1603_45_16__all() {
           continue
         fi
 
+        if [ "$unm49" = "834" ]; then
+          echo " 2022-07-12: 834 TZA (Tanzania) on this date have letters"
+          echo "             in addition to ISO 3166-1 Alha 2 prefix"
+          echo "             (e.g. TZ2101041b Endokise vs TZ2101041a Mamire; both"
+          echo "             coerced to 2101041) which may generate non-unique"
+          echo "             local identifiers. Skiping for now the"
+          echo "             friccionless validation"
+          echo "@TODO        Eventually test it again"
+          continue
+        fi
+
         frictionless validate "${ROOTDIR}/${_datapackage_cod_ab_lvl}"
         # lsf1603_to_gh_repo_local_file "$gh_repo_name" "$_datapackage_cod_ab_lvl" "${ROOTDIR}"
       done
