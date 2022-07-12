@@ -6748,6 +6748,7 @@ class TabulaSimplici:
     # in_limitem: int = 0
     # in_ordinem: str = None
     # quaero_numerordinatio: list = []
+    _primaryKey = None
 
     def __init__(
         self,
@@ -6784,6 +6785,11 @@ class TabulaSimplici:
             for lineam in reader:
                 if len(self.caput) == 0:
                     self.caput = lineam
+                    for _, _codicem in \
+                        BCP47_EX_HXL['#item+conceptum+codicem'].items():
+                        if _codicem in self.caput:
+                            self._primaryKey = _codicem
+                            break
                     continue
                 # TODO: what about empty lines?
                 self.res_totali += 1
@@ -6896,7 +6902,8 @@ class TabulaSimplici:
             # 'profile': 'tabular-data-resource',
             'tableSchema': {
                 'columns': [],
-                'foreignKeys': []
+                'primaryKey': self._primaryKey
+                # 'foreignKeys': []
             },
             # 'stats': {
             #     'fields': len(self.caput),
