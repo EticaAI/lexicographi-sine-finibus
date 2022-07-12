@@ -193,6 +193,20 @@ no11.skos.ttl' --data-apothecae-ex-praefixis='1603'
 --data-apothecae-ex-suffixis='no1.tm.hxl.csv,no11.tm.hxl.csv' \
 --data-apothecae-ex-praefixis='1603_1_1,1603_16_1,1603_45,!1603_45_16'
 
+    DATA_APOTHECAE_MINIMIS=1 {0} --methodus='data-apothecae' \
+--data-apothecae-ad-stdout --data-apothecae-formato='datapackage' \
+--data-apothecae-ex-suffixis='no1.bcp47.csv' \
+--data-apothecae-ex-praefixis='1603_45_16' | jq .resources[].name | wc -l
+
+Data apothēcae ūnicae . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+(Faster alternative to --methodus='status-quo' --status-quo-in-datapackage)
+(Generate output for a single dataset, but all file formats without full path)
+
+    {0} --methodus='data-apothecae-unicae' \
+--data-apothecae-ex='1603_45_1' \
+--data-apothecae-ad-stdout \
+--data-apothecae-formato='datapackage'
+
 Dictionaria Numerordĭnātĭo (deprecated) . . . . . . . . . . . . . . . . . . . .
     {0} --methodus='deprecatum-dictionaria-numerordinatio'
 
@@ -5321,6 +5335,7 @@ class CLI_2600:
             choices=[
                 'codex',
                 'data-apothecae',
+                'data-apothecae-unicae',
                 'hxltm-explanationi',
                 'ontologia-simplici',
                 'opus-temporibus',
@@ -5809,7 +5824,8 @@ class CLI_2600:
 
         # TODO: raise error if target already exist, so user could
         #       avoid override something
-        if pyargs.methodus == 'data-apothecae':
+        if pyargs.methodus == 'data-apothecae' \
+            or pyargs.methodus == 'data-apothecae-unicae':
 
             if self.pyargs.data_apothecae_ex_praefixis and \
                     len(self.pyargs.data_apothecae_ex_praefixis) > 0:
