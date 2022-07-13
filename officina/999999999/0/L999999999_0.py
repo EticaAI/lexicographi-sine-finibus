@@ -510,6 +510,32 @@ HXL_HASH_ET_ATTRIBUTA_AD_RDF = {
     },
 }
 
+HXL_WDATA = [
+    # hxl_v based on
+    # - https://data.humdata.org/dataset/hxl-master-vocabulary-list
+    # - https://data.humdata.org/dataset/countries-and-territories
+    {
+        'hxl_ix': 'ix_iso3166p1a2',
+        'hxl_v': 'v_iso2',
+        'wdata_p': 'P297',
+    },
+    {
+        'hxl_ix': 'ix_iso3166p1a3',
+        'hxl_v': 'v_iso3',
+        'wdata_p': 'P298',
+    },
+    {
+        'hxl_ix': 'ix_unm49',
+        'hxl_v': 'v_m49',
+        'wdata_p': 'P2082',
+    },
+    {
+        'hxl_ix': 'ix_unpcode',
+        'hxl_v': 'v_pcode',
+        'wdata_p': None,
+    }
+]
+
 # @TODO reorganize this
 
 
