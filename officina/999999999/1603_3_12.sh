@@ -135,6 +135,7 @@ SELECT
   (GROUP_CONCAT(DISTINCT ?ix_usfactbook; separator = "|") AS ?item__rem__i_qcc__is_zxxx__ix_usfactbook)
   (GROUP_CONCAT(DISTINCT ?ix_xzgithubt; separator = "|") AS ?item__rem__i_qcc__is_zxxx__ix_xzgithubt)
   (GROUP_CONCAT(DISTINCT ?ix_zzwgs84point; separator = "|") AS ?item__rem__i_qcc__is_zxxx__ix_zzwgs84point)
+  (GROUP_CONCAT(DISTINCT ?ix_zzgeojson; separator = "|") AS ?item__rem__i_qcc__is_zxxx__ix_zzgeojson)
 
 WHERE
 {
@@ -152,6 +153,7 @@ WHERE
   OPTIONAL { ?item wdt:P9948 ?ix_usfactbook. }
   OPTIONAL { ?item wdt:P9100 ?ix_xzgithubt. }
   OPTIONAL { ?item wdt:P625 ?ix_zzwgs84point. }
+  OPTIONAL { ?item wdt:P3896 ?ix_zzgeojson. }
 }
 GROUP BY ?item ?ix_iso3166p1n
 ORDER BY ASC(?item__rem__i_qcc__is_zxxx__ix_iso3166p1n)

@@ -514,6 +514,14 @@ HXL_WDATA = [
     # hxl_v based on
     # - https://data.humdata.org/dataset/hxl-master-vocabulary-list
     # - https://data.humdata.org/dataset/countries-and-territories
+    #
+    # fūnctiō/relātiō tags:
+    # - abl-0: administrative boundary level 0
+    # - abl-1: administrative boundary level 1
+    # - abl-0123456: administrative boundary level any
+    # - psl-t-0: Population Statistics by administrative boundary level 0
+    # - psl-t-1: Population Statistics by administrative boundary level 1
+    # - psl-t-0123456: Population Statistics by administrative boundary l. any
     {
         # Ontological meaning for fūnctiō: reason to exist; focus
         '_function': ['abl-0'],
@@ -664,17 +672,35 @@ HXL_WDATA = [
         'wdata_p': 'P402',
     },
     {
+        '_function': ['abl-0123456'],
+        '_relatio': [],
+        # ZZ prefix (differenaited from XY) inspired by UNICODE CLDR would means
+        # "Unknown or Invalid Territory"
+        'hxl_ix': 'ix_zzgeojson',
+        'hxl_v': None,
+        'iri': 'https://www.wikidata.org/wiki/Property:P3896',
+        'wdata_p': 'P3896',
+    },
+    {
         '_function': [],
         '_relatio': ['abl-0123456'],  # Any adm level could have a point
                                       # Example for Brazil: Point(-53.0 -14.0)
-        # ZZ prefix (differenaited from XY) inspired by UNICODE CLDR would means
-        # "Unknown or Invalid Territory"
+
         'hxl_ix': 'ix_zzwgs84point',
         'hxl_v': None,
         'iri': 'https://www.wikidata.org/wiki/Property:P625',
         'wdata_p': 'P625',
     },
 ]
+
+# Note: KML is not as popular on Wikidata as P3896 geoshape
+# P3096
+# https://www.wikidata.org/wiki/Property:P3096
+# ix_zzkml
+
+# P3896
+# https://www.wikidata.org/wiki/Property:P3896
+# ix_zzgeojson
 
 # @TODO reorganize this
 
