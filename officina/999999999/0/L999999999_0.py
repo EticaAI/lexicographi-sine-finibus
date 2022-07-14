@@ -515,101 +515,164 @@ HXL_WDATA = [
     # - https://data.humdata.org/dataset/hxl-master-vocabulary-list
     # - https://data.humdata.org/dataset/countries-and-territories
     {
+        # Ontological meaning for fūnctiō: reason to exist; focus
+        '_function': ['abl-0'],
+        # Ontology meaning for relātiō: broader relation, can be used for this
+        '_relatio': [],
         'hxl_ix': 'ix_iso3166p1a2',
         'hxl_v': 'v_iso2',
         'wdata_p': 'P297',
     },
     {
+        '_function': ['abl-0'],
+        '_relatio': [],
         'hxl_ix': 'ix_iso3166p1a3',
         'hxl_v': 'v_iso3',
         'wdata_p': 'P298',
     },
     {
+        '_function': [],
+        '_relatio': ['abl-0'],  # weak relation: "countries can have currency"
         'hxl_ix': 'ix_iso4217',
         'hxl_v': 'v_currency',
+        'iri': None,
         'wdata_p': 'P498',
     },
     {
+        '_function': [],
+        '_relatio': [],
         'hxl_ix': 'ix_iso15924a4',
         'hxl_v': None,
         'iri': 'http://www.unicode.org/iso15924/iso15924-codes.html',
         'wdata_p': 'P506',
     },
     {
+        '_function': [],
+        '_relatio': [],
         'hxl_ix': 'ix_iso15924n3',
         'hxl_v': None,
         'iri': 'http://www.unicode.org/iso15924/iso15924-codes.html',
         'wdata_p': 'P2620',
     },
     {
+        '_function': ['abl-0123456'],
+        '_relatio': [],
         'hxl_ix': 'ix_jpgeolod',
         'hxl_v': None,
         'iri': 'https://geolod.ex.nii.ac.jp',
         'wdata_p': 'P5400',
     },
     {
+        '_function': [],
+        # broader relation: "AGROVOC can have countries"
+        '_relatio': ['abl-0'],
         'hxl_ix': 'ix_unagrovoc',
         'hxl_v': None,
         'iri': 'https://agrovoc.fao.org',
         'wdata_p': 'P8061',
     },
     {
+        '_function': [],
+        # broader relation: "AGROVOC can have countries"
+        '_relatio': ['abl-0'],
         'hxl_ix': 'ix_unescothes',
         'hxl_v': None,
         'iri': 'https://vocabularies.unesco.org',
         'wdata_p': 'P3916',
     },
     {
+        '_function': ['abl-0'],
+        '_relatio': [],
         'hxl_ix': 'ix_unm49',
         'hxl_v': 'v_m49',
+        'iri': None,
         'wdata_p': 'P2082',
     },
     {
+        '_function': ['abl-0123456'],
+        '_relatio': [],
         'hxl_ix': 'ix_unp',  # using 'unp', ommiting 'code' / 'id' from all
         'hxl_v': 'v_pcode',
+        'iri': None,
         'wdata_p': None,
     },
     {
+        '_function': ['abl-0'],
+        '_relatio': [],
         'hxl_ix': 'ix_usfactbook',
         'hxl_v': None,
         'iri': 'https://www.cia.gov/the-world-factbook/countries',
         'wdata_p': 'P9948',
     },
     {
+        '_function': [],
+        '_relatio': ['abl-0123456'],  # WordNet can have several Adm levels
+                                      # But is not main function of Wordnet be
+                                      # only about administrativel levels.
         'hxl_ix': 'ix_usworldnet',
         'hxl_v': None,
         'iri': 'http://wordnet-rdf.princeton.edu/',
         'wdata_p': 'P8814',
     },
     {
+        '_function': ['abl-1'],
+        '_relatio': [],
+        'hxl_ix': 'ix_xzhasc',
+        'hxl_v': None,
+        # http://www.statoids.com/wab.html
+        'iri': 'http://www.statoids.com/ihasc.html',
+        'wdata_p': 'P8119',
+    },
+    {
+        '_function': ['abl-0123456'],
+        '_relatio': [],
         'hxl_ix': 'ix_xzgeonames',
         'hxl_v': None,
         'iri': 'https://www.geonames.org',
         'wdata_p': 'P1566',
     },
     {
+        '_function': [],
+        '_relatio': [],
         'hxl_ix': 'ix_xzglide',
         'hxl_v': 'v_glide',
         'iri': 'https://glidenumber.net',
         'wdata_p': None,
     },
     {
+        '_function': [],
+        '_relatio': ['abl-0'],  # GitHub topics _can_ have adm0 (but not focus)
         'hxl_ix': 'ix_xzgithubt',
         'hxl_v': None,
         'iri': 'https://github.com/topics',
         'wdata_p': 'P9100',
     },
     {
+        '_function': [],
+        '_relatio': [],
         'hxl_ix': 'ix_xzglotto',
         'hxl_v': 'v_glotto',  # Proposed as 2022-07-13
         'iri': 'https://glottolog.org',
         'wdata_p': 'P1394',
     },
     {
+        '_function': ['abl-0123456'],
+        '_relatio': [],
         'hxl_ix': 'ix_xzosmrel',  # ommiting 'code' / 'id' from all
         'hxl_v': None,
         'iri': 'https://wiki.openstreetmap.org/wiki/Relation',
         'wdata_p': 'P402',
+    },
+    {
+        '_function': [],
+        '_relatio': ['abl-0123456'],  # Any adm level could have a point
+                                      # Example for Brazil: Point(-53.0 -14.0)
+        # ZZ prefix (differenaited from XY) inspired by UNICODE CLDR would means
+        # "Unknown or Invalid Territory"
+        'hxl_ix': 'ix_zzwgs84point',
+        'hxl_v': None,
+        'iri': 'https://www.wikidata.org/wiki/Property:P625',
+        'wdata_p': 'P625',
     },
 ]
 
