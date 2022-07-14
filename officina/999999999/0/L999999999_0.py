@@ -525,15 +525,92 @@ HXL_WDATA = [
         'wdata_p': 'P298',
     },
     {
+        'hxl_ix': 'ix_iso4217',
+        'hxl_v': 'v_currency',
+        'wdata_p': 'P498',
+    },
+    {
+        'hxl_ix': 'ix_iso15924a4',
+        'hxl_v': None,
+        'iri': 'http://www.unicode.org/iso15924/iso15924-codes.html',
+        'wdata_p': 'P506',
+    },
+    {
+        'hxl_ix': 'ix_iso15924n3',
+        'hxl_v': None,
+        'iri': 'http://www.unicode.org/iso15924/iso15924-codes.html',
+        'wdata_p': 'P2620',
+    },
+    {
+        'hxl_ix': 'ix_jpgeolod',
+        'hxl_v': None,
+        'iri': 'https://geolod.ex.nii.ac.jp',
+        'wdata_p': 'P5400',
+    },
+    {
+        'hxl_ix': 'ix_unagrovoc',
+        'hxl_v': None,
+        'iri': 'https://agrovoc.fao.org',
+        'wdata_p': 'P8061',
+    },
+    {
+        'hxl_ix': 'ix_unescothes',
+        'hxl_v': None,
+        'iri': 'https://vocabularies.unesco.org',
+        'wdata_p': 'P3916',
+    },
+    {
         'hxl_ix': 'ix_unm49',
         'hxl_v': 'v_m49',
         'wdata_p': 'P2082',
     },
     {
-        'hxl_ix': 'ix_unpcode',
+        'hxl_ix': 'ix_unp',  # using 'unp', ommiting 'code' / 'id' from all
         'hxl_v': 'v_pcode',
         'wdata_p': None,
-    }
+    },
+    {
+        'hxl_ix': 'ix_usfactbook',
+        'hxl_v': None,
+        'iri': 'https://www.cia.gov/the-world-factbook/countries',
+        'wdata_p': 'P9948',
+    },
+    {
+        'hxl_ix': 'ix_usworldnet',
+        'hxl_v': None,
+        'iri': 'http://wordnet-rdf.princeton.edu/',
+        'wdata_p': 'P8814',
+    },
+    {
+        'hxl_ix': 'ix_xzgeonames',
+        'hxl_v': None,
+        'iri': 'https://www.geonames.org',
+        'wdata_p': 'P1566',
+    },
+    {
+        'hxl_ix': 'ix_xzglide',
+        'hxl_v': 'v_glide',
+        'iri': 'https://glidenumber.net',
+        'wdata_p': None,
+    },
+    {
+        'hxl_ix': 'ix_xzgithubt',
+        'hxl_v': None,
+        'iri': 'https://github.com/topics',
+        'wdata_p': 'P9100',
+    },
+    {
+        'hxl_ix': 'ix_xzglotto',
+        'hxl_v': 'v_glotto',  # Proposed as 2022-07-13
+        'iri': 'https://glottolog.org',
+        'wdata_p': 'P1394',
+    },
+    {
+        'hxl_ix': 'ix_xzosmrel',  # ommiting 'code' / 'id' from all
+        'hxl_v': None,
+        'iri': 'https://wiki.openstreetmap.org/wiki/Relation',
+        'wdata_p': 'P402',
+    },
 ]
 
 # @TODO reorganize this
