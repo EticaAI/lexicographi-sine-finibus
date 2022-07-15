@@ -157,7 +157,7 @@ WHERE
   OPTIONAL { ?item wdt:P3896 ?ix_zzgeojson . }
 }
 GROUP BY ?item ?ix_unm49
-ORDER BY ASC(?item__rem__i_qcc__is_zxxx__ix_iso3166p1n)
+ORDER BY ASC(?item__conceptum__codicem)
 ' >"$objectivum_archivum_temporarium"
 
   frictionless validate "$objectivum_archivum_temporarium"
@@ -223,6 +223,68 @@ WHERE
 GROUP BY ?item ?ix_iso3166p2
 ORDER BY ASC(?item)
 ' >"$objectivum_archivum_temporarium"
+
+
+  # Source of the query
+  # https://www.wikidata.org/wiki/Wikidata_talk:WikiProject_Country_subdivision/Items
+  # @see https://en.wikipedia.org/wiki/List_of_administrative_divisions_by_country
+  # shellcheck disable=SC2034
+  wikiproject_country_subdivisions='
+SELECT ?country ?countryLabel ?item ?itemLabel ?level ?expected ?found ?samenumber
+WITH {
+  SELECT ?item ?expected ?country ?level (COUNT(DISTINCT ?place) AS ?found) {
+    ?item wdt:P279* ?acs ; wdt:P17 ?country.
+    FILTER NOT EXISTS { ?country wdt:P576 [] }
+    ?acs p:P279 [ ps:P279 wd:Q1799794 ; pq:P1545 ?level ] .
+    
+    OPTIONAL { ?item wdt:P1114 ?expected }    
+    OPTIONAL { 
+      ?place p:P31 ?placeStatement .
+      ?placeStatement ps:P31 ?item.
+      FILTER NOT EXISTS { ?placeStatement wdt:P582 [] }
+    }  
+  } 
+  GROUP BY ?item ?expected ?country ?level
+} AS %subdivisions
+WHERE {
+  include %subdivisions.
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
+  BIND(IF(?expected = ?found, "✓", "✘") AS ?samenumber).
+} 
+ORDER BY ?countryLabel ?level DESC(?expected) ?itemLabel
+  '
+
+  # SPARQL subquery https://en.wikibooks.org/wiki/SPARQL/Subqueries
+  # shellcheck disable=SC2034
+  sparq_subquery_1='
+SELECT ?x ?y WHERE {
+  VALUES ?x { 1 2 3 4 }
+  {
+    SELECT ?y WHERE { VALUES ?y { 5 6 7 8 }  }
+  }  # \subQuery
+} # \mainQuery
+  '
+  # shellcheck disable=SC2034
+  sparq_subquery_2='
+SELECT ?countryLabel ?population (round(?population/?worldpopulation*1000)/10 AS ?percentage)
+WHERE {
+  ?country wdt:P31 wd:Q3624078;    # is a sovereign state
+           wdt:P1082 ?population.
+
+  { 
+    # subquery to determine ?worldpopulation
+    SELECT (sum(?population) AS ?worldpopulation)
+    WHERE { 
+      ?country wdt:P31 wd:Q3624078;    # is a sovereign state
+               wdt:P1082 ?population. 
+    }
+  }
+
+  SERVICE wikibase:label {bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en".}
+}
+ORDER BY desc(?population)
+  '
+
 
   frictionless validate "$objectivum_archivum_temporarium"
 
