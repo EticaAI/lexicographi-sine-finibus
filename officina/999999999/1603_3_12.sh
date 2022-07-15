@@ -119,13 +119,13 @@ WHERE
   curl --header "Accept: text/csv" --silent --show-error \
     --get https://query.wikidata.org/sparql --data-urlencode query='
 SELECT
-  (xsd:integer(?ix_iso3166p1n) AS ?item__conceptum__codicem)
+  (xsd:integer(?ix_unm49) AS ?item__conceptum__codicem)
   (STRAFTER(STR(?item), "entity/") AS ?item__rem__i_qcc__is_zxxx__ix_wikiq)
-  #?item__rem__i_qcc__is_zxxx__ix_iso3166p1n
   (GROUP_CONCAT(DISTINCT ?ix_iso3166p1n; separator = "|") AS ?item__rem__i_qcc__is_zxxx__ix_iso3166p1n)
   (GROUP_CONCAT(DISTINCT ?ix_unm49; separator = "|") AS ?item__rem__i_qcc__is_zxxx__ix_unm49)
   (GROUP_CONCAT(DISTINCT ?ix_iso3166p1a2; separator = "|") AS ?item__rem__i_qcc__is_zxxx__ix_iso3166p1a2)
   (GROUP_CONCAT(DISTINCT ?ix_iso3166p1a3; separator = "|") AS ?item__rem__i_qcc__is_zxxx__ix_iso3166p1a3)
+  (GROUP_CONCAT(DISTINCT ?ix_iso3166p2; separator = "|") AS ?item__rem__i_qcc__is_zxxx__ix_iso3166p2)
   (GROUP_CONCAT(DISTINCT ?ix_unescothes; separator = "|") AS ?item__rem__i_qcc__is_zxxx__ix_unescothes)
   (GROUP_CONCAT(DISTINCT ?ix_unagrovoc; separator = "|") AS ?item__rem__i_qcc__is_zxxx__ix_unagrovoc)
   (GROUP_CONCAT(DISTINCT ?ix_xzosmrel; separator = "|") AS ?item__rem__i_qcc__is_zxxx__ix_xzosmrel)
@@ -140,23 +140,88 @@ SELECT
 WHERE
 {
   ?item wdt:P31 wd:Q6256 ;
-  OPTIONAL { ?item wdt:P2082 ?ix_unm49. }
-  ?item wdt:P299 ?ix_iso3166p1n.
-  OPTIONAL { ?item wdt:P297 ?ix_iso3166p1a2. }
-  OPTIONAL { ?item wdt:P298 ?ix_iso3166p1a3. }
-  OPTIONAL { ?item wdt:P3916 ?ix_unescothes. }
-  OPTIONAL { ?item wdt:P8061 ?ix_unagrovoc. }
-  OPTIONAL { ?item wdt:P402 ?ix_xzosmrel. }
-  OPTIONAL { ?item wdt:P1566 ?ix_xzgeonames. }
-  OPTIONAL { ?item wdt:P5400 ?ix_jpgeolod. }
-  OPTIONAL { ?item wdt:P8814 ?ix_usworldnet. }
-  OPTIONAL { ?item wdt:P9948 ?ix_usfactbook. }
-  OPTIONAL { ?item wdt:P9100 ?ix_xzgithubt. }
-  OPTIONAL { ?item wdt:P625 ?ix_zzwgs84point. }
-  OPTIONAL { ?item wdt:P3896 ?ix_zzgeojson. }
+  wdt:P2082 ?ix_unm49 ;
+  OPTIONAL { ?item wdt:P299 ?ix_iso3166p1n . }
+  OPTIONAL { ?item wdt:P297 ?ix_iso3166p1a2 . }
+  OPTIONAL { ?item wdt:P298 ?ix_iso3166p1a3 . }
+  OPTIONAL { ?item wdt:P300 ?ix_iso3166p2 . }
+  OPTIONAL { ?item wdt:P3916 ?ix_unescothes . }
+  OPTIONAL { ?item wdt:P8061 ?ix_unagrovoc . }
+  OPTIONAL { ?item wdt:P402 ?ix_xzosmrel . }
+  OPTIONAL { ?item wdt:P1566 ?ix_xzgeonames . }
+  OPTIONAL { ?item wdt:P5400 ?ix_jpgeolod . }
+  OPTIONAL { ?item wdt:P8814 ?ix_usworldnet . }
+  OPTIONAL { ?item wdt:P9948 ?ix_usfactbook . }
+  OPTIONAL { ?item wdt:P9100 ?ix_xzgithubt . }
+  OPTIONAL { ?item wdt:P625 ?ix_zzwgs84point . }
+  OPTIONAL { ?item wdt:P3896 ?ix_zzgeojson . }
 }
-GROUP BY ?item ?ix_iso3166p1n
+GROUP BY ?item ?ix_unm49
 ORDER BY ASC(?item__rem__i_qcc__is_zxxx__ix_iso3166p1n)
+' >"$objectivum_archivum_temporarium"
+
+  frictionless validate "$objectivum_archivum_temporarium"
+
+  caput_csvnormali=$(head -n1 "$objectivum_archivum_temporarium")
+  caput_hxltm=$(caput_csvnormali_ad_hxltm "${caput_csvnormali}" ",")
+
+  echo "$caput_hxltm" > "$objectivum_archivum_temporarium_hxltm"
+  tail -n +2 "$objectivum_archivum_temporarium" >> "$objectivum_archivum_temporarium_hxltm"
+
+  file_update_if_necessary csv "$objectivum_archivum_temporarium" "$objectivum_archivum"
+  file_update_if_necessary csv "$objectivum_archivum_temporarium_hxltm" "$objectivum_archivum_hxltm"
+}
+
+#######################################
+# Return list of administrative level 1 codes
+#
+# Globals:
+#   None
+# Arguments:
+#   None
+# Outputs:
+#   csvfile (stdout)
+#######################################
+1603_3_12_wikipedia_adm1_v2() {
+  # fontem_archivum=
+  objectivum_archivum="${ROOTDIR}/1603/3/1603_3__adm1_v2.csv"
+  objectivum_archivum_temporarium="${ROOTDIR}/1603/3/1603_3__adm1_v2.TEMP.csv"
+  objectivum_archivum_temporarium_hxltm="${ROOTDIR}/1603/3/1603_3__adm1_v2.TEMP.tm.hxl.csv"
+  objectivum_archivum_hxltm="${ROOTDIR}/1603/3/1603_3__adm1.tm.hxl.csv"
+
+  # if [ -z "$(stale_archive "$objectivum_archivum")" ]; then return 0; fi
+
+  echo "${FUNCNAME[0]} stale data on [$objectivum_archivum], refreshing..."
+
+  curl --header "Accept: text/csv" --silent --show-error \
+    --get https://query.wikidata.org/sparql --data-urlencode query='
+SELECT
+  (xsd:integer(STRAFTER(STR(?item), "entity/Q")) AS ?item__conceptum__codicem)
+  (STRAFTER(STR(?item), "entity/") AS ?item__rem__i_qcc__is_zxxx__ix_wikiq)
+  (GROUP_CONCAT(DISTINCT ?ix_iso3166p2; separator = "|") AS ?item__rem__i_qcc__is_zxxx__ix_iso3166p2)
+  (GROUP_CONCAT(DISTINCT ?ix_xzosmrel; separator = "|") AS ?item__rem__i_qcc__is_zxxx__ix_xzosmrel)
+  (GROUP_CONCAT(DISTINCT ?ix_xzgeonames; separator = "|") AS ?item__rem__i_qcc__is_zxxx__ix_xzgeonames)
+  (GROUP_CONCAT(DISTINCT ?ix_jpgeolod; separator = "|") AS ?item__rem__i_qcc__is_zxxx__ix_jpgeolod)
+  (GROUP_CONCAT(DISTINCT ?ix_usworldnet; separator = "|") AS ?item__rem__i_qcc__is_zxxx__ix_usworldnet)
+  (GROUP_CONCAT(DISTINCT ?ix_zzwgs84point; separator = "|") AS ?item__rem__i_qcc__is_zxxx__ix_zzwgs84point)
+  (GROUP_CONCAT(DISTINCT ?ix_zzgeojson; separator = "|") AS ?item__rem__i_qcc__is_zxxx__ix_zzgeojson)
+
+WHERE
+{
+  # ?item wdt:P31 wd:Q6256 ;
+  ?item wdt:P31 wd:Q10864048 ;
+  # wdt:P2082 ?ix_unm49 ;
+  #  wdt:P300 ?ix_iso3166p2 ;
+  OPTIONAL { ?item wdt:P300 ?ix_iso3166p2 . }
+  OPTIONAL { ?item wdt:P402 ?ix_xzosmrel . }
+  OPTIONAL { ?item wdt:P1566 ?ix_xzgeonames . }
+  OPTIONAL { ?item wdt:P5400 ?ix_jpgeolod . }
+  OPTIONAL { ?item wdt:P8814 ?ix_usworldnet . }
+  OPTIONAL { ?item wdt:P625 ?ix_zzwgs84point . }
+  OPTIONAL { ?item wdt:P3896 ?ix_zzgeojson . }
+}
+GROUP BY ?item ?ix_iso3166p2
+ORDER BY ASC(?item)
 ' >"$objectivum_archivum_temporarium"
 
   frictionless validate "$objectivum_archivum_temporarium"
@@ -262,6 +327,7 @@ order by (?wmCode)
 1603_3_12_wikipedia_adm0
 
 1603_3_12_wikipedia_adm0_v2
+1603_3_12_wikipedia_adm1_v2
 
 # temp, see later
 # - https://www.wikidata.org/wiki/Help:Frequently_used_properties
