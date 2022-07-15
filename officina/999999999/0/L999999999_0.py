@@ -693,6 +693,46 @@ HXL_WDATA = [
     },
 ]
 
+# @TODO https://www.wikidata.org/wiki/Property:P3743
+#       ITU/ISO/IEC object identifier
+
+# @TODO maybe https://www.wikidata.org/wiki/Property:P901
+
+# @TODO maybe https://www.wikidata.org/wiki/Wikidata:Property_proposal/PM20_geo_code
+
+# @TODO maybe https://www.wikidata.org/wiki/Property:P998
+
+# @TODO maybe https://www.wikidata.org/wiki/Property:P5437
+# @TODO maybe https://www.wikidata.org/wiki/Property:P8374
+# @TODO maybe https://www.wikidata.org/wiki/Property:P3422
+# @TODO maybe https://www.wikidata.org/wiki/Property:P8217
+# @TODO maybe https://www.wikidata.org/wiki/Property:P4427
+# @TODO maybe https://www.wikidata.org/wiki/Property:P2163
+# @TODO https://www.wikidata.org/wiki/Property:P6366
+# @TODO not sure https://www.wikidata.org/wiki/Property:P2983
+# @TODO https://www.wikidata.org/wiki/Property:P486
+# @TODO https://www.wikidata.org/wiki/Property:P2581
+# @TODO https://www.wikidata.org/wiki/Property:P8714
+# @TODO do it https://www.wikidata.org/wiki/Property:P8717
+# @TODO do it https://www.wikidata.org/wiki/Property:P8370
+# @TODO do it https://www.wikidata.org/wiki/Property:P8672
+# @TODO do it https://www.wikidata.org/wiki/Property:P5337
+# @TODO do it https://www.wikidata.org/wiki/Property:P3553
+# @TODO do it https://www.wikidata.org/wiki/Property:P213
+# @TODO check later https://www.wikidata.org/wiki/Property:P5063
+# @TODO maybe https://www.wikidata.org/wiki/Property:P3097
+# @TODO https://www.wikidata.org/wiki/Property:P487
+# @TODO maybe https://www.wikidata.org/wiki/Property:P2979
+
+# @TODO https://www.wikidata.org/wiki/Property:P300
+#       this is for adm1, but some cases an adm0 like
+#       https://www.wikidata.org/wiki/Q26273 with code NL-SX would be adm1 of NL
+#       https://www.wikidata.org/wiki/Q16644 with code US-MP would be adm1 of US
+
+# NOTE weid case for UN M.49 528:
+#      - https://www.wikidata.org/wiki/Q55
+#      - https://www.wikidata.org/wiki/Q29999
+
 # Note: KML is not as popular on Wikidata as P3896 geoshape
 # P3096
 # https://www.wikidata.org/wiki/Property:P3096
