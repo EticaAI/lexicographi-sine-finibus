@@ -5,6 +5,12 @@ Note: this document is a quick draft of a top level overview. It migth take time
 
 ## Simplified explanation of operational stages 0, 1 and 2 for LSF
 
+Visible to the external world, the deliverables and workflow of LSF can have two operational stages to allow continuous bootstrapping of new dictionaries while allowing different focused audiences.
+Stage 0 is a special case, mostly for primitive self-checks.
+
+Stage 1 tries to be a baseline to enable several stage 2 releases with localization beyond mere language.
+However, as of 2022-07-15, LSF is creating stage 1 and even if this evolves to have endorsed stage 2, it could take years.
+
 ### From dictionary user perspective
 
 
