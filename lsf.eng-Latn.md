@@ -63,14 +63,26 @@ but humans cannot have the dexterity to deal with the level of details OR the er
 
 #### Stage 0
 
-> @TODO draft this part
+Stage 0 would include most primitive _commom sense_ which regardless of moral points of view could lead to bad consequences. However, even if could be possible make rule-based inferences with implementations such as OWL, and also recommend humans to not abuse fallacious arguments, from a lexicographical point of view, we would label stage 0 strategies to mitigate very basic errors likely in automated ways or at least warn humans of something which may conflict with stage 1 or stage 2.
+
+Humans should always have final say, even if it means allowing them to disable rules. However, humans can make typographic errors and the output of other programs can lead to inconsistent results if used on large systems. That's where stage 0 becomes relevant: attempt to validate basic reasoning, maybe even require that certain changes with higher impact would need to have digital signature.
+
+A common point of stage 0 would be strategies to know if a content is stale and have ways to know the precedence of the information. Stage 2 and very likely derived works which could be endorsed by reference organizations Ina area or even in standard ways on how a governments have an official position in a subject are likely to not have entire metadata of how these decisions are made, but the ideal role of LSF would means we make easier to have copies of entire chain of decision (at least in case is based on public sources) which they could store privately.
+
+Please note that the difference between what humans could consider stage 0 unlikely to have disagreements and what can realistically be done as part of automation workflows is huge. This can evolve over time.
 
 #### Stage 1
 
-LSF stage 1 lexicography applies **deontological ethics** (...).
+SF stage 1 lexicography applies what in Western culture would be called **deontological ethics**. Good/bad are evaluated by the action itself, not by the consequences. It's a rigid thinking, often simplistic to a point of even when there's disagreement which could make stage 1 not direct reusable o stage 2, at least is predictable and, very important feature, **different world regions can have experts which can mimic this thinking** while they can still have personal biases or be aware of they jurisdiction.
+
+In terminology, the direct impact would make it viable to be reusable for bootstrapping multiple stages 2 without becoming so generic and vague that it becomes useless. Already at stage 1, is viable the bootstrapping of rudimentar ontological rules such as "what is a territory", "what is a government'', and "what is an organization" and also provide suggested interlingual codes individuals in a way that at minimum allow disambiguation. Final works based on stage 2 can (and often will) use similar labels for different concepts, or group different concepts under obviously overly generic terminology, but stage 1 needs to be very critical to consistency. It should be done in such a way that even though implementations of stage 2 can't use some parts of it, it's easier and predictable to replace them.
+
+This deontological approach makes things predictable, especially under stress. Another strong point (which is less moralistic) is to avoid exceptionalism: rules so specific which would apply to near one individual can't be encoded as stage 1.
 
 #### Stage 2
 
-LSF stage 2 lexicography is free to apply other moral philosophies than the rigid deontological ethics, such as utilitarianism or consequentialism which can forbiden deontological justifications under certain circustances far more common in the real world.
+LSF stage 2 lexicography not only can adhere to the opinion of the region of the target audience, but is free to apply other moral philosophies than the rigid deontological ethics. For example utilitarianism or consequentialism can forbid deontological justifications under certain circumstances far more common in the real world, such as what to do when resources are scarce.
 
-> TODO: continue this part
+Since data encoding in formats such as OWL allow for semantic reasoning, stage 2 can add further rules to public releases of stage 1 which might re-evaluate facts.
+
+A common use case might evaluate a fact based on the opinion of an organization or opinion of another country (such as if an organization is embargoed, or if a country is considered independent). Under ideal circumstances, the entire chain of command of decision would be encoded (so a semantic reasoner could re-evaluate), but overly detailed reasoning (especially if most users don't want details) is computing intensive.
