@@ -65,6 +65,10 @@ ROOTDIR="$(pwd)"
 #######################################
 1603_3_12_wikipedia_adm0() {
   # fontem_archivum=
+
+  echo "DEPRECATED"
+  return 0
+
   objectivum_archivum="${ROOTDIR}/1603/3/1603_3__adm0.csv"
   objectivum_archivum_temporarium="${ROOTDIR}/1603/3/1603_3__adm0.TEMP.csv"
 
@@ -107,10 +111,13 @@ WHERE
 #######################################
 1603_3_12_wikipedia_adm0_v2() {
   # fontem_archivum=
-  objectivum_archivum="${ROOTDIR}/1603/3/1603_3__adm0_v2.csv"
-  objectivum_archivum_temporarium="${ROOTDIR}/1603/3/1603_3__adm0_v2.TEMP.csv"
-  objectivum_archivum_temporarium_hxltm="${ROOTDIR}/1603/3/1603_3__adm0_v2.TEMP.tm.hxl.csv"
-  objectivum_archivum_hxltm="${ROOTDIR}/1603/3/1603_3__adm0.tm.hxl.csv"
+  # objectivum_archivum="${ROOTDIR}/1603/3/1603_3__adm0_v2.csv"
+  # objectivum_archivum_temporarium="${ROOTDIR}/1603/3/1603_3__adm0_v2.TEMP.csv"
+  objectivum_archivum="${ROOTDIR}/999999/0/1603_3__adm0_v2.csv"
+  objectivum_archivum_temporarium="${ROOTDIR}/999999/0/1603_3__adm0_v2.TEMP.csv"
+  objectivum_archivum_temporarium_hxltm="${ROOTDIR}/999999/0/1603_3__adm0_v2.TEMP.tm.hxl.csv"
+  # objectivum_archivum_hxltm="${ROOTDIR}/999999/0/1603_3__adm0.tm.hxl.csv"
+  objectivum_archivum_hxltm_999999="${ROOTDIR}/999999/1603/3/45/16/1/1/1603_3_45_16_1_1.tm.hxl.csv"
 
   # if [ -z "$(stale_archive "$objectivum_archivum")" ]; then return 0; fi
 
@@ -169,7 +176,7 @@ ORDER BY ASC(?item__conceptum__codicem)
   tail -n +2 "$objectivum_archivum_temporarium" >>"$objectivum_archivum_temporarium_hxltm"
 
   file_update_if_necessary csv "$objectivum_archivum_temporarium" "$objectivum_archivum"
-  file_update_if_necessary csv "$objectivum_archivum_temporarium_hxltm" "$objectivum_archivum_hxltm"
+  file_update_if_necessary csv "$objectivum_archivum_temporarium_hxltm" "$objectivum_archivum_hxltm_999999"
 }
 
 #######################################
@@ -409,7 +416,7 @@ order by (?wmCode)
 
 1603_3_12_wikipedia_language_codes
 
-1603_3_12_wikipedia_adm0
+# 1603_3_12_wikipedia_adm0
 
 1603_3_12_wikipedia_adm0_v2
 1603_3_12_wikipedia_adm1_v2
