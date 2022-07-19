@@ -4987,13 +4987,15 @@ def hxltm__ex_dict(
     data_novis = []
     if caput is None:
         _first = list(hxltm_dict.keys())[0]
-        caput_novo = hxltm_dict[_first].keys()
+        caput = hxltm_dict[_first].keys()
+
+    # print(caput)
 
     if caput_aliis is not None:
         _hxltm_dict = {}
         for clavem, v in hxltm_dict.items():
             _hxltm_dict[clavem] = v
-            for k_old, k_new in caput_aliis:
+            for k_old, k_new in caput_aliis.items():
                 if k_old in _hxltm_dict[clavem]:
                     _hxltm_dict[clavem][k_new] = _hxltm_dict[clavem].pop(k_old)
     else:
@@ -5001,7 +5003,7 @@ def hxltm__ex_dict(
 
     for _index, res in _hxltm_dict.items():
         linea_novae = []
-        for item in caput_novo:
+        for item in caput:
             if item in res:
                 linea_novae.append(res[item])
             else:

@@ -137,6 +137,8 @@ Work with WDATA ADM0 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
     {0} --methodus='wdata_adm0'
 
 Work with local COD AB + WDATA ADM0 . . . . . . . . . . . . . . . . . . . . . .
+(Re-generate territories from COD AB + WDATA intermediate tables)
+
     {0} --methodus='cod_ab_et_wdata' --numerordinatio-praefixo='1603_16'
 
 Process XLSXs from external sources . . . . . . . . . . . . . . . . . . . . . .
@@ -706,6 +708,7 @@ class Cli:
                     no1_simplici=True, cod_ab_level__inline=True)
 
                 caput_wdata, data_wdata = hxltm_carricato(WDATA_ADM0)
+                # print(data_wdata[0])
 
                 caput, data = hxltm_carricato__cod_ab_et_wdata(
                     caput_cod, data_cod,
@@ -1115,6 +1118,13 @@ def hxltm_carricato__cod_ab_et_wdata(
     unm49_index_cod = 1  # we assume this will be the index
     unm49_index_wdata = 0  # we assume this will be the index
 
+    caput_aliis = {
+        '#country+code+v_unm49': '#item+rem+i_qcc+is_zxxx+ix_unm49',
+        '#country+code+v_iso3': '#item+rem+i_qcc+is_zxxx+ix_iso3166p1a3',
+        '#country+code+v_iso2': '#item+rem+i_qcc+is_zxxx+ix_iso3166p1a2',
+        '#meta+source+cod_ab_level': '#item+rem+i_qcc+is_zxxx+ix_zzcodablevel',
+    }
+
     numerordinatio_praefixo = numerordinatio_neo_separatum(
         numerordinatio_praefixo, ':')
     cod_dict = {}
@@ -1123,28 +1133,49 @@ def hxltm_carricato__cod_ab_et_wdata(
     for item in data_cod:
         cod_dict[int(item[unm49_index_cod])] = dict(zip(caput_cod, item))
     for item in data_wdata:
-        wdata_dict[int(item[unm49_index_wdata])] = dict(zip(caput_cod, item))
+        wdata_dict[int(item[unm49_index_wdata])] = dict(zip(caput_wdata, item))
 
-    # print(cod_dict)
+    # print(wdata_dict)
     caput_novo = caput_cod
     data_novis = data_cod
+
+    # print(data_wdata[0])
 
     for unm49 in range(0, 1000):
         if unm49 not in cod_dict and unm49 not in wdata_dict:
             continue
+
         if unm49 in wdata_dict:
             if unm49 in cod_dict:
+                # print('both')
                 resultatum_dict[unm49] = {
                     **wdata_dict[unm49], **cod_dict[unm49]}
             else:
                 resultatum_dict[unm49] = wdata_dict[unm49]
-        if unm49 in cod_dict:
+        else:
             resultatum_dict[unm49] = cod_dict[unm49]
 
+        # This :0 means "root administrative level, often 'country level'"
         resultatum_dict[unm49]['#item+conceptum+numerordinatio'] = \
-            '{0}:{1}:1'.format(numerordinatio_praefixo, str(unm49))
+            '{0}:{1}:0'.format(numerordinatio_praefixo, str(unm49))
 
-    caput_novo, data_novis = hxltm__ex_dict(resultatum_dict)
+    _caput_novo = caput_cod
+    for item in caput_wdata:
+        if item not in _caput_novo:
+            _caput_novo.append(item)
+
+    for _index, _value in enumerate(_caput_novo):
+        #     print(idx, x)
+        # for item in _caput_novo:
+        if _value in caput_aliis:
+            _caput_novo[_index] = caput_aliis[_value]
+
+    _caput_novo = list(dict.fromkeys(_caput_novo))
+
+    # print(_caput_novo)
+
+    caput_novo, data_novis = hxltm__ex_dict(
+        resultatum_dict, caput=_caput_novo, caput_aliis=caput_aliis)
 
     # print(resultatum_dict[4])
     return caput_novo, data_novis
