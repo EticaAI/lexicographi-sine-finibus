@@ -51,6 +51,7 @@ from L999999999_0 import (
     csv_imprimendo,
     # hxltm__data_referentibus,
     hxltm__est_data_referentibus,
+    hxltm__ex_dict,
     hxltm__quod_data_referentibus,
     hxltm_adde_columna,
     hxltm_carricato,
@@ -708,6 +709,7 @@ class Cli:
 
                 caput, data = hxltm_carricato__cod_ab_et_wdata(
                     caput_cod, data_cod,
+                    caput_wdata, data_wdata,
                     numerordinatio_praefixo=numerordinatio_praefixo)
 
             # if pyargs.methodus == 'cod_ab_index_levels':
@@ -1104,12 +1106,47 @@ class CliMain:
 
 
 def hxltm_carricato__cod_ab_et_wdata(
-    caput: list, data: list, numerordinatio_praefixo: str = '1603_45_16',
+    caput_cod: list, data_cod: list,
+    caput_wdata: list, data_wdata: list,
+    numerordinatio_praefixo: str = '1603_45_16',
     no1_simplici: bool = False
 ) -> Tuple[list, list]:
     # @TODO finish this draft
-    caput_novo = caput
-    data_novis = data
+    unm49_index_cod = 1  # we assume this will be the index
+    unm49_index_wdata = 0  # we assume this will be the index
+
+    numerordinatio_praefixo = numerordinatio_neo_separatum(
+        numerordinatio_praefixo, ':')
+    cod_dict = {}
+    wdata_dict = {}
+    resultatum_dict = {}
+    for item in data_cod:
+        cod_dict[int(item[unm49_index_cod])] = dict(zip(caput_cod, item))
+    for item in data_wdata:
+        wdata_dict[int(item[unm49_index_wdata])] = dict(zip(caput_cod, item))
+
+    # print(cod_dict)
+    caput_novo = caput_cod
+    data_novis = data_cod
+
+    for unm49 in range(0, 1000):
+        if unm49 not in cod_dict and unm49 not in wdata_dict:
+            continue
+        if unm49 in wdata_dict:
+            if unm49 in cod_dict:
+                resultatum_dict[unm49] = {
+                    **wdata_dict[unm49], **cod_dict[unm49]}
+            else:
+                resultatum_dict[unm49] = wdata_dict[unm49]
+        if unm49 in cod_dict:
+            resultatum_dict[unm49] = cod_dict[unm49]
+
+        resultatum_dict[unm49]['#item+conceptum+numerordinatio'] = \
+            '{0}:{1}:1'.format(numerordinatio_praefixo, str(unm49))
+
+    caput_novo, data_novis = hxltm__ex_dict(resultatum_dict)
+
+    # print(resultatum_dict[4])
     return caput_novo, data_novis
 
 
