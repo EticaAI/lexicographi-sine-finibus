@@ -47,6 +47,7 @@ from L999999999_0 import (
     BCP47_AD_HXL,
     RDF_SPATIA_NOMINALIBUS_EXTRAS,
     HXLHashtagSimplici,
+    OntologiaVocabularioHXL,
     SetEncoder,
     bcp47_langtag,
     # bcp47_langtag_callback_hxl,
@@ -487,8 +488,11 @@ class Cli:
             # for sake of simplification, should assume they are used
             # on the main direct relation (otherwise would not make sense
             # even if we could pre-compute all relations)
-            raise NotImplementedError('TODO {0}'.format(
-                pyargs.objectivum_formato))
+            # raise NotImplementedError('TODO {0}'.format(
+            #     pyargs.objectivum_formato))
+            hxlvocab = OntologiaVocabularioHXL()
+            hxlvocab.praeparatio().imprimere_ad_ttl()
+            return self.EXIT_OK
 
         if pyargs.objectivum_formato in [
                 '_temp_bcp47_to_bcp47_shortnames',

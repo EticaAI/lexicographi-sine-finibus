@@ -38,6 +38,27 @@ ROOTDIR="$(pwd)"
 # Outputs:
 #   HXLated tabular output (not HXLTM neither Numeroordinatio)
 #######################################
+hxl_vocab() {
+  objectivum_archivum="${ROOTDIR}/999999/1603/1/1603/13/1603_1_1603_13.owl.ttl"
+  set -x
+  "${ROOTDIR}/999999999/0/999999999_54872.py" \
+    --objectivum-formato='_temp_hxlstandard_vocab_ix' \
+    >"$objectivum_archivum"
+  set +x
+
+}
+
+#######################################
+# numerordiatio_caput extract from no1.tm.hxl.csv some quick metadata.
+# Mostly focused on patters of the headings.
+#
+# Globals:
+#   ROOTDIR
+# Arguments:
+#   basim
+# Outputs:
+#   HXLated tabular output (not HXLTM neither Numeroordinatio)
+#######################################
 numerordiatio_summarium() {
   basim="$1"
   shopt -s nullglob globstar
@@ -144,6 +165,13 @@ numerordiatio_summarium() {
 #     fi
 #   done
 # }
+
+
+#### Main ______________________________________________________________________
+
+hxl_vocab
+
+exit 0
 
 # find path/to/dir -name "*.ext1" -o -name "*.ext2"
 # echo "$ROOTDIR"
