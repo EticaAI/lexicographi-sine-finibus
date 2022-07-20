@@ -1058,6 +1058,49 @@ file_hotfix_duplicated_merge_key() {
 }
 
 #######################################
+# For an CSV file with '#item+rem+i_qcc+is_zxxx+ix_wikiq' column, extract all
+# unique values and sort then, and print results, one per line
+#
+# Globals:
+#   ROOTDIR
+# Arguments:
+#   fontem
+# Outputs:
+#   print all items
+#######################################
+file_extract_ix_wikiq() {
+  fontem="$1"
+  # objectivum="$2"
+
+  _nomen=$(basename "$fontem")
+  _nomen="${_nomen%%.*}"
+
+  objectivum_archivum_temporarium_b="${ROOTDIR}/999999/0/$_nomen~1.q.txt"
+  objectivum_archivum_temporarium_b_u="${ROOTDIR}/999999/0/$_nomen~1.uniq.q.txt"
+
+  hxlcut \
+    --include='#item+rem+i_qcc+is_zxxx+ix_wikiq' \
+    "$fontem" |
+    hxlselect --query='#item+rem+i_qcc+is_zxxx+ix_wikiq>0' \
+      >"$objectivum_archivum_temporarium_b"
+
+  sed -i '1,2d' "${objectivum_archivum_temporarium_b}"
+
+  sort --version-sort --field-separator="Q" <"$objectivum_archivum_temporarium_b" | uniq >"$objectivum_archivum_temporarium_b_u"
+
+  # if [ -f "$objectivum" ]; then
+  #   rm "$objectivum"
+  # fi
+
+  cat "$objectivum_archivum_temporarium_b_u"
+
+  # mv "$objectivum_archivum_temporarium_b_u" "$objectivum"
+
+  rm "$objectivum_archivum_temporarium_b_u"
+  rm "$objectivum_archivum_temporarium_b"
+}
+
+#######################################
 # Create a codex (documentation) from an Numerordinatio standard file
 #
 # Globals:
@@ -2548,6 +2591,47 @@ wikidata_p_ex_totalibus() {
 
   return 0
 
+}
+
+#######################################
+# From a path on disk with sorted list of Q items to generate an
+# .wikiq.tm.hxl.csv file, try compute "the ideal" number of requests to Wikidata
+# extract the labels, and then save the result at the objectivum path if
+# all things work as expected
+#
+# Globals:
+#   ROOTDIR
+# Arguments:
+#   wikiq        (string, list of Q items)
+#   objectivum   (path, destiny of .wikiq.tm.hxl.csv)
+# Outputs:
+#   File
+#######################################
+wikidata_q_ex_totalibus() {
+  wikiq="$1"
+  objectivum="$2"
+
+  _nomen=$(basename "$objectivum")
+  _nomen="${_nomen%%.*}"
+  _qitems=$(echo "$wikiq" | wc -l | cut -f1 -d' ')
+
+  # Minimum of divisions is 5
+  lingua_divisioni=5
+
+  echo "${FUNCNAME[0]} [$_nomen] _qitems [$_qitems] lingua_divisioni [$lingua_divisioni]"
+
+  for i in $(seq 1 $lingua_divisioni); do
+    echo "$i"
+  done
+
+  # for i in {1..19}; do
+  #   # for i in {6..19}; do
+  #   echo "Number: $i"
+  #   sleep 10
+  #   wikidata_p_ex_linguis "$numerordinatio" "1" "1" "$ex_wikidata_p" "$i" "20"
+  # done
+
+  return 0
 }
 
 tempfunc_merge_wikiq_files() {
