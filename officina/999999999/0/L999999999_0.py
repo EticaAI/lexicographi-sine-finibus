@@ -3377,14 +3377,21 @@ class CodAbTabulae:
             _identitas_locali = linea[identitas_locali_index]
             # Special case: replace ISO2/ISO3 with UN m49 if is country
             if self.ordo == 0:
-                _identitas_locali = self.unm49
-
-            _numerordinatio = '{0}:{1}:{2}:{3}'.format(
-                self.numerordinatio_praefixo,
-                self.unm49,
-                str(self.ordo),
-                _identitas_locali,
-            )
+                # _identitas_locali = self.unm49
+                # adm0 is an special case: the unm49 already is at the base
+                # so we as only one option can exist ("0"), no redundancy need
+                _numerordinatio = '{0}:{1}:{2}'.format(
+                    self.numerordinatio_praefixo,
+                    self.unm49,
+                    str(self.ordo)
+                )
+            else:
+                _numerordinatio = '{0}:{1}:{2}:{3}'.format(
+                    self.numerordinatio_praefixo,
+                    self.unm49,
+                    str(self.ordo),
+                    _identitas_locali,
+                )
             # linea_novae = [_numerordinatio, _numerordinatio]
             linea_novae = [_numerordinatio]
             linea_novae.extend(linea)
