@@ -710,7 +710,14 @@ class Cli:
                     numerordinatio_praefixo=numerordinatio_praefixo,
                     no1_simplici=True, cod_ab_level__inline=True)
 
-                caput_wdata, data_wdata = hxltm_carricato(WDATA_ADM0)
+                if exists(WDATA_ADM0_NO11):
+                    caput_wdata, data_wdata = hxltm_carricato(WDATA_ADM0_NO11)
+                elif exists(WDATA_ADM0):
+                    caput_wdata, data_wdata = hxltm_carricato(WDATA_ADM0)
+                else:
+                    raise FileNotFoundError('[{0}, {1}] ?'.format(
+                        WDATA_ADM0_NO11, WDATA_ADM0
+                    ))
                 # print(data_wdata[0])
 
                 caput, data = hxltm_carricato__cod_ab_et_wdata(

@@ -13,6 +13,7 @@
 #  REQUIREMENTS:  - Bash shell (or better)
 #                 - wget
 #                 - csvkit (https://github.com/wireservice/csvkit)
+#                 - rapper (sudo apt install raptor2-utils)
 #          BUGS:  ---
 #         NOTES:  ---
 #        AUTHOR:  Emerson Rocha <rocha[at]ieee.org>
