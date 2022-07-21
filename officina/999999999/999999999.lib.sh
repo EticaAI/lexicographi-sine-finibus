@@ -1134,6 +1134,8 @@ file_extract_ix_wikiq() {
   _nomen=$(basename "$fontem")
   _nomen="${_nomen%%.*}"
 
+  # @TODO also allow use of '#meta+rem+i_qcc+is_zxxx+ix_wikiq'
+
   objectivum_archivum_temporarium_b="${ROOTDIR}/999999/0/$_nomen~1.q.txt"
   objectivum_archivum_temporarium_b_u="${ROOTDIR}/999999/0/$_nomen~1.uniq.q.txt"
 

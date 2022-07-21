@@ -31,6 +31,7 @@
 #   /hxl-geolocation-standard-draft.pdf
 
 import json
+import re
 import sys
 import os
 import argparse
@@ -47,6 +48,8 @@ import yaml
 
 # l999999999_0 = __import__('999999999_0')
 from L999999999_0 import (
+    HXL_WDATA,
+    HXL_WDATA__META_IX,
     CodAbTabulae,
     HXLHashtagSimplici,
     csv_imprimendo,
@@ -1612,144 +1615,85 @@ def hxltm_carricato__de_hxltm_ordo0_ad_no11(
                 'de_hxltm_ordo0_ad_no11 needs upgraded hashtags. '
                 'Found [{0}]'.format(item))
 
-    # return caput, data
+        if item.find('+preferred') > -1:
+            raise NotImplementedError(
+                '@TODO de_hxltm_ordo0_ad_no11 needs support skos:altLabel '
+                'if +preferred found in some existing tag.'
+                'Found [{0}]'.format(item))
 
-    # codt = CodAbTabulae(
-    #     caput=caput,
-    #     data=data,
-    #     ordo=0,
-    #     numerordinatio_praefixo=numerordinatio_praefixo,
-    #     pcode_praefixo=pcode_praefixo,
-    #     unm49=unm49,
-    #     experimentum_est=pyargs.experimentum_est
-    # )
-    # caput, data = codt.praeparatio(schema).imprimere()
+    if '#item+rem+i_qcc+is_zxxx+rdf_a_obo_bfo29+rdf_s_u2200_s5000' in caput:
+        # Already processed input. Return without changes
+        return caput, data
+
     caput_novo = []
     data_novis = []
-    _inject_pivot_adm0_index = 2  # likely after #item+conceptum+codicem
-    _inject_pivot_adm0_value = 0  # likely after #item+conceptum+codicem
+    _inject_pivot_adm0_index = caput.index('#item+conceptum+codicem') + 1
+    _inject_pivot_adm0_value = caput.index('#item+conceptum+numerordinatio')
+    _pattern_lang = r"\#item\+rem\+i_[a-z]{3}\+is_[a-z]{4}.*"
+    _pattern_ix = r"(\+ix_[a-z0-9]{2,99})"
     for hxlhashtag in caput:
         if not hxlhashtag or len(hxlhashtag) == 0 or \
                 not hxlhashtag.startswith('#'):
             caput_novo.append('')
             continue
-        # else:
 
-        # _hxl = HXLHashtagSimplici(hxlhashtag).praeparatio()
-        # caput_novo.append(_hxl.quod_numerordinatio(caput_contextui=caput))
+        # raise ValueError(re.match(_pattern_lang, '#item+rem+i_ara+is_arab'))
 
-        caput_novo.append(hxlhashtag)
-        if hxlhashtag == '#item+conceptum+codicem':
-            caput_novo.append(
-                '#item+rem+i_qcc+is_zxxx+rdf_a_obo_bfo29+rdf_s_u2200_s5000')
+        if hxlhashtag.startswith('#item+rem+i_qcc+is_zxxx'):
+            # TODO process +ix_
+            res_rdf = []
+            _ix_list = re.findall(_pattern_ix, hxlhashtag)
+            # raise ValueError(_ix_list)
+            for _ix_item in _ix_list:
+                _ix_item = _ix_item.replace('+', '')
+
+                if _ix_item in HXL_WDATA__META_IX:
+                    hxlhashtag = hxlhashtag.replace(
+                        '#item+rem+i_qcc+is_zxxx', '#meta+rem+i_qcc+is_zxxx')
+                    # caput_novo.append(hxlhashtag)
+                    break
+
+                _okay = False
+                for _hxlwdata in HXL_WDATA:
+                    if 'hxl_ix' in _hxlwdata and \
+                        _hxlwdata['hxl_ix'] == _ix_item and \
+                            'wdata_p' in _hxlwdata and _hxlwdata['wdata_p']:
+
+                        res_rdf.append('+rdf_p_p_{0}_s5000'.format(
+                            _hxlwdata['wdata_p'].lower()))
+                        # raise SyntaxError('foi')
+                        _okay = True
+                        # continue
+                # @TODO decide prefered ix over '+ix_p297' vs 'ix_iso3166p1a2'
+                # for _hxlwdata in HXL_WDATA:
+                #     _ix_item_p = _ix_item.replace('+ix_wdata', '')
+                #     _ix_item_p = _ix_item_p.replace('+ix_', '').upper()
+                #     if 'wdata_p' in _hxlwdata and \
+                #         _hxlwdata['wdata_p'] == _ix_item_p:
+                #         hxlhashtag = hxlhashtag.replace(
+                #             '+' + _ix_item + 'p', '+ix_wdatap')
+                #         res_rdf.append('+rdf_p_p_{0}_s5000'.format(
+                #             _hxlwdata['wdata_p'].lower()))
+                #         continue
+                if not _okay:
+                    raise SyntaxError(
+                        'Unknown [{0}] on [{1}]'.format(_ix_item, hxlhashtag))
+
+            # for item in _ix_list
+            caput_novo.append(hxlhashtag)
+        elif bool(re.match(_pattern_lang, hxlhashtag)):
+            caput_novo.append(hxlhashtag + '+rdf_p_skos_preflabel_s5000')
+        else:
+            caput_novo.append(hxlhashtag)
+            if hxlhashtag == '#item+conceptum+codicem':
+                caput_novo.append(
+                    '#item+rem+i_qcc+is_zxxx+rdf_a_obo_bfo29+rdf_s_u2200_s5000')
 
     for linea in data:
         _pivot_value = linea[_inject_pivot_adm0_value]
         linea.insert(_inject_pivot_adm0_index, _pivot_value)
         data_novis.append(linea)
 
-        # if cod_ab_level__inline:
-        #     _cod_ab_level = []
-        #     for cod_ab_level in range(0, (int(linea[1]) + 1)):
-        #         _cod_ab_level.append(str(cod_ab_level))
-        #     _cod_ab_level_str = '|'.join(_cod_ab_level)
-        #     linea_novae = []
-        #     numerordinatio = '{0}:{1}'.format(
-        #         numerordinatio_praefixo, linea[0]
-        #     )
-        #     # _numerordinatio__done.append(numerordinatio)
-        #     linea_novae.append(numerordinatio)
-        #     if no1_simplici:
-        #         linea_novae.append(linea[0])
-        #     linea_novae.append(linea[0])
-        #     linea_novae.append(_cod_ab_level_str)
-        #     linea_novae.append(linea[2])
-        #     linea_novae.append(linea[3])
-        #     # linea_novae.extend(linea)
-        #     data_novis.append(linea_novae)
-        #     continue
-
-    return caput_novo, data_novis
-
-    caput_novo = ['#item+conceptum+numerordinatio']
-    caput_cum_columnis = [
-        '#country+code+v_unm49',
-        '#meta+source+cod_ab_level',
-        '#country+code+v_iso3',
-        '#country+code+v_iso2'
-    ]
-    # @TODO Need create new function, as this one is plain wrong compared to the
-    #       drafted OWL TTL version
-    caput_no1 = [
-        '#item+conceptum+codicem',
-        '#country+code+v_unm49',
-        '#meta+source+cod_ab_level',
-        '#country+code+v_iso3',
-        '#country+code+v_iso2'
-    ]
-    data_novis = []
-
-    caput, data = hxltm_cum_aut_sine_columnis_simplicibus(
-        caput, data, caput_cum_columnis)
-
-    numerordinatio_praefixo = numerordinatio_neo_separatum(
-        numerordinatio_praefixo, ':')
-
-    if no1_simplici:
-        caput_novo.extend(caput_no1)
-    else:
-        caput_novo.extend(caput_cum_columnis)
-
-    data.sort(key=lambda linea: int(linea[0]))
-
-    _numerordinatio__done = []
-
-    for linea in data:
-
-        if cod_ab_level__inline:
-            _cod_ab_level = []
-            for cod_ab_level in range(0, (int(linea[1]) + 1)):
-                _cod_ab_level.append(str(cod_ab_level))
-            _cod_ab_level_str = '|'.join(_cod_ab_level)
-            linea_novae = []
-            numerordinatio = '{0}:{1}'.format(
-                numerordinatio_praefixo, linea[0]
-            )
-            _numerordinatio__done.append(numerordinatio)
-            linea_novae.append(numerordinatio)
-            if no1_simplici:
-                linea_novae.append(linea[0])
-            linea_novae.append(linea[0])
-            linea_novae.append(_cod_ab_level_str)
-            linea_novae.append(linea[2])
-            linea_novae.append(linea[3])
-            # linea_novae.extend(linea)
-            data_novis.append(linea_novae)
-            continue
-
-        # for cod_ab_level in range(0, int(linea[1])):
-        for cod_ab_level in range(0, (int(linea[1]) + 1)):
-            linea_novae = []
-            numerordinatio = '{0}:{1}:{2}'.format(
-                numerordinatio_praefixo, linea[0], cod_ab_level
-            )
-
-            if numerordinatio in _numerordinatio__done:
-                continue
-
-            _numerordinatio__done.append(numerordinatio)
-            linea_novae.append(numerordinatio)
-            if no1_simplici:
-                linea_novae.append(linea[0])
-            linea_novae.append(linea[0])
-            linea_novae.append(cod_ab_level)
-            linea_novae.append(linea[2])
-            linea_novae.append(linea[3])
-            # linea_novae.extend(linea)
-            data_novis.append(linea_novae)
-
-    # raise NotImplementedError
-    # return caput, data
     return caput_novo, data_novis
 
 

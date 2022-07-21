@@ -539,6 +539,13 @@ HXL_WDATA = [
         'wdata_p': 'P298',
     },
     {
+        '_function': ['abl-0'],
+        '_relatio': [],
+        'hxl_ix': 'ix_iso3166p1n',
+        'hxl_v': None,
+        'wdata_p': 'P299',
+    },
+    {
         # The function (reason to exist) of  ISO 3166-2 is subdivision, adm1.
         # However, in some circustances, places can have codes as if they're
         # adm0; this means ISO 3166-2 have a relatio with adm0
@@ -701,6 +708,12 @@ HXL_WDATA = [
         'iri': 'https://www.wikidata.org/wiki/Property:P625',
         'wdata_p': 'P625',
     },
+]
+
+# Hotfixes for used ix_, but not as fully documented
+HXL_WDATA__META_IX = [
+    'ix_zzcodablevel',
+    'ix_wikiq'  # @TODO this could be improved to wdata:{value}
 ]
 
 # @TODO https://www.wikidata.org/wiki/Property:P3743
