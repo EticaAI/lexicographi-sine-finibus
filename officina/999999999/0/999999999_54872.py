@@ -84,21 +84,31 @@ __EPILOGUM__ = """
                             EXEMPLŌRUM GRATIĀ
 ------------------------------------------------------------------------------
 
+Generic Numerordinatio to RDF Turtle . . . . . . . . . . . . . . . . . . . . .
+(TODO: fix example)
+    {0} --methodus=_temp_no1 \
+--rdf-sine-spatia-nominalibus=devnull \
+--rdf-trivio=5000 \
+999999/1603/3/45/16/1/1/1603_3_45_16_1_1.no11.tm.hxl.csv
+
+Configuration-based HXLTM to Numerordinatio . . . . . . . . . . . . . . . . . .
+(Experimental; uses YAML to upgrade HXLTM to Numerordinatio tabular)
+
     cat 999999/0/ibge_un_adm2.tm.hxl.csv | \
-{0} --methodus=hxltm_rdf_ex_configurationi --objectivum-formato=text/csv \
+{0} --methodus=ad_rdf_ex_configurationi --objectivum-formato=text/csv \
 --archivum-configurationi-ex-fonti=999999999/0/999999999_268072.meta.yml \
 --praefixum-configurationi-ex-fonti=methodus,ibge_un_adm2 \
 > 999999/0/ibge_un_adm2.no1.tm.hxl.csv
 
     cat 999999/0/ibge_un_adm2.tm.hxl.csv | \
-{0} --methodus=hxltm_rdf_ex_configurationi \
+{0} --methodus=ad_rdf_ex_configurationi \
 --objectivum-formato=application/x-turtle \
 --archivum-configurationi-ex-fonti=999999999/0/999999999_268072.meta.yml \
 --praefixum-configurationi-ex-fonti=methodus,ibge_un_adm2 \
 > 999999/0/ibge_un_adm2.no1.skos.ttl
 
     cat 999999/0/ibge_un_adm2.tm.hxl.csv | \
-{0} --methodus=hxltm_rdf_ex_configurationi \
+{0} --methodus=ad_rdf_ex_configurationi \
 --objectivum-formato=application/x-turtle \
 --archivum-configurationi-ex-fonti=999999999/0/999999999_268072.meta.yml \
 --praefixum-configurationi-ex-fonti=methodus,ibge_un_adm2 \
@@ -106,13 +116,6 @@ __EPILOGUM__ = """
 
     rapper --quiet --input=turtle --output=ntriples \
 999999/0/ibge_un_adm2.no1.skos.ttl > 999999/0/ibge_un_adm2.no1.skos.nt
-
-Generic Numerordinatio to RDF Turtle . . . . . . . . . . . . . . . . . . . . .
-(TODO: fix example)
-    {0} --methodus=_temp_no1 \
---rdf-sine-spatia-nominalibus=devnull \
---rdf-trivio=5000 \
-999999/1603/3/45/16/1/1/1603_3_45_16_1_1.no11.tm.hxl.csv
 
 Temporary tests . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 (Debug information in JSON)
@@ -281,8 +284,9 @@ class Cli:
             dest='methodus',
             nargs='?',
             choices=[
-                'auto',  # Uses
-                'hxltm_rdf_ex_configurationi',
+                'auto',  # Uses ad_rdf_ex_configurationi
+                'ad_rdf_genericae',
+                'ad_rdf_ex_configurationi',
                 '_temp_bcp47',
                 '_temp_no1',
                 '_temp_bcp47_meta_in_json',
