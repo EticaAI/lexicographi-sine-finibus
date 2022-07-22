@@ -85,19 +85,21 @@ __EPILOGUM__ = """
 ------------------------------------------------------------------------------
 
     cat 999999/0/ibge_un_adm2.tm.hxl.csv | \
-{0} --objectivum-formato=text/csv \
+{0} --methodus=hxltm_rdf_ex_configurationi --objectivum-formato=text/csv \
 --archivum-configurationi-ex-fonti=999999999/0/999999999_268072.meta.yml \
 --praefixum-configurationi-ex-fonti=methodus,ibge_un_adm2 \
 > 999999/0/ibge_un_adm2.no1.tm.hxl.csv
 
     cat 999999/0/ibge_un_adm2.tm.hxl.csv | \
-{0} --objectivum-formato=application/x-turtle \
+{0} --methodus=hxltm_rdf_ex_configurationi \
+--objectivum-formato=application/x-turtle \
 --archivum-configurationi-ex-fonti=999999999/0/999999999_268072.meta.yml \
 --praefixum-configurationi-ex-fonti=methodus,ibge_un_adm2 \
 > 999999/0/ibge_un_adm2.no1.skos.ttl
 
     cat 999999/0/ibge_un_adm2.tm.hxl.csv | \
-{0} --objectivum-formato=application/x-turtle \
+{0} --methodus=hxltm_rdf_ex_configurationi \
+--objectivum-formato=application/x-turtle \
 --archivum-configurationi-ex-fonti=999999999/0/999999999_268072.meta.yml \
 --praefixum-configurationi-ex-fonti=methodus,ibge_un_adm2 \
 | rapper --quiet --input=turtle --output=ntriples /dev/fd/0
@@ -105,47 +107,53 @@ __EPILOGUM__ = """
     rapper --quiet --input=turtle --output=ntriples \
 999999/0/ibge_un_adm2.no1.skos.ttl > 999999/0/ibge_un_adm2.no1.skos.nt
 
+Generic Numerordinatio to RDF Turtle . . . . . . . . . . . . . . . . . . . . .
+(TODO: fix example)
+    {0} --methodus=_temp_no1 \
+--rdf-sine-spatia-nominalibus=devnull \
+--rdf-trivio=5000 \
+999999/1603/3/45/16/1/1/1603_3_45_16_1_1.no11.tm.hxl.csv
 
 Temporary tests . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 (Debug information in JSON)
-    {0} --objectivum-formato=_temp_bcp47_meta_in_json \
+    {0} --methodus=_temp_bcp47_meta_in_json \
 --punctum-separato-de-fontem=$'\\t' \
 999999999/1568346/data/cod-ab-example1-with-inferences.bcp47.tsv \
 --numerordinatio-cum-antecessoribus \
 --rdf-ontologia-ordinibus=5 --rdf-trivio=5002
 
-    {0} --objectivum-formato=_temp_bcp47_meta_in_json \
+    {0} --methodus=_temp_bcp47_meta_in_json \
 --punctum-separato-de-fontem=$'\\t' \
 --rdf-namespaces-archivo=\
 999999999/1568346/data/hxlstandard-rdf-namespaces-example.hxl.csv \
 999999999/1568346/data/unesco-thesaurus.bcp47g.tsv
 
-    {0} --objectivum-formato=_temp_hxl_meta_in_json \
+    {0} --methodus=_temp_hxl_meta_in_json \
 --punctum-separato-de-fontem=$'\\t' \
 999999999/1568346/data/cod-ab-example1-with-inferences.no1.tm.hxl.tsv \
 --numerordinatio-cum-antecessoribus \
 --rdf-ontologia-ordinibus=5 --rdf-trivio=5002
 
 (Data operations)
-    {0} --objectivum-formato=_temp_bcp47 \
+    {0} --methodus=_temp_bcp47 \
 --punctum-separato-de-fontem=$'\\t' \
 999999999/1568346/data/cod-ab-example1-with-inferences.bcp47.tsv \
 --numerordinatio-cum-antecessoribus --rdf-ontologia-ordinibus=5 \
 --rdf-trivio=5002
 
-    {0} --objectivum-formato=_temp_bcp47 \
+    {0} --methodus=_temp_bcp47 \
 --punctum-separato-de-fontem=$'\\t' \
 --rdf-namespaces-archivo=\
 999999999/1568346/data/hxlstandard-rdf-namespaces-example.hxl.csv \
 999999999/1568346/data/unesco-thesaurus.bcp47g.tsv \
 --numerordinatio-cum-antecessoribus --rdf-trivio=1
 
-    {0} --objectivum-formato=_temp_bcp47 --rdf-namespaces-archivo=\
+    {0} --methodus=_temp_bcp47 --rdf-namespaces-archivo=\
 999999999/1568346/data/hxlstandard-rdf-namespaces-example.hxl.csv \
 999999999/1568346/data/unesco-thesaurus.bcp47g.tsv \
 --numerordinatio-cum-antecessoribus --rdf-trivio=5001
 
-    {0} --objectivum-formato=_temp_bcp47 \
+    {0} --methodus=_temp_bcp47 \
 --punctum-separato-de-fontem=$'\\t' \
 --rdf-namespaces-archivo=\
 999999999/1568346/data/hxlstandard-rdf-namespaces-example.hxl.csv \
@@ -153,13 +161,13 @@ Temporary tests . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 | rapper --quiet --input=turtle --output=turtle /dev/fd/0
 
 (Data operation; example of "SKOS version" without OWL/OBO assertions)
-    {0} --objectivum-formato=_temp_bcp47 \
+    {0} --methodus=_temp_bcp47 \
 --punctum-separato-de-fontem=$'\\t' \
 999999999/1568346/data/cod-ab-example1-with-inferences.bcp47.tsv \
 --rdf-sine-spatia-nominalibus=owl,obo,devnull --rdf-trivio=5002
 
 (Data operation; example of "OWL + OBO" without SKOS linguistic metadata)
-    {0} --objectivum-formato=_temp_bcp47 \
+    {0} --methodus=_temp_bcp47 \
 --punctum-separato-de-fontem=$'\\t' \
 999999999/1568346/data/cod-ab-example1-with-inferences.bcp47.tsv \
 --rdf-sine-spatia-nominalibus=skos,wdata,devnull --rdf-trivio=5002
@@ -167,15 +175,15 @@ Temporary tests . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 (Data operations, header conversion RDF+HXL -> RDF+BCP47)
     varhxl=$(head -n1 \
 999999999/1568346/data/cod-ab-example1-with-inferences.no1.tm.hxl.tsv)
-    {0} --objectivum-formato=_temp_header_hxl_to_bcp47 "$varhxl"
+    {0} --methodus=_temp_header_hxl_to_bcp47 "$varhxl"
 
 (Data operations, header conversion RDF+BCP47 -> RDF+HXL)
     varbcp47=$(head -n1 \
 999999999/1568346/data/cod-ab-example1-with-inferences.bcp47.tsv)
-    {0} --objectivum-formato=_temp_header_bcp47_to_hxl "$varbcp47"
+    {0} --methodus=_temp_header_bcp47_to_hxl "$varbcp47"
 
 (Create shorter column names; good for databases, less for command line)
-    {0} --objectivum-formato=_temp_bcp47_to_bcp47_shortnames \
+    {0} --methodus=_temp_bcp47_to_bcp47_shortnames \
 --punctum-separato-de-fontem=$'\\t' \
 999999999/1568346/data/cod-ab-example1-with-inferences.bcp47.tsv
 
@@ -267,22 +275,28 @@ class Cli:
             required=False,
         )
 
-        # parser.add_argument(
-        #     '--methodus',
-        #     help='Modo de operação.',
-        #     dest='methodus',
-        #     nargs='?',
-        #     choices=[
-        #         'ibge_un_adm2',
-        #         # 'data-apothecae',
-        #         # 'hxltm-explanationi',
-        #         # 'opus-temporibus',
-        #         # 'status-quo',
-        #         # 'deprecatum-dictionaria-numerordinatio'
-        #     ],
-        #     # required=True
-        #     default='ibge_un_adm2'
-        # )
+        parser.add_argument(
+            '--methodus',
+            help='Main operation mode',
+            dest='methodus',
+            nargs='?',
+            choices=[
+                'auto',  # Uses
+                'hxltm_rdf_ex_configurationi',
+                '_temp_bcp47',
+                '_temp_no1',
+                '_temp_bcp47_meta_in_json',
+                '_temp_hxl_meta_in_json',
+                '_temp_hxlstandard_vocab_ix',
+                '_temp_header_hxl_to_bcp47',
+                '_temp_header_bcp47_to_hxl',
+                '_temp_data_hxl_to_bcp47',
+                '_temp_bcp47_to_bcp47_shortnames',
+                '_temp_no1_to_no1_shortnames',
+            ],
+            # required=True
+            default='auto'
+        )
 
         # objectīvum, n, s, nominativus,
         #                       https://en.wiktionary.org/wiki/objectivus#Latin
@@ -297,6 +311,7 @@ class Cli:
             dest='objectivum_formato',
             nargs='?',
             choices=[
+                'auto',
                 'text/csv',
                 # https://www.w3.org/TR/turtle/
                 'application/x-turtle',
@@ -312,20 +327,20 @@ class Cli:
                 # #  - https://stackoverflow.com/questions/41609586
                 # #    /loading-wikidata-dump
                 # #    - Uses '.ndjson' as extension
-                # 'application/x-ndjson',
-                '_temp_bcp47',
-                '_temp_no1',
-                '_temp_bcp47_meta_in_json',
-                '_temp_hxl_meta_in_json',
-                '_temp_hxlstandard_vocab_ix',
-                '_temp_header_hxl_to_bcp47',
-                '_temp_header_bcp47_to_hxl',
-                '_temp_data_hxl_to_bcp47',
-                '_temp_bcp47_to_bcp47_shortnames',
-                '_temp_no1_to_no1_shortnames',
+                # # 'application/x-ndjson',
+                # '_temp_bcp47',
+                # '_temp_no1',
+                # '_temp_bcp47_meta_in_json',
+                # '_temp_hxl_meta_in_json',
+                # '_temp_hxlstandard_vocab_ix',
+                # '_temp_header_hxl_to_bcp47',
+                # '_temp_header_bcp47_to_hxl',
+                # '_temp_data_hxl_to_bcp47',
+                # '_temp_bcp47_to_bcp47_shortnames',
+                # '_temp_no1_to_no1_shortnames',
             ],
             # required=True
-            default='application/x-turtle'
+            default='auto'
         )
 
         parser.add_argument(
@@ -483,7 +498,7 @@ class Cli:
             # print(RDF_SPATIA_NOMINALIBUS_EXTRAS)
             # pass
 
-        if pyargs.objectivum_formato == '_temp_hxlstandard_vocab_ix':
+        if pyargs.methodus == '_temp_hxlstandard_vocab_ix':
             # Quick draft of an RDF namespace for ix_ attributes;
             # for sake of simplification, should assume they are used
             # on the main direct relation (otherwise would not make sense
@@ -494,20 +509,20 @@ class Cli:
             hxlvocab.praeparatio().imprimere_ad_ttl()
             return self.EXIT_OK
 
-        if pyargs.objectivum_formato in [
+        if pyargs.methodus in [
                 '_temp_bcp47_to_bcp47_shortnames',
                 '_temp_no1_to_no1_shortnames']:
-            # if pyargs.objectivum_formato = '_temp_no1_to_no1_shortnames':
+            # if pyargs.methodus = '_temp_no1_to_no1_shortnames':
 
             if _stdin and not _infile:
                 raise NotImplementedError('{0} not with stdin'.format(
-                    pyargs.objectivum_formato))
+                    pyargs.methodus))
 
             caput, data = hxltm_carricato_brevibus(
                 _infile, _stdin, punctum_separato=fontem_separato)
 
             est_bcp47 = True
-            if pyargs.objectivum_formato == '_temp_no1_to_no1_shortnames':
+            if pyargs.methodus == '_temp_no1_to_no1_shortnames':
                 est_bcp47 = False
                 caput_novo = []
                 for _item in caput:
@@ -543,10 +558,10 @@ class Cli:
 
         # _temp_data_hxl_to_bcp47
         # Simplistic conversion of header
-        if pyargs.objectivum_formato == '_temp_data_hxl_to_bcp47':
+        if pyargs.methodus == '_temp_data_hxl_to_bcp47':
             if _stdin:
                 raise NotImplementedError('{0} not with stdin'.format(
-                    pyargs.objectivum_formato))
+                    pyargs.methodus))
             # print('oi')
 
             numerordinatio_data__hxltm_to_bcp47(
@@ -570,13 +585,13 @@ class Cli:
             return self.EXIT_OK
 
         # @TODO maybe refactor this temporary part
-        # if pyargs.objectivum_formato == '_temp_bcp47_meta_in_json':
-        if pyargs.objectivum_formato in [
+        # if pyargs.methodus == '_temp_bcp47_meta_in_json':
+        if pyargs.methodus in [
                 '_temp_bcp47_meta_in_json', '_temp_hxl_meta_in_json']:
             caput, data = hxltm_carricato_brevibus(
                 _infile, _stdin, punctum_separato=fontem_separato)
 
-            if pyargs.objectivum_formato == '_temp_hxl_meta_in_json':
+            if pyargs.methodus == '_temp_hxl_meta_in_json':
                 caput_novo = []
                 for _item in caput:
                     # print('hxl item     > ', _item)
@@ -603,13 +618,13 @@ class Cli:
             return self.EXIT_OK
 
         # @TODO remove thsi temporary part
-        # if pyargs.objectivum_formato == '_temp_bcp47':
-        if pyargs.objectivum_formato in ['_temp_bcp47', '_temp_no1']:
+        # if pyargs.methodus == '_temp_bcp47':
+        if pyargs.methodus in ['_temp_bcp47', '_temp_no1']:
 
             caput, data = hxltm_carricato(
                 _infile, _stdin, punctum_separato=fontem_separato)
 
-            if pyargs.objectivum_formato == '_temp_no1':
+            if pyargs.methodus == '_temp_no1':
                 caput_novo = []
                 for _item in caput:
                     # print('hxl item     > ', _item)
@@ -650,7 +665,7 @@ class Cli:
 
             return self.EXIT_OK
 
-        if pyargs.objectivum_formato == '_temp_header_bcp47_to_hxl':
+        if pyargs.methodus == '_temp_header_bcp47_to_hxl':
             # delimiter = "\t"
             delimiter = "\t"
             hxl_base = '#item+rem'
@@ -719,7 +734,7 @@ class Cli:
             # print(json.dumps(meta, sort_keys=False, ensure_ascii=False))
             return self.EXIT_OK
 
-        if pyargs.objectivum_formato == '_temp_header_hxl_to_bcp47':
+        if pyargs.methodus == '_temp_header_hxl_to_bcp47':
             delimiter = "\t"
             if _stdin is True:
                 raise NotImplementedError
@@ -783,6 +798,8 @@ class Cli:
             venandum_insectum=self.venandum_insectum
         )
 
+        if pyargs.objectivum_formato == 'auto':
+            return climain.actio()
         if pyargs.objectivum_formato == 'text/csv':
             return climain.actio()
         if pyargs.objectivum_formato == 'application/x-turtle':

@@ -427,7 +427,7 @@ caput_bcp47_ad_hxltm_ad() {
   caput_tab=$(echo "$caput" | tr "$separatum" '\t')
 
   resultatum_tab=$("${ROOTDIR}/999999999/0/999999999_54872.py" \
-    --objectivum-formato=_temp_header_bcp47_to_hxl "$caput_tab")
+    --methodus=_temp_header_bcp47_to_hxl "$caput_tab")
 
   resultatum_finali=$(echo "$resultatum_tab" | tr '\t' "$separatum")
 
@@ -523,7 +523,7 @@ caput_hxltm_ad_bcp47() {
   caput_tab=$(echo "$caput" | tr "$separatum" '\t')
 
   resultatum_tab=$("${ROOTDIR}/999999999/0/999999999_54872.py" \
-    --objectivum-formato=_temp_header_hxl_to_bcp47 "$caput_tab")
+    --methodus=_temp_header_hxl_to_bcp47 "$caput_tab")
 
   resultatum_finali=$(echo "$resultatum_tab" | tr '\t' "$separatum")
 
@@ -1061,7 +1061,7 @@ file_convert_rdf_skos_ttl_de_numerordinatio11__v2() {
   # file_update_if_necessary 'rdf_skos_ttl' "$objectivum_archivum_temporarium" "$objectivum_archivum"
 
   # "${ROOTDIR}/999999999/0/999999999_54872.py" \
-  #   --objectivum-formato=_temp_no1 \
+  #   --methodus=_temp_no1 \
   #   --numerordinatio-cum-antecessoribus \
   #   --rdf-sine-spatia-nominalibus=devnull \
   #   --rdf-ontologia-ordinibus="${rdf_ontologia_ordinibus}" \
