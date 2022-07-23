@@ -96,6 +96,7 @@ bootstrap_1603_16_1__lsf() {
   objetivum_archivum_no11="${ROOTDIR}/1603/16/1/0/$_nomen.no11.tm.hxl.csv"
   objetivum_archivum_no11_bcp47min="${ROOTDIR}/1603/16/1/0/$_nomen.no11.bcp47.csv"
   objetivum_archivum_no11_skos="${ROOTDIR}/1603/16/1/0/$_nomen.no11.skos.ttl"
+  objetivum_archivum_datapackage="${ROOTDIR}/1603/16/1/0/datapackage.json"
 
   opus_temporibus_temporarium="${DESTDIR}/999999/0/${_nomen}~TEMP~1.csv"
   opus_temporibus_temporarium_2="${DESTDIR}/999999/0/${_nomen}~TEMP~2.csv"
@@ -187,37 +188,39 @@ bootstrap_1603_16_1__lsf() {
   file_update_if_necessary "csv" "${fontem_archivum_temporarium_no11}" "${objetivum_archivum_no11}"
   file_update_if_necessary "csv" "${fontem_archivum_temporarium_no1}" "${objetivum_archivum_no1}"
 
+  ##  Computational-like RDF serialization, "OWL version" --------------------
+  # @TODO fix generation of invalid format if
+  #       --rdf-sine-spatia-nominalibus=skos,devnull is enabled
+  rdf_ontologia_ordinibus='4'
+  rdf_trivio='5000'
   set -x
 
-  ##  Computational-like RDF serialization, "OWL version" --------------------
-    # @TODO fix generation of invalid format if
-    #       --rdf-sine-spatia-nominalibus=skos,devnull is enabled
+  "${ROOTDIR}/999999999/0/999999999_54872.py" \
+    --methodus=_temp_no1 \
+    --numerordinatio-cum-antecessoribus \
+    --rdf-sine-spatia-nominalibus=devnull \
+    --rdf-ontologia-ordinibus="${rdf_ontologia_ordinibus}" \
+    --rdf-trivio="${rdf_trivio}" \
+    <"${objetivum_archivum_no1}" >"${opus_temporibus_temporarium_ttl_1}"
 
-  # "${ROOTDIR}/999999999/0/999999999_54872.py" \
-  #   --methodus=_temp_no1 \
-  #   --numerordinatio-cum-antecessoribus \
-  #   --rdf-sine-spatia-nominalibus=devnull \
-  #   --rdf-ontologia-ordinibus="${rdf_ontologia_ordinibus}" \
-  #   --rdf-trivio="${rdf_trivio}" \
-  #   <"${objectivum_archivum_no1}" >"${opus_temporibus_temporarium}"
+  rdfpipe --input-format=turtle --output-format=longturtle \
+    "${opus_temporibus_temporarium_ttl_1}" \
+    >"${opus_temporibus_temporarium_ttl_2}"
 
-  # # rapper --quiet --input=turtle --output=turtle \
-  # #   "${opus_temporibus_temporarium}" \
-  # #   >"${objectivum_archivum_no1_owl_ttl}"
+  riot --validate "${opus_temporibus_temporarium_ttl_2}"
 
-  # rdfpipe --input-format=turtle --output-format=longturtle \
-  #   "${opus_temporibus_temporarium}" \
-  #   >"${objectivum_archivum_no1_owl_ttl}"
+  # sleep 10
+  set +x
 
-  # riot --validate "${objectivum_archivum_no1_owl_ttl}"
+  file_update_if_necessary "ttl" "${opus_temporibus_temporarium_ttl_2}" "${objetivum_archivum_no1_owl}"
 
-  ##  Linguistic-like RDF serialization, "SKOS version" ----------------------
+  ##  Linguistic-like RDF serialization, "SKOS version" ------------------------
   # @TODO fix invalid generation if disabling OWL with
   #        --rdf-sine-spatia-nominalibus=owl
-
   rdf_ontologia_ordinibus='4'
   rdf_trivio='5000'
 
+  set -x
   "${ROOTDIR}/999999999/0/999999999_54872.py" \
     --methodus=_temp_no1 \
     --numerordinatio-cum-antecessoribus \
@@ -226,9 +229,9 @@ bootstrap_1603_16_1__lsf() {
     --rdf-trivio="${rdf_trivio}" \
     <"${objetivum_archivum_no11}" >"${opus_temporibus_temporarium_ttl_1}"
 
-    rdfpipe --input-format=turtle --output-format=longturtle \
-      "${opus_temporibus_temporarium_ttl_1}" \
-      >"${opus_temporibus_temporarium_ttl_2}"
+  rdfpipe --input-format=turtle --output-format=longturtle \
+    "${opus_temporibus_temporarium_ttl_1}" \
+    >"${opus_temporibus_temporarium_ttl_2}"
 
   riot --validate "${opus_temporibus_temporarium_ttl_2}"
 
@@ -236,6 +239,20 @@ bootstrap_1603_16_1__lsf() {
 
   # file_update_if_necessary "ttl" "${opus_temporibus_temporarium_ttl_2}" "${objetivum_archivum_no1_owl}"
   file_update_if_necessary "ttl" "${opus_temporibus_temporarium_ttl_2}" "${objetivum_archivum_no11_skos}"
+
+  ## Now create the packages ---------------------------------------------------
+
+  set -x
+  "${ROOTDIR}/999999999/0/1603_1.py" \
+    --methodus='data-apothecae-unicae' \
+    --data-apothecae-ex='1603_16_1_0' \
+    --data-apothecae-ad-stdout \
+    --data-apothecae-formato='datapackage' \
+    >"$objetivum_archivum_datapackage"
+
+  frictionless validate "$objetivum_archivum_datapackage"
+
+  set +x
 }
 
 #######################################
