@@ -433,6 +433,28 @@ bootstrap_1603_45_16__item_no1() {
 }
 
 #######################################
+# Pre-create common 1603/16/1 shared with the library and always commited
+# with the code. Is used later by 1603_16_1 to expand languages and other
+# informaiton.
+#
+# NOTE: this is NOT designed to be executed by EticaAI/MDCIII-boostrapper.
+#       otherwise will run with circular dependencies
+#
+# Globals:
+#   ROOTDIR
+#
+# Arguments:
+#
+# Outputs:
+#   Convert files
+#######################################
+bootstrap_1603_16_1__lsf() {
+  echo "TODO"
+
+  # ./999999999/0/999999999_7200235.py --methodus='cod_ab_et_wdata' --numerordinatio-praefixo='1603_16' | ./999999999/0/999999999_7200235.py --methodus='de_hxltm_ordo0_ad_no11'
+}
+
+#######################################
 # Convert the XLSXs to intermediate formats on 999999/1603/45/16 using
 # 999999999_7200235.py to 1603/45/16/{cod_ab_level}/
 #
