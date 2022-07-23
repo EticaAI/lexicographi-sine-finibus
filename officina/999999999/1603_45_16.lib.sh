@@ -79,13 +79,12 @@ bootstrap_999999_1603_45_16_fetch_data() {
 #   ROOTDIR
 #
 # Arguments:
+#  est_radix  (values: "0", "1"; if "1" will boostrap from zero)
 #
 # Outputs:
 #   Convert files
 #######################################
-bootstrap_1603_16_1__lsf() {
-  # echo "TODO"
-
+bootstrap_1603_16_1_0__radix() {
   _nomen='1603_16_1_0'
 
   fontem_archivum_temporarium_no11="${ROOTDIR}/999999/0/$_nomen.no11.tm.hxl.csv"
@@ -102,6 +101,9 @@ bootstrap_1603_16_1__lsf() {
   opus_temporibus_temporarium_2="${DESTDIR}/999999/0/${_nomen}~TEMP~2.csv"
   opus_temporibus_temporarium_ttl_1="${DESTDIR}/999999/0/${_nomen}~TEMP~1.ttl"
   opus_temporibus_temporarium_ttl_2="${DESTDIR}/999999/0/${_nomen}~TEMP~2.ttl"
+
+  printf "\n\t%40s\n" "${tty_blue}${FUNCNAME[0]} STARTED ${tty_normal}"
+  start_time_fn=$(date +%s)
 
   set -x
 
@@ -253,6 +255,10 @@ bootstrap_1603_16_1__lsf() {
   frictionless validate "$objetivum_archivum_datapackage"
 
   set +x
+
+  end_time=$(date +%s)
+  elapsed=$((end_time - start_time_fn))
+  printf "\t%40s\n" "${tty_green}${FUNCNAME[0]} FINISHED OKAY in ${elapsed}s ${tty_normal}"
 }
 
 #######################################
