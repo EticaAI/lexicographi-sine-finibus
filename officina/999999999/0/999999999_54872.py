@@ -84,6 +84,13 @@ __EPILOGUM__ = """
                             EXEMPLŌRUM GRATIĀ
 ------------------------------------------------------------------------------
 
+Merge NO1 + wikiq into NO11 . . . . . . . . . . . . . . . . . . . . . . . . .
+    {0} --methodus=hxltm_combinatio_linguae \
+--rdf-combinatio-archivum-linguae=1603/16/1/0/1603_16_1_0.wikiq.tm.hxl.csv \
+--rdf-combinatio-praedicatis-linguae=skos:prefLabel \
+--rdf-trivio=5000 \
+1603/16/1/0/1603_16_1_0.no1.tm.hxl.csv
+
 Generic Numerordinatio to RDF Turtle . . . . . . . . . . . . . . . . . . . . .
 (TODO: fix example)
     {0} --methodus=_temp_no1 \
@@ -287,6 +294,7 @@ class Cli:
                 'auto',  # Uses ad_rdf_ex_configurationi
                 'ad_rdf_genericae',
                 'ad_rdf_ex_configurationi',
+                'hxltm_combinatio_linguae',
                 '_temp_bcp47',
                 '_temp_no1',
                 '_temp_bcp47_meta_in_json',
@@ -350,11 +358,11 @@ class Cli:
         parser.add_argument(
             '--rdf-trivio',
             help='(Advanced) RDF bag; extract triples from tabular data from '
-            'other groups than 1',
+            'other groups than 1603',
             dest='rdf_bag',
             nargs='?',
             # required=True,
-            default='1'
+            default='1603'
         )
 
         # - spatium, s, n, nominativus, https://en.wiktionary.org/wiki/spatium#Latin
@@ -475,6 +483,32 @@ class Cli:
         #     help='Output file',
         #     nargs='?'
         # )
+
+        combinatio_linguae = parser.add_argument_group(
+            "HXLTM combīnātiō",
+            '[ --methodus=\'hxltm_combinatio_linguae\' ] '
+            "NO1 + wikiq = NO11. Merge terminology translations to "
+            "the key tables"
+        )
+
+        combinatio_linguae.add_argument(
+            '--rdf-combinatio-archivum-linguae',
+            help='Path to .wikiq.tm.hxl.csv',
+            dest='combinatio_archivum',
+            nargs='?',
+            default=None
+        )
+
+        # praedicātīs, pl, n, https://en.wiktionary.org/wiki/praedicatum#Latin
+        combinatio_linguae.add_argument(
+            '--rdf-combinatio-praedicatis-linguae',
+            help='Predicates to add. Use --rdf-trivio to signal the group. '
+            'Add several using commas , as separator'
+            'Example: skos:prefLabel',
+            dest='praedicatis_linguae',
+            nargs='?',
+            type=lambda x: x.split(',')
+        )
 
         return parser.parse_args()
 

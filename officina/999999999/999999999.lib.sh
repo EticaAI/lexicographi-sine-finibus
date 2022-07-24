@@ -719,8 +719,8 @@ file_download_1603_xlsx() {
 file_convert_bpc47min_de_numerordinatio() {
   numerordinatio="$1"
   numerordinatio_typo="${2:-"no1"}"
-  est_temporarium_fontem="${2:-"1"}"
-  est_temporarium_objectivum="${3:-"1"}"
+  est_temporarium_fontem="${3:-"1"}"
+  est_temporarium_objectivum="${4:-"1"}"
 
   _path=$(numerordinatio_neo_separatum "$numerordinatio" "/")
   _nomen=$(numerordinatio_neo_separatum "$numerordinatio" "_")
