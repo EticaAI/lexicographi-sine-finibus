@@ -52,6 +52,7 @@ from L999999999_0 import (
     bcp47_langtag,
     # bcp47_langtag_callback_hxl,
     bcp47_rdf_extension_poc,
+    csv_imprimendo,
     hxl_hashtag_to_bcp47,
     hxltm_carricato,
     HXLTMAdRDFSimplicis,
@@ -536,6 +537,34 @@ class Cli:
             # print(RDF_SPATIA_NOMINALIBUS_EXTRAS)
             # pass
 
+        if pyargs.methodus == 'hxltm_combinatio_linguae':
+            # Quick draft of an RDF namespace for ix_ attributes;
+            # for sake of simplification, should assume they are used
+            # on the main direct relation (otherwise would not make sense
+            # even if we could pre-compute all relations)
+            # raise NotImplementedError('TODO {0}'.format(
+            #     pyargs.methodus))
+            # caput, data = hxltm_carricato(
+            #     _infile, _stdin, punctum_separato=fontem_separato)
+            # caput_wikiq, data_wikiq = hxltm_carricato(
+            #     pyargs.combinatio_archivum, False)
+
+            # csv_imprimendo(caput, data, punctum_separato=fontem_separato)
+            # csv_imprimendo(caput_wikiq, data_wikiq, punctum_separato=fontem_separato)
+
+            # numerordinatio_data__combinatio_linguae(
+            #     caput, data, pyargs.combinatio_archivum
+            # )
+            numerordinatio_data__combinatio_linguae(
+                no1=_infile, wikiq=pyargs.combinatio_archivum,
+            )
+
+            # print()
+            # print('@TODO not implemented yet')
+
+            # xlsx.finis()
+            return self.EXIT_OK
+
         if pyargs.methodus == '_temp_hxlstandard_vocab_ix':
             # Quick draft of an RDF namespace for ix_ attributes;
             # for sake of simplification, should assume they are used
@@ -979,6 +1008,61 @@ class CliMain:
             # print('oi actio')
             # numerordinatio_neo_separatum
         # print('failed')
+
+
+def numerordinatio_data__combinatio_linguae(
+    no1: str, wikiq: str, punctum_separato: str = ","
+):
+    # json.dumps(caput_asa)
+    # print(json.dumps(caput_asa))
+    # return ''
+    # print(caput_asa['caput_originali'])
+    # print(caput_asa['caput_ad_columnae_i'])
+
+    # @TODO convert reference wikiq as associative array
+    #       into the memory. However, generate output on demand
+    #       https://stackoverflow.com/questions/3765533/python-array-with-string-indices
+    #       https://www.youtube.com/watch?v=C4Kc8xzcA68
+
+    _no1_stdin = True if no1 is None else False
+
+    caput, data = hxltm_carricato(
+        no1, _no1_stdin, punctum_separato=punctum_separato)
+    caput_wikiq, data_wikiq = hxltm_carricato(wikiq)
+
+    # caput_wikiq, data_wikiq = hxltm_carricato(
+    #     wikiq_trivio, False)
+
+    # caput_wikiq, data_wikiq = hxltm_carricato(
+    #     wikiq_trivio, False)
+
+    # caput_novo = []
+    # for _item in caput:
+    #     # print('hxl item     > ', _item)
+    #     _hxl = HXLHashtagSimplici(_item).praeparatio()
+    #     _item_bcp47 = _hxl.quod_bcp47(strictum=False)
+    #     # print('_item_bcp47  > ', _item_bcp47)
+    #     caput_novo.append(_item_bcp47)
+
+    # res_novae = []
+
+    # csv_imprimendo(caput, data, punctum_separato=punctum_separato)
+    csv_imprimendo(caput_wikiq, data_wikiq, punctum_separato=punctum_separato)
+
+    # with open(fontem, 'r') as _fons:
+    #     _writer = csv.writer(sys.stdout, delimiter=punctum_separato)
+    #     _csv_reader = csv.reader(_fons, delimiter=punctum_separato)
+
+    #     # discard original header
+    #     next(_csv_reader)
+    #     # _writer.writerow(_header_original)
+    #     _writer.writerow(caput_novo)
+
+    #     for linea in _csv_reader:
+    #         linea_novae = linea
+    #         if len(res_novae) > 0:
+    #             linea_novae.extend(res_novae)
+    #         _writer.writerow(linea_novae)
 
 
 def numerordinatio_data__hxltm_to_bcp47(
