@@ -46,14 +46,17 @@ import yaml
 from L999999999_0 import (
     BCP47_AD_HXL,
     RDF_SPATIA_NOMINALIBUS_EXTRAS,
+    RDF_SPATIA_NOMINALIBUS_PREFIX,
     HXLHashtagSimplici,
     OntologiaVocabularioHXL,
     SetEncoder,
+    _rdf_spatia_nominalibus_prefix_normali,
     bcp47_langtag,
     # bcp47_langtag_callback_hxl,
     bcp47_rdf_extension_poc,
     csv_imprimendo,
     hxl_hashtag_to_bcp47,
+    hxltm__ex_dict,
     hxltm_carricato,
     HXLTMAdRDFSimplicis,
     hxltm_carricato_brevibus,
@@ -557,6 +560,8 @@ class Cli:
             # )
             numerordinatio_data__combinatio_linguae(
                 no1=_infile, wikiq=pyargs.combinatio_archivum,
+                rdf_trivio=pyargs.rdf_bag,
+                praedicatis_linguae=pyargs.praedicatis_linguae
             )
 
             # print()
@@ -1011,7 +1016,8 @@ class CliMain:
 
 
 def numerordinatio_data__combinatio_linguae(
-    no1: str, wikiq: str, punctum_separato: str = ","
+    no1: str, wikiq: str, punctum_separato: str = ",",
+    rdf_trivio: str = '1603', praedicatis_linguae: list = None
 ):
     # json.dumps(caput_asa)
     # print(json.dumps(caput_asa))
@@ -1026,9 +1032,91 @@ def numerordinatio_data__combinatio_linguae(
 
     _no1_stdin = True if no1 is None else False
 
+    caput_wikiq, data_wikiq = hxltm_carricato(wikiq)
+    # wikiq__dict = dict(zip(caput_wikiq, data_wikiq))
+
+    hxlattrs = []
+    if praedicatis_linguae is not None:
+        for item in praedicatis_linguae:
+            item = _rdf_spatia_nominalibus_prefix_normali(item)
+            _rdf_p_prefix, _rdf_p_value = item.split(':')
+
+            hxlattrs.append('+rdf_p_{0}_{1}_s{2}'.format(
+                _rdf_p_prefix, _rdf_p_value, rdf_trivio))
+
+        hxlattrs = sorted(hxlattrs)
+
+        # Since we replace in place, this means we can reuse the caput
+        for _i, _v in enumerate(caput_wikiq):
+            if _v.find('+i_qcc+is_zxxx') == -1 and \
+                    _v.startswith(('#item+rem+i_', '#meta+rem+i_')):
+                for _attr in hxlattrs:
+                    if _v.find(_attr) == -1:
+                        caput_wikiq[_i] = caput_wikiq[_i] + _attr
+        # caput_wikiq[1:]
+
+    # @TODO add additional predicate if need
+
+    wikiq__dicts_by_key = {}
+    for linea in data_wikiq:
+        # referens__dicts.append(dict(zip(caput, linea)))
+        # wikiq__dicts.append(zip(caput_wikiq, data_wikiq))
+        _wikiq_value = linea[0]
+        _values = linea[1:]
+        wikiq__dicts_by_key[_wikiq_value] = (
+            dict(zip(caput_wikiq[1:], _values)))
+
+    # raise ValueError(wikiq__dicts_by_key['Q155'])
+
     caput, data = hxltm_carricato(
         no1, _no1_stdin, punctum_separato=punctum_separato)
-    caput_wikiq, data_wikiq = hxltm_carricato(wikiq)
+
+    referens__dicts = []
+
+    _referens_wikiq_index = -1
+    if '#item+rem+i_qcc+is_zxxx+ix_wikiq' in caput:
+        _referens_wikiq_index = caput.index('#item+rem+i_qcc+is_zxxx+ix_wikiq')
+        _referens_wikiq_hxl = '#item+rem+i_qcc+is_zxxx+ix_wikiq'
+        # raise ValueError('foi2')
+    if _referens_wikiq_index == -1:
+        # need investigate
+        for _item in caput:
+            if _item.find('+rem+i_qcc+is_zxxx+ix_wikiq') > -1 and \
+                    _item.find(rdf_trivio) > -1:
+                # have both the signal and already with bag.
+                _referens_wikiq_index = caput.index(_item)
+                _referens_wikiq_hxl = _item
+                break
+            elif _item.find('+rem+i_qcc+is_zxxx+ix_wikiq') > -1:
+                # Fallback assuming only one exists
+                _referens_wikiq_index = caput.index(_item)
+                _referens_wikiq_hxl = _item
+                # raise ValueError('foi2', _item)
+                break
+    if _referens_wikiq_index == -1:
+        raise ValueError('+ix_wiki_q? <{0}>'.format(caput))
+
+    referens__dicts = {}
+    for _i, linea in enumerate(data):
+        # referens__dicts.append(dict(zip(caput, linea)))
+        res = dict(zip(caput, linea))
+        # print(_referens_wikiq_hxl)
+        # print(res[_referens_wikiq_hxl])
+        if res[_referens_wikiq_hxl] in wikiq__dicts_by_key:
+            res = {**res, **wikiq__dicts_by_key[res[_referens_wikiq_hxl]]}
+            # raise ValueError('deu', res)
+        # else:
+        #     raise ValueError('n deu', res)
+        referens__dicts[_i] = res
+
+    # raise ValueError('')
+    # raise ValueError(referens__dicts)
+
+    _dict_keys = caput
+    _dict_keys.extend(caput_wikiq[1:])
+
+    caput_novo, data_novis = hxltm__ex_dict(referens__dicts, caput=_dict_keys)
+    csv_imprimendo(caput_novo, data_novis, punctum_separato=punctum_separato)
 
     # caput_wikiq, data_wikiq = hxltm_carricato(
     #     wikiq_trivio, False)
@@ -1047,7 +1135,7 @@ def numerordinatio_data__combinatio_linguae(
     # res_novae = []
 
     # csv_imprimendo(caput, data, punctum_separato=punctum_separato)
-    csv_imprimendo(caput_wikiq, data_wikiq, punctum_separato=punctum_separato)
+    # csv_imprimendo(caput_wikiq, data_wikiq, punctum_separato=punctum_separato)
 
     # with open(fontem, 'r') as _fons:
     #     _writer = csv.writer(sys.stdout, delimiter=punctum_separato)
