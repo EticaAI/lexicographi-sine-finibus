@@ -1019,16 +1019,22 @@ def numerordinatio_data__combinatio_linguae(
     no1: str, wikiq: str, punctum_separato: str = ",",
     rdf_trivio: str = '1603', praedicatis_linguae: list = None
 ):
-    # json.dumps(caput_asa)
-    # print(json.dumps(caput_asa))
-    # return ''
-    # print(caput_asa['caput_originali'])
-    # print(caput_asa['caput_ad_columnae_i'])
+    """numerordinatio_data__combinatio_linguae
 
-    # @TODO convert reference wikiq as associative array
-    #       into the memory. However, generate output on demand
-    #       https://stackoverflow.com/questions/3765533/python-array-with-string-indices
-    #       https://www.youtube.com/watch?v=C4Kc8xzcA68
+    For an reference table (likely no1.tm.hxl.csv) and path to a reference table
+    with labels (likely pre-processed wikiq.tm.hxl.csv) merge the end result
+    in a new value.
+
+    Args:
+        no1 (str): _description_
+        wikiq (str): _description_
+        punctum_separato (str, optional): _description_. Defaults to ",".
+        rdf_trivio (str, optional): _description_. Defaults to '1603'.
+        praedicatis_linguae (list, optional): _description_. Defaults to None.
+    """
+    # @TODO this function is not optimized for large datasets, but it could be.
+    #       Not a priority now, but it can be partially replaced to do the
+    #       steps here on demand (Rocha, 2022-07*24 00:59 UTC)
 
     _no1_stdin = True if no1 is None else False
 
@@ -1053,9 +1059,6 @@ def numerordinatio_data__combinatio_linguae(
                 for _attr in hxlattrs:
                     if _v.find(_attr) == -1:
                         caput_wikiq[_i] = caput_wikiq[_i] + _attr
-        # caput_wikiq[1:]
-
-    # @TODO add additional predicate if need
 
     wikiq__dicts_by_key = {}
     for linea in data_wikiq:
@@ -1117,40 +1120,6 @@ def numerordinatio_data__combinatio_linguae(
 
     caput_novo, data_novis = hxltm__ex_dict(referens__dicts, caput=_dict_keys)
     csv_imprimendo(caput_novo, data_novis, punctum_separato=punctum_separato)
-
-    # caput_wikiq, data_wikiq = hxltm_carricato(
-    #     wikiq_trivio, False)
-
-    # caput_wikiq, data_wikiq = hxltm_carricato(
-    #     wikiq_trivio, False)
-
-    # caput_novo = []
-    # for _item in caput:
-    #     # print('hxl item     > ', _item)
-    #     _hxl = HXLHashtagSimplici(_item).praeparatio()
-    #     _item_bcp47 = _hxl.quod_bcp47(strictum=False)
-    #     # print('_item_bcp47  > ', _item_bcp47)
-    #     caput_novo.append(_item_bcp47)
-
-    # res_novae = []
-
-    # csv_imprimendo(caput, data, punctum_separato=punctum_separato)
-    # csv_imprimendo(caput_wikiq, data_wikiq, punctum_separato=punctum_separato)
-
-    # with open(fontem, 'r') as _fons:
-    #     _writer = csv.writer(sys.stdout, delimiter=punctum_separato)
-    #     _csv_reader = csv.reader(_fons, delimiter=punctum_separato)
-
-    #     # discard original header
-    #     next(_csv_reader)
-    #     # _writer.writerow(_header_original)
-    #     _writer.writerow(caput_novo)
-
-    #     for linea in _csv_reader:
-    #         linea_novae = linea
-    #         if len(res_novae) > 0:
-    #             linea_novae.extend(res_novae)
-    #         _writer.writerow(linea_novae)
 
 
 def numerordinatio_data__hxltm_to_bcp47(
