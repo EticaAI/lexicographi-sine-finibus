@@ -45,8 +45,8 @@ import yaml
 # l999999999_0 = __import__('999999999_0')
 from L999999999_0 import (
     BCP47_AD_HXL,
-    RDF_SPATIA_NOMINALIBUS_EXTRAS,
-    RDF_SPATIA_NOMINALIBUS_PREFIX,
+    # RDF_SPATIA_NOMINALIBUS_EXTRAS,
+    # RDF_SPATIA_NOMINALIBUS_PREFIX,
     HXLHashtagSimplici,
     OntologiaVocabularioHXL,
     SetEncoder,

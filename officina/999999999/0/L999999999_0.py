@@ -1763,6 +1763,7 @@ def bcp47_langtag_callback_hxl_minimal(
     Returns:
         str: return HXL attributes (without HXL hashtag)
     """
+    # print('langtag_meta', langtag_meta)
     res = bcp47_langtag_callback_hxl(langtag_meta, strictum)
     minimal_parts = []
     extra_parts = []
