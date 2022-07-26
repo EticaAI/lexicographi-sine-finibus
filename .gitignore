@@ -20,6 +20,7 @@
 /officina/**/**.tbx
 /officina/**/**.png
 /officina/**/**.jpg
+/officina/**/**.geojson
 /officina/**/**.json
 /officina/**/**.jsonl
 /officina/**/**.statum.yml

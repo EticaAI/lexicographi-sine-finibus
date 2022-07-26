@@ -96,8 +96,13 @@ Merge NO1 + wikiq into NO11 . . . . . . . . . . . . . . . . . . . . . . . . .
 1603/16/1/0/1603_16_1_0.no1.tm.hxl.csv
 
 Generic Numerordinatio to RDF Turtle . . . . . . . . . . . . . . . . . . . . .
-(TODO: fix example)
     {0} --methodus=_temp_no1 \
+--rdf-sine-spatia-nominalibus=devnull \
+--rdf-trivio=5000 1603/16/1/0/1603_16_1_0.no1.tm.hxl.csv
+
+Generic Numerordinatio to GeoJSON Linked Data (minimalistic) . . . . . . . . .
+(@TODO implement MVP)
+    {0} --methodus=geojson \
 --rdf-sine-spatia-nominalibus=devnull \
 --rdf-trivio=5000 1603/16/1/0/1603_16_1_0.no1.tm.hxl.csv
 
@@ -295,8 +300,9 @@ class Cli:
             nargs='?',
             choices=[
                 'auto',  # Uses ad_rdf_ex_configurationi
-                'ad_rdf_genericae',
+                'ad_rdf_genericae',  # @TODO rename from _temp_no1
                 'ad_rdf_ex_configurationi',
+                'geojson',
                 'hxltm_combinatio_linguae',
                 '_temp_bcp47',
                 '_temp_no1',
@@ -855,6 +861,22 @@ class Cli:
 
             return self.EXIT_OK
 
+        if pyargs.methodus == 'geojson':
+            # delimiter = "\t"
+            # if _stdin is True:
+            #     raise NotImplementedError
+            # if _infile.find("\t") == -1:
+            #     if _infile.find(",") > -1:
+            #         delimiter = ','
+            #     else:
+            #         # If user is requesting only a single header, this will
+            #         # fail to auto-detect
+            #         raise NotImplementedError(
+            #             "Delimiter [{0}]?? Single header item?".format(_infile))
+            numerordinatio_data__geojson(_infile)
+            # print('TODO')
+            return self.EXIT_ERROR
+
         # _infile = None
         # _stdin = None
         configuratio = self.quod_configuratio(
@@ -1157,6 +1179,90 @@ def numerordinatio_data__hxltm_to_bcp47(
             if len(res_novae) > 0:
                 linea_novae.extend(res_novae)
             _writer.writerow(linea_novae)
+
+
+def numerordinatio_data__geojson(
+    fontem: str, punctum_separato: str = ","
+):
+    # json.dumps(caput_asa)
+    # print(json.dumps(caput_asa))
+    # return ''
+    # print(caput_asa['caput_originali'])
+    # print(caput_asa['caput_ad_columnae_i'])
+
+    resutatum = {
+        "$schema": "https://geojson.org/schema/GeoJSON.json",
+        "@context": {
+            "@version": 1.1,
+            "geojson": "https://purl.org/geojson/vocab#",
+            "Feature": "geojson:Feature",
+            "FeatureCollection": "geojson:FeatureCollection",
+            "Point": "geojson:Point",
+            "Polygon": "geojson:Polygon",
+            "coordinates": {
+                "@container": "@list",
+                "@id": "geojson:coordinates"
+            },
+            "features": {
+                "@container": "@set",
+                "@id": "geojson:features"
+            },
+            "geometry": "geojson:geometry",
+            "id": "@id",
+            "properties": "geojson:properties",
+            "type": "@type",
+            "description": "http://purl.org/dc/terms/description",
+            "title": "http://purl.org/dc/terms/title"
+        },
+        "type": "FeatureCollection",
+        "features": [
+            {
+                "type": "Feature",
+                "id": "urn:mdciii:123:456",
+                "geometry": {
+                    "type": "Point",
+                    "coordinates": [
+                        0.0,
+                        0.0
+                    ]
+                },
+                "properties": {
+                    "title": "Null Island",
+                    "description": "A fictional island in the Gulf of Guinea"
+                }
+            }
+        ]
+    }
+
+    print(json.dumps(resutatum, indent=2, ensure_ascii=False, sort_keys=False))
+
+    # caput, _data = hxltm_carricato_brevibus(
+    #     fontem, est_stdin=False, punctum_separato=punctum_separato)
+
+    # caput_novo = []
+    # for _item in caput:
+    #     # print('hxl item     > ', _item)
+    #     _hxl = HXLHashtagSimplici(_item).praeparatio()
+    #     _item_bcp47 = _hxl.quod_bcp47(strictum=False)
+    #     # print('_item_bcp47  > ', _item_bcp47)
+    #     caput_novo.append(_item_bcp47)
+
+    # res_novae = []
+
+    # with open(fontem, 'r') as _fons:
+    #     _writer = csv.writer(sys.stdout, delimiter=punctum_separato)
+    #     _csv_reader = csv.reader(_fons, delimiter=punctum_separato)
+
+    #     # discard original header
+    #     next(_csv_reader)
+    #     # _writer.writerow(_header_original)
+    #     _writer.writerow(caput_novo)
+
+    #     for linea in _csv_reader:
+    #         linea_novae = linea
+    #         if len(res_novae) > 0:
+    #             linea_novae.extend(res_novae)
+    #         _writer.writerow(linea_novae)
 
 
 def numerordinatio_data__sortnames(
