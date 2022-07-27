@@ -50,84 +50,92 @@ import xml.etree.ElementTree as XMLElementTree
 
 STDIN = sys.stdin.buffer
 
-NOMEN = '999999999_10263485'
+NOMEN = '999999999_521850'
 
 DESCRIPTION = """
-{0} Processamento de dados de referência do CNES (Cadastro Nacional de
-Estabelecimentos de Saúde) do Brasil.
-
-@see - https://github.com/EticaAI/lexicographi-sine-finibus/issues/42
-     - wiki.saude.gov.br/cnes/index.php/Categoria:Contexto_Hist%C3%B3rico
-       - "(...) O CNES possui atualmente quase 300 mil estabelecimentos de
-         saúde cadastrados (CNES, jul/2015), dos quais mais de 2/3 não
-         atendem ao SUS, sendo que mais de 150 mil são consultórios ou
-         pequenas clínicas privadas. (...)"
+{0} Generic pre-processor for data scrapping. Mostly access external services
+and prepare their data to HXLTM (which then can be reused by rest of the
+tools)
 
 Trivia:
-- Q10263485, https://www.wikidata.org/wiki/Q10263485
-  - DATASUS
-  - "DATASUS é o departamento de informática do Sistema Único de Saúde do
-     Brasil. É responsável, também, pelos sistemas e aplicativos necessários
-     para registrar e processar as informações de saúde. Um exemplo
-     é o Cadastro Nacional de Estabelecimentos de Saúde (CNES), (...)"
+- Q521850, https://www.wikidata.org/wiki/Q521850
+  - data scraping (Q521850)
 """.format(__file__)
 
 __EPILOGUM__ = """
 ------------------------------------------------------------------------------
                             EXEMPLŌRUM GRATIĀ
 ------------------------------------------------------------------------------
-    {0} --methodus=datasus_xmlcnae 999999/0/xmlCNES.xml
-    cat 999999/0/xmlCNES.xml | {0} --methodus=datasus_xmlcnae
+    {0} --methodus=undata
 
-    {0} --methodus=datasus_xmlcnae 999999/0/xmlCNES.xml \
---objectivum-formato=csv > 999999/0/xmlCNES.csv
+    {0} --methodus=unhcr
 
-    {0} --methodus=datasus_xmlcnae 999999/0/xmlCNES.xml \
---objectivum-formato=hxl_csv > 999999/0/xmlCNES.hxl.csv
+    {0} --methodus=unochafts
 
-    {0} --methodus=datasus_xmlcnae 999999/0/xmlCNES.xml \
---objectivum-formato=hxltm_csv > 999999/0/xmlCNES.tm.hxl.csv
+    {0} --methodus=unwpf
 
-@TODO: fazer funcionar com stream de XML (não apenas por arquivo)
+    {0} --methodus=worldbank
+
 ------------------------------------------------------------------------------
                             EXEMPLŌRUM GRATIĀ
 ------------------------------------------------------------------------------
 """.format(__file__)
 
-LIKELY_NUMERIC = [
-    '#item+conceptum+codicem',
-    '#status+conceptum',
-    '#item+rem+i_qcc+is_zxxx+ix_n1603',
-    '#item+rem+i_qcc+is_zxxx+ix_iso5218',
-]
-# https://en.wiktionary.org/wiki/tabula#Latin
-XML_AD_CSV_TABULAE = {
-    'CO_UNIDADE': 'CO_UNIDADE',
-    'NO_FANTASIA': 'NO_FANTASIA',
-    'CO_MUNICIPIO_GESTOR': 'CO_MUNICIPIO_GESTOR',
-    'NU_CNPJ': 'NU_CNPJ',
-    'CO_CNES': 'CO_CNES',
-    'DT_ATUALIZACAO': 'DT_ATUALIZACAO',
-    'TP_UNIDADE': 'TP_UNIDADE',
+DATA_SCRAPPING_HELP = {
+    'UNDATA': [
+        'https://data.un.org/'
+    ],
+    'UNHCR': [
+        'https://www.unhcr.org/global-public-api.html',
+        'https://data.unhcr.org/en/geoservices/',
+    ],
+    'UNOCHAFTS': [
+        'https://fts.unocha.org/'
+    ],
+    'UNWPF': [
+        'https://geonode.wfp.org/',
+    ],
+    'WORLDBANK': [
+        'https://data.worldbank.org/',
+        # Total population
+        'https://data.worldbank.org/indicator/SP.POP.TOTL',
+    ],
 }
 
-CSV_AD_HXLTM_TABULAE = {
-    # @TODO: create wikiq
-    'CO_UNIDADE': '#item+rem+i_qcc+is_zxxx+ix_brcnae',
-    'NO_FANTASIA': '#meta+NO_FANTASIA',
-    'CO_MUNICIPIO_GESTOR': '#item+rem+i_qcc+is_zxxx+ix_wdatap1585',
-    'NU_CNPJ': '#item+rem+i_qcc+is_zxxx+ix_wdatap6204',
-    'CO_CNES': '#meta+CO_CNES',
-    'DT_ATUALIZACAO': '#meta+DT_ATUALIZACAO',
-    'TP_UNIDADE': '#meta+TP_UNIDADE',
-}
+# LIKELY_NUMERIC = [
+#     '#item+conceptum+codicem',
+#     '#status+conceptum',
+#     '#item+rem+i_qcc+is_zxxx+ix_n1603',
+#     '#item+rem+i_qcc+is_zxxx+ix_iso5218',
+# ]
+# # https://en.wiktionary.org/wiki/tabula#Latin
+# XML_AD_CSV_TABULAE = {
+#     'CO_UNIDADE': 'CO_UNIDADE',
+#     'NO_FANTASIA': 'NO_FANTASIA',
+#     'CO_MUNICIPIO_GESTOR': 'CO_MUNICIPIO_GESTOR',
+#     'NU_CNPJ': 'NU_CNPJ',
+#     'CO_CNES': 'CO_CNES',
+#     'DT_ATUALIZACAO': 'DT_ATUALIZACAO',
+#     'TP_UNIDADE': 'TP_UNIDADE',
+# }
 
-SYSTEMA_SARCINAE = str(Path(__file__).parent.resolve())
-PROGRAMMA_SARCINAE = str(Path().resolve())
-ARCHIVUM_CONFIGURATIONI_DEFALLO = [
-    SYSTEMA_SARCINAE + '/' + NOMEN + '.meta.yml',
-    PROGRAMMA_SARCINAE + '/' + NOMEN + '.meta.yml',
-]
+# CSV_AD_HXLTM_TABULAE = {
+#     # @TODO: create wikiq
+#     'CO_UNIDADE': '#item+rem+i_qcc+is_zxxx+ix_brcnae',
+#     'NO_FANTASIA': '#meta+NO_FANTASIA',
+#     'CO_MUNICIPIO_GESTOR': '#item+rem+i_qcc+is_zxxx+ix_wdatap1585',
+#     'NU_CNPJ': '#item+rem+i_qcc+is_zxxx+ix_wdatap6204',
+#     'CO_CNES': '#meta+CO_CNES',
+#     'DT_ATUALIZACAO': '#meta+DT_ATUALIZACAO',
+#     'TP_UNIDADE': '#meta+TP_UNIDADE',
+# }
+
+# SYSTEMA_SARCINAE = str(Path(__file__).parent.resolve())
+# PROGRAMMA_SARCINAE = str(Path().resolve())
+# ARCHIVUM_CONFIGURATIONI_DEFALLO = [
+#     SYSTEMA_SARCINAE + '/' + NOMEN + '.meta.yml',
+#     PROGRAMMA_SARCINAE + '/' + NOMEN + '.meta.yml',
+# ]
 
 # ./999999999/0/999999999_521850.py 999999/0/1603_1_1--old.csv 999999/0/1603_1_1--new.csv
 
@@ -187,15 +195,15 @@ class Cli:
             dest='methodus',
             nargs='?',
             choices=[
-                'datasus_xmlcnae',
-                # 'data-apothecae',
-                # 'hxltm-explanationi',
-                # 'opus-temporibus',
-                # 'status-quo',
-                # 'deprecatum-dictionaria-numerordinatio'
+                'undata',  # https://data.un.org/
+                'unochafts',  # https://fts.unocha.org/
+                'unhcr',  # https://www.unhcr.org/global-public-api.html
+                          # https://data.unhcr.org/en/geoservices/
+                'unwpf',  # https://geonode.wfp.org/
+                'worldbank',  # https://data.worldbank.org/
             ],
             # required=True
-            default='datasus_xmlcnae'
+            default='undata'
         )
 
         # objectīvum, n, s, nominativus,
@@ -221,13 +229,13 @@ class Cli:
         # archīvum, n, s, nominativus, https://en.wiktionary.org/wiki/archivum
         # cōnfigūrātiōnī, f, s, dativus,
         #                      https://en.wiktionary.org/wiki/configuratio#Latin
-        parser.add_argument(
-            '--archivum-configurationi',
-            help='Arquivo de configuração .meta.yml',
-            dest='archivum_configurationi',
-            nargs='?',
-            default=None
-        )
+        # parser.add_argument(
+        #     '--archivum-configurationi',
+        #     help='Arquivo de configuração .meta.yml',
+        #     dest='archivum_configurationi',
+        #     nargs='?',
+        #     default=None
+        # )
 
         # parser.add_argument(
         #     'outfile',
@@ -244,7 +252,7 @@ class Cli:
         _infile = None
         _stdin = None
 
-        configuratio = self._quod_configuratio(pyargs.archivum_configurationi)
+        # configuratio = self._quod_configuratio(pyargs.archivum_configurationi)
 
         if stdin.isatty():
             # print("ERROR. Please pipe data in. \nExample:\n"
@@ -267,167 +275,31 @@ class Cli:
         #         codicem = line.replace('\n', ' ').replace('\r', '')
 
         # hf = CliMain(self.pyargs.infile, self.pyargs.outfile)
-        climain = CliMain(
-            infile=_infile, stdin=_stdin,
-            pyargs=pyargs,
-            configuratio=configuratio
-        )
-        if pyargs.methodus == 'datasus_xmlcnae':
-            return climain.execute_ex_datasus_xmlcnae()
+
+        if pyargs.methodus == 'undata':
+            print(DATA_SCRAPPING_HELP['UNDATA'])
+            return self.EXIT_OK
+
+        if pyargs.methodus == 'unhcr':
+            print(DATA_SCRAPPING_HELP['UNHCR'])
+            return self.EXIT_OK
+
+
+        if pyargs.methodus == 'unochafts':
+            print(DATA_SCRAPPING_HELP['UNOCHAFTS'])
+            return self.EXIT_OK
+
+        if pyargs.methodus == 'unwpf':
+            print(DATA_SCRAPPING_HELP['UNWPF'])
+            return self.EXIT_OK
+
+        if pyargs.methodus == 'worldbank':
+            print(DATA_SCRAPPING_HELP['WORLDBANK'])
+            return self.EXIT_OK
 
         print('Unknow option.')
         return self.EXIT_ERROR
 
-
-class CliMain:
-    """Remove .0 at the end of CSVs from data exported from XLSX and likely
-    to have numeric values (and trigger weird bugs)
-    """
-    delimiter = ','
-
-    # def __init__(self, infile: str = None, stdin=None,
-    #              objectivum_formato: str = 'hxltm-csv'):
-    #     """
-    #     Constructs all the necessary attributes for the Cli object.
-    #     """
-    #     self.infile = infile
-    #     self.stdin = stdin
-    #     self.objectivum_formato = objectivum_formato
-
-    #     # self.outfile = outfile
-    #     self.header = []
-    #     self.header_index_fix = []
-
-
-    def __init__(
-            self, infile: str = None, stdin=None,
-            pyargs: dict = None, configuratio: dict = None):
-        """
-        Constructs all the necessary attributes for the Cli object.
-        """
-        self.infile = infile
-        self.stdin = stdin
-        self.objectivum_formato = pyargs.objectivum_formato
-        self.methodus = pyargs.methodus
-        # self.configuratio = configuratio
-
-        # delimiter = ','
-        if self.objectivum_formato in ['tsv', 'hxltm_tsv', 'hxl_tsv']:
-            self.delimiter = "\t"
-
-        methodus_ex_tabulae = configuratio['methodus'][self.methodus]
-
-        self.configuratio = methodus_ex_tabulae
-
-        self.tabula = TabulaAdHXLTM(
-            methodus_ex_tabulae=methodus_ex_tabulae,
-            methodus=self.methodus,
-            objectivum_formato=self.objectivum_formato
-        )
-
-    def process_row(self, row: list) -> list:
-        if len(self.header) == 0:
-            if row[0].strip().startswith('#'):
-                self.header = row
-                for index, item in enumerate(self.header):
-                    item_norm = item.strip().replace(" ", "")
-                    for likely in LIKELY_NUMERIC:
-                        # print(item_norm, likely)
-                        if item_norm.startswith(likely):
-                            self.header_index_fix.append(index)
-                # print('oi header', self.header_index_fix, self.header)
-        else:
-            for index_fix in self.header_index_fix:
-                row[index_fix] = re.sub('\.0$', '', row[index_fix].strip())
-        return row
-
-    def execute_ex_datasus_xmlcnae(self):
-        # print('@TODO copy logic from https://github.com/EticaAI/hxltm/blob/main/bin/hxltmdexml.py')
-
-        _source = self.infile if self.infile is not None else self.stdin
-        delimiter = ','
-        if self.objectivum_formato in ['tsv', 'hxltm_tsv']:
-            delimiter = "\t"
-        objectivum = csv.writer(
-            sys.stdout, delimiter=delimiter, quoting=csv.QUOTE_MINIMAL)
-
-        # self.iteratianem = XMLElementTree.iterparse(
-        iteratianem = XMLElementTree.iterparse(
-            # source=self.fontem_archivum,
-            # source=self.infile,
-            source=_source,
-            events=('start', 'end')
-            # events=('end')
-        )
-
-        caput = self.configuratio['__de_xml_ad_csv']
-
-        _to_int = []
-        if '__de_xml_ad_csv__cast_int' in self.configuratio:
-            _to_int = self.configuratio['__de_xml_ad_csv__cast_int']
-
-        if self.objectivum_formato in ['tsv', 'csv']:
-            objectivum.writerow(caput)
-        else:
-            objectivum.writerow(
-                self.tabula.caput_translationi(caput))
-        # caput = []
-        # caput_okay = False
-        for event, elem in iteratianem:
-            if event == 'end':
-                # print(elem)
-                if elem.tag.upper() != 'ROW':
-                    continue
-                if hasattr(elem, 'attrib'):
-                    lineam = []
-
-                    for item in caput:
-                        if item in elem.attrib:
-                            _res = elem.attrib[item]
-                            if len(_to_int) > 0 and item in _to_int:
-                                _res = int(_res)
-                            lineam.append(_res)
-                        else:
-                            lineam.append('')
-                    objectivum.writerow(lineam)
-
-        return Cli.EXIT_OK
-
-    def execute(self):
-        with open(self.infile, newline='') as infilecsv:
-            with open(self.outfile, 'w', newline='') as outfilecsv:
-                spamreader = csv.reader(infilecsv)
-                spamwriter = csv.writer(outfilecsv)
-                for row in spamreader:
-                    # spamwriter.writerow(row)
-                    spamwriter.writerow(self.process_row(row))
-                    # self.data.append(row)
-
-
-def de_dotted(self, dotted_key: str,  # pylint: disable=invalid-name
-              default: Any = None, fontem: dict = None) -> Any:
-    """
-    Trivia: dē, https://en.wiktionary.org/wiki/de#Latin
-    Examples:
-        >>> exemplum = {'a': {'a2': 123}, 'b': 456}
-        >>> otlg = HXLTMOntologia(exemplum)
-        >>> otlg.de('a.a2', fontem=exemplum)
-        123
-    Args:
-        dotted_key (str): Dotted key notation
-        default ([Any], optional): Value if not found. Defaults to None.
-        fontem (dict): An nested object to search
-    Returns:
-        [Any]: Return the result. Defaults to default
-    """
-    if fontem is None:
-        fontem = self.crudum
-
-    keys = dotted_key.split('.')
-    return reduce(
-        lambda d, key: d.get(
-            key) if d else default, keys, fontem
-    )
 
 
 if __name__ == "__main__":
