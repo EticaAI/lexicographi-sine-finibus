@@ -862,20 +862,8 @@ class Cli:
             return self.EXIT_OK
 
         if pyargs.methodus == 'geojson':
-            # delimiter = "\t"
-            # if _stdin is True:
-            #     raise NotImplementedError
-            # if _infile.find("\t") == -1:
-            #     if _infile.find(",") > -1:
-            #         delimiter = ','
-            #     else:
-            #         # If user is requesting only a single header, this will
-            #         # fail to auto-detect
-            #         raise NotImplementedError(
-            #             "Delimiter [{0}]?? Single header item?".format(_infile))
             numerordinatio_data__geojson(_infile)
-            # print('TODO')
-            return self.EXIT_ERROR
+            return self.EXIT_OK
 
         # _infile = None
         # _stdin = None
@@ -1212,8 +1200,8 @@ def numerordinatio_data__geojson(
             "id": "@id",
             "properties": "geojson:properties",
             "type": "@type",
-            "x-iso3166p1a2": "wdata:P297",
-            "x-iso3166p1a3": "wdata:P298",
+            # "x-iso3166p1a2": "wdata:P297",
+            # "x-iso3166p1a3": "wdata:P298",
         },
         "type": "FeatureCollection",
         "features": [
@@ -1270,22 +1258,23 @@ def numerordinatio_data__geojson(
         res_hxl_ix = _hxl.habeo_attributa__hxl_wdata('hxl_ix')
         if res_hxl_ix is not None:
             if 'wdata_p' in res_hxl_ix and res_hxl_ix['wdata_p']:
-                geojson_properties_meta.append({
+                _res = {
                     'index': caput.index(_item),
-                    'predicate': 'wdatap:{0}'.format(res_hxl_ix['wdata_p']),
-                    'alias': 'x-{0}'.format(res_hxl_ix['hxl_ix'].replace('ix_', '')),
-                })
+                    'predicate': 'wdata:{0}'.format(res_hxl_ix['wdata_p']),
+                    'alias': 'x-{0}'.format(
+                        res_hxl_ix['hxl_ix'].replace('ix_', '')),
+                }
+                geojson_properties_meta.append(_res)
+            # resutatum['@context'][_res['alias']] = _res['predicate']
 
-        # print('_hxl  > ', _hxl)
-        # # print('_hxl  > ', _hxl.habeo_attributa('ix_usworldnet'))
-        # print('_hxl  > ', _hxl.habeo_attributa__hxl_wdata('hxl_ix'))
-        # print('_item_bcp47  > ', _item_bcp47)
         caput_novo.append(_item_bcp47)
 
-    # print(caput)
-    # print(caput_novo)
-
-    res_novae = []
+    if len(geojson_properties_meta) > 0:
+        geojson_properties_meta = sorted(
+            geojson_properties_meta, key=lambda d: d['alias'])
+        # pass
+        for _res in geojson_properties_meta:
+            resutatum['@context'][_res['alias']] = _res['predicate']
 
     _, data = hxltm_carricato(
         fontem, est_stdin=False, punctum_separato=punctum_separato)
@@ -1329,30 +1318,12 @@ def numerordinatio_data__geojson(
             },
             "type": "Feature",
             'id': "urn:mdciii:{0}".format(linea[_index_numerordinatio]),
-            # 'properties': {
-            #     'x-todo': linea[_index_numerordinatio]
-            # },
             'properties': properties
         }
         resutatum['features'].append(res)
 
     if len(_invalid):
         resutatum['_missing'] = _invalid
-
-    # with open(fontem, 'r') as _fons:
-    #     _writer = csv.writer(sys.stdout, delimiter=punctum_separato)
-    #     _csv_reader = csv.reader(_fons, delimiter=punctum_separato)
-
-    #     # discard original header
-    #     next(_csv_reader)
-    #     # _writer.writerow(_header_original)
-    #     _writer.writerow(caput_novo)
-
-    #     for linea in _csv_reader:
-    #         linea_novae = linea
-    #         if len(res_novae) > 0:
-    #             linea_novae.extend(res_novae)
-    #         _writer.writerow(linea_novae)
 
     # print(json.dumps(resutatum, indent=2, ensure_ascii=False, sort_keys=True))
 

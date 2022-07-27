@@ -105,6 +105,18 @@ for datasets that already are highly reusable, as mere suggestion:
 ## GeoJSON
 > Initial discussion at https://github.com/EticaAI/lexicographi-sine-finibus/issues/48
 
+- Temporary example: https://geojson.io/#data=data:text/x-url,https://raw.githubusercontent.com/EticaAI/lsf-cache/main/1603/16/1/0/1603_16_1_0.data.ld.geojson
+  - https://jsonschema.dev/
+  - https://json-ld.org/playground/
+    - https://www.easyrdf.org/converter
+
+### How to merge back all data files with geojson
+> TODO needs testing:
+>
+> - https://stackoverflow.com/questions/60228327/use-jq-to-merge-keys-with-common-id
+> - https://stackoverflow.com/questions/71563226/combine-two-jsons-by-key-using-jq
+> - https://stackoverflow.com/questions/72609247/jq-how-to-left-join-and-merge-fields-from-two-input-json-files
+
 ## Other links
 <!--
 
