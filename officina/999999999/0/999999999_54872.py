@@ -1195,6 +1195,7 @@ def numerordinatio_data__geojson(
         "@context": {
             "@version": 1.1,
             "geojson": "https://purl.org/geojson/vocab#",
+            "wdata": "http://www.wikidata.org/wiki/Special:EntityData/",
             "Feature": "geojson:Feature",
             "FeatureCollection": "geojson:FeatureCollection",
             "Point": "geojson:Point",
@@ -1211,43 +1212,84 @@ def numerordinatio_data__geojson(
             "id": "@id",
             "properties": "geojson:properties",
             "type": "@type",
-            "description": "http://purl.org/dc/terms/description",
-            "title": "http://purl.org/dc/terms/title"
+            "x-iso3166p1a2": "wdata:P297",
+            "x-iso3166p1a3": "wdata:P298",
         },
         "type": "FeatureCollection",
         "features": [
             {
                 "type": "Feature",
-                "id": "urn:mdciii:123:456",
+                "id": "urn:mdciii:1603:16:24:0",
                 "geometry": {
                     "type": "Point",
                     "coordinates": [
-                        0.0,
-                        0.0
+                        17.35,
+                        -12.35
                     ]
                 },
                 "properties": {
-                    "title": "Null Island",
-                    "description": "A fictional island in the Gulf of Guinea"
+                    "x-iso3166p1a2": "AO",
+                    "x-iso3166p1a3": "AGO",
+                }
+            },
+            {
+                "type": "Feature",
+                "id": "urn:mdciii:1603:16:76:0",
+                "geometry": {
+                    "type": "Point",
+                    "coordinates": [
+                        -53.0,
+                        -14.0
+                    ]
+                },
+                "properties": {
+                    "x-iso3166p1a2": "BR",
+                    "x-iso3166p1a3": "BRA",
                 }
             }
         ]
     }
 
-    print(json.dumps(resutatum, indent=2, ensure_ascii=False, sort_keys=False))
+    caput, _data = hxltm_carricato_brevibus(
+        fontem, est_stdin=False, punctum_separato=punctum_separato)
 
-    # caput, _data = hxltm_carricato_brevibus(
-    #     fontem, est_stdin=False, punctum_separato=punctum_separato)
+    caput_novo = []
+    for _item in caput:
+        # print('hxl item     > ', _item)
+        _hxl = HXLHashtagSimplici(_item).praeparatio()
+        _item_bcp47 = _hxl.quod_bcp47(strictum=False)
+        # print('_item_bcp47  > ', _item_bcp47)
+        caput_novo.append(_item_bcp47)
 
-    # caput_novo = []
-    # for _item in caput:
-    #     # print('hxl item     > ', _item)
-    #     _hxl = HXLHashtagSimplici(_item).praeparatio()
-    #     _item_bcp47 = _hxl.quod_bcp47(strictum=False)
-    #     # print('_item_bcp47  > ', _item_bcp47)
-    #     caput_novo.append(_item_bcp47)
+    # print(caput)
+    # print(caput_novo)
 
-    # res_novae = []
+    res_novae = []
+
+    _index_numerordinatio = caput.index(
+        '#item+conceptum+numerordinatio')
+    # _index_numerordinatio = caput_novo.index(
+    #     'qcc-Zxxx-r-aMDCIII-alatnumerordinatio-anop-sU2200-s1603-snop')
+
+    _, data = hxltm_carricato(
+        fontem, est_stdin=False, punctum_separato=punctum_separato)
+
+    for linea in data:
+        res = {
+            'type': 'Feature',
+            'id': "urn:mdciii:{0}".format(linea[_index_numerordinatio]),
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    17.35,
+                    -12.35
+                ]
+            },
+            'properties': {
+                'x-todo': linea[_index_numerordinatio]
+            }
+        }
+        resutatum['features'].append(res)
 
     # with open(fontem, 'r') as _fons:
     #     _writer = csv.writer(sys.stdout, delimiter=punctum_separato)
@@ -1263,6 +1305,8 @@ def numerordinatio_data__geojson(
     #         if len(res_novae) > 0:
     #             linea_novae.extend(res_novae)
     #         _writer.writerow(linea_novae)
+
+    print(json.dumps(resutatum, indent=2, ensure_ascii=False, sort_keys=False))
 
 
 def numerordinatio_data__sortnames(
