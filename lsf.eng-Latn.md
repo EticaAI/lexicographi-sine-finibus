@@ -6,14 +6,20 @@
 ### Why LSF approach is designed to cope under heavy differences of opinions
 
 1. The main underlying goal are consistent encoding of **_universals (Q3551307)_** and viabilize both machine interoperability (such as ontology encoding or simpler to use versions) and human comprehension in their own native language (such as over 100's terminology language variants and visual assistance for composition of ideas).
-    - The encoding of **_particulars (Q6502323)_** for sake of pratical usages, even on the uncommon cases which are acceptable consensual and near to no disputes at global level, still done in such way that allow for voluntary acceptance.
-2. (...)
+    - The encoding of **_particulars (Q6502323)_** for sake of practical usages, even on the uncommon cases which are acceptable consensual and near to no disputes at global level, still done in such way that allow for voluntary acceptance, and even then another LSF cluster can be free to re-publish different different content, in special when related to individuals.
+2.
+3. The main strategy of encoding of universals not only opt for interlingual numeric taxonomy to maximize interoperability and long term reuse, but uses philosophical (_what things are in relation to the other things?_) in opposition of linguistic description (_how people label what this thing in real world?_)
+    - The internals of LSF are closer to the way scientific nomenclature is organized (but we're gave up on use Latin over numeric coding) than mere collection of terminology.
+4. (...)
+
+<!-- While the main users of LSF, as L means lexicographers, are about dictionaries, the structural encoding to allow a massive number of languages is ontology engineering. You must plan universals similar to how scientists use scientific nomenclature to describe a new living thing. -->
 
 <details>
 <summary>Examples of universals vs particulars</summary>
 
-1. In simple terms you have a table with data about administrative territories of top level (which might consider sovereign countries), the data contain **particulars**. The close to **universals** would be what allows the common features about such particulars such was "what is makes a sovereign country?" or "what means latitude?"
-  - both cases LSF would want to eventually have proposed labels for such univerals in each language and this must be globally consistent. 
+1. Let's assume you have table with data about administrative territories of top level (which might consider sovereign countries), the data contain **particulars**. The close to **universals** would be what allows the common features about such particulars such was _"what is makes a sovereign country?"_ or _"what means latitude?"_
+    1. For final user, means LSF is far more concerned with strict terminology (both human labels and computer undestanding) _how to label data_ in multiple languages, not so much about the data itself.
+    2. This example also allows understand one issue, which means LSF clusters can disagree with others in a way to support be useful in their focus region: as individuals (such as place) can be disputed, LSF is also optimized to not enforce an strict opinion as it allows customization at granular level
 
 </details>
 
