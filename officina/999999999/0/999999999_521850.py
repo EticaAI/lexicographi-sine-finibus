@@ -85,6 +85,8 @@ __EPILOGUM__ = """
 ------------------------------------------------------------------------------
     {0} --methodus-fonti=undata
 
+    {0} --methodus-fonti=undata --methodus=POP
+
     {0} --methodus-fonti=unhcr
 
     {0} --methodus-fonti=unochafts
@@ -107,13 +109,16 @@ __EPILOGUM__ = """
 ------------------------------------------------------------------------------
 """.format(__file__)
 
+# Other sources here https://pandasdmx.readthedocs.io/en/v1.0/
 DATA_SCRAPPING_HELP = {
     'UNDATA': [
-        'https://data.un.org/'
+        'https://data.un.org/',
+        'http://data.un.org/Host.aspx?Content=API',
     ],
     'UNHCR': [
         'https://www.unhcr.org/global-public-api.html',
         'https://data.unhcr.org/en/geoservices/',
+        'https://www.unhcr.org/refugee-statistics/',
     ],
     'UNOCHAFTS': [
         'https://fts.unocha.org/'
@@ -128,43 +133,22 @@ DATA_SCRAPPING_HELP = {
     ],
 }
 
-# LIKELY_NUMERIC = [
-#     '#item+conceptum+codicem',
-#     '#status+conceptum',
-#     '#item+rem+i_qcc+is_zxxx+ix_n1603',
-#     '#item+rem+i_qcc+is_zxxx+ix_iso5218',
-# ]
-# # https://en.wiktionary.org/wiki/tabula#Latin
-# XML_AD_CSV_TABULAE = {
-#     'CO_UNIDADE': 'CO_UNIDADE',
-#     'NO_FANTASIA': 'NO_FANTASIA',
-#     'CO_MUNICIPIO_GESTOR': 'CO_MUNICIPIO_GESTOR',
-#     'NU_CNPJ': 'NU_CNPJ',
-#     'CO_CNES': 'CO_CNES',
-#     'DT_ATUALIZACAO': 'DT_ATUALIZACAO',
-#     'TP_UNIDADE': 'TP_UNIDADE',
-# }
+# Some extra links
+# - http://data.un.org/Host.aspx?Content=API
+#   - Uses SDMX, https://sdmx.org/?page_id=4500
+#       - https://pandasdmx.readthedocs.io/en/v1.0/
+# - https://pandasdmx.readthedocs.io/en/v1.0/example.html
 
-# CSV_AD_HXLTM_TABULAE = {
-#     # @TODO: create wikiq
-#     'CO_UNIDADE': '#item+rem+i_qcc+is_zxxx+ix_brcnae',
-#     'NO_FANTASIA': '#meta+NO_FANTASIA',
-#     'CO_MUNICIPIO_GESTOR': '#item+rem+i_qcc+is_zxxx+ix_wdatap1585',
-#     'NU_CNPJ': '#item+rem+i_qcc+is_zxxx+ix_wdatap6204',
-#     'CO_CNES': '#meta+CO_CNES',
-#     'DT_ATUALIZACAO': '#meta+DT_ATUALIZACAO',
-#     'TP_UNIDADE': '#meta+TP_UNIDADE',
-# }
 
-# SYSTEMA_SARCINAE = str(Path(__file__).parent.resolve())
-# PROGRAMMA_SARCINAE = str(Path().resolve())
-# ARCHIVUM_CONFIGURATIONI_DEFALLO = [
-#     SYSTEMA_SARCINAE + '/' + NOMEN + '.meta.yml',
-#     PROGRAMMA_SARCINAE + '/' + NOMEN + '.meta.yml',
-# ]
+# FTS (do not use SDMX)
+# - https://api.hpc.tools/docs/v1/
+#   - https://api.hpc.tools/v1/public/fts/flow?year=2016
+#   - https://api.hpc.tools/v1/public/location
+#   - https://api.hpc.tools/v1/public/organization
+#   - https://api.hpc.tools/v1/public/plan/country/SDN
 
-# ./999999999/0/999999999_521850.py 999999/0/1603_1_1--old.csv 999999/0/1603_1_1--new.csv
-
+# Triangulation, maybe?
+# - https://www.devex.com/news/funding-tracker-who-s-sending-aid-to-ukraine-102887
 
 class Cli:
 
@@ -293,7 +277,11 @@ class Cli:
             if pyargs.methodus == 'help':
                 print(DATA_SCRAPPING_HELP['UNDATA'])
                 return self.EXIT_OK
-            raise NotImplementedError
+
+            ds_undata = DataScrappingUNDATA(
+                pyargs.methodus, pyargs.objectivum_formato)
+            ds_undata.praeparatio()
+            # ds_undata.imprimere()
             return self.EXIT_OK
 
         if pyargs.methodus_fonti == 'unhcr':
@@ -327,6 +315,11 @@ class Cli:
 
 
 class DataScrapping:
+
+    def __init__(self, methodus: str, objectivum_formato: str):
+
+        self.methodus = methodus
+        self.objectivum_formato = objectivum_formato
 
     def _hxlize_dummy(self, caput: list):
         resultatum = []
@@ -379,6 +372,66 @@ class DataScrapping:
         # print("TODO")
 
 
+class DataScrappingUNDATA(DataScrapping):
+    def praeparatio(self):
+        """praeparātiō
+
+        Trivia:
+        - praeparātiō, s, f, Nom., https://en.wiktionary.org/wiki/praeparatio
+        """
+
+        # pip install pandasdmx[cache]
+
+        import pandasdmx as sdmx
+        estat = sdmx.Request('ESTAT')
+        metadata = estat.datastructure('DSD_une_rt_a')
+        print(metadata)
+
+        for cl in 'CL_AGE', 'CL_UNIT':
+            print(sdmx.to_pandas(metadata.codelist[cl]))
+        resp = estat.data(
+            'une_rt_a',
+            key={'GEO': 'EL+ES+IE'},
+            params={'startPeriod': '2007'},
+            )
+        data = resp.to_pandas(
+            datetime={'dim': 'TIME_PERIOD', 'freq': 'FREQ'}).xs('Y15-74', level='AGE',
+                axis=1, drop_level=False)
+        print(data.columns.names)
+        print(data.columns.levels)
+
+        print(data.loc[:, ('Y15-74', 'PC_ACT', 'T')])
+
+        print('')
+        print('')
+        print('')
+        print('UNSD')
+
+        unsd = sdmx.Request('UNSD')
+        print(unsd)
+        # unsd = Request('UNSD')
+        cat_response = unsd.categoryscheme()
+        print(cat_response)
+        # https://pandasdmx.readthedocs.io/en/v1.0/howto.html#use-category-schemes-to-explore-data
+        print('UNSD all categories list')
+        print(sdmx.to_pandas(cat_response.category_scheme.UNdata_Categories))
+        # # print(cat_response.write().categoryscheme)
+        # # dsd_id = unsd.categoryscheme().dataflow.NA_MAIN.structure.id
+        # # dsd_response = unsd.datastructure(resource_id = dsd_id)
+        # print('')
+        # print('')
+        # print('')
+        # print('UNICEF')
+
+        # unicef = sdmx.Request('UNICEF')
+        # print(unicef)
+
+        # @see https://pandasdmx.readthedocs.io/en/v1.0/example.html
+        # @see https://pandasdmx.readthedocs.io/en/v1.0/walkthrough.html
+        print('TODO')
+        pass
+
+
 class DataScrappingWorldbank(DataScrapping):
 
     methodus: str = 'SP.POP.TOTL'
@@ -388,12 +441,7 @@ class DataScrappingWorldbank(DataScrapping):
     temp_fonti_csv: str = ''
     temp_fonti_hxltm: str = ''
 
-    def __init__(self, methodus: str, objectivum_formato: str):
-
-        self.methodus = methodus
-        self.objectivum_formato = objectivum_formato
-
-        # print('oioioi', self.dictionaria_codex )
+    # print('oioioi', self.dictionaria_codex )
 
     def imprimere(self, formatum: str = None) -> list:
 
