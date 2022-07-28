@@ -1,9 +1,30 @@
 # Lexicographers Without Borders - Quickstart
 - **Created**: 2022-07-15T05:31:00Z
 
+## General focus of LSF
+
+### Why LSF approach is designed to cope under heavy differences of opinions
+
+1. The main underlying goal are consistent encoding of **_universals (Q3551307)_** and viabilize both machine interoperability (such as ontology encoding or simpler to use versions) and human comprehension in their own native language (such as over 100's terminology language variants and visual assistance for composition of ideas).
+    - The encoding of **_particulars (Q6502323)_** for sake of pratical usages, even on the uncommon cases which are acceptable consensual and near to no disputes at global level, still done in such way that allow for voluntary acceptance.
+2. (...)
+
+<details>
+<summary>Examples of universals vs particulars</summary>
+
+1. In simple terms you have a table with data about administrative territories of top level (which might consider sovereign countries), the data contain **particulars**. The close to **universals** would be what allows the common features about such particulars such was "what is makes a sovereign country?" or "what means latitude?"
+  - both cases LSF would want to eventually have proposed labels for such univerals in each language and this must be globally consistent. 
+
+</details>
+
+
+## Advanced aspects
+
 Note: this document is a quick draft of a top level overview. It migth take time to have a minimal usable description.
 
-## Simplified explanation of operational stages 0, 1 and 2 for LSF
+- **Last change**: 2022-07-15
+
+### Simplified explanation of operational stages 0, 1 and 2 for LSF
 
 Visible to the external world, the deliverables and workflow of LSF can have two operational stages to allow continuous bootstrapping of new dictionaries while allowing different focused audiences.
 Stage 0 is a special case, mostly for primitive self-checks.
@@ -11,10 +32,10 @@ Stage 0 is a special case, mostly for primitive self-checks.
 Stage 1 tries to be a baseline to enable several stage 2 releases with localization beyond mere language.
 However, as of 2022-07-15, LSF is creating stage 1 and even if this evolves to have endorsed stage 2, it could take years.
 
-### From dictionary user perspective
+#### From dictionary user perspective
 
 
-#### Stage 0
+##### Stage 0
 
 LSF stage 0 can be explained as automated strategies to ensure correctness of releases from stage 1 and potentially simplistic checks for stage 2. 
 At minimum, it can be as simple generic file format validations.
@@ -22,13 +43,13 @@ However, as the dictionaries themselves are able do document other dictionaries,
 next automations of stage 0 can be based on previous releases.
 
 
-#### Stage 1
+##### Stage 1
 
 As the goal of stage 1 operation mode is preparation for stage 2.
 
 > TODO improve this part.
 
-#### Stage 2
+##### Stage 2
 
 Stage 2 targets the actual end users of dictionaries not only in the natural language they prefer, but in a meaningful way they are useful under the jurisdiction (the "country/territory you live") or as existing areas of knowledge exchange (such as data about diseases between different regions) they would be used.
 
@@ -48,12 +69,12 @@ but humans cannot have the dexterity to deal with the level of details OR the er
 -->
 
 
-### Analogy to computer science bootstrapping
+#### Analogy to computer science bootstrapping
 
-#### Stage 0
+##### Stage 0
 > @TODO give quick comment
 
-#### Stage 1
+##### Stage 1
 
 - **Function (ontological sense: reason to exist)**:
   - Minimal functionality for Stage 2
@@ -62,12 +83,12 @@ but humans cannot have the dexterity to deal with the level of details OR the er
   - Use external controlled vocabularies to document own taxonomy.
   - Provide linguitic terminology to document own taxonomy.
 
-#### Stage 2
+##### Stage 2
 > @TODO draft this part
 
-### Analogy to ethical points of view
+#### Analogy to ethical points of view
 
-#### Stage 0
+##### Stage 0
 
 Stage 0 would include most primitive _commom sense_ which regardless of moral points of view could lead to bad consequences. However, even if could be possible make rule-based inferences with implementations such as OWL, and also recommend humans to not abuse fallacious arguments, from a lexicographical point of view, we would label stage 0 strategies to mitigate very basic errors likely in automated ways or at least warn humans of something which may conflict with stage 1 or stage 2.
 
@@ -77,7 +98,7 @@ A common point of stage 0 would be strategies to know if a content is stale and 
 
 Please note that the difference between what humans could consider stage 0 unlikely to have disagreements and what can realistically be done as part of automation workflows is huge. This can evolve over time.
 
-#### Stage 1
+##### Stage 1
 
 SF stage 1 lexicography applies what in Western culture would be called **deontological ethics**. Good/bad are evaluated by the action itself, not by the consequences. It's a rigid thinking, often simplistic to a point of even when there's disagreement which could make stage 1 not direct reusable o stage 2, at least is predictable and, very important feature, **different world regions can have experts which can mimic this thinking** while they can still have personal biases or be aware of they jurisdiction.
 
@@ -85,7 +106,7 @@ In terminology, the direct impact would make it viable to be reusable for bootst
 
 This deontological approach makes things predictable, especially under stress. Another strong point (which is less moralistic) is to avoid exceptionalism: rules so specific which would apply to near one individual can't be encoded as stage 1.
 
-#### Stage 2
+##### Stage 2
 
 LSF stage 2 lexicography not only can adhere to the opinion of the region of the target audience, but is free to apply other moral philosophies than the rigid deontological ethics. For example utilitarianism or consequentialism can forbid deontological justifications under certain circumstances far more common in the real world, such as what to do when resources are scarce.
 
