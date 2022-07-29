@@ -13,6 +13,8 @@
 #       OPTIONS:  ---
 #
 #  REQUIREMENTS:  - python3
+#                   - pip install xlrd
+#                   - pip install pandasdmx
 #          BUGS:  ---
 #         NOTES:  ---
 #       AUTHORS:  Emerson Rocha <rocha[at]ieee.org>
@@ -48,15 +50,21 @@ from L999999999_0 import (
 
 import requests
 
+# try:
+#     from openpyxl import (
+#         load_workbook
+#     )
+# except ModuleNotFoundError:
+#     # Error handling
+#     pass
+
 try:
-    from openpyxl import (
-        load_workbook
-    )
+    import xlrd
 except ModuleNotFoundError:
     # Error handling
     pass
 try:
-    import xlrd
+    import pandasdmx as sdmx
 except ModuleNotFoundError:
     # Error handling
     pass
@@ -103,6 +111,8 @@ __EPILOGUM__ = """
 
     {0} --methodus-fonti=worldbank --methodus=SP.POP.TOTL \
 --objectivum-formato=hxltm
+
+    {0} --methodus-fonti=sdmx-tests
 
 ------------------------------------------------------------------------------
                             EXEMPLŌRUM GRATIĀ
@@ -188,6 +198,7 @@ class Cli:
                           # https://data.unhcr.org/en/geoservices/
                 'unwpf',  # https://geonode.wfp.org/
                 'worldbank',  # https://data.worldbank.org/
+                'sdmx-tests',
             ],
             # required=True
             default='undata'
@@ -310,6 +321,74 @@ class Cli:
             ds_worldbank.imprimere()
             return self.EXIT_OK
 
+        if pyargs.methodus_fonti == 'sdmx-tests':
+
+            sdmx_wb = sdmx.Request('WB')
+            cat_response = sdmx_wb.categoryscheme()
+            print(cat_response)
+
+            print('WB all categories list')
+            print(sdmx.to_pandas(cat_response.category_scheme.WITS_Data))
+
+            print('')
+            print('')
+            print('')
+            print('WB_WDI')
+
+            sdmx_wb_wdi = sdmx.Request('WB_WDI')
+            cat_response = sdmx_wb_wdi.categoryscheme()
+            print(cat_response)
+
+            return True
+
+            estat = sdmx.Request('ESTAT')
+            metadata = estat.datastructure('DSD_une_rt_a')
+            print(metadata)
+
+            for cl in 'CL_AGE', 'CL_UNIT':
+                print(sdmx.to_pandas(metadata.codelist[cl]))
+            resp = estat.data(
+                'une_rt_a',
+                key={'GEO': 'EL+ES+IE'},
+                params={'startPeriod': '2007'},
+            )
+            data = resp.to_pandas(
+                datetime={'dim': 'TIME_PERIOD', 'freq': 'FREQ'}).xs(
+                    'Y15-74', level='AGE', axis=1, drop_level=False)
+            print(data.columns.names)
+            print(data.columns.levels)
+
+            print(data.loc[:, ('Y15-74', 'PC_ACT', 'T')])
+
+            print('')
+            print('')
+            print('')
+            print('UNSD')
+
+            unsd = sdmx.Request('UNSD')
+            print(unsd)
+            # unsd = Request('UNSD')
+            cat_response = unsd.categoryscheme()
+            print(cat_response)
+            # https://pandasdmx.readthedocs.io/en/v1.0/howto.html#use-category-schemes-to-explore-data
+            print('UNSD all categories list')
+            print(sdmx.to_pandas(cat_response.category_scheme.UNdata_Categories))
+            # # print(cat_response.write().categoryscheme)
+            # # dsd_id = unsd.categoryscheme().dataflow.NA_MAIN.structure.id
+            # # dsd_response = unsd.datastructure(resource_id = dsd_id)
+            # print('')
+            # print('')
+            # print('')
+            # print('UNICEF')
+
+            # unicef = sdmx.Request('UNICEF')
+            # print(unicef)
+
+            # @see https://pandasdmx.readthedocs.io/en/v1.0/example.html
+            # @see https://pandasdmx.readthedocs.io/en/v1.0/walkthrough.html
+            print('TODO')
+            return self.EXIT_OK
+
         print('Unknow option.')
         return self.EXIT_ERROR
 
@@ -382,7 +461,7 @@ class DataScrappingUNDATA(DataScrapping):
 
         # pip install pandasdmx[cache]
 
-        import pandasdmx as sdmx
+        # import pandasdmx as sdmx
         estat = sdmx.Request('ESTAT')
         metadata = estat.datastructure('DSD_une_rt_a')
         print(metadata)
@@ -393,10 +472,10 @@ class DataScrappingUNDATA(DataScrapping):
             'une_rt_a',
             key={'GEO': 'EL+ES+IE'},
             params={'startPeriod': '2007'},
-            )
+        )
         data = resp.to_pandas(
-            datetime={'dim': 'TIME_PERIOD', 'freq': 'FREQ'}).xs('Y15-74', level='AGE',
-                axis=1, drop_level=False)
+            datetime={'dim': 'TIME_PERIOD', 'freq': 'FREQ'}).xs(
+                'Y15-74', level='AGE', axis=1, drop_level=False)
         print(data.columns.names)
         print(data.columns.levels)
 
