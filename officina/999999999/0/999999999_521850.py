@@ -323,6 +323,45 @@ class Cli:
 
         if pyargs.methodus_fonti == 'sdmx-tests':
 
+            # @see https://registry.sdmx.org/organisations/agencies.html#
+            # @see https://registry.sdmx.org/items/conceptscheme.html
+            # @see https://pandasdmx.readthedocs.io/
+
+            print('')
+            print('')
+            print('')
+            print('UNSD')
+
+            unsd = sdmx.Request('UNSD')
+            print(unsd)
+            cat_response = unsd.categoryscheme()
+            print(cat_response)
+            print('')
+            print('dataflow')
+
+            print('')
+            print('  >>> UNSD all dataflows <<<')
+            unsd_dataflow = unsd.dataflow()
+            print('unsd_dataflow.response.url', unsd_dataflow.response.url)
+            dataflows = sdmx.to_pandas(unsd_dataflow.dataflow)
+            print(dataflows.head())
+            return True
+
+
+            print('')
+            print('')
+            print(unsd_dataflow)
+            for _item in unsd_dataflow:
+                print(_item)
+            print('')
+            print('unsd_dataflow.DF_UNDATA_COUNTRYDATA ')
+            print(unsd_dataflow.dataflow.DF_UNDATA_COUNTRYDATA)
+            # https://pandasdmx.readthedocs.io/en/v1.0/howto.html#use-category-schemes-to-explore-data
+            print('UNSD all categories list')
+            print(sdmx.to_pandas(cat_response.category_scheme.UNdata_Categories))
+            print('')
+            print('')
+
             sdmx_wb = sdmx.Request('WB')
             cat_response = sdmx_wb.categoryscheme()
             print(cat_response)
@@ -335,9 +374,24 @@ class Cli:
             print('')
             print('WB_WDI')
 
+            # @see https://datahelpdesk.worldbank.org/knowledgebase/articles/1886701-sdmx-api-queries
             sdmx_wb_wdi = sdmx.Request('WB_WDI')
-            cat_response = sdmx_wb_wdi.categoryscheme()
-            print(cat_response)
+            # sdmx.
+            print(sdmx_wb_wdi)
+            print(sdmx_wb_wdi.__dict__)
+            print('sdmx_wb_wdi.codelist')
+            print(sdmx_wb_wdi.codelist)
+            # print(sdmx_wb_wdi.categoryscheme())
+            # cat_response = sdmx_wb_wdi.categoryscheme()
+            # print(cat_response)
+
+            # print('')
+            # print('')
+            # print('')
+            # metadata = sdmx_wb_wdi.datastructure('A.SP_POP_TOTL.AFG')
+            # print(metadata)
+            # print(metadata.codelist)
+            # print(metadata.codelist.__dict__)
 
             return True
 
@@ -460,6 +514,10 @@ class DataScrappingUNDATA(DataScrapping):
         """
 
         # pip install pandasdmx[cache]
+
+        ## Population per city and sex (Somewhat incomplete, but have CENSUS)
+        # http://data.un.org/Data.aspx?d=POP&f=tableCode%3a240
+        # http://data.un.org/Data.aspx?d=POP&f=tableCode%3a240&c=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18&s=_countryEnglishNameOrderBy:asc,refYear:desc,areaCode:asc&v=1
 
         # import pandasdmx as sdmx
         estat = sdmx.Request('ESTAT')
