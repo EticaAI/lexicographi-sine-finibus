@@ -33,6 +33,7 @@ import csv
 # import re
 from pathlib import Path
 from os.path import exists
+from time import sleep
 
 # from functools import reduce
 from typing import (
@@ -119,9 +120,11 @@ __EPILOGUM__ = """
 (Individual humans) . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 See https://interpol.api.bund.dev/
 
-    {0} --methodus-fonti=interpol --methodus=red
+    {0} --methodus-fonti=interpol --methodus=red \
+--archivum-objetivum=999999/0/interpol-red.tm.hxl.csv
 
-    {0} --methodus-fonti=interpol --methodus=un
+    {0} --methodus-fonti=interpol --methodus=un \
+--archivum-objetivum=999999/0/interpol-un.tm.hxl.csv
 
 
 ------------------------------------------------------------------------------
@@ -299,6 +302,14 @@ class Cli:
         #     nargs='?'
         # )
 
+        parser.add_argument(
+            '--archivum-objetivum',
+            help='Output file (for looping operations)',
+            dest='archivum_objetivum',
+            nargs='?',
+            default=None
+        )
+
         return parser.parse_args()
 
     def execute_cli(self, pyargs, stdin=STDIN, stdout=sys.stdout,
@@ -338,7 +349,8 @@ class Cli:
                 return self.EXIT_OK
 
             ds_interpol = DataScrappingInterpol(
-                pyargs.methodus, pyargs.objectivum_formato)
+                pyargs.methodus, pyargs.objectivum_formato,
+                pyargs.archivum_objetivum)
             ds_interpol.praeparatio()
             # ds_undata.imprimere()
             return self.EXIT_OK
@@ -581,6 +593,91 @@ class DataScrappingInterpol(DataScrapping):
 
     link_fonti: str = 'https://interpol.api.bund.dev/'
 
+    def __init__(self, methodus: str, objectivum_formato: str, archivum_objetivum: str):
+
+        _allowed_types = [
+            'red', 'yellow', 'un'
+        ]
+
+        if methodus not in _allowed_types:
+            raise ValueError(
+                'objectivum_formato [{0}]?'.format(methodus))
+
+        self.methodus = methodus
+        self.objectivum_formato = objectivum_formato
+        if not archivum_objetivum:
+            raise ValueError('--archivum-objetivum ?')
+        self.archivum_objetivum = archivum_objetivum
+
+        self.data_notices = []
+        self.data_notices_tabular = []
+
+        self._resultPerPage = 160
+        self._page = 1
+        self._total = None
+        self._done = False
+
+        self._datafields = [
+            'entity_id',
+            'un_reference',
+            'name',
+            'forename',
+            'date_of_birth',
+            'nationalities',
+            # '_links.self',
+        ]
+
+    def _quod_url(self) -> str:
+        url = 'https://ws-public.interpol.int/' + \
+            'notices/v1/{0}?resultPerPage={1}'.format(
+                self.methodus, self._resultPerPage)
+        return url
+
+    def _quod_request(self) -> str:
+        _url = self._quod_url()
+        print(_url)
+        r = requests.get(_url)
+        print(r)
+
+        result = r.json()
+
+        self._total = result['total']
+        self.data_notices.extend(
+            result['_embedded']['notices']
+        )
+
+        if result['_links']['self']['href'] == result['_links']['last']['href']:
+            self._done = True
+
+        return result
+
+    def _praeparatio_tabulae(self) -> str:
+
+        caput = []
+        for item in self.data_notices:
+            if len(caput) == 0:
+                for _maybe in self._datafields:
+                    if _maybe in item:
+                        caput.append(_maybe)
+                caput.append('_links.self')
+                self.data_notices_tabular.append(caput)
+
+            linea = []
+            for _maybe in self._datafields:
+                if _maybe in item:
+                    if isinstance(item[_maybe], list):
+                        linea.append('|'.join(item[_maybe]))
+                    else:
+                        linea.append(item[_maybe])
+
+            # if item['_links']['self']['href']
+
+            linea.append(item['_links']['self']['href'])
+
+            self.data_notices_tabular.append(linea)
+
+        return True
+
     def imprimere(self, formatum: str = None) -> list:
 
         if self.objectivum_formato == 'link-fonti':
@@ -598,7 +695,30 @@ class DataScrappingInterpol(DataScrapping):
             # print(self.link_fonti)
             return True
 
-        print('@TODO', __class__.__name__)
+        # print('@TODO', __class__.__name__)
+
+        while (self._page == 1 and self._total == None) or self._done is False:
+            # print(self._quod_request())
+            self._quod_request()
+            if self._done is True:
+                print('DONE!')
+                break
+            print('sleep 10...')
+            sleep(10)
+
+        self._praeparatio_tabulae()
+        print('')
+        print('')
+        print('')
+        print('')
+        # print(self.data_notices_tabular)
+
+        with open(self.archivum_objetivum, "w") as write_file:
+            for linea in self.data_notices_tabular:
+                _writer = csv.writer(write_file)
+                _writer.writerow(linea)
+
+        print('saved at {0}'.format(self.archivum_objetivum))
 
 
 class DataScrappingUNDATA(DataScrapping):
