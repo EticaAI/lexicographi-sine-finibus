@@ -143,6 +143,25 @@ DATA_SCRAPPING_HELP = {
     ],
 }
 
+DATA_HXL_DE_CSV_GENERIC = {
+    'country name': '#country+name',
+    'country code': '#country+code+v_iso3',  # World Bank
+    'indicator name': '#indicator+name',  # World Bank
+    'indicator code': '#indicator+code',  # World Bank
+}
+
+DATA_HXL_DE_CSV_REGEX = {
+    # @see https://data.humdata.org/tools/hxl-example/
+    'worldbank': {
+        # Only for numeric
+        'SP.POP.TOTL': '#population+t+year{0}',
+        # https://data.worldbank.org/indicator/SP.POP.TOTL.MA.IN
+        'SP.POP.TOTL.MA.IN': '#population+m+year{0}',
+        # https://data.worldbank.org/indicator/SP.POP.TOTL.FE.IN
+        'SP.POP.TOTL.FE.IN': '#population+f+year{0}',
+    }
+}
+
 # Some extra links
 # - http://data.un.org/Host.aspx?Content=API
 #   - Uses SDMX, https://sdmx.org/?page_id=4500
@@ -347,7 +366,6 @@ class Cli:
             print(dataflows.head())
             return True
 
-
             print('')
             print('')
             print(unsd_dataflow)
@@ -459,11 +477,25 @@ class DataScrapping:
         for res in caput:
             if not res:
                 resultatum.append('')
-            else:
-                resultatum.append(
-                    '#meta+{0}'.format(res.lower().strip().replace(' ',
-                                       '').replace('-', '_'))
-                )
+                continue
+            if res.lower().strip() in DATA_HXL_DE_CSV_GENERIC:
+                resultatum.append(DATA_HXL_DE_CSV_GENERIC[res.lower().strip()])
+                continue
+
+            # raise ValueError(self.__dict__)
+            if self.methodus in DATA_HXL_DE_CSV_REGEX['worldbank'].keys():
+
+                # @TODO make a better check on this rule
+                if len(res) == 4:
+                    resultatum.append(DATA_HXL_DE_CSV_REGEX[
+                        'worldbank'][self.methodus].format(res))
+                    continue
+
+            resultatum.append(
+                '#meta+{0}'.format(
+                    res.lower().strip().replace(
+                        ' ', '').replace('-', '_'))
+            )
         return resultatum
 
     def de_csv_ad_csvnorm(self, fonti: str, objetivum: str, caput_initiali: list):
@@ -515,7 +547,7 @@ class DataScrappingUNDATA(DataScrapping):
 
         # pip install pandasdmx[cache]
 
-        ## Population per city and sex (Somewhat incomplete, but have CENSUS)
+        # Population per city and sex (Somewhat incomplete, but have CENSUS)
         # http://data.un.org/Data.aspx?d=POP&f=tableCode%3a240
         # http://data.un.org/Data.aspx?d=POP&f=tableCode%3a240&c=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18&s=_countryEnglishNameOrderBy:asc,refYear:desc,areaCode:asc&v=1
 
@@ -602,6 +634,7 @@ class DataScrappingWorldbank(DataScrapping):
         Trivia:
         - praeparātiō, s, f, Nom., https://en.wiktionary.org/wiki/praeparatio
         """
+        # return True
         if self.objectivum_formato == 'link-fonti':
             # print(self.link_fonti)
             return True
