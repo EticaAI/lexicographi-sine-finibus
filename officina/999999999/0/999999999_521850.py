@@ -91,6 +91,8 @@ __EPILOGUM__ = """
 ------------------------------------------------------------------------------
                             EXEMPLŌRUM GRATIĀ
 ------------------------------------------------------------------------------
+(Collective of humans / adm0 statistics) . . . . . . . . . . . . . . . . . . . .
+
     {0} --methodus-fonti=undata
 
     {0} --methodus-fonti=undata --methodus=POP
@@ -114,6 +116,14 @@ __EPILOGUM__ = """
 
     {0} --methodus-fonti=sdmx-tests
 
+(Individual humans) . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+See https://interpol.api.bund.dev/
+
+    {0} --methodus-fonti=interpol --methodus=red
+
+    {0} --methodus-fonti=interpol --methodus=un
+
+
 ------------------------------------------------------------------------------
                             EXEMPLŌRUM GRATIĀ
 ------------------------------------------------------------------------------
@@ -121,6 +131,9 @@ __EPILOGUM__ = """
 
 # Other sources here https://pandasdmx.readthedocs.io/en/v1.0/
 DATA_SCRAPPING_HELP = {
+    'INTERPOL': [
+        'https://interpol.api.bund.dev/',
+    ],
     'UNDATA': [
         'https://data.un.org/',
         'http://data.un.org/Host.aspx?Content=API',
@@ -152,15 +165,30 @@ DATA_HXL_DE_CSV_GENERIC = {
 
 DATA_HXL_DE_CSV_REGEX = {
     # @see https://data.humdata.org/tools/hxl-example/
+    # @see https://data.worldbank.org/indicator
     'worldbank': {
+
+        # Population statistics, thematic
         # Only for numeric
         'SP.POP.TOTL': '#population+t+year{0}',
         # https://data.worldbank.org/indicator/SP.POP.TOTL.MA.IN
         'SP.POP.TOTL.MA.IN': '#population+m+year{0}',
         # https://data.worldbank.org/indicator/SP.POP.TOTL.FE.IN
         'SP.POP.TOTL.FE.IN': '#population+f+year{0}',
+
+        # Money related, thematic
+        # https://data.worldbank.org/indicator/BX.GRT.EXTA.CD.WD?view=chart
+        'BX.GRT.EXTA.CD.WD': '#value+funding+usd+year{0}',
+        # https://data.worldbank.org/indicator/BX.GRT.TECH.CD.WD?view=chart
+        'BX.GRT.TECH.CD.WD': '#value+funding+usd+year{0}',
+
+        # TODOs
+        # GINI https://data.worldbank.org/indicator/SI.POV.GINI?view=chart
+        # Redugees https://data.worldbank.org/indicator/SM.POP.REFG?view=chart
     }
 }
+
+# @TODO https://api.hpc.tools/v1/public/fts/flow?year=2022
 
 # Some extra links
 # - http://data.un.org/Host.aspx?Content=API
@@ -211,6 +239,7 @@ class Cli:
             dest='methodus_fonti',
             nargs='?',
             choices=[
+                'interpol',  # https://interpol.api.bund.dev/
                 'undata',  # https://data.un.org/
                 'unochafts',  # https://fts.unocha.org/
                 'unhcr',  # https://www.unhcr.org/global-public-api.html
@@ -302,6 +331,17 @@ class Cli:
         #         codicem = line.replace('\n', ' ').replace('\r', '')
 
         # hf = CliMain(self.pyargs.infile, self.pyargs.outfile)
+
+        if pyargs.methodus_fonti == 'interpol':
+            if pyargs.methodus == 'help':
+                print(DATA_SCRAPPING_HELP['INTERPOL'])
+                return self.EXIT_OK
+
+            ds_interpol = DataScrappingInterpol(
+                pyargs.methodus, pyargs.objectivum_formato)
+            ds_interpol.praeparatio()
+            # ds_undata.imprimere()
+            return self.EXIT_OK
 
         if pyargs.methodus_fonti == 'undata':
             if pyargs.methodus == 'help':
@@ -535,6 +575,30 @@ class DataScrapping:
                     _csv_writer.writerow(linea)
 
         # print("TODO")
+
+
+class DataScrappingInterpol(DataScrapping):
+
+    link_fonti: str = 'https://interpol.api.bund.dev/'
+
+    def imprimere(self, formatum: str = None) -> list:
+
+        if self.objectivum_formato == 'link-fonti':
+            print(self.link_fonti)
+            return True
+
+    def praeparatio(self):
+        """praeparātiō
+
+        Trivia:
+        - praeparātiō, s, f, Nom., https://en.wiktionary.org/wiki/praeparatio
+        """
+        # return True
+        if self.objectivum_formato == 'link-fonti':
+            # print(self.link_fonti)
+            return True
+
+        print('@TODO', __class__.__name__)
 
 
 class DataScrappingUNDATA(DataScrapping):

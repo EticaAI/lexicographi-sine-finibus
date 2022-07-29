@@ -99,3 +99,10 @@ UNData
 
 - Male, 35-39 http://data.un.org/Data.aspx?q=population&d=PopDiv&f=variableID%3a1070%3btimeID%3a88&c=0,1,2,3,4,5,6,7&s=_crEngNameOrderBy:asc,_timeEngNameOrderBy:desc,_varEngNameOrderBy:asc&v=1
 -->
+
+<!--
+## Ontology example of person (as individual)
+### Interpol red notices
+- https://interpol.api.bund.dev/
+  - https://ws-public.interpol.int/notices/v1/red?nationality=BR&resultPerPage=200&page=1
+-->
