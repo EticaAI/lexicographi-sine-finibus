@@ -49,6 +49,7 @@ import zipfile
 from L999999999_0 import (
     # hxltm_carricato,
     NUMERORDINATIO_BASIM,
+    numerordinatio_neo_separatum,
     # TabulaAdHXLTM
 )
 
@@ -219,6 +220,11 @@ DATA_HXLTM_DE_HXL_GENERIC = {
     # '#item+rem+i_qcc+is_zxxx+ix_xywdatap1539': r"^#population\+f$",
     # # male population (P1540)
     # '#item+rem+i_qcc+is_zxxx+ix_xywdatap1540': r"^#population\+m$",
+}
+
+DATA_NO1_DE_HXLTM_GENERIC = {
+    # '^(?P<t>#[a-z0-9]{3,99})\+rem\+i_qcc\+is_zxxx\+ix_xywdatap(?P<v2>[0-9]{1,12})'
+    '#{t}+rem+i_qcc+is_zxxx+ix_iso8601v{v1}+rdf_p_wdata_p{v2}_s{trivio}': r"^#(?P<t>[a-z0-9]{3,99})\+rem\+i_qcc\+is_zxxx\+ix_iso8601v(?P<v1>[0-9]{4})\+ix_xywdatap(?P<v2>[0-9]{1,12})"
 }
 
 DATA_HXL_DE_CSV_REGEX = {
@@ -454,6 +460,24 @@ class Cli:
             default=None
         )
 
+        parser.add_argument(
+            '--numerordinatio-praefixo',
+            help='Numerordĭnātĭo prefix',
+            dest='numerordinatio_praefixo',
+            nargs='?',
+            default='999999:0'
+        )
+
+        parser.add_argument(
+            '--rdf-trivio',
+            help='(Advanced) RDF bag; extract triples from tabular data from '
+            'other groups than 1603',
+            dest='rdf_trivio',
+            nargs='?',
+            # required=True,
+            default='1603'
+        )
+
         return parser.parse_args()
 
     def execute_cli(self, pyargs, stdin=STDIN, stdout=sys.stdout,
@@ -531,7 +555,8 @@ class Cli:
         if pyargs.methodus_fonti == 'worldbank':
             # print(DATA_SCRAPPING_HELP['WORLDBANK'])
             ds_worldbank = DataScrappingWorldbank(
-                pyargs.methodus, pyargs.objectivum_formato)
+                pyargs.methodus, pyargs.objectivum_formato,
+                pyargs.numerordinatio_praefixo, pyargs.rdf_trivio)
             ds_worldbank.praeparatio()
             ds_worldbank.imprimere()
             return self.EXIT_OK
@@ -663,9 +688,21 @@ class Cli:
 
 class DataScrapping:
 
-    def __init__(self, methodus: str, objectivum_formato: str):
+    def __init__(
+        self, methodus: str,
+        objectivum_formato: str,
+        numerordinatio_praefixo: str = '999999:0',
+        rdf_trivio: str = '1603'
+    ):
 
         self.methodus = methodus
+        if numerordinatio_praefixo:
+            self.numerordinatio_praefixo = numerordinatio_neo_separatum(
+                numerordinatio_praefixo, ':'
+            )
+        # if rdf_trivio:
+        self.rdf_trivio = rdf_trivio
+
         self.objectivum_formato = objectivum_formato
         self._temp = {}
 
@@ -751,20 +788,68 @@ class DataScrapping:
             )
         return resultatum
 
-    def de_csv_ad_csvnorm(self, fonti: str, objetivum: str, caput_initiali: list):
+    def _no1lize(self, caput: list):
+        resultatum = []
+        for res in caput:
+            if not res:
+                resultatum.append('')
+                continue
+
+            _done = False
+            for _ht_novo, _ht_retest in DATA_NO1_DE_HXLTM_GENERIC.items():
+
+                if isinstance(_ht_retest, str) and _ht_retest == res:
+                    resultatum.append(_ht_novo)
+                    _done = True
+                    break
+
+                _resultatum = re.match(_ht_retest, res)
+                if not _resultatum:
+                    continue
+                _vars = _resultatum.groupdict()
+
+                # print(res, _resultatum, _vars)
+                if _vars and len(_vars.keys()) > 0:
+                    _vars['trivio'] = self.rdf_trivio
+                    resultatum.append(_ht_novo.format_map(_vars))
+                else:
+                    resultatum.append(_ht_novo)
+                _done = True
+                break
+
+            if _done is True:
+                continue
+
+            # Let at is is
+            resultatum.append(res)
+
+            # resultatum.append(
+            #     '#meta+rem+i_qcc+is_zxxx+{0}'.format(
+            #         res.lower().strip().replace(
+            #             ' ', '').replace('-', '_').replace(
+            #                 '#', '').replace('+', '_'))
+            # )
+        return resultatum
+
+    def de_csv_ad_csvnorm(
+            self, fonti: str, objetivum: str, caput_initiali: list):
         # print("TODO de_csv_ad_csvnorm")
         with open(objetivum, 'w') as _objetivum:
             with open(fonti, 'r') as _fons:
                 _csv_reader = csv.reader(_fons)
                 _csv_writer = csv.writer(_objetivum)
                 started = False
+                strip_last = None
                 for linea in _csv_reader:
-                    # print(linea)
+
                     if not started:
                         if linea and linea[0].strip() in caput_initiali:
                             started = True
+                            strip_last = len(linea[-1]) == 0
                         else:
                             continue
+                    if strip_last:
+                        linea.pop()
                     _csv_writer.writerow(linea)
 
         # print("TODO")
@@ -784,6 +869,8 @@ class DataScrapping:
 
     def de_hxl_ad_hxltm(self, fonti: str, objetivum: str):
         # print("TODO de_csv_ad_csvnorm")
+        index_linea = 0
+        codicem_inconito = False
         with open(objetivum, 'w') as _objetivum:
             with open(fonti, 'r') as _fons:
                 _csv_reader = csv.reader(_fons)
@@ -792,12 +879,21 @@ class DataScrapping:
                 for linea in _csv_reader:
                     if not started:
                         started = True
-                        _csv_writer.writerow(self._hxltmize(linea))
+                        caput = self._hxltmize(linea)
+                        if '#item+conceptum+codicem' not in caput:
+                            codicem_inconito = True
+                            caput.insert(0, '#item+conceptum+codicem')
+                        _csv_writer.writerow(caput)
                         continue
+                    if codicem_inconito is True:
+                        index_linea += 1
+                        linea.insert(0, str(index_linea))
                     _csv_writer.writerow(linea)
 
     def de_hxltm_ad_no1(self, fonti: str, objetivum: str):
         # print("TODO de_csv_ad_csvnorm")
+        numerordinatio_inconito = False
+        codicem_index = -1
         with open(objetivum, 'w') as _objetivum:
             with open(fonti, 'r') as _fons:
                 _csv_reader = csv.reader(_fons)
@@ -806,8 +902,17 @@ class DataScrapping:
                 for linea in _csv_reader:
                     if not started:
                         started = True
-                        _csv_writer.writerow(self._hxltmize(linea))
+                        caput = self._no1lize(linea)
+                        if '#item+conceptum+numerordinatio' not in caput:
+                            numerordinatio_inconito = True
+                            codicem_index = caput.index(
+                                '#item+conceptum+codicem')
+                            caput.insert(0, '#item+conceptum+numerordinatio')
+                        _csv_writer.writerow(caput)
                         continue
+                    if numerordinatio_inconito is True:
+                        linea.insert(0, '{0}:{1}'.format(
+                            self.numerordinatio_praefixo, linea[codicem_index]))
                     _csv_writer.writerow(linea)
 
 
@@ -1040,6 +1145,7 @@ class DataScrappingUNDATA(DataScrapping):
 class DataScrappingWorldbank(DataScrapping):
 
     methodus: str = 'SP.POP.TOTL'
+    numerordinatio_praefixo: str = '999999:0'
     objectivum_formato: str = 'csv'
     # link_fonti: str = 'https://api.worldbank.org/v2/en/indicator/SP.POP.TOTL?downloadformat=excel'
     link_fonti: str = 'https://api.worldbank.org/v2/en/indicator/SP.POP.TOTL?downloadformat=csv'
