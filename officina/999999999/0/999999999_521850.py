@@ -121,11 +121,16 @@ __EPILOGUM__ = """
 See https://interpol.api.bund.dev/
 
     {0} --methodus-fonti=interpol --methodus=red \
---archivum-objetivum=999999/0/interpol-red.tm.hxl.csv
+--archivum-objetivum=999999/0/interpol-red.csv
 
     {0} --methodus-fonti=interpol --methodus=un \
---archivum-objetivum=999999/0/interpol-un.tm.hxl.csv
+--archivum-objetivum=999999/0/interpol-un.csv
 
+    {0} --methodus-fonti=interpol --methodus=red --objectivum-formato=hxltm \
+--archivum-objetivum=999999/0/interpol-red.tm.hxl.csv
+
+    {0} --methodus-fonti=interpol --methodus=un --objectivum-formato=hxltm \
+--archivum-objetivum=999999/0/interpol-un.tm.hxl.csv
 
 ------------------------------------------------------------------------------
                             EXEMPLŌRUM GRATIĀ
@@ -136,6 +141,12 @@ See https://interpol.api.bund.dev/
 DATA_SCRAPPING_HELP = {
     'INTERPOL': [
         'https://interpol.api.bund.dev/',
+        'https://www.wikidata.org/wiki/Q3088566',  # Interpol notice (Q3088566)
+        # Interpol Red Notice (Q47612352)
+        'https://www.wikidata.org/wiki/Q47612352',
+        # Interpol-United Nations Security Council Special Notice (Q47613015)
+        'https://www.wikidata.org/wiki/Q47613015',
+
     ],
     'UNDATA': [
         'https://data.un.org/',
@@ -164,6 +175,12 @@ DATA_HXL_DE_CSV_GENERIC = {
     'country code': '#country+code+v_iso3',  # World Bank
     'indicator name': '#indicator+name',  # World Bank
     'indicator code': '#indicator+code',  # World Bank
+    'entity_id': '#item+code+v_interpol',  # INTERPOL
+    'un_reference': '#item+code+unref',  # INTERPOL
+    'forename': '#item+forename',  # INTERPOL
+    'date_of_birth': '#date+birth',  # INTERPOL
+    'nationalities': '#item+v_iso2',  # INTERPOL
+    '_links.self': '#item+url',  # INTERPOL
 }
 
 DATA_HXL_DE_CSV_REGEX = {
@@ -190,6 +207,15 @@ DATA_HXL_DE_CSV_REGEX = {
         # Redugees https://data.worldbank.org/indicator/SM.POP.REFG?view=chart
     }
 }
+
+# Economic
+# - https://www.wikidata.org/wiki/Wikidata:Database_reports/List_of_properties/all
+#   - nominal GDP (P2131)
+#   - P2132	nominal GDP per capita
+#   - P2219	real GDP growth rate
+#   - P2299	PPP GDP per capita
+#   - P4010	GDP (PPP)
+
 
 # @TODO https://api.hpc.tools/v1/public/fts/flow?year=2022
 
@@ -626,6 +652,16 @@ class DataScrappingInterpol(DataScrapping):
             'nationalities',
             # '_links.self',
         ]
+        self._datafields_date = [
+            'date_of_birth'
+        ]
+
+    def _quod_date(self, textum) -> str:
+        if not textum:
+            return textum
+        if len(textum) == 0 or textum.find('/') == -1:
+            return textum
+        return textum.replace('/', '-')
 
     def _quod_url(self) -> str:
         url = 'https://ws-public.interpol.int/' + \
@@ -654,25 +690,45 @@ class DataScrappingInterpol(DataScrapping):
     def _praeparatio_tabulae(self) -> str:
 
         caput = []
-        for item in self.data_notices:
-            if len(caput) == 0:
-                for _maybe in self._datafields:
-                    if _maybe in item:
-                        caput.append(_maybe)
-                caput.append('_links.self')
-                self.data_notices_tabular.append(caput)
+        _caput = set()
 
-            linea = []
+        for item in self.data_notices:
             for _maybe in self._datafields:
+                if _maybe in item:
+                    _caput.add(_maybe)
+
+        for _maybe in self._datafields:
+            if _maybe in _caput:
+                caput.append(_maybe)
+
+        caput.append('_links.self')
+
+        if self.objectivum_formato == 'hxltm':
+            self.data_notices_tabular.append(self._hxlize_dummy(caput))
+        else:
+            self.data_notices_tabular.append(caput)
+
+        for item in self.data_notices:
+            linea = []
+            for _maybe in caput:
                 if _maybe in item:
                     if isinstance(item[_maybe], list):
                         linea.append('|'.join(item[_maybe]))
                     else:
-                        linea.append(item[_maybe])
+                        if _maybe in self._datafields_date:
+                            linea.append(self._quod_date(
+                                item[_maybe]
+                            ))
+                        else:
+                            linea.append(item[_maybe])
+                elif _maybe == '_links.self':
+                    linea.append(item['_links']['self']['href'])
+                else:
+                    linea.append('')
 
             # if item['_links']['self']['href']
 
-            linea.append(item['_links']['self']['href'])
+            # linea.append(item['_links']['self']['href'])
 
             self.data_notices_tabular.append(linea)
 
