@@ -166,3 +166,42 @@ jsonschema --instance 999999999/1568346/data/cod-ab-example2.geojson 999999/0/Ge
   - @prefix ro http://purl.obolibrary.org/obo/
   - @prefix obo http://purl.obolibrary.org/obo/
 -->
+
+## Attempting to deal with complex relations (maybe qualifiers)
+- https://www.wikidata.org/wiki/Help:Qualifiers
+  - https://www.wikidata.org/wiki/Q7742
+    - https://www.wikidata.org/wiki/Special:EntityData/Q7742.ttl
+
+```bash
+curl https://www.wikidata.org/wiki/Special:EntityData/Q7742.ttl --output 999999/0/Q7742.ttl
+
+rdfpipe --input-format=turtle --output-format=longturtle 999999/0/Q7742.ttl > 999999/0/Q7742~norm.ttl
+```
+
+- https://en.wikipedia.org/wiki/ISO_8601#Years
+  - `urn:hxla:+iso8601v2022`, year 2022 (https://en.wikipedia.org/wiki/ISO_8601)
+  - `urn:hxla:+iso3166p1v076`, country/territory Brazil (BR/BRA/076) (https://en.wikipedia.org/wiki/ISO_3166-1)
+  - `urn:hxla:+iso5218v0`, sex Not known (https://en.wikipedia.org/wiki/ISO/IEC_5218)
+  - `urn:hxla:+iso5218v1`, sex Male
+  - `urn:hxla:+iso5218v2`, sex Female
+  - `urn:hxla:+iso5218v9`, sex Not applicable
+  - Compositions, need sorting
+    - `urn:hxla:+iso5218v2+iso8601v2022`; sex Female && year 2022
+
+
+```ttl
+# https://censo2010.ibge.gov.br/noticias-censo.html?busca=1&id=3&idnoticia=1766&t=censo-2010-populacao-brasil-190-732-694-pessoas&view=noticia
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX wdata: <http://www.wikidata.org/wiki/Special:EntityData/>
+
+
+## <subject> <predicate> <object> <graph label>
+
+# population (P1082)
+<urn:hxla:+iso3166p1v076> wdata:P1082 190732694 <urn:hxla:+iso8601v2010> .
+# female population (P1539)
+<urn:hxla:+iso3166p1v076> wdata:P1539 97342162 <urn:hxla:+iso8601v2010> .
+# male population (P1540)
+<urn:hxla:+iso3166p1v076> wdata:P1540 93390532 <urn:hxla:+iso8601v2010> .
+
+```
