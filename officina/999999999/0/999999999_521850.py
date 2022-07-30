@@ -27,6 +27,7 @@
 #      REVISION:  ---
 # ==============================================================================
 
+import re
 import sys
 import argparse
 import csv
@@ -38,6 +39,8 @@ from time import sleep
 # from functools import reduce
 from typing import (
     Any,
+    List,
+    Pattern,
     # Dict,
     # List,
 )
@@ -208,6 +211,79 @@ DATA_HXL_DE_CSV_REGEX = {
     }
 }
 
+DATA_HXL_AD_HXLTM = {
+    'ix_iso5218v1': [
+        {'t': "#population", 'a': ['m']}
+    ],
+    'ix_iso5218v2': [
+        {'t': "#population", 'a': ['f']}
+    ],
+    'ix_iso5218v9': [
+        {'t': "#population", 'a': ['i']}
+    ],
+    'ix_iso8601v{0}': [
+        {'t': "#population", 'a': [r"^year(?P<v1>[0-9]{4})$"]}
+    ],
+}
+
+
+def parse_hashtag(hashtag: str) -> dict:
+    """parse_hashtag
+
+    Convert HXL hashtag to dict.
+
+    @TODO maybe refactor in something more full featured
+
+    Args:
+        hashtag (str): full hashtag
+
+    Returns:
+        dict: _description_
+    """
+    resultatum = {
+        't': '',
+        'a': []
+    }
+    if not hashtag or not hashtag.startswith('#'):
+        raise SyntaxError(hashtag)
+    _hashtag_norm = hashtag.lower().rstrip('#').split('+')
+    resultatum['t'] = _hashtag_norm.pop(0)
+    resultatum['a'] = sorted(_hashtag_norm)
+    return resultatum
+
+
+def parse_hashtag_mached_is(hashtag: str, hashtag_refs: List[dict]) -> bool:
+    """parse_hashtag
+
+    Convert HXL hashtag to dict.
+
+    @TODO maybe refactor in something more full featured
+
+    Args:
+        hashtag (str): full hashtag
+
+    Returns:
+        dict: _description_
+    """
+    _hashtag = parse_hashtag(hashtag)
+    for item in hashtag_refs:
+        if not item['t'] or _hashtag['t'] == item['t']:
+            if len(item['a']) == 0:
+                return True
+            for _a in item['a']:
+                if isinstance(_a, Pattern):
+                    _done = False
+                    for _vh in _hashtag['a']:
+                        if re.match(_a, _vh):
+                            _done = True
+                    if not _done:
+                        return False
+                if _a not in _hashtag['a']:
+                    return False
+            return True
+    return False
+
+
 # Economic
 # - https://www.wikidata.org/wiki/Wikidata:Database_reports/List_of_properties/all
 #   - nominal GDP (P2131)
@@ -299,7 +375,9 @@ class Cli:
             nargs='?',
             choices=[
                 'csv',
+                'hxl',
                 'hxltm',
+                'no1',
                 'link-fonti',
                 # 'tsv',
                 # 'hxl_csv',
@@ -549,6 +627,29 @@ class DataScrapping:
 
         self.methodus = methodus
         self.objectivum_formato = objectivum_formato
+        self._temp = {}
+
+    def _init_temp(self):
+        self._temp = {
+            '__source_zip__': '{0}/999999/0/{1}~{2}.zip'.format(
+                NUMERORDINATIO_BASIM, type(self).__name__, self.methodus
+            ),
+            '__source_main_csv__': '{0}/999999/0/{1}~{2}.csv'.format(
+                NUMERORDINATIO_BASIM, type(self).__name__, self.methodus
+            ),
+            'csv': '{0}/999999/0/{1}~{2}.norm.csv'.format(
+                NUMERORDINATIO_BASIM, type(self).__name__, self.methodus
+            ),
+            'hxl': '{0}/999999/0/{1}~{2}.hxl.csv'.format(
+                NUMERORDINATIO_BASIM, type(self).__name__, self.methodus
+            ),
+            'hxltm': '{0}/999999/0/{1}~{2}.tm.hxl.csv'.format(
+                NUMERORDINATIO_BASIM, type(self).__name__, self.methodus
+            ),
+            'no1': '{0}/999999/0/{1}~{2}.no1.tm.hxl.csv'.format(
+                NUMERORDINATIO_BASIM, type(self).__name__, self.methodus
+            ),
+        }
 
     def _hxlize_dummy(self, caput: list):
         resultatum = []
@@ -560,10 +661,30 @@ class DataScrapping:
                 resultatum.append(DATA_HXL_DE_CSV_GENERIC[res.lower().strip()])
                 continue
 
-            # raise ValueError(self.__dict__)
             if self.methodus in DATA_HXL_DE_CSV_REGEX['worldbank'].keys():
+                if len(res) == 4:
+                    resultatum.append(DATA_HXL_DE_CSV_REGEX[
+                        'worldbank'][self.methodus].format(res))
+                    continue
 
-                # @TODO make a better check on this rule
+            resultatum.append(
+                '#meta+{0}'.format(
+                    res.lower().strip().replace(
+                        ' ', '').replace('-', '_'))
+            )
+        return resultatum
+
+    def _hxltmize(self, caput: list):
+        resultatum = []
+        for res in caput:
+            if not res:
+                resultatum.append('')
+                continue
+            if res.lower().strip() in DATA_HXL_DE_CSV_GENERIC:
+                resultatum.append(DATA_HXL_DE_CSV_GENERIC[res.lower().strip()])
+                continue
+
+            if self.methodus in DATA_HXL_DE_CSV_REGEX['worldbank'].keys():
                 if len(res) == 4:
                     resultatum.append(DATA_HXL_DE_CSV_REGEX[
                         'worldbank'][self.methodus].format(res))
@@ -593,7 +714,7 @@ class DataScrapping:
                     _csv_writer.writerow(linea)
 
         # print("TODO")
-    def de_csv_ad_hxltm(self, fonti: str, objetivum: str, caput_initiali: list):
+    def de_csvnorm_ad_hxl(self, fonti: str, objetivum):
         # print("TODO de_csv_ad_csvnorm")
         with open(objetivum, 'w') as _objetivum:
             with open(fonti, 'r') as _fons:
@@ -601,18 +722,39 @@ class DataScrapping:
                 _csv_writer = csv.writer(_objetivum)
                 started = False
                 for linea in _csv_reader:
-                    # print(linea)
                     if not started:
-                        if linea and linea[0].strip() in caput_initiali:
-                            started = True
-                            # @TODO remove this draft part
-                            _csv_writer.writerow(self._hxlize_dummy(linea))
-                            continue
-                        else:
-                            continue
+                        started = True
+                        _csv_writer.writerow(self._hxlize_dummy(linea))
+                        continue
                     _csv_writer.writerow(linea)
 
-        # print("TODO")
+    def de_hxl_ad_hxltm(self, fonti: str, objetivum: str):
+        # print("TODO de_csv_ad_csvnorm")
+        with open(objetivum, 'w') as _objetivum:
+            with open(fonti, 'r') as _fons:
+                _csv_reader = csv.reader(_fons)
+                _csv_writer = csv.writer(_objetivum)
+                started = False
+                for linea in _csv_reader:
+                    if not started:
+                        started = True
+                        _csv_writer.writerow(self._hxltmize(linea))
+                        continue
+                    _csv_writer.writerow(linea)
+
+    def de_hxltm_ad_no1(self, fonti: str, objetivum: str):
+        # print("TODO de_csv_ad_csvnorm")
+        with open(objetivum, 'w') as _objetivum:
+            with open(fonti, 'r') as _fons:
+                _csv_reader = csv.reader(_fons)
+                _csv_writer = csv.writer(_objetivum)
+                started = False
+                for linea in _csv_reader:
+                    if not started:
+                        started = True
+                        _csv_writer.writerow(self._hxltmize(linea))
+                        continue
+                    _csv_writer.writerow(linea)
 
 
 class DataScrappingInterpol(DataScrapping):
@@ -848,7 +990,10 @@ class DataScrappingWorldbank(DataScrapping):
     # link_fonti: str = 'https://api.worldbank.org/v2/en/indicator/SP.POP.TOTL?downloadformat=excel'
     link_fonti: str = 'https://api.worldbank.org/v2/en/indicator/SP.POP.TOTL?downloadformat=csv'
     temp_fonti_csv: str = ''
+    temp_fonti_csvnorm: str = ''
+    temp_fonti_hxl: str = ''
     temp_fonti_hxltm: str = ''
+    temp_fonti_no1: str = ''
 
     # print('oioioi', self.dictionaria_codex )
 
@@ -858,9 +1003,13 @@ class DataScrappingWorldbank(DataScrapping):
             print(self.link_fonti)
             return True
 
-        fonti = self.temp_fonti_csv
+        fonti = self.temp_fonti_csvnorm
+        if self.objectivum_formato == 'hxl':
+            fonti = self.temp_fonti_hxl
         if self.objectivum_formato == 'hxltm':
             fonti = self.temp_fonti_hxltm
+        if self.objectivum_formato == 'no1':
+            fonti = self.temp_fonti_no1
 
         with open(fonti, 'r') as _fons:
             _csv_reader = csv.reader(_fons)
@@ -881,18 +1030,31 @@ class DataScrappingWorldbank(DataScrapping):
         # self.temp_fonti = '{0}/999999/0/{1}~{2}.xls'.format(
         #     NUMERORDINATIO_BASIM, __class__.__name__, self.methodus
         # )
-        temp_fonti_zip = '{0}/999999/0/{1}~{2}.zip'.format(
-            NUMERORDINATIO_BASIM, __class__.__name__, self.methodus
-        )
+
+        self._init_temp()
+
+        # temp_fonti_zip = '{0}/999999/0/{1}~{2}.zip'.format(
+        #     NUMERORDINATIO_BASIM, __class__.__name__, self.methodus
+        # )
         self.temp_fonti_csv = '{0}/999999/0/{1}~{2}.csv'.format(
             NUMERORDINATIO_BASIM, __class__.__name__, self.methodus
         )
-        temp_fonti_csvnorm = '{0}/999999/0/{1}~{2}.norm.csv'.format(
+        self.temp_fonti_csvnorm = '{0}/999999/0/{1}~{2}.norm.csv'.format(
+            NUMERORDINATIO_BASIM, __class__.__name__, self.methodus
+        )
+        self.temp_fonti_hxl = '{0}/999999/0/{1}~{2}.hxl.csv'.format(
             NUMERORDINATIO_BASIM, __class__.__name__, self.methodus
         )
         self.temp_fonti_hxltm = '{0}/999999/0/{1}~{2}.tm.hxl.csv'.format(
             NUMERORDINATIO_BASIM, __class__.__name__, self.methodus
         )
+        self.temp_fonti_no1 = '{0}/999999/0/{1}~{2}.no1.tm.hxl.csv'.format(
+            NUMERORDINATIO_BASIM, __class__.__name__, self.methodus
+        )
+
+        # raise ValueError(self._temp)
+
+        temp_fonti_zip = self._temp['__source_zip__']
 
         if not exists(temp_fonti_zip):
             # Download to local cache if alreayd there
@@ -916,21 +1078,27 @@ class DataScrappingWorldbank(DataScrapping):
 
         # save the extraced file
         content = f.read()
-        f = open(self.temp_fonti_csv, 'wb')
+        # f = open(self.temp_fonti_csv, 'wb')
+        f = open(self._temp['__source_main_csv__'], 'wb')
         f.write(content)
         f.close()
 
-        if self.objectivum_formato == 'hxltm':
-            # print(self.link_fonti)
-            self.de_csv_ad_csvnorm(
-                self.temp_fonti_csv, temp_fonti_csvnorm, [
-                    'Country Name', 'Country Code'
-                ]
+        self.de_csv_ad_csvnorm(
+            self._temp['__source_main_csv__'], self._temp['csv'], [
+                'Country Name', 'Country Code'
+            ]
+        )
+        if self.objectivum_formato in ['hxl', 'hxltm', 'no1']:
+            self.de_csvnorm_ad_hxl(
+                self._temp['csv'], self._temp['hxl']
             )
-            return self.de_csv_ad_hxltm(
-                temp_fonti_csvnorm, self.temp_fonti_hxltm, [
-                    'Country Name', 'Country Code'
-                ]
+        if self.objectivum_formato in ['hxltm', 'no1']:
+            self.de_hxl_ad_hxltm(
+                self._temp['hxl'], self._temp['hxltm']
+            )
+        if self.objectivum_formato in ['no1']:
+            self.de_hxltm_ad_no1(
+                self._temp['hxltm'], self._temp['no1']
             )
 
 
