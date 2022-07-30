@@ -190,18 +190,51 @@ rdfpipe --input-format=turtle --output-format=longturtle 999999/0/Q7742.ttl > 99
 
 
 ```ttl
+## 999999/0/poc.ttl
 # https://censo2010.ibge.gov.br/noticias-censo.html?busca=1&id=3&idnoticia=1766&t=censo-2010-populacao-brasil-190-732-694-pessoas&view=noticia
-PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+PREFIX hxla: <urn:hxla:>
 PREFIX wdata: <http://www.wikidata.org/wiki/Special:EntityData/>
 
+<urn:example:BR>
+    wdata:P1082 [
+            hxla:iso8601v2010 "190732694" ;
+            hxla:iso8601v2020 "123456"
+        ] ;
+    wdata:P1539 [
+            hxla:iso8601v2010 "97342162" ;
+            hxla:iso8601v2020 "123456"
+        ] ;
+    wdata:P1540 [
+            hxla:iso8601v2010 "97342162" ;
+            hxla:iso8601v2020 "123456"
+        ] ;
+.
+```
 
-## <subject> <predicate> <object> <graph label>
+```trig
+@prefix wdata: <http://www.wikidata.org/wiki/Special:EntityData/> .
 
-# population (P1082)
-<urn:hxla:+iso3166p1v076> wdata:P1082 190732694 <urn:hxla:+iso8601v2010> .
-# female population (P1539)
-<urn:hxla:+iso3166p1v076> wdata:P1539 97342162 <urn:hxla:+iso8601v2010> .
-# male population (P1540)
-<urn:hxla:+iso3166p1v076> wdata:P1540 93390532 <urn:hxla:+iso8601v2010> .
+#<urn:hxla:+iso3166p1v076> <http://www.wikidata.org/wiki/Special:EntityData/P1540> "93390532" <urn:hxla:iso8601v2010> .
+<urn:example:BR> <http://www.wikidata.org/wiki/Special:EntityData/P1540> "93390532" .
+
+<urn:hxla:iso8601v2010> {
+    <urn:example:BR> wdata:P1082 "190732694" ;
+        wdata:P1539 "97342162" ;
+        wdata:P1540 "93390532" .
+}
 
 ```
+
+```nq
+### 999999/0/poc.nq
+<urn:hxla:+iso3166p1v076> <http://www.wikidata.org/wiki/Special:EntityData/P1082> "190732694" <urn:hxla:+iso8601v2010> .
+<urn:hxla:+iso3166p1v076> <http://www.wikidata.org/wiki/Special:EntityData/P1539> "97342162" <urn:hxla:+iso8601v2010> .
+<urn:hxla:+iso3166p1v076> <http://www.wikidata.org/wiki/Special:EntityData/P1540> "93390532" <urn:hxla:+iso8601v2010> .
+
+```
+
+rdfpipe --input-format=turtle --output-format=longturtle 999999/0/poc.ttl
+rdfpipe --input-format=trig --output-format=trig --ns=hxla=urn:hxla 999999/0/poc.trig
+
+rdfpipe --input-format=trig --output-format=json-ld --ns=hxla=urn:hxla: 999999/0/poc.trig
