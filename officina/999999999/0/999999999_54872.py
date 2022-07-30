@@ -704,11 +704,19 @@ class Cli:
             if pyargs.methodus == '_temp_no1':
                 caput_novo = []
                 for _item in caput:
-                    # print('hxl item     > ', _item)
-                    _hxl = HXLHashtagSimplici(_item).praeparatio()
-                    _item_bcp47 = _hxl.quod_bcp47(strictum=False)
-                    # print('_item_bcp47  > ', _item_bcp47)
-                    caput_novo.append(_item_bcp47)
+                    if not _item or len(_item) == 0:
+                        raise SyntaxError(
+                            'Input have empty hashtag, <{0}>'.format(caput))
+                    # print('hxl item     > ', _item, caput)
+                    try:
+                        _hxl = HXLHashtagSimplici(_item).praeparatio()
+                        _item_bcp47 = _hxl.quod_bcp47(strictum=False)
+                        # print('_item_bcp47  > ', _item_bcp47)
+                        caput_novo.append(_item_bcp47)
+                    except AttributeError:
+                        # raise SyntaxError('HXLTM/No1 non hashtag[{0}]? <{1}>'.format(_item, caput))
+                        raise SyntaxError(
+                            'HXLTM/No1 non hashtag[{0}]?'.format(_item))
                 caput = caput_novo
                 # print('caput', caput)
 

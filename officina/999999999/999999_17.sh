@@ -76,15 +76,29 @@ set -x
 
 ./999999999/0/999999999_521850.py \
   --methodus-fonti=worldbank \
-  --methodus="SP.POP.TOTL.MA.IN" \
-  --objectivum-formato=hxltm \
-  >"999999/0/1603_992_1_0~worldbank~SP_POP_TOTL_MA_IN.tm.hxl.csv"
+  --methodus="SP.POP.TOTL" \
+  --objectivum-formato=no1 \
+  >"999999/0/1603_992_1_0~worldbank~SP_POP_TOTL.no1.tm.hxl.csv"
+
+
+./999999999/0/999999999_54872.py \
+  --methodus=_temp_no1 \
+  --rdf-sine-spatia-nominalibus=devnull \
+  --rdf-trivio=1603 \
+  "999999/0/1603_992_1_0~worldbank~SP_POP_TOTL.no1.tm.hxl.csv" \
+  >"999999/0/1603_992_1_0~worldbank~SP_POP_TOTL.no1.owl.ttl"
 
 ./999999999/0/999999999_521850.py \
   --methodus-fonti=worldbank \
-  --methodus="SP.POP.TOTL.FE.IN" \
+  --methodus="SP.RUR.TOTL" \
   --objectivum-formato=hxltm \
-  >"999999/0/1603_992_1_0~worldbank~SP_POP_TOTL_FE_IN.tm.hxl.csv"
+  >"999999/0/1603_992_1_0~worldbank~SP_RUR_TOTL.tm.hxl.csv"
+
+./999999999/0/999999999_521850.py \
+  --methodus-fonti=worldbank \
+  --methodus="SP.POP.TOTL.MA.IN" \
+  --objectivum-formato=hxltm \
+  >"999999/0/1603_992_1_0~worldbank~SP_POP_TOTL_MA_IN.tm.hxl.csv"
 
 ./999999999/0/999999999_521850.py \
   --methodus-fonti=worldbank \

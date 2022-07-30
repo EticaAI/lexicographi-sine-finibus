@@ -107,6 +107,7 @@ __EPILOGUM__ = """
 
     {0} --methodus-fonti=unwpf
 
+(Total population)
     {0} --methodus-fonti=worldbank --methodus=SP.POP.TOTL
 
     {0} --methodus-fonti=worldbank --methodus=SP.POP.TOTL \
@@ -118,7 +119,10 @@ __EPILOGUM__ = """
     {0} --methodus-fonti=worldbank --methodus=SP.POP.TOTL \
 --objectivum-formato=hxltm
 
-    {0} --methodus-fonti=sdmx-tests
+(Rural population)
+    {0} --methodus-fonti=worldbank --methodus=SP.RUR.TOTL \
+--objectivum-formato=hxltm
+
 
 (Individual humans) . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 See https://interpol.api.bund.dev/
@@ -134,6 +138,10 @@ See https://interpol.api.bund.dev/
 
     {0} --methodus-fonti=interpol --methodus=un --objectivum-formato=hxltm \
 --archivum-objetivum=999999/0/interpol-un.tm.hxl.csv
+
+
+(Etc) . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+    {0} --methodus-fonti=sdmx-tests
 
 ------------------------------------------------------------------------------
                             EXEMPLŌRUM GRATIĀ
@@ -186,6 +194,33 @@ DATA_HXL_DE_CSV_GENERIC = {
     '_links.self': '#item+url',  # INTERPOL
 }
 
+DATA_HXLTM_DE_HXL_GENERIC = {
+    '#meta+rem+i_eng+is_latn+name': '#country+name',
+
+    # Population statistics, with year -----------------------------------------
+    # population (P1082)
+    '#item+rem+i_qcc+is_zxxx+ix_iso8601v{v1}+ix_xywdatap1082': r"^#population\+t\+year(?P<v1>[0-9]{4})$",
+    # female population (P1539)
+    '#item+rem+i_qcc+is_zxxx+ix_iso8601v{v1}+ix_xywdatap1539': r"^#population\+f\+year(?P<v1>[0-9]{4})$",
+    # male population (P1540)
+    '#item+rem+i_qcc+is_zxxx+ix_iso8601v{v1}+ix_xywdatap1540': r"^#population\+m\+year(?P<v1>[0-9]{4})$",
+    # rural population (P6344)
+    '#item+rem+i_qcc+is_zxxx+ix_iso8601v{v1}+ix_xywdatap6344': r"^#population\+rural\+year(?P<v1>[0-9]{4})$",
+    # urban population (P6343)
+    '#item+rem+i_qcc+is_zxxx+ix_iso8601v{v1}+ix_xywdatap6343': r"^#population\+urban\+year(?P<v1>[0-9]{4})$",
+
+    # Houseolds? No data with this yet
+    # https://www.wikidata.org/wiki/Property:P1538
+
+    # Population statistics, without year -------------------------------------
+    # population (P1082)
+    # '#item+rem+i_qcc+is_zxxx+ix_xywdatap1082': r"^#population\+t$",
+    # # female population (P1539)
+    # '#item+rem+i_qcc+is_zxxx+ix_xywdatap1539': r"^#population\+f$",
+    # # male population (P1540)
+    # '#item+rem+i_qcc+is_zxxx+ix_xywdatap1540': r"^#population\+m$",
+}
+
 DATA_HXL_DE_CSV_REGEX = {
     # @see https://data.humdata.org/tools/hxl-example/
     # @see https://data.worldbank.org/indicator
@@ -194,6 +229,11 @@ DATA_HXL_DE_CSV_REGEX = {
         # Population statistics, thematic
         # Only for numeric
         'SP.POP.TOTL': '#population+t+year{0}',
+
+        # https://data.worldbank.org/indicator/SP.RUR.TOTL
+        # https://www.wikidata.org/wiki/Property:P6344
+        # 'SP.RUR.TOTL': '#population+ix_xywdatap6344+year{0}',
+        'SP.RUR.TOTL': '#population+rural+year{0}',
         # https://data.worldbank.org/indicator/SP.POP.TOTL.MA.IN
         'SP.POP.TOTL.MA.IN': '#population+m+year{0}',
         # https://data.worldbank.org/indicator/SP.POP.TOTL.FE.IN
@@ -680,20 +720,34 @@ class DataScrapping:
             if not res:
                 resultatum.append('')
                 continue
-            if res.lower().strip() in DATA_HXL_DE_CSV_GENERIC:
-                resultatum.append(DATA_HXL_DE_CSV_GENERIC[res.lower().strip()])
+
+            _done = False
+            for _ht_novo, _ht_retest in DATA_HXLTM_DE_HXL_GENERIC.items():
+
+                if isinstance(_ht_retest, str) and _ht_retest == res:
+                    resultatum.append(_ht_novo)
+                    _done = True
+                    break
+
+                _resultatum = re.match(_ht_retest, res)
+                if not _resultatum:
+                    continue
+                _vars = _resultatum.groupdict()
+                if _vars and len(_vars.keys()) > 0:
+                    resultatum.append(_ht_novo.format_map(_vars))
+                else:
+                    resultatum.append(_ht_novo)
+                _done = True
+                break
+
+            if _done is True:
                 continue
 
-            if self.methodus in DATA_HXL_DE_CSV_REGEX['worldbank'].keys():
-                if len(res) == 4:
-                    resultatum.append(DATA_HXL_DE_CSV_REGEX[
-                        'worldbank'][self.methodus].format(res))
-                    continue
-
             resultatum.append(
-                '#meta+{0}'.format(
+                '#meta+rem+i_qcc+is_zxxx+{0}'.format(
                     res.lower().strip().replace(
-                        ' ', '').replace('-', '_'))
+                        ' ', '').replace('-', '_').replace(
+                            '#', '').replace('+', '_'))
             )
         return resultatum
 
