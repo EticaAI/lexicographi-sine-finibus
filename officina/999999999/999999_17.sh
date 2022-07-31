@@ -88,11 +88,16 @@ set -x
   "999999/0/1603_992_1_0~worldbank~SP_POP_TOTL.no1.tm.hxl.csv" \
   >"999999/0/1603_992_1_0~worldbank~SP_POP_TOTL~TEMP.no1.owl.ttl"
 
-
 # @TODO fix the extra namespace when we use default 1603
 rdfpipe --input-format=turtle --output-format=longturtle \
   "999999/0/1603_992_1_0~worldbank~SP_POP_TOTL~TEMP.no1.owl.ttl" \
-  "999999/0/1603_992_1_0~worldbank~SP_POP_TOTL.no1.owl.ttl"
+  >"999999/0/1603_992_1_0~worldbank~SP_POP_TOTL.no1.owl.ttl"
+
+
+# ./999999999/0/999999999_54872.py --methodus=_temp_no1 --rdf-sine-spatia-nominalibus=devnull,mdciii --rdf-trivio=1603 999999/0/1603_992_1_0~worldbank~SP_POP_TOTL.no1.tm.hxl.csv | head -n 20
+# head -n 3 999999/0/1603_992_1_0~worldbank~SP_POP_TOTL.no1.tm.hxl.csv
+
+# rdfpipe --input-format=turtle --output-format=longturtle --ns=ix=urn:hxl:vocab:a:ix: 999999/0/poc-3.ttl
 
 # rdfpipe --input-format=turtle --output-format=longturtle 999999/0/1603_992_1_0~worldbank~SP_POP_TOTL~TEMP.no1.owl.ttl
 

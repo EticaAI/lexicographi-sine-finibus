@@ -2630,6 +2630,7 @@ def bcp47_rdf_extension_poc(
         header: List[str],
         data: List[List],
         objective_bag: str = '1',
+        rdf_trivio_hxla: List[str] = None,
         _auxiliary_bags: List[str] = None,
         namespaces: List[dict] = None,
         rdf_sine_spatia_nominalibus: List = None,

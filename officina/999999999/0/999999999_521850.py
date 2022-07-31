@@ -27,6 +27,7 @@
 #      REVISION:  ---
 # ==============================================================================
 
+import os
 import re
 import sys
 import argparse
@@ -705,6 +706,16 @@ class DataScrapping:
 
         self.objectivum_formato = objectivum_formato
         self._temp = {}
+
+    def __del__(self):
+        for clavem, res in self._temp.items():
+            # if clavem in ['__source_zip__', '__source_main_csv__']:
+            if clavem in ['__source_zip__']:
+                continue
+            if exists(res):
+                # print('removing', res)
+                os.remove(res)
+        # print('destructor called')
 
     def _init_temp(self):
         self._temp = {

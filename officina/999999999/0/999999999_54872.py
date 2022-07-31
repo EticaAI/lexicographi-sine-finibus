@@ -374,6 +374,18 @@ class Cli:
             default='1603'
         )
 
+        parser.add_argument(
+            '--rdf-per-trivio',
+            help='(Advanced) Define ix_atts which furter act as pivots for '
+            'exported data, so it can "fit" on RDF. Uses blank nodes. '
+            'Example: ix_iso8601v '
+            '(Expands: ix_iso8601v2010, ix_iso8601v2011, ...)',
+            dest='rdf_trivio_hxla',
+            nargs='?',
+            type=lambda x: x.split(','),
+            default=None
+        )
+
         # - spatium, s, n, nominativus, https://en.wiktionary.org/wiki/spatium#Latin
         # - nōminālī, s, n, dativus, https://en.wiktionary.org/wiki/nominalis#Latin
         # - ... /spatium nominali/ (s, n)
@@ -722,8 +734,12 @@ class Cli:
 
             # print(caput, data)
             # print('')
+            rdf_trivio_hxla = None
+            if pyargs.rdf_trivio_hxla and len(pyargs.rdf_trivio_hxla) > 0:
+                rdf_trivio_hxla = pyargs.rdf_trivio_hxla
             meta = bcp47_rdf_extension_poc(
                 caput, data, objective_bag=pyargs.rdf_bag,
+                rdf_trivio_hxla=rdf_trivio_hxla,
                 rdf_sine_spatia_nominalibus=pyargs.rdf_sine_spatia_nominalibus,
                 cum_antecessoribus=pyargs.cum_antecessoribus,
                 rdf_ontologia_ordinibus=pyargs.rdf_ontologia_ordinibus)

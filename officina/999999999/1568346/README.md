@@ -238,3 +238,65 @@ rdfpipe --input-format=turtle --output-format=longturtle 999999/0/poc.ttl
 rdfpipe --input-format=trig --output-format=trig --ns=hxla=urn:hxla 999999/0/poc.trig
 
 rdfpipe --input-format=trig --output-format=json-ld --ns=hxla=urn:hxla: 999999/0/poc.trig
+
+
+### Attempt 3
+
+rdfpipe --input-format=turtle --output-format=longturtle --ns=ix=urn:hxl:vocab:a:ix: 999999/0/poc-3.ttl
+
+```ttl
+# 999999/0/poc-3.ttl
+PREFIX ix: <urn:hxl:vocab:a:ix:>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX wdata: <http://www.wikidata.org/wiki/Special:EntityData/>
+
+<urn:mdciii:1603:992:1:0:1>
+    a
+        owl:Thing ,
+        skos:Concept ;
+    rdfs:label "1603:992:1:0:1" ;
+    wdata:P1082 _:b1 
+        # "54208" ,
+        # "55434" ,
+        # "56234" ,
+        # "56699" ,
+        # "57029" ,
+        # "57357" ,
+        # "57702" ,
+        # "58044" ,
+        # "58377" ,
+        # "58734" ;
+.
+
+_:b1 <urn:hxl:vocab:a:ix:iso8601v1960> "54208" .
+_:b1 <urn:hxl:vocab:a:ix:iso8601v1961> "55434" .
+_:b1 <urn:hxl:vocab:a:ix:iso8601v1962> "56234" .
+_:b1 <urn:hxl:vocab:a:ix:iso8601v1963> "56699" .
+_:b1 <urn:hxl:vocab:a:ix:iso8601v1965> "57029" .
+
+```
+#### Result
+```ttl
+PREFIX ix: <urn:hxl:vocab:a:ix:>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX wdata: <http://www.wikidata.org/wiki/Special:EntityData/>
+
+<urn:mdciii:1603:992:1:0:1>
+    a
+        owl:Thing ,
+        skos:Concept ;
+    rdfs:label "1603:992:1:0:1" ;
+    wdata:P1082 [
+            ix:iso8601v1960 "54208" ;
+            ix:iso8601v1961 "55434" ;
+            ix:iso8601v1962 "56234" ;
+            ix:iso8601v1963 "56699" ;
+            ix:iso8601v1965 "57029"
+        ] ;
+.
+
+```
