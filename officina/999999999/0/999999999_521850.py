@@ -273,6 +273,10 @@ DATA_HXL_AD_HXLTM = {
     ],
 }
 
+DATA_HXLTM_AD_RDFTYPE = {
+    'ix_iso8601v': ''
+}
+
 
 def parse_hashtag(hashtag: str) -> dict:
     """parse_hashtag

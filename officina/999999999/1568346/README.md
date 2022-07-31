@@ -15,6 +15,13 @@
   - `BCP47_EX_HXL` on L999999999_0.py is just a syntatic sugar for
     `#item+conceptum+codicem` and `#item+conceptum+numerordinatio`
 
+## Note on harecoded special cases for cell value expansion: HXL `+rdf_t_xsd_datetime*` and BCP47 `-r-y*`
+Full example:
+
+- `xsd:dateTime`
+  - HXL attribute: `#item+rem+i_qcc+is_zxxx+rdf_t_xsd_datetime`
+  - BPC 47 part attribute: `qcc-Zxxx-r-tXSD-tdatetime-tnop`
+
 ## Note on harecoded special cases for cell value expansion: HXL `+rdf_y_*` and BCP47 `-r-y*`
 
 ### Explode list of items

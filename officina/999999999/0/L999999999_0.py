@@ -925,6 +925,7 @@ RDF_SPATIA_NOMINALIBUS_EXTRAS = {
     'wdt': 'http://www.wikidata.org/prop/direct/',
     'wdv': 'http://www.wikidata.org/value/',
     'p': 'http://www.wikidata.org/prop/',  # NOTE: preffer use wdata for datasets
+    'xsd': 'http://www.w3.org/2001/XMLSchema#',
 }
 # For "Base OWL" of Wikidata, download link: http://wikiba.se/ontology
 
@@ -2985,15 +2986,29 @@ def bcp47_rdf_extension_poc(
                 for _item in bcp47_privateuse:
                     if _item.startswith(_hxla):
                         # raise ValueError('foi', triples)
-                        _trivio_hxla = 'ix:{0}'.format(_hxla)
-                        triples.append(['#<foi>', _trivio_hxla, _hxla])
+                        _trivio_hxla = 'ix:{0}'.format(_item)
+                        # triples.append(['#<foi>', _trivio_hxla, _hxla])
 
             if _trivio_hxla is not None:
                 triples_novo = []
                 for _triple_item in triples:
-                    _bn = uuid.uuid3(uuid.NAMESPACE_DNS, 'python.org')
-                    pass
-
+                    _bn = '_:{0}'.format(uuid.uuid3(
+                        uuid.NAMESPACE_DNS,
+                        _triple_item[0]
+                        # str(_triple_item[0], _triple_item[1])
+                    ))
+                    triples_novo.append([
+                        _triple_item[0],
+                        _triple_item[1],
+                        _bn
+                    ])
+                    triples_novo.append([
+                        _bn,
+                        _trivio_hxla,
+                        _triple_item[2]
+                    ])
+                    # pass
+                triples = triples_novo
 
         return triples, triples_delayed
 
@@ -3106,6 +3121,11 @@ def bcp47_rdf_extension_poc(
     if 'rdf_spatia_nominalibus' in result:
         # @TODO remove this later.
         del result['rdf_spatia_nominalibus']
+
+    # raise ValueError(result['caput_asa'].keys())
+    if rdf_trivio_hxla and len(rdf_trivio_hxla) > 0:
+        # We're likely to need upfront. So lets already add it
+        result['caput_asa']['rdf_spatia_nominalibus']['ix'] = 'urn:hxl:vocab:a:ix:'
 
     result['antecessoribus_rdf_triplis'] = \
         NUMERODINATIO_ANTECESSORIBUS__RDF_TRIPLIS

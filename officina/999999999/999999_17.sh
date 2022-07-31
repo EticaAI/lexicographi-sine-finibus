@@ -85,6 +85,7 @@ set -x
   --methodus=_temp_no1 \
   --rdf-sine-spatia-nominalibus=devnull,mdciii \
   --rdf-trivio=1603 \
+  --rdf-per-trivio='iso8601v' \
   "999999/0/1603_992_1_0~worldbank~SP_POP_TOTL.no1.tm.hxl.csv" \
   >"999999/0/1603_992_1_0~worldbank~SP_POP_TOTL~TEMP.no1.owl.ttl"
 
