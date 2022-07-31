@@ -27,6 +27,7 @@
 #      REVISION:  ---
 # ==============================================================================
 
+import json
 import os
 import re
 import sys
@@ -45,6 +46,7 @@ from typing import (
     # Dict,
     # List,
 )
+
 import zipfile
 
 from L999999999_0 import (
@@ -691,6 +693,31 @@ class Cli:
         return self.EXIT_ERROR
 
 
+# ./999999999/0/999999999_7200235.py  --methodus=index_praeparationi 1603_16_1_0 --index-nomini=i1603_16_1_0 --index-ad-columnam='ix_unm49'
+class Adm0CodexLocali:
+
+    i1603_16_1_0: dict = None
+
+    def __init__(
+        self
+    ):
+        _path = NUMERORDINATIO_BASIM + '/999999/0/i1603_16_1_0.index.json'
+        if not exists(_path):
+            raise NotFoundErr(
+                "Warm up required. Use ./999999999/0/999999999_7200235.py "
+                " --methodus=index_praeparationi 1603_16_1_0 "
+                "--index-nomini=i1603_16_1_0 --index-ad-columnam='ix_unm49'")
+
+        with open(_path, 'r') as f:
+            self.i1603_16_1_0 = json.load(f)
+
+    def quod(self, res: str) -> str:
+        if res and res in self.i1603_16_1_0:
+            _v = str(int(self.i1603_16_1_0[res]))
+            return _v
+        return None
+
+
 class DataScrapping:
 
     def __init__(
@@ -710,6 +737,8 @@ class DataScrapping:
 
         self.objectivum_formato = objectivum_formato
         self._temp = {}
+
+        self._Adm0CodexLocali = None
 
     def __del__(self):
         for clavem, res in self._temp.items():
@@ -742,6 +771,15 @@ class DataScrapping:
                 NUMERORDINATIO_BASIM, type(self).__name__, self.methodus
             ),
         }
+
+    def _codicem(self, res: str, strictum: bool = False, index: int = 0) -> str:
+        if self._Adm0CodexLocali is None:
+            self._Adm0CodexLocali = Adm0CodexLocali()
+        _v = self._Adm0CodexLocali.quod(res)
+        if _v:
+            return _v
+        else:
+            return None if strictum else str(900 + index)
 
     def _hxlize_dummy(self, caput: list):
         resultatum = []
@@ -902,7 +940,18 @@ class DataScrapping:
                         continue
                     if codicem_inconito is True:
                         index_linea += 1
-                        linea.insert(0, str(index_linea))
+                        # linea.insert(0, str(index_linea))
+                        # _v = self._codicem(index_linea, index_linea)
+
+                        # Brute force whathever is on first 3 columns
+                        for i in range(3):
+                            _v = self._codicem(linea[i], strictum=True)
+                            if _v is not None:
+                                break
+                        if _v is None:
+                            _v = self._codicem(
+                                False, index=index_linea, strictum=False)
+                        linea.insert(0, _v)
                     _csv_writer.writerow(linea)
 
     def de_hxltm_ad_no1(self, fonti: str, objetivum: str):

@@ -6500,7 +6500,11 @@ def hxltm_index_praeparationi(
     if not index_ad_columnam:
         index_ad_columnam = 0
     else:
-        index_ad_columnam = caput.index(index_ad_columnam)
+        de_facto = qhxl_select(
+            caput, index_ad_columnam, unicum=True, strictum=True)
+        # print('de_facto', de_facto, caput)
+        # index_ad_columnam = caput.index(index_ad_columnam)
+        index_ad_columnam = caput.index(de_facto)
 
     _data_json = {}
     data_json = {}
@@ -7332,6 +7336,53 @@ def qhxl_bcp47_2_hxlattr(bcp47: str) -> str:
             resultatum += '+ix_' + item
 
     return resultatum
+
+
+def qhxl_select(caput: list, query: str, unicum: bool = False, strictum: bool = False):
+    """qhxl_select
+
+    Select HXL hashtags from list of header of hashtags without
+    need be exact
+
+    Args:
+        caput (list): HXL hashtags header
+        query (str): query to search for parts
+        unicum (bool): Return just one item instead of always list
+        strictum (bool): Force have at least one value
+
+    Returns:
+        list: 0 or more results
+    """
+    result_filtered = []
+
+    if query in caput:
+        # Exact match
+        return query if unicum else [query]
+
+    query_parts = query.replace('#', '').strip('+').split('+')
+    # query_parts = filter(None, query_parts)
+    for res in caput:
+        _failed = False
+        _res_parts = res.replace('#', '').strip('+').split('+')
+        # _res_parts = filter(None, _res_parts)
+        for _q in query_parts:
+            if _q not in _res_parts:
+                _failed = True
+                continue
+        if not _failed:
+            result_filtered.append(res)
+
+    if strictum is True and len(result_filtered) == 0:
+        raise ValueError('<{0}> not found in <{1}>'.format(query, caput))
+
+    if strictum is True and unicum is True and len(result_filtered) > 1:
+        raise ValueError('Non unicum <{0}>: <{1}>; caput <{2}>'.format(
+            query, result_filtered, caput))
+
+    if unicum:
+        return result_filtered[0]
+
+    return result_filtered
 
 
 def res_interlingualibus_formata(rem: dict, query) -> str:

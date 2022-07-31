@@ -68,6 +68,9 @@ ROOTDIR="$(pwd)"
 # wikidata_q_ex_totalibus "$wikiq" "999999/1603/3/45/16/1/1/1603_3_45_16_1_1.wikiq.tm.hxl.csv"
 set -x
 
+
+# ./999999999/0/999999999_7200235.py  --methodus=index_praeparationi 1603_16_1_0 --index-nomini=i1603_16_1_0 --index-ad-columnam='ix_unm49'
+
 ./999999999/0/999999999_521850.py \
   --methodus-fonti=worldbank \
   --methodus="SP.POP.TOTL" \
