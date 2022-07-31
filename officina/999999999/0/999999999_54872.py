@@ -378,8 +378,8 @@ class Cli:
             '--rdf-per-trivio',
             help='(Advanced) Define ix_atts which furter act as pivots for '
             'exported data, so it can "fit" on RDF. Uses blank nodes. '
-            'Example: ix_iso8601v '
-            '(Expands: ix_iso8601v2010, ix_iso8601v2011, ...)',
+            'Example: iso8601v (no ix_ prefix, only common prefix need)'
+            '(Expands: iso8601v2010, iso8601v2011, ...)',
             dest='rdf_trivio_hxla',
             nargs='?',
             type=lambda x: x.split(','),

@@ -103,6 +103,8 @@ rdfpipe --input-format=turtle --output-format=longturtle \
 
 # ./999999999/0/999999999_521850.py --methodus-fonti=worldbank --methodus=SP.POP.TOTL --objectivum-formato=no1 --rdf-trivio=12345 | hea
 
+# ./999999999/0/999999999_54872.py --methodus=_temp_no1 --rdf-sine-spatia-nominalibus=devnull,mdciii --rdf-trivio=1603  --rdf-per-trivio='ix_iso8601v' 999999/0/1603_992_1_0~worldbank~SP_POP_TOTL.no1.tm.hxl.csv | head -n 20
+
 ./999999999/0/999999999_521850.py \
   --methodus-fonti=worldbank \
   --methodus="SP.RUR.TOTL" \
