@@ -225,7 +225,7 @@ DATA_HXLTM_DE_HXL_GENERIC = {
 
 DATA_NO1_DE_HXLTM_GENERIC = {
     # '^(?P<t>#[a-z0-9]{3,99})\+rem\+i_qcc\+is_zxxx\+ix_xywdatap(?P<v2>[0-9]{1,12})'
-    '#{t}+rem+i_qcc+is_zxxx+ix_iso8601v{v1}+rdf_p_wdata_p{v2}_s{trivio}': r"^#(?P<t>[a-z0-9]{3,99})\+rem\+i_qcc\+is_zxxx\+ix_iso8601v(?P<v1>[0-9]{4})\+ix_xywdatap(?P<v2>[0-9]{1,12})"
+    '#{t}+rem+i_qcc+is_zxxx+ix_iso8601v{v1}+rdf_p_wdata_p{v2}_s{trivio}+rdf_t_xsd_int': r"^#(?P<t>[a-z0-9]{3,99})\+rem\+i_qcc\+is_zxxx\+ix_iso8601v(?P<v1>[0-9]{4})\+ix_xywdatap(?P<v2>[0-9]{1,12})"
 }
 
 DATA_HXL_DE_CSV_REGEX = {
@@ -273,9 +273,9 @@ DATA_HXL_AD_HXLTM = {
     ],
 }
 
-DATA_HXLTM_AD_RDFTYPE = {
-    'ix_iso8601v': ''
-}
+# DATA_HXLTM_AD_RDFTYPE = {
+#     'ix_iso8601v': 'rdf_t_xsd_int'
+# }
 
 
 def parse_hashtag(hashtag: str) -> dict:

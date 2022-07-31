@@ -2070,7 +2070,7 @@ def bcp47_rdf_extension(
             elif r_op == 't':
                 if result['rdfs:Datatype'] is None:
                     datatype = _rdf_spatia_nominalibus_prefix_normali(
-                        '{0}:{1}'.format(r_verb, r_op_1)
+                        '{0}:{1}'.format(r_verb.lower(), r_op_1)
                     )
                     # raise ValueError(r_verb, datatype)
                     # r_verb = r_verb.lower()
@@ -4846,35 +4846,44 @@ class HXLHashtagSimplici:
 
 
 def hxl_hashtag_normalizatio(hashtag: str) -> str:
-    """hxl_hashtag_normalizatio _summary_
+    """hxl_hashtag_normalizatio Canonical form of HXL and HXLTM hashtags
 
-    _extended_summary_
+    Quick function to remove extra spaces and repeated attributes. If
+    the hashtag starts with HXLTM pattern, we also do extra sorting
+    and make sure have at least language and stript.
+
+    Note: this function will not do further syntax checking. The
+    bcp47_langtag() / hxl_hashtag_to_bcp47() could be used for this.
 
     Args:
-        hashtag (str): _description_
-
-    Raises:
-        SyntaxError: _description_
+        hashtag (str): HXL / HXLTM hashtag
 
     Returns:
-        str: _description_
-
+        str: canonized hashtag
 
     >>> hxl_hashtag_normalizatio(' #date+stArT ')
     '#date+start'
     >>> hxl_hashtag_normalizatio(
     ...     '#item+rem+i_qcc+is_zxxx+ix_zza+rdf_t_xsd_datetime+ix_aaa+ix_aaa')
-    '#item+rem+i_qcc+is_zxxx+ix_aaa+ix_zzz+rdf_t_xsd_datetime'
+    '#item+rem+i_qcc+is_zxxx+ix_aaa+ix_zza+rdf_t_xsd_datetime'
 
     >>> hxl_hashtag_normalizatio(
-    ...     '#item+rem+i_qcc+is_zxxx+ix_zza+rdf_t_xsd_datetime+ix_aaz')
-    '#item+rem+i_qcc+is_zxxx+ix_aaa+ix_zzzz+rdf_t_xsd_datetime'
+    ...     '#item+rem+i_qcc+is_zxxx+ix_zza+rdf_t_xsd_int+rdf_t_xsd_int+ix_aaz')
+    '#item+rem+i_qcc+is_zxxx+ix_aaz+ix_zza+rdf_t_xsd_int'
 
-    >>> hxl_hashtag_normalizatio(
-    ...     '#item+rem+i_qcc+is_zxxx+ix_zzzz+ix_zzz+rdf_t_xsd_int+ix_aaa')
-    '#item+rem+i_qcc+is_zxxx+ix_aaa+ix_zzzz+rdf_t_xsd_datetime'
+    >>> hxl_hashtag_normalizatio('#item+rem+i_qcc+is_zxxx+ix_aaz+ix_zza' +
+    ... '+rdf_t_xsd_int+rdf_s_u2200_s+rdf_p_skos_preflabel' +
+    ... '+rdf_y_u001d_u007c+rdf_y_u001d_u007c+rdf_a_owl_thing')
+    '#item+rem+i_qcc+is_zxxx+ix_aaz+ix_zza+rdf_a_owl_thing\
++rdf_p_skos_preflabel+rdf_s_u2200_s+rdf_t_xsd_int+rdf_y_u001d_u007c'
 
     """
+
+    # @TODO this function could be simplified in half even further if we change
+    #       +i_lll (the lang attribute) to have an additional letter
+    #       sorting before all others +is_llll and +ix_xxxxx. Yet we may keep
+    #       as it is (Rocha, 2022-07-31 14:12 UTC)
+
     hxltm_prefix = ('#item+rem', '#meta+rem', '#status+rem')
     hxltm_hashtag = None
     _hxltm_attrs = []
@@ -4916,9 +4925,6 @@ def hxl_hashtag_normalizatio(hashtag: str) -> str:
     if _hxltm_attrs_script is None:
         raise SyntaxError(f'+is_qqqq? <{hashtag}>')
 
-    # if _hxltm_attrs_lang is None or _hxltm_attrs_script is None:
-    #     raise SyntaxError(hashtag)
-
     hxltm_hashtag += '+' + _hxltm_attrs_lang
     hxltm_hashtag += '+' + _hxltm_attrs_script
     if len(_hxltm_attrs_ix) > 0:
@@ -4929,14 +4935,6 @@ def hxl_hashtag_normalizatio(hashtag: str) -> str:
         hxltm_hashtag += '+{0}'.format('+'.join(_hxltm_attrs_rest))
 
     return hxltm_hashtag
-    # # @TODO improve sorthing
-    # _hxltm_attrs.sort()
-
-    # # return hashtag
-    # return '{0}+{1}'.format(
-    #     hxltm_hashtag,
-    #     '+'.join(_hxltm_attrs)
-    # )
 
 
 def hxl_hashtag_to_bcp47(
@@ -4954,6 +4952,8 @@ def hxl_hashtag_to_bcp47(
     """
     if not hashtag.startswith('#'):
         raise ValueError('{0} not start with #'.format(hashtag))
+
+    hashtag = hxl_hashtag_normalizatio(hashtag)
 
     # This this AST is similar to bcp47_langtag
     result = {
