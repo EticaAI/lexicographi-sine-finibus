@@ -2,6 +2,7 @@
 <rdf:RDF xmlns="urn:mdciii_simulato:#"
      xml:base="urn:mdciii_simulato:"
      xmlns:dc="http://purl.org/dc/elements/1.1/"
+     xmlns:obo="http://purl.obolibrary.org/obo/"
      xmlns:owl="http://www.w3.org/2002/07/owl#"
      xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
      xmlns:xml="http://www.w3.org/XML/1998/namespace"
@@ -19,10 +20,32 @@
     <!-- 
     ///////////////////////////////////////////////////////////////////////////////////////
     //
+    // Annotation properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.w3.org/2004/02/skos/core#notation -->
+
+    <owl:AnnotationProperty rdf:about="http://www.w3.org/2004/02/skos/core#notation"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
     // Classes
     //
     ///////////////////////////////////////////////////////////////////////////////////////
      -->
+
+    
+
+
+    <!-- urn:mdciii_simulato:1603_16_N_0() -->
 
     <owl:Class rdf:about="urn:mdciii_simulato:1603_16_N_0()">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000029"/>
@@ -30,6 +53,10 @@
         <rdfs:label>1603_16_N_0()</rdfs:label>
         <skos:notation>ABL0</skos:notation>
     </owl:Class>
+    
+
+
+    <!-- urn:mdciii_simulato:1603_16_N_1() -->
 
     <owl:Class rdf:about="urn:mdciii_simulato:1603_16_N_1()">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000029"/>
@@ -37,6 +64,10 @@
         <rdfs:label>1603_16_N_1()</rdfs:label>
         <skos:notation>ABL1</skos:notation>
     </owl:Class>
+    
+
+
+    <!-- urn:mdciii_simulato:1603_16_N_2() -->
 
     <owl:Class rdf:about="urn:mdciii_simulato:1603_16_N_2()">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000029"/>
@@ -44,6 +75,10 @@
         <rdfs:label>1603_16_N_2()</rdfs:label>
         <skos:notation>ABL2</skos:notation>
     </owl:Class>
+    
+
+
+    <!-- urn:mdciii_simulato:1603_16_N_3() -->
 
     <owl:Class rdf:about="urn:mdciii_simulato:1603_16_N_3()">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000029"/>
@@ -51,46 +86,111 @@
         <rdfs:label>1603_16_N_3()</rdfs:label>
         <skos:notation>ABL3</skos:notation>
     </owl:Class>
+    
+
+
+    <!-- urn:mdciii_simulato:1603_16_N_4() -->
 
     <owl:Class rdf:about="urn:mdciii_simulato:1603_16_N_4()">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000029"/>
         <rdfs:comment xml:lang="en">Administrative Boundary Level 4</rdfs:comment>
         <rdfs:label>1603_16_N_4()</rdfs:label>
-        <skos:notation>ABL3</skos:notation>
+        <skos:notation>ABL4</skos:notation>
     </owl:Class>
+    
+
+
+    <!-- urn:mdciii_simulato:1603_16_N_5() -->
 
     <owl:Class rdf:about="urn:mdciii_simulato:1603_16_N_5()">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000029"/>
         <rdfs:comment xml:lang="en">Administrative Boundary Level 5</rdfs:comment>
         <rdfs:label>1603_16_N_5()</rdfs:label>
-        <skos:notation>ABL4</skos:notation>
+        <skos:notation>ABL5</skos:notation>
     </owl:Class>
+    
+
+
+    <!-- urn:mdciii_simulato:1603_16_N_6() -->
 
     <owl:Class rdf:about="urn:mdciii_simulato:1603_16_N_6()">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000029"/>
         <rdfs:comment xml:lang="en">Administrative Boundary Level 6</rdfs:comment>
         <rdfs:label>1603_16_N_6()</rdfs:label>
-        <skos:notation>ABL5</skos:notation>
+        <skos:notation>ABL6</skos:notation>
     </owl:Class>
+    
 
 
-    <owl:Class rdf:about="urn:mdciii_simulato:@1603_XN_N_0()?xn=np">
+    <!-- urn:mdciii_simulato:@1603_{NP}_N_0() -->
+
+    <owl:Class rdf:about="urn:mdciii_simulato:@1603_{NP}_N_0()">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000030"/>
         <rdfs:comment xml:lang="en">Natural person (by ABL0)</rdfs:comment>
-        <rdfs:label>@1603_XN_N_0()</rdfs:label>
+        <rdfs:label>@1603_{NP}_N_0()</rdfs:label>
+        <rdfs:seeAlso xml:lang="en">https://www.wikidata.org/wiki/Q154954</rdfs:seeAlso>
     </owl:Class>
-    <owl:Class rdf:about="urn:mdciii_simulato:@1603_XN_N_1()?xn=np">
+    
+
+
+    <!-- urn:mdciii_simulato:@1603_{NP}_N_1() -->
+
+    <owl:Class rdf:about="urn:mdciii_simulato:@1603_{NP}_N_1()">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000030"/>
         <rdfs:comment xml:lang="en">Natural person (by ABL1)</rdfs:comment>
-        <rdfs:label>@1603_XN_N_1()</rdfs:label>
+        <rdfs:label>@1603_{NP}_N_1()</rdfs:label>
+        <rdfs:seeAlso xml:lang="en">https://www.wikidata.org/wiki/Q154954</rdfs:seeAlso>
     </owl:Class>
-    <owl:Class rdf:about="urn:mdciii_simulato:@1603_XN_N_2()?xn=np">
+    
+
+
+    <!-- urn:mdciii_simulato:@1603_{NP}_N_2() -->
+
+    <owl:Class rdf:about="urn:mdciii_simulato:@1603_{NP}_N_2()">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000030"/>
         <rdfs:comment xml:lang="en">Natural person (by ABL2)</rdfs:comment>
-        <rdfs:label>@1603_XN_N_2()</rdfs:label>
+        <rdfs:label>@1603_{NP}_N_2()</rdfs:label>
+        <rdfs:seeAlso xml:lang="en">https://www.wikidata.org/wiki/Q154954</rdfs:seeAlso>
+    </owl:Class>
+    
+
+
+    <!-- urn:mdciii_simulato:@1603_{POP}_N_0() -->
+
+    <owl:Class rdf:about="urn:mdciii_simulato:@1603_{POP}_N_0()">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000027"/>
+        <rdfs:comment xml:lang="en">Population (by ABL0)</rdfs:comment>
+        <rdfs:label>@1603_{POP}_N_0()</rdfs:label>
+        <rdfs:seeAlso xml:lang="en">http://purl.obolibrary.org/obo/OBI_0000181</rdfs:seeAlso>
+        <rdfs:seeAlso xml:lang="en">https://www.wikidata.org/wiki/Q2625603</rdfs:seeAlso>
+    </owl:Class>
+    
+
+
+    <!-- urn:mdciii_simulato:@1603_{POP}_N_1() -->
+
+    <owl:Class rdf:about="urn:mdciii_simulato:@1603_{POP}_N_1()">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000027"/>
+        <rdfs:comment xml:lang="en">Population (by ABL1)</rdfs:comment>
+        <rdfs:label>@1603_{POP}_N_1()</rdfs:label>
+        <rdfs:seeAlso xml:lang="en">http://purl.obolibrary.org/obo/OBI_0000181</rdfs:seeAlso>
+        <rdfs:seeAlso xml:lang="en">https://www.wikidata.org/wiki/Q2625603</rdfs:seeAlso>
+    </owl:Class>
+    
+
+
+    <!-- urn:mdciii_simulato:@1603_{POP}_N_2() -->
+
+    <owl:Class rdf:about="urn:mdciii_simulato:@1603_{POP}_N_2()">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000027"/>
+        <rdfs:comment xml:lang="en">Population (by ABL2)</rdfs:comment>
+        <rdfs:label>@1603_{POP}_N_2()</rdfs:label>
+        <rdfs:seeAlso xml:lang="en">http://purl.obolibrary.org/obo/OBI_0000181</rdfs:seeAlso>
+        <rdfs:seeAlso xml:lang="en">https://www.wikidata.org/wiki/Q2625603</rdfs:seeAlso>
     </owl:Class>
 </rdf:RDF>
 
 
 
 <!-- Generated by the OWL API (version 4.5.9.2019-02-01T07:24:44Z) https://github.com/owlcs/owlapi -->
+
