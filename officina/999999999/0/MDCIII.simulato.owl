@@ -122,6 +122,18 @@
     
 
 
+    <!-- urn:mdciii_simulato:@1603_{AC}_1603() -->
+
+    <owl:Class rdf:about="urn:mdciii_simulato:@1603_{AC}_1603()">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000040"/>
+        <rdfs:comment xml:lang="en">Authority control</rdfs:comment>
+        <rdfs:label>@1603_{AC}_1603()</rdfs:label>
+        <rdfs:seeAlso rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://www.wikidata.org/wiki/Q36524</rdfs:seeAlso>
+        <skos:scopeNote xml:lang="en">Agent responsible to control external identifiers for exchanged data. Mostly used to assert what cannot be inferred by places.</skos:scopeNote>
+    </owl:Class>
+    
+
+
     <!-- urn:mdciii_simulato:@1603_{NP}_N_0() -->
 
     <owl:Class rdf:about="urn:mdciii_simulato:@1603_{NP}_N_0()">
@@ -129,6 +141,7 @@
         <rdfs:comment xml:lang="en">Natural person (by ABL0)</rdfs:comment>
         <rdfs:label>@1603_{NP}_N_0()</rdfs:label>
         <rdfs:seeAlso xml:lang="en">https://www.wikidata.org/wiki/Q154954</rdfs:seeAlso>
+        <skos:scopeNote xml:lang="en">Reason for not have an Legal person: for legal person (such company), please use Organization and specify as property that is a legal person</skos:scopeNote>
     </owl:Class>
     
 
@@ -151,6 +164,42 @@
         <rdfs:comment xml:lang="en">Natural person (by ABL2)</rdfs:comment>
         <rdfs:label>@1603_{NP}_N_2()</rdfs:label>
         <rdfs:seeAlso xml:lang="en">https://www.wikidata.org/wiki/Q154954</rdfs:seeAlso>
+    </owl:Class>
+    
+
+
+    <!-- urn:mdciii_simulato:@1603_{ORG}_N_0() -->
+
+    <owl:Class rdf:about="urn:mdciii_simulato:@1603_{ORG}_N_0()">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000040"/>
+        <rdfs:comment xml:lang="en">Organization (by ABL0)</rdfs:comment>
+        <rdfs:label>@1603_{ORG}_N_0()</rdfs:label>
+        <rdfs:seeAlso rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">http://purl.obolibrary.org/obo/OBI_0000245</rdfs:seeAlso>
+        <rdfs:seeAlso rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://www.wikidata.org/wiki/Q43229</rdfs:seeAlso>
+    </owl:Class>
+    
+
+
+    <!-- urn:mdciii_simulato:@1603_{ORG}_N_1() -->
+
+    <owl:Class rdf:about="urn:mdciii_simulato:@1603_{ORG}_N_1()">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000040"/>
+        <rdfs:comment xml:lang="en">Organization (by ABL1)</rdfs:comment>
+        <rdfs:label>@1603_{ORG}_N_1()</rdfs:label>
+        <rdfs:seeAlso rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">http://purl.obolibrary.org/obo/OBI_0000245</rdfs:seeAlso>
+        <rdfs:seeAlso rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://www.wikidata.org/wiki/Q43229</rdfs:seeAlso>
+    </owl:Class>
+    
+
+
+    <!-- urn:mdciii_simulato:@1603_{ORG}_N_2() -->
+
+    <owl:Class rdf:about="urn:mdciii_simulato:@1603_{ORG}_N_2()">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000040"/>
+        <rdfs:comment xml:lang="en">Organization (by ABL2)</rdfs:comment>
+        <rdfs:label>@1603_{ORG}_N_2()</rdfs:label>
+        <rdfs:seeAlso rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">http://purl.obolibrary.org/obo/OBI_0000245</rdfs:seeAlso>
+        <rdfs:seeAlso rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">https://www.wikidata.org/wiki/Q43229</rdfs:seeAlso>
     </owl:Class>
     
 
