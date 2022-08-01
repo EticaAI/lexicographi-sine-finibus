@@ -939,7 +939,7 @@ class DataScrapping:
                         _csv_writer.writerow(caput)
                         continue
                     if codicem_inconito is True:
-                        index_linea += 1
+                        # index_linea += 1
                         # linea.insert(0, str(index_linea))
                         # _v = self._codicem(index_linea, index_linea)
 
@@ -949,6 +949,7 @@ class DataScrapping:
                             if _v is not None:
                                 break
                         if _v is None:
+                            index_linea += 1
                             _v = self._codicem(
                                 False, index=index_linea, strictum=False)
                         linea.insert(0, _v)
