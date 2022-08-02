@@ -703,7 +703,7 @@ class Adm0CodexLocali:
     ):
         _path = NUMERORDINATIO_BASIM + '/999999/0/i1603_16_1_0.index.json'
         if not exists(_path):
-            raise NotFoundErr(
+            raise FileNotFoundError(
                 "Warm up required. Use ./999999999/0/999999999_7200235.py "
                 " --methodus=index_praeparationi 1603_16_1_0 "
                 "--index-nomini=i1603_16_1_0 --index-ad-columnam='ix_unm49'")
