@@ -122,12 +122,40 @@
     
 
 
+    <!-- urn:mdciii_simulato::@1603_NP -->
+
+    <owl:Class rdf:about="urn:mdciii_simulato::@1603_NP">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000030"/>
+        <rdfs:label>@1603_NP</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- urn:mdciii_simulato::@1603_ORG -->
+
+    <owl:Class rdf:about="urn:mdciii_simulato::@1603_ORG">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000040"/>
+        <rdfs:label>@1603_ORG</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- urn:mdciii_simulato::@1603_POIA -->
+
+    <owl:Class rdf:about="urn:mdciii_simulato::@1603_POIA">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000030"/>
+        <rdfs:label>@1603_POIA</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- urn:mdciii_simulato::@1603_{QLTY}_N_0() -->
 
     <owl:Class rdf:about="urn:mdciii_simulato::@1603_{QLTY}_N_0()">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000019"/>
-        <rdfs:comment xml:lang="en">Qualities (by ABL0)2</rdfs:comment>
+        <rdfs:comment xml:lang="en">Qualities (by ABL0)</rdfs:comment>
         <rdfs:label>@1603_{QLTY}_N_0()</rdfs:label>
+        <skos:example>urn:worldbank:NY.GDP.MKTP.CD, urn:worldbank:EN.ATM.CO2E.KT</skos:example>
     </owl:Class>
     
 
@@ -165,10 +193,24 @@
     
 
 
+    <!-- urn:mdciii_simulato:@1603_{MOOI}_N_0() -->
+
+    <owl:Class rdf:about="urn:mdciii_simulato:@1603_{MOOI}_N_0()">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000030"/>
+        <owl:disjointWith rdf:resource="urn:mdciii_simulato:@1603_{POIA}_N_0()"/>
+        <rdfs:comment xml:lang="en">Movable object of interest (by ABL0)</rdfs:comment>
+        <rdfs:label>@1603_{MOOI}_N_0()</rdfs:label>
+        <rdfs:seeAlso rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">http://purl.obolibrary.org/obo/ENVO_00000070</rdfs:seeAlso>
+        <rdfs:seeAlso xml:lang="en">https://www.wikidata.org/wiki/Q132987</rdfs:seeAlso>
+        <skos:definition xml:lang="en">Generic catch-all numeric namespace for objects which can be moved off location without losing its essence. An ambulance (vs the hospital), an defibrillator (vs surgery room in a building).</skos:definition>
+    </owl:Class>
+    
+
+
     <!-- urn:mdciii_simulato:@1603_{NP}_N_0() -->
 
     <owl:Class rdf:about="urn:mdciii_simulato:@1603_{NP}_N_0()">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000030"/>
+        <rdfs:subClassOf rdf:resource="urn:mdciii_simulato::@1603_NP"/>
         <rdfs:comment xml:lang="en">Natural person (by ABL0)</rdfs:comment>
         <rdfs:label>@1603_{NP}_N_0()</rdfs:label>
         <rdfs:seeAlso xml:lang="en">https://www.wikidata.org/wiki/Q154954</rdfs:seeAlso>
@@ -180,7 +222,7 @@
     <!-- urn:mdciii_simulato:@1603_{NP}_N_1() -->
 
     <owl:Class rdf:about="urn:mdciii_simulato:@1603_{NP}_N_1()">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000030"/>
+        <rdfs:subClassOf rdf:resource="urn:mdciii_simulato::@1603_NP"/>
         <rdfs:comment xml:lang="en">Natural person (by ABL1)</rdfs:comment>
         <rdfs:label>@1603_{NP}_N_1()</rdfs:label>
         <rdfs:seeAlso xml:lang="en">https://www.wikidata.org/wiki/Q154954</rdfs:seeAlso>
@@ -191,7 +233,7 @@
     <!-- urn:mdciii_simulato:@1603_{NP}_N_2() -->
 
     <owl:Class rdf:about="urn:mdciii_simulato:@1603_{NP}_N_2()">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000030"/>
+        <rdfs:subClassOf rdf:resource="urn:mdciii_simulato::@1603_NP"/>
         <rdfs:comment xml:lang="en">Natural person (by ABL2)</rdfs:comment>
         <rdfs:label>@1603_{NP}_N_2()</rdfs:label>
         <rdfs:seeAlso xml:lang="en">https://www.wikidata.org/wiki/Q154954</rdfs:seeAlso>
@@ -202,7 +244,7 @@
     <!-- urn:mdciii_simulato:@1603_{ORG}_N_0() -->
 
     <owl:Class rdf:about="urn:mdciii_simulato:@1603_{ORG}_N_0()">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000040"/>
+        <rdfs:subClassOf rdf:resource="urn:mdciii_simulato::@1603_ORG"/>
         <rdfs:comment xml:lang="en">Organization (by ABL0)</rdfs:comment>
         <rdfs:label>@1603_{ORG}_N_0()</rdfs:label>
         <rdfs:seeAlso rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">http://purl.obolibrary.org/obo/OBI_0000245</rdfs:seeAlso>
@@ -214,7 +256,7 @@
     <!-- urn:mdciii_simulato:@1603_{ORG}_N_1() -->
 
     <owl:Class rdf:about="urn:mdciii_simulato:@1603_{ORG}_N_1()">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000040"/>
+        <rdfs:subClassOf rdf:resource="urn:mdciii_simulato::@1603_ORG"/>
         <rdfs:comment xml:lang="en">Organization (by ABL1)</rdfs:comment>
         <rdfs:label>@1603_{ORG}_N_1()</rdfs:label>
         <rdfs:seeAlso rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">http://purl.obolibrary.org/obo/OBI_0000245</rdfs:seeAlso>
@@ -226,7 +268,7 @@
     <!-- urn:mdciii_simulato:@1603_{ORG}_N_2() -->
 
     <owl:Class rdf:about="urn:mdciii_simulato:@1603_{ORG}_N_2()">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000040"/>
+        <rdfs:subClassOf rdf:resource="urn:mdciii_simulato::@1603_ORG"/>
         <rdfs:comment xml:lang="en">Organization (by ABL2)</rdfs:comment>
         <rdfs:label>@1603_{ORG}_N_2()</rdfs:label>
         <rdfs:seeAlso rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">http://purl.obolibrary.org/obo/OBI_0000245</rdfs:seeAlso>
@@ -238,11 +280,12 @@
     <!-- urn:mdciii_simulato:@1603_{POIA}_N_0() -->
 
     <owl:Class rdf:about="urn:mdciii_simulato:@1603_{POIA}_N_0()">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000030"/>
+        <rdfs:subClassOf rdf:resource="urn:mdciii_simulato::@1603_POIA"/>
         <rdfs:comment xml:lang="en">Point of interest, anthropomorphic (by ABL0)</rdfs:comment>
         <rdfs:label>@1603_{POIA}_N_0()</rdfs:label>
         <rdfs:seeAlso rdf:datatype="http://www.w3.org/2001/XMLSchema#anyURI">http://purl.obolibrary.org/obo/ENVO_00000070</rdfs:seeAlso>
         <rdfs:seeAlso xml:lang="en">https://www.wikidata.org/wiki/Q132987</rdfs:seeAlso>
+        <skos:definition xml:lang="en">Generic catch-all numeric namespace for points of interest which are fixed in a geographical location for all its existence. An hospital (vs ambulance); an temporary shelter in a building after an disaster (vs the items such as beds for temporary shelter)</skos:definition>
     </owl:Class>
     
 
@@ -345,3 +388,4 @@
 
 
 <!-- Generated by the OWL API (version 4.5.9.2019-02-01T07:24:44Z) https://github.com/owlcs/owlapi -->
+
