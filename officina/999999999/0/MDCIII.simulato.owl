@@ -122,6 +122,36 @@
     
 
 
+    <!-- urn:mdciii_simulato::@1603_{QLTY}_N_0() -->
+
+    <owl:Class rdf:about="urn:mdciii_simulato::@1603_{QLTY}_N_0()">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000019"/>
+        <rdfs:comment xml:lang="en">Qualities (by ABL0)2</rdfs:comment>
+        <rdfs:label>@1603_{QLTY}_N_0()</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- urn:mdciii_simulato::@1603_{QLTY}_N_1() -->
+
+    <owl:Class rdf:about="urn:mdciii_simulato::@1603_{QLTY}_N_1()">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000019"/>
+        <rdfs:comment xml:lang="en">Qualities (by ABL1)</rdfs:comment>
+        <rdfs:label>@1603_{QLTY}_N_1()</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- urn:mdciii_simulato::@1603_{QLTY}_N_2() -->
+
+    <owl:Class rdf:about="urn:mdciii_simulato::@1603_{QLTY}_N_2()">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000019"/>
+        <rdfs:comment xml:lang="en">Qualities (by ABL2)</rdfs:comment>
+        <rdfs:label>@1603_{QLTY}_N_2()</rdfs:label>
+    </owl:Class>
+    
+
+
     <!-- urn:mdciii_simulato:@1603_{AC}_1603() -->
 
     <owl:Class rdf:about="urn:mdciii_simulato:@1603_{AC}_1603()">
@@ -257,8 +287,58 @@
 
     <owl:Class rdf:about="urn:mdciii_simulato:@1603_{PROC}_N_0()">
         <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000015"/>
-        <rdfs:comment xml:lang="en">Process (by ABL0)2</rdfs:comment>
+        <rdfs:comment xml:lang="en">Process (by ABL0)</rdfs:comment>
         <rdfs:label>@1603_{PROC}_N_0()</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- urn:mdciii_simulato:@1603_{PROC}_N_1() -->
+
+    <owl:Class rdf:about="urn:mdciii_simulato:@1603_{PROC}_N_1()">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000015"/>
+        <rdfs:comment xml:lang="en">Process (by ABL1)</rdfs:comment>
+        <rdfs:label>@1603_{PROC}_N_1()</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- urn:mdciii_simulato:@1603_{PROC}_N_2() -->
+
+    <owl:Class rdf:about="urn:mdciii_simulato:@1603_{PROC}_N_2()">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000015"/>
+        <rdfs:comment xml:lang="en">Process (by ABL2)</rdfs:comment>
+        <rdfs:label>@1603_{PROC}_N_2()</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- urn:mdciii_simulato:@1603_{SPOP}_N_0() -->
+
+    <owl:Class rdf:about="urn:mdciii_simulato:@1603_{SPOP}_N_0()">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000027"/>
+        <rdfs:comment xml:lang="en">Subpopulation (by ABL0)</rdfs:comment>
+        <rdfs:label>@1603_{SPOP}_N_0()</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- urn:mdciii_simulato:@1603_{SPOP}_N_1() -->
+
+    <owl:Class rdf:about="urn:mdciii_simulato:@1603_{SPOP}_N_1()">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000027"/>
+        <rdfs:comment xml:lang="en">Subpopulation (by ABL1)</rdfs:comment>
+        <rdfs:label>@1603_{SPOP}_N_1()</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- urn:mdciii_simulato:@1603_{SPOP}_N_2() -->
+
+    <owl:Class rdf:about="urn:mdciii_simulato:@1603_{SPOP}_N_2()">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000027"/>
+        <rdfs:comment xml:lang="en">Subpopulation (by ABL2)</rdfs:comment>
+        <rdfs:label>@1603_{SPOP}_N_2()</rdfs:label>
     </owl:Class>
 </rdf:RDF>
 
