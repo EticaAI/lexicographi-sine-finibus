@@ -225,7 +225,10 @@ DATA_HXLTM_DE_HXL_GENERIC = {
     # # male population (P1540)
     # '#item+rem+i_qcc+is_zxxx+ix_xywdatap1540': r"^#population\+m$",
 
-    '#item+rem+i_qcc+is_zxxx+ix_iso8601v{v1}+ix_xyhxltrivio': r"^#indicator\+value\+year(?P<v1>[0-9]{4})$",
+    '#item+rem+i_qcc+is_zxxx+ix_iso8601v{v1}+ix_xyexhxltrivio': r"^#indicator\+value\+year(?P<v1>[0-9]{4})$",
+
+    # HXL hashtags to replace ix_xyexhxltrivio when exploding the coluns
+    # '#item+rem+i_qcc+is_zxxx+ix_xyadhxltrivio': None,
 }
 
 DATA_NO1_DE_HXLTM_GENERIC = {
@@ -249,37 +252,37 @@ DATA_HXL_DE_CSV_REGEX = {
 
         # Population statistics, thematic
         # Only for numeric
-        'SP.POP.TOTL': '#population+t+year{0}',
+        'SP.POP.TOTL': ['#population+t+year{0}'],
 
         # https://data.worldbank.org/indicator/SP.RUR.TOTL
         # https://www.wikidata.org/wiki/Property:P6344
         # 'SP.RUR.TOTL': '#population+ix_xywdatap6344+year{0}',
-        'SP.RUR.TOTL': '#population+rural+year{0}',
+        'SP.RUR.TOTL': ['#population+rural+year{0}'],
         # https://data.worldbank.org/indicator/SP.POP.TOTL.MA.IN
-        'SP.POP.TOTL.MA.IN': '#population+m+year{0}',
+        'SP.POP.TOTL.MA.IN': ['#population+m+year{0}'],
         # https://data.worldbank.org/indicator/SP.POP.TOTL.FE.IN
-        'SP.POP.TOTL.FE.IN': '#population+f+year{0}',
+        'SP.POP.TOTL.FE.IN': ['#population+f+year{0}'],
 
         # Population ages 0-14, total
-        'SP.POP.0014.TO': '#population+t_0_14+year{0}',
+        'SP.POP.0014.TO': ['#population+t_0_14+year{0}'],
         # Population ages 0-14, female
-        'SP.POP.0014.FE.IN': '#population+f_0_14+year{0}',
+        'SP.POP.0014.FE.IN': ['#population+f_0_14+year{0}'],
         # Population ages 0-14, male
-        'SP.POP.0014.MA.IN': '#population+m_0_14+year{0}',
+        'SP.POP.0014.MA.IN': ['#population+m_0_14+year{0}'],
 
         # Population ages 15-64, total
-        'SP.POP.1564.TO': '#population+t_15_64+year{0}',
+        'SP.POP.1564.TO': ['#population+t_15_64+year{0}'],
         # Population ages 15-64, male
-        'SP.POP.1564.MA.IN': '#population+m_15_64+year{0}',
+        'SP.POP.1564.MA.IN': ['#population+m_15_64+year{0}'],
         # Population ages 15-64, female
-        'SP.POP.1564.FE.IN': '#population+f_15_64+year{0}',
+        'SP.POP.1564.FE.IN': ['#population+f_15_64+year{0}'],
 
         # Population ages 65 and above, total
-        'SP.POP.65UP.TO': '#population+t_65_999+year{0}',
+        'SP.POP.65UP.TO': ['#population+t_65_999+year{0}'],
         # Population ages 65 and above, female
-        'SP.POP.65UP.FE.IN': '#population+f_65_999+year{0}',
+        'SP.POP.65UP.FE.IN': ['#population+f_65_999+year{0}'],
         # Population ages 65 and above, male
-        'SP.POP.65UP.MA.IN': '#population+m_65_999+year{0}',
+        'SP.POP.65UP.MA.IN': ['#population+m_65_999+year{0}'],
 
         # @TODO if we take the %, there are other age ranges. Eventualy
         #       deal with this
@@ -288,9 +291,9 @@ DATA_HXL_DE_CSV_REGEX = {
 
         # Money related, thematic
         # https://data.worldbank.org/indicator/BX.GRT.EXTA.CD.WD?view=chart
-        'BX.GRT.EXTA.CD.WD': '#value+funding+usd+year{0}',
+        'BX.GRT.EXTA.CD.WD': ['#value+funding+usd+year{0}'],
         # https://data.worldbank.org/indicator/BX.GRT.TECH.CD.WD?view=chart
-        'BX.GRT.TECH.CD.WD': '#value+funding+usd+year{0}',
+        'BX.GRT.TECH.CD.WD': ['#value+funding+usd+year{0}'],
 
         # TODOs
         # GINI https://data.worldbank.org/indicator/SI.POV.GINI?view=chart
@@ -300,7 +303,7 @@ DATA_HXL_DE_CSV_REGEX = {
         # From all indicators, the health bring most of agregated data
         # - https://data.worldbank.org/topic/health?view=chart
         # - https://api.worldbank.org/v2/en/topic/8?downloadformat=csv
-        'health': '#indicator+value+year{0}',
+        'health': ['#indicator+value+year{0}'],
     }
 }
 
@@ -793,9 +796,11 @@ class DataScrapping:
             #     'not_in': DATA_HXL_DE_CSV_REGEX['worldbank'].keys()
             # },
         ]
-        # self._hxlPivot = {}
-        self._hxlPivot = DATA_HXL_DE_CSV_REGEX['worldbank']
-        self._hxlPivotCode = '#indicator+code'
+        self._hxlPivot = {}
+        # self._hxlPivot = DATA_HXL_DE_CSV_REGEX['worldbank']
+        self._hxlPivotCode = ['#indicator+code',
+                              '#meta+rem+i_qcc+is_zxxx+indicator_code']
+        # #item+rem+i_qcc+is_zxxx+ix_xyadhxltrivio
 
         self._Adm0CodexLocali = None
 
@@ -853,7 +858,7 @@ class DataScrapping:
             if self.methodus in DATA_HXL_DE_CSV_REGEX['worldbank'].keys():
                 if len(res) == 4:
                     resultatum.append(DATA_HXL_DE_CSV_REGEX[
-                        'worldbank'][self.methodus].format(res))
+                        'worldbank'][self.methodus][0].format(res))
                     continue
 
             resultatum.append(
@@ -1007,6 +1012,7 @@ class DataScrapping:
     ):
         # print("TODO de_csv_ad_csvnorm")
         index_linea = 0
+        index_ix_xyadhxltrivio = -1
         codicem_inconito = False
         with open(objetivum, 'w') as _objetivum:
             with open(fonti, 'r') as _fons:
@@ -1020,6 +1026,18 @@ class DataScrapping:
                         if '#item+conceptum+codicem' not in caput:
                             codicem_inconito = True
                             caput.insert(0, '#item+conceptum+codicem')
+                        if hxl_vocab is True and \
+                                '#item+rem+i_qcc+is_zxxx+ix_xyadhxltrivio' not in caput:
+                            for _p in self._hxlPivotCode:
+                                if _p in caput:
+                                    # _index_ref = caput.index(self._hxlPivotCode)
+                                    _index_ref = caput.index(_p)
+                                    break
+                            index_ix_xyadhxltrivio = _index_ref + 1
+                            caput.insert(
+                                index_ix_xyadhxltrivio,
+                                '#item+rem+i_qcc+is_zxxx+ix_xyadhxltrivio')
+
                         self._caput = caput
                         _csv_writer.writerow(caput)
                         continue
@@ -1038,6 +1056,12 @@ class DataScrapping:
                             _v = self._codicem(
                                 False, index=index_linea, strictum=False)
                         linea.insert(0, _v)
+                    if index_ix_xyadhxltrivio > -1:
+                        _v_refs = linea[index_ix_xyadhxltrivio - 1]
+
+                        _v = self._hxlPivot[_v_refs]
+                        # _v = "@todo"
+                        linea.insert(index_ix_xyadhxltrivio, _v)
                     _csv_writer.writerow(linea)
 
     def de_hxltm_ad_no1(self, fonti: str, objetivum: str):
@@ -1424,8 +1448,12 @@ class DataScrappingWorldbank(DataScrapping):
             )
 
         if self.objectivum_formato in ['hxltm', 'no1']:
+            hxl_vocab = False
+            if self.methodus == 'health':
+                self._hxlPivot = DATA_HXL_DE_CSV_REGEX['worldbank']
+                hxl_vocab = True
             self.de_hxl_ad_hxltm(
-                self._temp['hxl'], self._temp['hxltm']
+                self._temp['hxl'], self._temp['hxltm'], hxl_vocab=hxl_vocab
             )
         if self.objectivum_formato in ['no1']:
             self.de_hxltm_ad_no1(
