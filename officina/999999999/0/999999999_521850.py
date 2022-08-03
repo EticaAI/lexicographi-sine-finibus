@@ -53,6 +53,7 @@ import zipfile
 from L999999999_0 import (
     # hxltm_carricato,
     NUMERORDINATIO_BASIM,
+    hxltm__data_pivot_wide,
     hxltm__data_sort,
     numerordinatio_neo_separatum,
     # TabulaAdHXLTM
@@ -1155,9 +1156,12 @@ class DataScrapping:
         data_sorted = hxltm__data_sort(
             fonti, ['#item+rem+i_qcc+is_zxxx+ix_xyadhxltrivio'])
 
-        # print(data_sorted[0:10])
+        caput, data = hxltm__data_pivot_wide(data_sorted[0], data_sorted[1:])
 
-        # raise NotImplementedError
+        # print(data_sorted[0:10])
+        print(caput, data[0:10])
+
+        raise NotImplementedError
 
         with open(objetivum, 'w') as _objetivum:
             # with open(fonti, 'r') as _fons:

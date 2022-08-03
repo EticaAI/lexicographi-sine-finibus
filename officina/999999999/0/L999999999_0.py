@@ -5445,6 +5445,121 @@ def hxltm__data_sort(fonti: str, sortkeys: list = None) -> list:
     return resultatum
 
 
+def hxltm__data_pivot_wide(caput: list, data: list) -> list:
+
+    referens_columnae = '#item+rem+i_qcc+is_zxxx+ix_xyadhxltrivio'
+
+    # No + as prefix here
+    hxlatt_ex = 'ix_xyexhxltrivio'
+    if referens_columnae not in caput:
+        raise SyntaxError('[{}] must exist on header <{}>'.format(
+            referens_columnae, caput))
+
+    referens_per_indici = caput.index(referens_columnae)
+    referens_ad_indici = []
+    for item in caput:
+        if hxlatt_ex in item:
+            referens_ad_indici.append(caput.index(item))
+    if len(referens_ad_indici) == 0:
+        raise SyntaxError('{} not in header <{}>'.format(hxlatt_ex, caput))
+
+    referens_hxlattrs = []
+    for linea in data:
+        if linea[referens_per_indici] not in referens_hxlattrs:
+            referens_hxlattrs.append(linea[referens_per_indici])
+
+    sorted(referens_hxlattrs)
+
+    columna_novae__list = []
+    columna_novae__mapping = {}
+
+    for item_I in referens_hxlattrs:
+        for item_II in referens_ad_indici:
+
+            res = hxl_hashtag_normalizatio(
+                caput[item_II].replace(hxlatt_ex, item_I))
+            if res in columna_novae__list:
+                continue
+            columna_novae__list.append(res)
+            # columna_novae__mapping[item_I] = columna_novae__list.index(res)
+            columna_novae__mapping[item_I] = len(columna_novae__list) - 1
+            # pass
+        # columna_novae__list
+
+    data_novae__dict = {}
+    _codice_indici = caput.index('#item+conceptum+codicem')
+    for linea in data:
+        _codicem = linea[_codice_indici]
+        _referens = linea[referens_per_indici]
+        __start = columna_novae__mapping[_referens]
+        __diff = len(columna_novae__list)
+        if _codicem not in data_novae__dict:
+            data_novae__dict[_codicem] = {
+                'originalis': linea,
+                # 'data_novae': [''] * len(columna_novae__list),
+                'data_novae': [''] * (len(columna_novae__list) + 1),
+            }
+
+        __loop = 0
+        # print(len(data_novae__dict[_codicem]['data_novae']))
+        for index_originalis in referens_ad_indici:
+            # index_novae = __start + index_originalis
+            # print(__loop, len(data_novae__dict[_codicem]['data_novae']))
+            index_novae = __start + __loop
+            if index_novae not in data_novae__dict[_codicem]['data_novae']:
+                print('error', index_novae, len(data_novae__dict[_codicem]['data_novae']))
+                continue
+            data_novae__dict[_codicem]['data_novae'][index_novae] = \
+                linea[index_originalis]
+            __loop += 1
+
+    # for item in caput:
+    #     for item_II in referens_ad_indici:
+
+    #     pass
+
+    raise NotImplementedError(data_novae__dict['4'])
+    raise NotImplementedError(columna_novae__list, columna_novae__mapping)
+
+    # if not sortkeys:
+    #     sortkeys = []
+
+    # if '#item+conceptum+codicem' not in sortkeys:
+    #     sortkeys.insert(0, '#item+conceptum+codicem')
+
+    # _data = []
+    # caput = []
+    # with open(fonti, 'r') as _fons:
+    #     _csv_reader = csv.reader(_fons)
+    #     # started = False
+    #     for linea in _csv_reader:
+    #         if len(caput) == 0:
+    #             caput = linea
+    #             continue
+    #         _data.append(linea)
+
+    # _i0 = caput.index(sortkeys[0])
+    # if len(sortkeys) == 1:
+    #     _data = sorted(_data, key=lambda row: int(row[_i0]))
+    # elif len(sortkeys) == 2:
+    #     _i1 = caput.index(sortkeys[1])
+    #     _data = sorted(_data, key=lambda row: (int(row[_i0]), row[_i1]))
+    # elif len(sortkeys) == 3:
+    #     _i1 = caput.index(sortkeys[1])
+    #     _i2 = caput.index(sortkeys[2])
+    #     _data = sorted(
+    #         _data, key=lambda row: (int(row[_i0]), row[_i1], row[_i2]))
+    # else:
+    #     raise NotImplementedError('len > 3; [{}] <{}>'.format(
+    #         len(sortkeys), sortkeys))
+
+    # resultatum = []
+    # resultatum.append(caput)
+    # resultatum.extend(_data)
+
+    return caput, data
+
+
 def hxltm__concat(
     # al1: str, b2: str,
     significatus: dict,
