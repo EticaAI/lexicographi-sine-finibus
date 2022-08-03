@@ -224,6 +224,8 @@ DATA_HXLTM_DE_HXL_GENERIC = {
     # '#item+rem+i_qcc+is_zxxx+ix_xywdatap1539': r"^#population\+f$",
     # # male population (P1540)
     # '#item+rem+i_qcc+is_zxxx+ix_xywdatap1540': r"^#population\+m$",
+
+    '#item+rem+i_qcc+is_zxxx+ix_iso8601v{v1}+ix_xyhxltrivio': r"^#indicator\+value\+year(?P<v1>[0-9]{4})$",
 }
 
 DATA_NO1_DE_HXLTM_GENERIC = {
@@ -791,6 +793,9 @@ class DataScrapping:
             #     'not_in': DATA_HXL_DE_CSV_REGEX['worldbank'].keys()
             # },
         ]
+        # self._hxlPivot = {}
+        self._hxlPivot = DATA_HXL_DE_CSV_REGEX['worldbank']
+        self._hxlPivotCode = '#indicator+code'
 
         self._Adm0CodexLocali = None
 
@@ -995,7 +1000,11 @@ class DataScrapping:
                     if not self._skip_line(linea):
                         _csv_writer.writerow(linea)
 
-    def de_hxl_ad_hxltm(self, fonti: str, objetivum: str):
+    def de_hxl_ad_hxltm(
+        self, fonti: str,
+        objetivum: str,
+        hxl_vocab: bool = False
+    ):
         # print("TODO de_csv_ad_csvnorm")
         index_linea = 0
         codicem_inconito = False
@@ -1371,6 +1380,8 @@ class DataScrappingWorldbank(DataScrapping):
             r = requests.get(self.link_fonti)
             with open(temp_fonti_zip, 'wb') as f:
                 f.write(r.content)
+        # else:
+        #     print('already cached', temp_fonti_zip)
 
         # zip file handler
         zip = zipfile.ZipFile(temp_fonti_zip)
@@ -1408,11 +1419,10 @@ class DataScrappingWorldbank(DataScrapping):
                     'not_in': DATA_HXL_DE_CSV_REGEX['worldbank'].keys()
                 }
             )
-            # def _qcallback(qself, caput):
-            #     return qself
             self.de_csvnorm_ad_hxl(
                 self._temp['csv'], self._temp['hxl']
             )
+
         if self.objectivum_formato in ['hxltm', 'no1']:
             self.de_hxl_ad_hxltm(
                 self._temp['hxl'], self._temp['hxltm']

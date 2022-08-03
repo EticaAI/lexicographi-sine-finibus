@@ -98,6 +98,18 @@ rdfpipe --input-format=turtle --output-format=longturtle \
   >"999999/0/1603_992_1_0~worldbank~SP_POP_TOTL.no1.owl.ttl"
 
 
+./999999999/0/999999999_521850.py \
+  --methodus-fonti=worldbank \
+  --methodus="health" \
+  --objectivum-formato=hxl \
+  >"999999/0/1603_99966_1_0~worldbank~health.hxl.csv"
+
+./999999999/0/999999999_521850.py \
+  --methodus-fonti=worldbank \
+  --methodus="health" \
+  --objectivum-formato=hxltm \
+  >"999999/0/1603_99966_1_0~worldbank~health.tm.hxl.csv"
+
 # ./999999999/0/999999999_54872.py --methodus=_temp_no1 --rdf-sine-spatia-nominalibus=devnull,mdciii --rdf-trivio=1603 999999/0/1603_992_1_0~worldbank~SP_POP_TOTL.no1.tm.hxl.csv | head -n 20
 # head -n 3 999999/0/1603_992_1_0~worldbank~SP_POP_TOTL.no1.tm.hxl.csv
 

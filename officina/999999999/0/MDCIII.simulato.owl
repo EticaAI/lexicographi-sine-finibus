@@ -178,6 +178,16 @@
     
 
 
+    <!-- urn:mdciii_simulato::@1603_{POP}() -->
+
+    <owl:Class rdf:about="urn:mdciii_simulato::@1603_{POP}()">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000027"/>
+        <rdfs:label xml:lang="en">@1603_{POP}()</rdfs:label>
+        <skos:notation xml:lang="en">1603:9947</skos:notation>
+    </owl:Class>
+    
+
+
     <!-- urn:mdciii_simulato::@1603_{PROC}() -->
 
     <owl:Class rdf:about="urn:mdciii_simulato::@1603_{PROC}()">
@@ -226,6 +236,17 @@
         <rdfs:subClassOf rdf:resource="urn:mdciii_simulato::@1603_{QLTY}()"/>
         <rdfs:comment xml:lang="en">Qualities (by ABL2)</rdfs:comment>
         <rdfs:label>@1603_{QLTY}_N_2()</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- urn:mdciii_simulato::@1603_{SPOP}() -->
+
+    <owl:Class rdf:about="urn:mdciii_simulato::@1603_{SPOP}()">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000027"/>
+        <rdfs:label xml:lang="en">@1603_{SPOP}()</rdfs:label>
+        <skos:definition xml:lang="en">Subpopulation, such as total population for a place, but by gender/sex, by age group, urban population, ...</skos:definition>
+        <skos:notation xml:lang="en">1603:9966</skos:notation>
     </owl:Class>
     
 
@@ -335,7 +356,7 @@
     <!-- urn:mdciii_simulato:@1603_{POP}_N_0() -->
 
     <owl:Class rdf:about="urn:mdciii_simulato:@1603_{POP}_N_0()">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000027"/>
+        <rdfs:subClassOf rdf:resource="urn:mdciii_simulato::@1603_{POP}()"/>
         <rdfs:comment xml:lang="en">Population (by ABL0)</rdfs:comment>
         <rdfs:label>@1603_{POP}_N_0()</rdfs:label>
         <rdfs:seeAlso xml:lang="en">http://purl.obolibrary.org/obo/OBI_0000181</rdfs:seeAlso>
@@ -347,7 +368,7 @@
     <!-- urn:mdciii_simulato:@1603_{POP}_N_1() -->
 
     <owl:Class rdf:about="urn:mdciii_simulato:@1603_{POP}_N_1()">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000027"/>
+        <rdfs:subClassOf rdf:resource="urn:mdciii_simulato::@1603_{POP}()"/>
         <rdfs:comment xml:lang="en">Population (by ABL1)</rdfs:comment>
         <rdfs:label>@1603_{POP}_N_1()</rdfs:label>
         <rdfs:seeAlso xml:lang="en">http://purl.obolibrary.org/obo/OBI_0000181</rdfs:seeAlso>
@@ -359,7 +380,7 @@
     <!-- urn:mdciii_simulato:@1603_{POP}_N_2() -->
 
     <owl:Class rdf:about="urn:mdciii_simulato:@1603_{POP}_N_2()">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000027"/>
+        <rdfs:subClassOf rdf:resource="urn:mdciii_simulato::@1603_{POP}()"/>
         <rdfs:comment xml:lang="en">Population (by ABL2)</rdfs:comment>
         <rdfs:label>@1603_{POP}_N_2()</rdfs:label>
         <rdfs:seeAlso xml:lang="en">http://purl.obolibrary.org/obo/OBI_0000181</rdfs:seeAlso>
@@ -401,7 +422,7 @@
     <!-- urn:mdciii_simulato:@1603_{SPOP}_N_0() -->
 
     <owl:Class rdf:about="urn:mdciii_simulato:@1603_{SPOP}_N_0()">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000027"/>
+        <rdfs:subClassOf rdf:resource="urn:mdciii_simulato::@1603_{SPOP}()"/>
         <rdfs:comment xml:lang="en">Subpopulation (by ABL0)</rdfs:comment>
         <rdfs:label>@1603_{SPOP}_N_0()</rdfs:label>
     </owl:Class>
@@ -411,7 +432,7 @@
     <!-- urn:mdciii_simulato:@1603_{SPOP}_N_1() -->
 
     <owl:Class rdf:about="urn:mdciii_simulato:@1603_{SPOP}_N_1()">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000027"/>
+        <rdfs:subClassOf rdf:resource="urn:mdciii_simulato::@1603_{SPOP}()"/>
         <rdfs:comment xml:lang="en">Subpopulation (by ABL1)</rdfs:comment>
         <rdfs:label>@1603_{SPOP}_N_1()</rdfs:label>
     </owl:Class>
@@ -421,7 +442,7 @@
     <!-- urn:mdciii_simulato:@1603_{SPOP}_N_2() -->
 
     <owl:Class rdf:about="urn:mdciii_simulato:@1603_{SPOP}_N_2()">
-        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000027"/>
+        <rdfs:subClassOf rdf:resource="urn:mdciii_simulato::@1603_{SPOP}()"/>
         <rdfs:comment xml:lang="en">Subpopulation (by ABL2)</rdfs:comment>
         <rdfs:label>@1603_{SPOP}_N_2()</rdfs:label>
     </owl:Class>
