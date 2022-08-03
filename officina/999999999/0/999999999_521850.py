@@ -230,6 +230,15 @@ DATA_NO1_DE_HXLTM_GENERIC = {
     '#{t}+rem+i_qcc+is_zxxx+ix_iso8601v{v1}+rdf_p_wdata_p{v2}_s{trivio}+rdf_t_xsd_int': r"^#(?P<t>[a-z0-9]{3,99})\+rem\+i_qcc\+is_zxxx\+ix_iso8601v(?P<v1>[0-9]{4})\+ix_xywdatap(?P<v2>[0-9]{1,12})"
 }
 
+DATA_METHODUS = {
+    'worldbank': {
+        # https://data.worldbank.org/topic/health?view=chart
+        'health': {
+            'download_url': 'https://api.worldbank.org/v2/en/topic/8?downloadformat=csv'
+        }
+    }
+}
+
 DATA_HXL_DE_CSV_REGEX = {
     # @see https://data.humdata.org/tools/hxl-example/
     # @see https://data.worldbank.org/indicator
@@ -257,6 +266,12 @@ DATA_HXL_DE_CSV_REGEX = {
         # TODOs
         # GINI https://data.worldbank.org/indicator/SI.POV.GINI?view=chart
         # Redugees https://data.worldbank.org/indicator/SM.POP.REFG?view=chart
+
+        # - https://data.worldbank.org/indicator?tab=all
+        # From all indicators, the health bring most of agregated data
+        # - https://data.worldbank.org/topic/health?view=chart
+        # - https://api.worldbank.org/v2/en/topic/8?downloadformat=csv
+        'health': '#indicator+value+year{0}',
     }
 }
 
@@ -1249,6 +1264,14 @@ class DataScrappingWorldbank(DataScrapping):
         - praeparātiō, s, f, Nom., https://en.wiktionary.org/wiki/praeparatio
         """
         # return True
+
+        if self.methodus in DATA_METHODUS['worldbank']:
+            self.link_fonti = DATA_METHODUS['worldbank'][self.methodus][
+                'download_url']
+        else:
+            self.link_fonti = 'https://api.worldbank.org/v2/en/indicator/{0}?downloadformat=csv'.format(
+                self.methodus)
+
         if self.objectivum_formato == 'link-fonti':
             # print(self.link_fonti)
             return True
