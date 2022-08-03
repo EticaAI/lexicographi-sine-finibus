@@ -112,7 +112,7 @@ __EPILOGUM__ = """
 
     {0} --methodus-fonti=unwpf
 
-(Total population)
+(Total population)  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
     {0} --methodus-fonti=worldbank --methodus=SP.POP.TOTL
 
     {0} --methodus-fonti=worldbank --methodus=SP.POP.TOTL \
@@ -124,10 +124,13 @@ __EPILOGUM__ = """
     {0} --methodus-fonti=worldbank --methodus=SP.POP.TOTL \
 --objectivum-formato=hxltm
 
-(Rural population)
+(Rural population) . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
     {0} --methodus-fonti=worldbank --methodus=SP.RUR.TOTL \
 --objectivum-formato=hxltm
 
+(Subpopulation; population by themes, such as by age, gender/sex, ...)
+    {0} --methodus-fonti=worldbank --methodus=health \
+--objectivum-formato=hxltm-wide
 
 (Individual humans) . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 See https://interpol.api.bund.dev/
@@ -252,37 +255,58 @@ DATA_HXL_DE_CSV_REGEX = {
 
         # Population statistics, thematic
         # Only for numeric
-        'SP.POP.TOTL': ['#population+t+year{0}'],
+        # https://www.wikidata.org/wiki/Property:P1082
+        'SP.POP.TOTL': ['#population+t+year{0}', ['ix_xywdatap1082']],
 
         # https://data.worldbank.org/indicator/SP.RUR.TOTL
         # https://www.wikidata.org/wiki/Property:P6344
         # 'SP.RUR.TOTL': '#population+ix_xywdatap6344+year{0}',
-        'SP.RUR.TOTL': ['#population+rural+year{0}'],
-        # https://data.worldbank.org/indicator/SP.POP.TOTL.MA.IN
-        'SP.POP.TOTL.MA.IN': ['#population+m+year{0}'],
+        'SP.RUR.TOTL': ['#population+rural+year{0}', ['ix_xywdatap6344']],
+
         # https://data.worldbank.org/indicator/SP.POP.TOTL.FE.IN
-        'SP.POP.TOTL.FE.IN': ['#population+f+year{0}'],
+        # https://www.wikidata.org/wiki/Property:P1539
+        'SP.POP.TOTL.FE.IN': ['#population+f+year{0}', ['ix_xywdatap1539']],
+
+        # https://data.worldbank.org/indicator/SP.POP.TOTL.MA.IN
+        # https://www.wikidata.org/wiki/Property:P1540
+        'SP.POP.TOTL.MA.IN': ['#population+m+year{0}', ['ix_xywdatap1540']],
+
+        # - minimum age (P2899)
+        #   - https://www.wikidata.org/wiki/Property:P2899
+
+        # - maximum age (P4135)
+        #   - https://www.wikidata.org/wiki/Property:P4135
 
         # Population ages 0-14, total
-        'SP.POP.0014.TO': ['#population+t_0_14+year{0}'],
+        'SP.POP.0014.TO': ['#population+t_0_14+year{0}', [
+            'ix_xywdatap1082', 'ix_xywdatap2899v0', 'ix_xywdatap4135v14']],
         # Population ages 0-14, female
-        'SP.POP.0014.FE.IN': ['#population+f_0_14+year{0}'],
+        'SP.POP.0014.FE.IN': ['#population+f_0_14+year{0}', [
+            'ix_xywdatap1539', 'ix_xywdatap2899v0', 'ix_xywdatap4135v14']],
         # Population ages 0-14, male
-        'SP.POP.0014.MA.IN': ['#population+m_0_14+year{0}'],
+        'SP.POP.0014.MA.IN': ['#population+m_0_14+year{0}', [
+            'ix_xywdatap1540', 'ix_xywdatap2899v0', 'ix_xywdatap4135v14']],
 
         # Population ages 15-64, total
-        'SP.POP.1564.TO': ['#population+t_15_64+year{0}'],
-        # Population ages 15-64, male
-        'SP.POP.1564.MA.IN': ['#population+m_15_64+year{0}'],
+        'SP.POP.1564.TO': ['#population+t_15_64+year{0}', [
+            'ix_xywdatap1082', 'ix_xywdatap2899v15', 'ix_xywdatap4135v64']],
         # Population ages 15-64, female
-        'SP.POP.1564.FE.IN': ['#population+f_15_64+year{0}'],
+        'SP.POP.1564.FE.IN': ['#population+f_15_64+year{0}', [
+            'ix_xywdatap1539', 'ix_xywdatap2899v15', 'ix_xywdatap4135v64']],
+        # Population ages 15-64, male
+        'SP.POP.1564.MA.IN': ['#population+m_15_64+year{0}', [
+            'ix_xywdatap1540', 'ix_xywdatap2899v15', 'ix_xywdatap4135v64']],
+
 
         # Population ages 65 and above, total
-        'SP.POP.65UP.TO': ['#population+t_65_999+year{0}'],
+        'SP.POP.65UP.TO': ['#population+t_65_999+year{0}', [
+            'ix_xywdatap1082', 'ix_xywdatap2899v65']],
         # Population ages 65 and above, female
-        'SP.POP.65UP.FE.IN': ['#population+f_65_999+year{0}'],
+        'SP.POP.65UP.FE.IN': ['#population+f_65_999+year{0}', [
+            'ix_xywdatap1539', 'ix_xywdatap2899v65']],
         # Population ages 65 and above, male
-        'SP.POP.65UP.MA.IN': ['#population+m_65_999+year{0}'],
+        'SP.POP.65UP.MA.IN': ['#population+m_65_999+year{0}', [
+            'ix_xywdatap1540', 'ix_xywdatap2899v65']],
 
         # @TODO if we take the %, there are other age ranges. Eventualy
         #       deal with this
@@ -477,6 +501,7 @@ class Cli:
                 'csv',
                 'hxl',
                 'hxltm',
+                'hxltm-wide',
                 'no1',
                 'link-fonti',
                 # 'tsv',
@@ -831,6 +856,9 @@ class DataScrapping:
             'hxltm': '{0}/999999/0/{1}~{2}.tm.hxl.csv'.format(
                 NUMERORDINATIO_BASIM, type(self).__name__, self.methodus
             ),
+            'hxltm_wide': '{0}/999999/0/{1}~{2}~WIDE.tm.hxl.csv'.format(
+                NUMERORDINATIO_BASIM, type(self).__name__, self.methodus
+            ),
             'no1': '{0}/999999/0/{1}~{2}.no1.tm.hxl.csv'.format(
                 NUMERORDINATIO_BASIM, type(self).__name__, self.methodus
             ),
@@ -1010,7 +1038,6 @@ class DataScrapping:
         objetivum: str,
         hxl_vocab: bool = False
     ):
-        # print("TODO de_csv_ad_csvnorm")
         index_linea = 0
         index_ix_xyadhxltrivio = -1
         codicem_inconito = False
@@ -1027,7 +1054,8 @@ class DataScrapping:
                             codicem_inconito = True
                             caput.insert(0, '#item+conceptum+codicem')
                         if hxl_vocab is True and \
-                                '#item+rem+i_qcc+is_zxxx+ix_xyadhxltrivio' not in caput:
+                                '#item+rem+i_qcc+is_zxxx+ix_xyadhxltrivio' \
+                                not in caput:
                             for _p in self._hxlPivotCode:
                                 if _p in caput:
                                     # _index_ref = caput.index(self._hxlPivotCode)
@@ -1058,14 +1086,53 @@ class DataScrapping:
                         linea.insert(0, _v)
                     if index_ix_xyadhxltrivio > -1:
                         _v_refs = linea[index_ix_xyadhxltrivio - 1]
-
-                        _v = self._hxlPivot[_v_refs]
+                        _v_novo_parts = self._hxlPivot[_v_refs][1]
+                        _v_novo_parts = sorted(_v_novo_parts)
+                        _v = '+'.join(_v_novo_parts)
                         # _v = "@todo"
                         linea.insert(index_ix_xyadhxltrivio, _v)
                     _csv_writer.writerow(linea)
 
-    def de_hxltm_ad_no1(self, fonti: str, objetivum: str):
+    def de_hxltm_ad_hxltm_wide(
+        self, fonti: str,
+        objetivum: str
+    ):
+        """de_hxltm_ad_hxltm_wide
+
+        @see https://en.wikipedia.org/wiki/Wide_and_narrow_data
+
+        Args:
+            fonti (str): _description_
+            objetivum (str): _description_
+        """
         # print("TODO de_csv_ad_csvnorm")
+        # numerordinatio_inconito = False
+        # codicem_index = -1
+        with open(objetivum, 'w') as _objetivum:
+            with open(fonti, 'r') as _fons:
+                _csv_reader = csv.reader(_fons)
+                _csv_writer = csv.writer(_objetivum)
+                started = False
+                for linea in _csv_reader:
+                    if not started:
+                        started = True
+                        caput = linea
+                        # caput = self._no1lize(linea)
+                        # if '#item+conceptum+numerordinatio' not in caput:
+                        #     numerordinatio_inconito = True
+                        #     codicem_index = caput.index(
+                        #         '#item+conceptum+codicem')
+                        #     caput.insert(0, '#item+conceptum+numerordinatio')
+                        self._caput = caput
+                        _csv_writer.writerow(caput)
+                        continue
+                    # if numerordinatio_inconito is True:
+                    #     linea.insert(0, '{0}:{1}'.format(
+                    #         self.numerordinatio_praefixo, linea[codicem_index]))
+                    _csv_writer.writerow(linea)
+
+    def de_hxltm_ad_no1(self, fonti: str, objetivum: str):
+
         numerordinatio_inconito = False
         codicem_index = -1
         with open(objetivum, 'w') as _objetivum:
@@ -1328,6 +1395,7 @@ class DataScrappingWorldbank(DataScrapping):
     temp_fonti_csvnorm: str = ''
     temp_fonti_hxl: str = ''
     temp_fonti_hxltm: str = ''
+    temp_fonti_hxltm_wide: str = ''
     temp_fonti_no1: str = ''
 
     # print('oioioi', self.dictionaria_codex )
@@ -1343,6 +1411,8 @@ class DataScrappingWorldbank(DataScrapping):
             fonti = self.temp_fonti_hxl
         if self.objectivum_formato == 'hxltm':
             fonti = self.temp_fonti_hxltm
+        if self.objectivum_formato == 'hxltm-wide':
+            fonti = self.temp_fonti_hxltm_wide
         if self.objectivum_formato == 'no1':
             fonti = self.temp_fonti_no1
 
@@ -1391,6 +1461,9 @@ class DataScrappingWorldbank(DataScrapping):
         self.temp_fonti_hxltm = '{0}/999999/0/{1}~{2}.tm.hxl.csv'.format(
             NUMERORDINATIO_BASIM, __class__.__name__, self.methodus
         )
+        self.temp_fonti_hxltm_wide = '{0}/999999/0/{1}~{2}~WIDE.tm.hxl.csv'.format(
+            NUMERORDINATIO_BASIM, __class__.__name__, self.methodus
+        )
         self.temp_fonti_no1 = '{0}/999999/0/{1}~{2}.no1.tm.hxl.csv'.format(
             NUMERORDINATIO_BASIM, __class__.__name__, self.methodus
         )
@@ -1434,7 +1507,7 @@ class DataScrappingWorldbank(DataScrapping):
             ]
         )
 
-        if self.objectivum_formato in ['hxl', 'hxltm', 'no1']:
+        if self.objectivum_formato in ['hxl', 'hxltm', 'hxltm-wide', 'no1']:
             # raise ValueError(self._caput)
             _indicator_code_index = self._caput.index('Indicator Code')
             self._skipLineMetaCsv.append(
@@ -1447,14 +1520,27 @@ class DataScrappingWorldbank(DataScrapping):
                 self._temp['csv'], self._temp['hxl']
             )
 
-        if self.objectivum_formato in ['hxltm', 'no1']:
+        if self.objectivum_formato in ['hxltm',  'hxltm-wide', 'no1']:
             hxl_vocab = False
             if self.methodus == 'health':
                 self._hxlPivot = DATA_HXL_DE_CSV_REGEX['worldbank']
                 hxl_vocab = True
+
             self.de_hxl_ad_hxltm(
                 self._temp['hxl'], self._temp['hxltm'], hxl_vocab=hxl_vocab
             )
+
+        if self.objectivum_formato in ['hxltm-wide', 'no1'] or \
+                (self.objectivum_formato == 'no1' and
+                    '#item+rem+i_qcc+is_zxxx+ix_xyadhxltrivio' in self._caput):
+            hxl_vocab = False
+            if self.methodus == 'health':
+                self._hxlPivot = DATA_HXL_DE_CSV_REGEX['worldbank']
+                hxl_vocab = True
+            self.de_hxltm_ad_hxltm_wide(
+                self._temp['hxltm'], self._temp['hxltm_wide']
+            )
+
         if self.objectivum_formato in ['no1']:
             self.de_hxltm_ad_no1(
                 self._temp['hxltm'], self._temp['no1']
