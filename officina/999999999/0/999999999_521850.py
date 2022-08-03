@@ -53,6 +53,7 @@ import zipfile
 from L999999999_0 import (
     # hxltm_carricato,
     NUMERORDINATIO_BASIM,
+    hxltm__data_sort,
     numerordinatio_neo_separatum,
     # TabulaAdHXLTM
 )
@@ -903,43 +904,6 @@ class DataScrapping:
             # return _v
             return None if strictum else str(900 + index)
 
-    def _data_sort(self, fonti: str) -> list:
-        # with open(objetivum, 'w') as _objetivum:
-        # @TODO move to L9999~
-        # @TODO create an dedicated function to explode datasets with
-        #       '#item+rem+i_qcc+is_zxxx+ix_xyadhxltrivio' reference and
-        #        '+ix_xyexhxltrivio' as attribute
-        _data = []
-        caput = []
-        with open(fonti, 'r') as _fons:
-            _csv_reader = csv.reader(_fons)
-            # started = False
-            for linea in _csv_reader:
-                if len(caput) == 0:
-                    caput = linea
-                    continue
-                _data.append(linea)
-
-        # @TODO do the sorting here
-
-        _codicem_index = caput.index('#item+conceptum+codicem')
-
-        if '#item+rem+i_qcc+is_zxxx+ix_xyadhxltrivio' in caput:
-            _adtrivio_index = caput.index(
-                '#item+rem+i_qcc+is_zxxx+ix_xyadhxltrivio')
-            _data = sorted(
-                _data,
-                key=lambda row: (
-                    int(row[_codicem_index]), row[_adtrivio_index])
-            )
-        else:
-            _data = sorted(_data, key=lambda row: int(row[_codicem_index]))
-        resultatum = []
-        resultatum.append(caput)
-        resultatum.extend(_data)
-
-        return resultatum
-
     def _hxlize_dummy(self, caput: list):
         resultatum = []
         for res in caput:
@@ -1187,7 +1151,9 @@ class DataScrapping:
             objetivum (str): _description_
         """
 
-        data_sorted = self._data_sort(fonti)
+        # data_sorted = self._data_sort(fonti)
+        data_sorted = hxltm__data_sort(
+            fonti, ['#item+rem+i_qcc+is_zxxx+ix_xyadhxltrivio'])
 
         # print(data_sorted[0:10])
 

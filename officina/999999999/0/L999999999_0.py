@@ -5393,6 +5393,58 @@ def hxltm__data_referentibus(
         return ''
 
 
+def hxltm__data_sort(fonti: str, sortkeys: list = None) -> list:
+    """hxltm__data_sort sort contents of HXLTM on disk
+
+    Load all data into memory. Return full List[List]. Header first row
+
+    Args:
+        fonti (str): path to file
+        sortkeys (list, optional): List of keys to sort. Defaults to None.
+
+    Returns:
+        list: sorted data
+    """
+
+    if not sortkeys:
+        sortkeys = []
+
+    if '#item+conceptum+codicem' not in sortkeys:
+        sortkeys.insert(0, '#item+conceptum+codicem')
+
+    _data = []
+    caput = []
+    with open(fonti, 'r') as _fons:
+        _csv_reader = csv.reader(_fons)
+        # started = False
+        for linea in _csv_reader:
+            if len(caput) == 0:
+                caput = linea
+                continue
+            _data.append(linea)
+
+    _i0 = caput.index(sortkeys[0])
+    if len(sortkeys) == 1:
+        _data = sorted(_data, key=lambda row: int(row[_i0]))
+    elif len(sortkeys) == 2:
+        _i1 = caput.index(sortkeys[1])
+        _data = sorted(_data, key=lambda row: (int(row[_i0]), row[_i1]))
+    elif len(sortkeys) == 3:
+        _i1 = caput.index(sortkeys[1])
+        _i2 = caput.index(sortkeys[2])
+        _data = sorted(
+            _data, key=lambda row: (int(row[_i0]), row[_i1], row[_i2]))
+    else:
+        raise NotImplementedError('len > 3; [{}] <{}>'.format(
+            len(sortkeys), sortkeys))
+
+    resultatum = []
+    resultatum.append(caput)
+    resultatum.extend(_data)
+
+    return resultatum
+
+
 def hxltm__concat(
     # al1: str, b2: str,
     significatus: dict,
