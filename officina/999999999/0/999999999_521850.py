@@ -769,6 +769,7 @@ class Cli:
 class Adm0CodexLocali:
 
     i1603_16_1_0: dict = None
+    i1603_16_1_0_alt: dict = {}
 
     def __init__(
         self
@@ -787,6 +788,24 @@ class Adm0CodexLocali:
         if res and res in self.i1603_16_1_0:
             _v = str(int(self.i1603_16_1_0[res]))
             return _v
+        if res and res in self.i1603_16_1_0_alt:
+            _v = str(int(self.i1603_16_1_0_alt[res]))
+            return _v
+        return None
+
+    def est(self, clavem: str, res: str) -> str:
+        """est create an on-the-fly code.
+
+        Use for loops, so alternative codes can be remembered
+
+        Args:
+            clavem (str): _description_
+            res (str): _description_
+
+        Returns:
+            str: _description_
+        """
+        self.i1603_16_1_0_alt[clavem] = res
         return None
 
 
@@ -871,7 +890,55 @@ class DataScrapping:
         if _v:
             return _v
         else:
+            # if not strict, and exist res, we create a consistent one
+            if strictum is False and res:
+                self._Adm0CodexLocali.est(res, str(900 + index))
+                _v = self._Adm0CodexLocali.quod(res)
+                return _v
+            # if strictum or not res:
+            #     return None
+            # self._Adm0CodexLocali.est(res, str(900 + index))
+            # print(self._Adm0CodexLocali)
+            # _v = self._Adm0CodexLocali.quod(res)
+            # return _v
             return None if strictum else str(900 + index)
+
+    def _data_sort(self, fonti: str) -> list:
+        # with open(objetivum, 'w') as _objetivum:
+        # @TODO move to L9999~
+        # @TODO create an dedicated function to explode datasets with
+        #       '#item+rem+i_qcc+is_zxxx+ix_xyadhxltrivio' reference and
+        #        '+ix_xyexhxltrivio' as attribute
+        _data = []
+        caput = []
+        with open(fonti, 'r') as _fons:
+            _csv_reader = csv.reader(_fons)
+            # started = False
+            for linea in _csv_reader:
+                if len(caput) == 0:
+                    caput = linea
+                    continue
+                _data.append(linea)
+
+        # @TODO do the sorting here
+
+        _codicem_index = caput.index('#item+conceptum+codicem')
+
+        if '#item+rem+i_qcc+is_zxxx+ix_xyadhxltrivio' in caput:
+            _adtrivio_index = caput.index(
+                '#item+rem+i_qcc+is_zxxx+ix_xyadhxltrivio')
+            _data = sorted(
+                _data,
+                key=lambda row: (
+                    int(row[_codicem_index]), row[_adtrivio_index])
+            )
+        else:
+            _data = sorted(_data, key=lambda row: int(row[_codicem_index]))
+        resultatum = []
+        resultatum.append(caput)
+        resultatum.extend(_data)
+
+        return resultatum
 
     def _hxlize_dummy(self, caput: list):
         resultatum = []
@@ -1075,14 +1142,28 @@ class DataScrapping:
                         # _v = self._codicem(index_linea, index_linea)
 
                         # Brute force whathever is on first 3 columns
-                        for i in range(3):
+                        _pseudo_hash = ''
+                        for i in range(2):
+                            _pseudo_hash += linea[i]
                             _v = self._codicem(linea[i], strictum=True)
                             if _v is not None:
                                 break
                         if _v is None:
                             index_linea += 1
-                            _v = self._codicem(
-                                False, index=index_linea, strictum=False)
+                            # _v = self._codicem(
+                            #     False, index=index_linea, strictum=False)
+                            # raise ValueError(caput)
+                            # caput will be off-by-one on this check
+                            if caput[2].find('code'):
+                                _v = self._codicem(
+                                    linea[1], index=index_linea, strictum=False)
+                            elif caput[1].find('code'):
+                                _v = self._codicem(
+                                    linea[0], index=index_linea, strictum=False)
+                            else:
+                                _v = self._codicem(
+                                    False, index=index_linea, strictum=False)
+
                         linea.insert(0, _v)
                     if index_ix_xyadhxltrivio > -1:
                         _v_refs = linea[index_ix_xyadhxltrivio - 1]
@@ -1105,31 +1186,37 @@ class DataScrapping:
             fonti (str): _description_
             objetivum (str): _description_
         """
-        # print("TODO de_csv_ad_csvnorm")
-        # numerordinatio_inconito = False
-        # codicem_index = -1
+
+        data_sorted = self._data_sort(fonti)
+
+        # print(data_sorted[0:10])
+
+        # raise NotImplementedError
+
         with open(objetivum, 'w') as _objetivum:
-            with open(fonti, 'r') as _fons:
-                _csv_reader = csv.reader(_fons)
-                _csv_writer = csv.writer(_objetivum)
+            # with open(fonti, 'r') as _fons:
+            _csv_writer = csv.writer(_objetivum)
+            for linea in data_sorted:
+                # _csv_reader = csv.reader(_fons)
+                # _csv_writer = csv.writer(_objetivum)
                 started = False
-                for linea in _csv_reader:
-                    if not started:
-                        started = True
-                        caput = linea
-                        # caput = self._no1lize(linea)
-                        # if '#item+conceptum+numerordinatio' not in caput:
-                        #     numerordinatio_inconito = True
-                        #     codicem_index = caput.index(
-                        #         '#item+conceptum+codicem')
-                        #     caput.insert(0, '#item+conceptum+numerordinatio')
-                        self._caput = caput
-                        _csv_writer.writerow(caput)
-                        continue
-                    # if numerordinatio_inconito is True:
-                    #     linea.insert(0, '{0}:{1}'.format(
-                    #         self.numerordinatio_praefixo, linea[codicem_index]))
-                    _csv_writer.writerow(linea)
+                # for linea in _csv_reader:
+                if not started:
+                    started = True
+                    caput = linea
+                    # caput = self._no1lize(linea)
+                    # if '#item+conceptum+numerordinatio' not in caput:
+                    #     numerordinatio_inconito = True
+                    #     codicem_index = caput.index(
+                    #         '#item+conceptum+codicem')
+                    #     caput.insert(0, '#item+conceptum+numerordinatio')
+                    self._caput = caput
+                    _csv_writer.writerow(caput)
+                    continue
+                # if numerordinatio_inconito is True:
+                #     linea.insert(0, '{0}:{1}'.format(
+                #         self.numerordinatio_praefixo, linea[codicem_index]))
+                _csv_writer.writerow(linea)
 
     def de_hxltm_ad_no1(self, fonti: str, objetivum: str):
 
