@@ -43,6 +43,7 @@ from typing import (
     Any,
     List,
     Pattern,
+    Type,
     # Dict,
     # List,
 )
@@ -256,6 +257,32 @@ DATA_HXL_DE_CSV_REGEX = {
         'SP.POP.TOTL.MA.IN': '#population+m+year{0}',
         # https://data.worldbank.org/indicator/SP.POP.TOTL.FE.IN
         'SP.POP.TOTL.FE.IN': '#population+f+year{0}',
+
+        # Population ages 0-14, total
+        'SP.POP.0014.TO': '#population+t_0_14+year{0}',
+        # Population ages 0-14, female
+        'SP.POP.0014.FE.IN': '#population+f_0_14+year{0}',
+        # Population ages 0-14, male
+        'SP.POP.0014.MA.IN': '#population+m_0_14+year{0}',
+
+        # Population ages 15-64, total
+        'SP.POP.1564.TO': '#population+t_15_64+year{0}',
+        # Population ages 15-64, male
+        'SP.POP.1564.MA.IN': '#population+m_15_64+year{0}',
+        # Population ages 15-64, female
+        'SP.POP.1564.FE.IN': '#population+f_15_64+year{0}',
+
+        # Population ages 65 and above, total
+        'SP.POP.65UP.TO': '#population+t_65_999+year{0}',
+        # Population ages 65 and above, female
+        'SP.POP.65UP.FE.IN': '#population+f_65_999+year{0}',
+        # Population ages 65 and above, male
+        'SP.POP.65UP.MA.IN': '#population+m_65_999+year{0}',
+
+        # @TODO if we take the %, there are other age ranges. Eventualy
+        #       deal with this
+
+        # ---------------------------------------------------------------------
 
         # Money related, thematic
         # https://data.worldbank.org/indicator/BX.GRT.EXTA.CD.WD?view=chart
@@ -751,7 +778,19 @@ class DataScrapping:
         self.rdf_trivio = rdf_trivio
 
         self.objectivum_formato = objectivum_formato
+        self._caput = []
         self._temp = {}
+
+        self._skipLineMetaCsv = [
+            {
+                'index': 0
+            },
+            # # Example of rule
+            # {
+            #     'index': 3,
+            #     'not_in': DATA_HXL_DE_CSV_REGEX['worldbank'].keys()
+            # },
+        ]
 
         self._Adm0CodexLocali = None
 
@@ -899,6 +938,20 @@ class DataScrapping:
             # )
         return resultatum
 
+    def _skip_line(self, line: list) -> bool:
+
+        for rule in self._skipLineMetaCsv:
+            if 'not_in' in rule:
+                # for r_n_item in rule['not_in']:
+                if line[rule['index']] not in rule['not_in']:
+                    return True
+                # return False
+            # Most basic, just check if index exist at all not evaluate to empy
+            elif not line[rule['index']] or \
+                    len(line[rule['index']].strip()) == 0:
+                return True
+        return False
+
     def de_csv_ad_csvnorm(
             self, fonti: str, objetivum: str, caput_initiali: list):
         # print("TODO de_csv_ad_csvnorm")
@@ -914,6 +967,7 @@ class DataScrapping:
                         if linea and linea[0].strip() in caput_initiali:
                             started = True
                             strip_last = len(linea[-1]) == 0
+                            self._caput = linea
                         else:
                             continue
                     if strip_last:
@@ -921,7 +975,8 @@ class DataScrapping:
                     _csv_writer.writerow(linea)
 
         # print("TODO")
-    def de_csvnorm_ad_hxl(self, fonti: str, objetivum):
+    def de_csvnorm_ad_hxl(
+            self, fonti: str, objetivum, callback: Type['function'] = None):
         # print("TODO de_csv_ad_csvnorm")
         with open(objetivum, 'w') as _objetivum:
             with open(fonti, 'r') as _fons:
@@ -931,9 +986,14 @@ class DataScrapping:
                 for linea in _csv_reader:
                     if not started:
                         started = True
+                        caput = self._hxlize_dummy(linea)
+                        self._caput = caput
                         _csv_writer.writerow(self._hxlize_dummy(linea))
+                        # if callback is not None:
+                        #     callback(qself=self, caput=caput)
                         continue
-                    _csv_writer.writerow(linea)
+                    if not self._skip_line(linea):
+                        _csv_writer.writerow(linea)
 
     def de_hxl_ad_hxltm(self, fonti: str, objetivum: str):
         # print("TODO de_csv_ad_csvnorm")
@@ -951,6 +1011,7 @@ class DataScrapping:
                         if '#item+conceptum+codicem' not in caput:
                             codicem_inconito = True
                             caput.insert(0, '#item+conceptum+codicem')
+                        self._caput = caput
                         _csv_writer.writerow(caput)
                         continue
                     if codicem_inconito is True:
@@ -988,6 +1049,7 @@ class DataScrapping:
                             codicem_index = caput.index(
                                 '#item+conceptum+codicem')
                             caput.insert(0, '#item+conceptum+numerordinatio')
+                        self._caput = caput
                         _csv_writer.writerow(caput)
                         continue
                     if numerordinatio_inconito is True:
@@ -1336,7 +1398,18 @@ class DataScrappingWorldbank(DataScrapping):
                 'Country Name', 'Country Code'
             ]
         )
+
         if self.objectivum_formato in ['hxl', 'hxltm', 'no1']:
+            # raise ValueError(self._caput)
+            _indicator_code_index = self._caput.index('Indicator Code')
+            self._skipLineMetaCsv.append(
+                {
+                    'index': _indicator_code_index,
+                    'not_in': DATA_HXL_DE_CSV_REGEX['worldbank'].keys()
+                }
+            )
+            # def _qcallback(qself, caput):
+            #     return qself
             self.de_csvnorm_ad_hxl(
                 self._temp['csv'], self._temp['hxl']
             )
