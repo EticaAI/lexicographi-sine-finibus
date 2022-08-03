@@ -1153,39 +1153,25 @@ class DataScrapping:
         """
 
         # data_sorted = self._data_sort(fonti)
-        data_sorted = hxltm__data_sort(
-            fonti, ['#item+rem+i_qcc+is_zxxx+ix_xyadhxltrivio'])
+
+        if '#item+rem+i_qcc+is_zxxx+ix_xyadhxltrivio' in self._caput:
+            data_sorted = hxltm__data_sort(
+                fonti, ['#item+rem+i_qcc+is_zxxx+ix_xyadhxltrivio'])
+        else:
+            data_sorted = hxltm__data_sort(fonti)
 
         caput, data = hxltm__data_pivot_wide(data_sorted[0], data_sorted[1:])
 
         # print(data_sorted[0:10])
-        print(caput, data[0:10])
+        # print(caput, data[0:10])
 
-        raise NotImplementedError
+        # raise NotImplementedError
 
         with open(objetivum, 'w') as _objetivum:
             # with open(fonti, 'r') as _fons:
             _csv_writer = csv.writer(_objetivum)
-            for linea in data_sorted:
-                # _csv_reader = csv.reader(_fons)
-                # _csv_writer = csv.writer(_objetivum)
-                started = False
-                # for linea in _csv_reader:
-                if not started:
-                    started = True
-                    caput = linea
-                    # caput = self._no1lize(linea)
-                    # if '#item+conceptum+numerordinatio' not in caput:
-                    #     numerordinatio_inconito = True
-                    #     codicem_index = caput.index(
-                    #         '#item+conceptum+codicem')
-                    #     caput.insert(0, '#item+conceptum+numerordinatio')
-                    self._caput = caput
-                    _csv_writer.writerow(caput)
-                    continue
-                # if numerordinatio_inconito is True:
-                #     linea.insert(0, '{0}:{1}'.format(
-                #         self.numerordinatio_praefixo, linea[codicem_index]))
+            _csv_writer.writerow(caput)
+            for linea in data:
                 _csv_writer.writerow(linea)
 
     def de_hxltm_ad_no1(self, fonti: str, objetivum: str):
@@ -1587,21 +1573,36 @@ class DataScrappingWorldbank(DataScrapping):
                 self._temp['hxl'], self._temp['hxltm'], hxl_vocab=hxl_vocab
             )
 
-        if self.objectivum_formato in ['hxltm-wide', 'no1'] or \
-                (self.objectivum_formato == 'no1' and
-                    '#item+rem+i_qcc+is_zxxx+ix_xyadhxltrivio' in self._caput):
+        if self.objectivum_formato == 'hxltm-wide':
             hxl_vocab = False
-            if self.methodus == 'health':
-                self._hxlPivot = DATA_HXL_DE_CSV_REGEX['worldbank']
-                hxl_vocab = True
+            # if self.methodus == 'health':
+            #     self._hxlPivot = DATA_HXL_DE_CSV_REGEX['worldbank']
+            #     hxl_vocab = True
             self.de_hxltm_ad_hxltm_wide(
                 self._temp['hxltm'], self._temp['hxltm_wide']
             )
 
-        if self.objectivum_formato in ['no1']:
+        # We also generate wide data implicitly if result needs it
+        if self.objectivum_formato == 'no1' and \
+                ('#item+rem+i_qcc+is_zxxx+ix_xyadhxltrivio' in self._caput):
+            hxl_vocab = False
+            # if self.methodus == 'health':
+            #     self._hxlPivot = DATA_HXL_DE_CSV_REGEX['worldbank']
+            #     hxl_vocab = True
+            self.de_hxltm_ad_hxltm_wide(
+                self._temp['hxltm'], self._temp['hxltm_wide']
+            )
+
+            self.de_hxltm_ad_no1(
+                self._temp['hxltm_wide'], self._temp['no1']
+            )
+
+        elif self.objectivum_formato in ['no1']:
             self.de_hxltm_ad_no1(
                 self._temp['hxltm'], self._temp['no1']
             )
+        else:
+            SyntaxError('{}??'.format(self.objectivum_formato))
 
 
 if __name__ == "__main__":

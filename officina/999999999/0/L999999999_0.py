@@ -5470,6 +5470,9 @@ def hxltm__data_pivot_wide(caput: list, data: list) -> list:
 
     sorted(referens_hxlattrs)
 
+
+    # raise ValueError(len(referens_hxlattrs) * len(referens_ad_indici))
+
     columna_novae__list = []
     columna_novae__mapping = {}
 
@@ -5481,13 +5484,19 @@ def hxltm__data_pivot_wide(caput: list, data: list) -> list:
             if res in columna_novae__list:
                 continue
             columna_novae__list.append(res)
-            # columna_novae__mapping[item_I] = columna_novae__list.index(res)
-            columna_novae__mapping[item_I] = len(columna_novae__list) - 1
+            columna_novae__mapping[item_I] = columna_novae__list.index(res)
+            # columna_novae__mapping[item_I] = len(columna_novae__list) - 1
             # pass
         # columna_novae__list
 
     data_novae__dict = {}
     _codice_indici = caput.index('#item+conceptum+codicem')
+    _matrix_size = len(referens_hxlattrs) * len(referens_ad_indici)
+    # raise ValueError(_matrix_size, [''] * _matrix_size)
+
+    _do_not_merge = []
+    # These already will be on data
+    _do_not_merge.extend(referens_ad_indici)
     for linea in data:
         _codicem = linea[_codice_indici]
         _referens = linea[referens_per_indici]
@@ -5497,67 +5506,68 @@ def hxltm__data_pivot_wide(caput: list, data: list) -> list:
             data_novae__dict[_codicem] = {
                 'originalis': linea,
                 # 'data_novae': [''] * len(columna_novae__list),
-                'data_novae': [''] * (len(columna_novae__list) + 1),
+                # 'data_novae': [''] * (len(columna_novae__list) + 1),
+                'data_novae': [''] * _matrix_size,
+                'data_meta': [],
             }
+        else:
+            # This will try to compare if we can safely add columns that would
+            # be equal anyway
+            for item_index, item_value in enumerate(linea):
+                if item_index in _do_not_merge:
+                    continue
+                if item_value != \
+                    data_novae__dict[_codicem]['originalis'][item_index]:
+                    _do_not_merge.append(item_index)
 
         __loop = 0
+        # __loop = -1
         # print(len(data_novae__dict[_codicem]['data_novae']))
+        # raise NotImplementedError(referens_ad_indici)
         for index_originalis in referens_ad_indici:
             # index_novae = __start + index_originalis
             # print(__loop, len(data_novae__dict[_codicem]['data_novae']))
             index_novae = __start + __loop
-            if index_novae not in data_novae__dict[_codicem]['data_novae']:
-                print('error', index_novae, len(data_novae__dict[_codicem]['data_novae']))
-                continue
+            if not index_novae < len(data_novae__dict[_codicem]['data_novae']):
+                break
+            # if index_novae not in data_novae__dict[_codicem]['data_novae']:
+            #     print('error', __start, index_novae, len(data_novae__dict[_codicem]['data_novae']))
+            #     continue
+            # print('antes', index_novae, len(data_novae__dict[_codicem]['data_novae']))
             data_novae__dict[_codicem]['data_novae'][index_novae] = \
                 linea[index_originalis]
+            # print('depois', index_novae)
+            # data_novae__dict[_codicem]['data_novae'][index_originalis] = \
+            #     linea[index_originalis]
             __loop += 1
+
+    for codicem in data_novae__dict:
+        for _old_index, _old_value in enumerate(data_novae__dict[codicem]['originalis']):
+            if _old_index not in _do_not_merge:
+                data_novae__dict[codicem]['data_meta'].append(_old_value)
 
     # for item in caput:
     #     for item_II in referens_ad_indici:
 
     #     pass
+    # raise ValueError(_old_index)
+    _caput_novo_meta = []
+    for _old_index, _old_caput in enumerate(caput):
+        if _old_index not in _do_not_merge:
+            _caput_novo_meta.append(_old_caput)
 
-    raise NotImplementedError(data_novae__dict['4'])
-    raise NotImplementedError(columna_novae__list, columna_novae__mapping)
+    caput_novo = _caput_novo_meta + columna_novae__list
+    data_novo = []
+    for codicem in data_novae__dict:
+        data_novo.append(data_novae__dict[codicem]['data_meta'] \
+            + data_novae__dict[_codicem]['data_novae'])
 
-    # if not sortkeys:
-    #     sortkeys = []
+    # raise NotImplementedError(caput_novo, data_novo[0])
+    # raise NotImplementedError(data_novae__dict['4'])
+    # raise NotImplementedError(columna_novae__list, columna_novae__mapping)
 
-    # if '#item+conceptum+codicem' not in sortkeys:
-    #     sortkeys.insert(0, '#item+conceptum+codicem')
 
-    # _data = []
-    # caput = []
-    # with open(fonti, 'r') as _fons:
-    #     _csv_reader = csv.reader(_fons)
-    #     # started = False
-    #     for linea in _csv_reader:
-    #         if len(caput) == 0:
-    #             caput = linea
-    #             continue
-    #         _data.append(linea)
-
-    # _i0 = caput.index(sortkeys[0])
-    # if len(sortkeys) == 1:
-    #     _data = sorted(_data, key=lambda row: int(row[_i0]))
-    # elif len(sortkeys) == 2:
-    #     _i1 = caput.index(sortkeys[1])
-    #     _data = sorted(_data, key=lambda row: (int(row[_i0]), row[_i1]))
-    # elif len(sortkeys) == 3:
-    #     _i1 = caput.index(sortkeys[1])
-    #     _i2 = caput.index(sortkeys[2])
-    #     _data = sorted(
-    #         _data, key=lambda row: (int(row[_i0]), row[_i1], row[_i2]))
-    # else:
-    #     raise NotImplementedError('len > 3; [{}] <{}>'.format(
-    #         len(sortkeys), sortkeys))
-
-    # resultatum = []
-    # resultatum.append(caput)
-    # resultatum.extend(_data)
-
-    return caput, data
+    return caput_novo, data_novo
 
 
 def hxltm__concat(
