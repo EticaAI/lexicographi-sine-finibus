@@ -2986,20 +2986,36 @@ def bcp47_rdf_extension_poc(
             # print('bag_meta', rdf_trivio_hxla, bcp47_privateuse)
             # print('bag_meta', bcp47_privateuse[0].startswith(rdf_trivio_hxla[0]))
             _trivio_hxla = None
+            _trivio_hxla_list = []
             for _hxla in rdf_trivio_hxla:
                 for _item in bcp47_privateuse:
                     if _item.startswith(_hxla):
                         # raise ValueError('foi', triples)
-                        _trivio_hxla = 'ix:{0}'.format(_item)
+                        # _trivio_hxla = 'ix:{0}'.format(_item)
+                        _trivio_hxla_list.append(_item)
                         # triples.append(['#<foi>', _trivio_hxla, _hxla])
+
+            if len(_trivio_hxla_list) > 0:
+                sorted(_trivio_hxla_list)
+                if len(_trivio_hxla_list) == 1:
+                    _trivio_hxla = 'ix:{0}'.format(_trivio_hxla_list[0])
+                else:
+                    _parts = []
+                    # if using owl:unionOf (ix:item1 ix:item2 ix:item3)
+                    # for _item in _trivio_hxla_list:
+                    #     _parts.append('ix:{0}'.format(_item))
+                    # _trivio_hxla = 'owl:unionOf ({0})'.format(' '.join(_parts))
+                    for _item in _trivio_hxla_list:
+                        _parts.append('ix:{0}'.format(_item))
+                    _trivio_hxla = 'ix:{0}'.format('__'.join(_trivio_hxla_list))
 
             if _trivio_hxla is not None:
                 triples_novo = []
                 for _triple_item in triples:
                     _bn = '_:{0}'.format(uuid.uuid3(
                         uuid.NAMESPACE_DNS,
-                        _triple_item[0]
-                        # str(_triple_item[0], _triple_item[1])
+                        # _triple_item[0]
+                        str('{}{}'.format(_triple_item[0], _triple_item[1]))
                     ))
                     triples_novo.append([
                         _triple_item[0],
@@ -3012,7 +3028,12 @@ def bcp47_rdf_extension_poc(
                         _triple_item[2]
                     ])
                     # pass
+                    # if len(triples):
+                    #     print(_bn)
+                # print('old', triples)
                 triples = triples_novo
+                # if len(triples):
+                #     raise ValueError(triples, triples_novo)
 
         return triples, triples_delayed
 

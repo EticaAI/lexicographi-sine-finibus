@@ -242,6 +242,14 @@ DATA_NO1_DE_HXLTM_GENERIC = {
     '#{t}+rem+i_qcc+is_zxxx+ix_iso8601v{v1}+rdf_p_wdata_p{v2}_s{trivio}+rdf_t_xsd_int': r"^#(?P<t>[a-z0-9]{3,99})\+rem\+i_qcc\+is_zxxx\+ix_iso8601v(?P<v1>[0-9]{4})\+ix_xywdatap(?P<v2>[0-9]{1,12})"
 }
 
+DATA_HXLTM_CASTTYPE = {
+    'ix_xywdatap1082': 'rdf_t_xsd_int',
+    'ix_xywdatap1539': 'rdf_t_xsd_int',
+    'ix_xywdatap1540': 'rdf_t_xsd_int',
+    'ix_xywdatap6344': 'rdf_t_xsd_int',
+    'ix_xywdatap6343': 'rdf_t_xsd_int',
+}
+
 DATA_METHODUS = {
     'worldbank': {
         # https://data.worldbank.org/topic/health?view=chart
@@ -972,6 +980,11 @@ class DataScrapping:
             if not res:
                 resultatum.append('')
                 continue
+
+            for ix_item, rdf_t_item in DATA_HXLTM_CASTTYPE.items():
+                if res.find(ix_item) > -1 and res.find(rdf_t_item) == -1:
+                    res = res + '+' + rdf_t_item
+                # pass
 
             res = hxltm_hashtag_ix_ad_rdf(res)
             resultatum.append(res)
