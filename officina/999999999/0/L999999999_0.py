@@ -5489,6 +5489,8 @@ def hxltm__data_pivot_wide(caput: list, data: list) -> list:
             # pass
         # columna_novae__list
 
+    # raise ValueError(columna_novae__list)
+
     data_novae__dict = {}
     _codice_indici = caput.index('#item+conceptum+codicem')
     _matrix_size = len(referens_hxlattrs) * len(referens_ad_indici)
@@ -5546,6 +5548,22 @@ def hxltm__data_pivot_wide(caput: list, data: list) -> list:
             if _old_index not in _do_not_merge:
                 data_novae__dict[codicem]['data_meta'].append(_old_value)
 
+    _gambiarra = []
+    for codicem in data_novae__dict:
+        data_novae__dict[codicem]['data_finalis'] = []
+        data_novae__dict[codicem]['data_finalis'].extend(
+            data_novae__dict[codicem]['data_meta']
+        )
+        data_novae__dict[codicem]['data_finalis'].extend(
+            data_novae__dict[codicem]['data_novae']
+        )
+
+        _gambiarra.append(list(data_novae__dict[codicem]['data_finalis']))
+
+        # raise ValueError(data_novae__dict[codicem]['data_finalis'])
+
+    # raise ValueError(_gambiarra[0])
+
     # for item in caput:
     #     for item_II in referens_ad_indici:
 
@@ -5557,17 +5575,44 @@ def hxltm__data_pivot_wide(caput: list, data: list) -> list:
             _caput_novo_meta.append(_old_caput)
 
     caput_novo = _caput_novo_meta + columna_novae__list
-    data_novo = []
-    for codicem in data_novae__dict:
-        data_novo.append(data_novae__dict[codicem]['data_meta'] \
-            + data_novae__dict[_codicem]['data_novae'])
+    # data_novo = []
+    # for codicem in data_novae__dict:
+        # _novus = [*data_novae__dict[codicem]['data_meta'], *data_novae__dict[_codicem]['data_novae']]
 
+        # _novus = data_novae__dict[codicem]['data_meta']
+        # _novus.extend(data_novae__dict[_codicem]['data_novae'])
+        # data_novo.append(data_novae__dict[codicem]['data_meta'] \
+        #     + data_novae__dict[_codicem]['data_novae'])
+
+        # Weid way to merge 2 lists. Whatever. Eventually review
+        # _novus = []
+        # for item in list(data_novae__dict[codicem]['data_meta']):
+        #     _novus.append(item)
+        # for item in list(data_novae__dict[_codicem]['data_novae']):
+        #     _novus.append(item)
+
+        # # raise ValueError(_novus, data_novae__dict[_codicem]['data_novae'])
+
+        # _novus = list(data_novae__dict[_codicem]['data_novae'])
+
+        # data_novo.append(_novus)
+        # raise ValueError(data_novae__dict[_codicem]['data_finalis'])
+        # data_novo.append(data_novae__dict[_codicem]['data_finalis'])
+
+    # raise NotImplementedError(data_novo[0], data_novae__dict['4'])
     # raise NotImplementedError(caput_novo, data_novo[0])
+    # raise NotImplementedError(data_novo[0], data_novae__dict['4']['data_novae'])
     # raise NotImplementedError(data_novae__dict['4'])
     # raise NotImplementedError(columna_novae__list, columna_novae__mapping)
 
-
-    return caput_novo, data_novo
+    _duplicates = []
+    for item in caput_novo:
+        if caput_novo.count(item) != 1 and item not in _duplicates:
+            _duplicates.append(item)
+    if len(_duplicates) > 0:
+        raise SyntaxError('duplicates <{0}> at header'.format(_duplicates))
+    # return caput_novo, data_novo
+    return caput_novo, _gambiarra
 
 
 def hxltm__concat(
