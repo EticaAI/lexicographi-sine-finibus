@@ -6711,21 +6711,135 @@ def hxltm_hashtag_ix_ad_rdf(
     rdf_trivio: int = 1603,
     limes_minimo: int = 1,
     limes_maximo: int = 1,
+    proprietates_ignorato: list = None,
     strictum: bool = False
 ) -> str:
-    """hxltm_hashtag_ix_ad_rdf _summary_
+    """hxltm_hashtag_ix_ad_rdf selectively upgrade some +ix_ to +rdf_p_
 
-    >>> hxltm_hashtag_ix_ad_rdf(' #date+stArT ')
-    '#date+start'
+    Args:
+        hashtag (str): The original hashtag
+        proprietates (list, optional): _description_. Defaults to None.
+        rdf_trivio (int, optional): _description_. Defaults to 1603.
+        limes_minimo (int, optional): Mininum number of upgrades. Defaults to 1.
+        limes_maximo (int, optional): Maximum number of ugrades. Defaults to 1.
+        proprietates_ignorato (list, optional): Regex list of ix_ hashtags
+                                                to ignore. Set to False to
+                                                disable defaults.
+        strictum (bool, optional): Less tolerant behavior. Defaults to False.
+
+
+    >>> _basi = '#item+rem+i_qcc+is_zxxx'
+    >>> _ix_III = '+ix_iso8601v2020+ix_xywdatap1540+ix_xywdatap2899v65'
+
+    ### Simpler case: if only one option is possible, assume it what user want
+    >>> hxltm_hashtag_ix_ad_rdf(_basi + '+ix_xywdatap1540')
+    '#item+rem+i_qcc+is_zxxx+rdf_p_wdata_p1540_s1603'
+
+    >>> hxltm_hashtag_ix_ad_rdf(_basi + _ix_III, proprietates=[
+    ...    'ix_xywdatap1540'])
+    '#item+rem+i_qcc+is_zxxx+ix_iso8601v2020+ix_xywdatap2899v65\
++rdf_p_wdata_p1540_s1603'
+
+    >>> hxltm_hashtag_ix_ad_rdf(_basi + _ix_III, proprietates=[
+    ...    r"ix_xywdatap1540"])
+    '#item+rem+i_qcc+is_zxxx+ix_iso8601v2020+ix_xywdatap2899v65\
++rdf_p_wdata_p1540_s1603'
+
+
+    ###>>> hxltm_hashtag_ix_ad_rdf(_basi + _ix_III)
+
+    Returns:
+        str: HXL hashtag
     """
     hashtag = hxl_hashtag_normalizatio(hashtag)
 
-    # @SEE hxl_hashtag_normalizatio()
-    # DATA_NO1_DE_HXLTM_GENERIC = {
-    #     # '^(?P<t>#[a-z0-9]{3,99})\+rem\+i_qcc\+is_zxxx\+ix_xywdatap(?P<v2>[0-9]{1,12})'
-    #     '#{t}+rem+i_qcc+is_zxxx+ix_iso8601v{v1}+rdf_p_wdata_p{v2}_s{trivio}+rdf_t_xsd_int': r"^#(?P<t>[a-z0-9]{3,99})\+rem\+i_qcc\+is_zxxx\+ix_iso8601v(?P<v1>[0-9]{4})\+ix_xywdatap(?P<v2>[0-9]{1,12})"
-    # }
-    return hashtag
+    hxltm_prefix = ('#item+rem', '#meta+rem', '#status+rem')
+
+    if proprietates_ignorato is None:
+        proprietates_ignorato = [
+            # Example: ix_iso8601v2020
+            r"^ix_iso.*$",
+            # Example: ix_xywdatap2899v65 (but not ix_xywdatap2899)
+            r"^ix_xywdata(p|q)[0-9]{1,12}v.*$"
+        ]
+
+    ix_attrs = []
+    rdf_p_attrs = []
+    if not hashtag.startswith(hxltm_prefix):
+        # Assime is a generic HXL hashtag. Return as it is
+        # Similar to #item+conceptum+(...), which are simpler and require
+        # no special sorting
+        return hashtag
+
+    for item in hxltm_prefix:
+        if hashtag.startswith(item):
+            hxltm_hashtag = item
+            _hxltm_attrs = hashtag.replace(item + '+', '').split('+')
+            for item_II in _hxltm_attrs:
+                _ignore = False
+                if proprietates_ignorato is not None:
+                    for _ig_test in proprietates_ignorato:
+                        if re.match(_ig_test, item_II):
+                            _ignore = True
+                if not _ignore and item_II.startswith('ix_'):
+                    ix_attrs.append(item_II)
+                if item_II.startswith('rdf_p_'):
+                    rdf_p_attrs.append(item_II)
+            break
+
+    def _helper(rem: str, strictum: bool = True):
+        if rem.startswith('ix_xywdata'):
+            # ix_xywdatap
+            # ix_xywdataq
+            return 'rdf_p_wdata_{0}_s{1}'.format(
+                rem.replace('ix_xywdata', ''), str(rdf_trivio)
+            )
+        if strictum:
+            raise NotImplementedError('[{0}] [{1}]'.format(
+                rem, hashtag
+            ))
+        else:
+            return False
+
+    if proprietates is None:
+        if limes_minimo == 1 and len(rdf_p_attrs) == 1:
+            # Already parsed before, let's keep at it is
+            pass
+        elif limes_minimo == 1 and len(ix_attrs) == 1:
+            _old = ix_attrs[0]
+            _new = _helper(_old)
+            _hxltm_attrs[_hxltm_attrs.index(_old)] = _new
+        elif limes_minimo == 0 and len(ix_attrs) == 0:
+            # Allowed to ignore
+            pass
+        else:
+            if not hxltm_hashtag.startswith('#meta'):
+                # Tolerate malformated #meta's
+                raise SyntaxError(
+                    '[{0}] limes[{1}] limes_minimo [{2}]'.format(
+                        hashtag, len(ix_attrs), limes_minimo))
+    else:
+        _old_and_new = {}
+        _done = False
+        for prop_test in proprietates:
+            if isinstance(prop_test, str):
+                for ix_item in ix_attrs:
+                    if ix_item.startswith(prop_test):
+                        _new = _helper(ix_item)
+                        _old_and_new[ix_item] = _new
+                # resultatum.append(_ht_novo)
+
+                if len(_old_and_new.keys()) <= limes_maximo:
+                    _done = True
+                    break
+        if len(_old_and_new.keys()) <= limes_maximo and \
+                len(_old_and_new.keys()) >= limes_minimo:
+            for _old, _new in _old_and_new.items():
+                _hxltm_attrs[_hxltm_attrs.index(_old)] = _new
+
+    # @TODO replace _hxltm_attrs final values
+    return hxl_hashtag_normalizatio(
+        hxltm_hashtag + '+{0}'.format('+'.join(_hxltm_attrs)))
 
 
 def hxltm_index_praeparationi(

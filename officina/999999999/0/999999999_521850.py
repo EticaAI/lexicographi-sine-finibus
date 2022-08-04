@@ -55,6 +55,7 @@ from L999999999_0 import (
     NUMERORDINATIO_BASIM,
     hxltm__data_pivot_wide,
     hxltm__data_sort,
+    hxltm_hashtag_ix_ad_rdf,
     numerordinatio_neo_separatum,
     # TabulaAdHXLTM
 )
@@ -971,6 +972,10 @@ class DataScrapping:
             if not res:
                 resultatum.append('')
                 continue
+
+            res = hxltm_hashtag_ix_ad_rdf(res)
+            resultatum.append(res)
+            continue
 
             _done = False
             for _ht_novo, _ht_retest in DATA_NO1_DE_HXLTM_GENERIC.items():
