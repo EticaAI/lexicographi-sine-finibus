@@ -5445,7 +5445,22 @@ def hxltm__data_sort(fonti: str, sortkeys: list = None) -> list:
     return resultatum
 
 
-def hxltm__data_pivot_wide(caput: list, data: list) -> list:
+def hxltm__data_pivot_wide(caput: list, data: list) -> Tuple[list, List[list]]:
+    """hxltm__data_pivot_wide
+
+    For an HXL dataset with strict HXLTM documented attributes, convert data
+    from narrow (or long) to wide.
+    It works by getting attributes from an column +ix_xyadhxltrivio ("ad")
+    and using to pivo from its value all other columns with
+    +ix_xyexhxltrivio ("ex").
+
+    Args:
+        caput (list): header
+        data (list): all data, long format
+
+    Returns:
+        Tuple[list, List[list]]: caput, data
+    """
 
     referens_columnae = '#item+rem+i_qcc+is_zxxx+ix_xyadhxltrivio'
 
@@ -5469,7 +5484,6 @@ def hxltm__data_pivot_wide(caput: list, data: list) -> list:
             referens_hxlattrs.append(linea[referens_per_indici])
 
     sorted(referens_hxlattrs)
-
 
     # raise ValueError(len(referens_hxlattrs) * len(referens_ad_indici))
 
@@ -5519,7 +5533,7 @@ def hxltm__data_pivot_wide(caput: list, data: list) -> list:
                 if item_index in _do_not_merge:
                     continue
                 if item_value != \
-                    data_novae__dict[_codicem]['originalis'][item_index]:
+                        data_novae__dict[_codicem]['originalis'][item_index]:
                     _do_not_merge.append(item_index)
 
         __loop = 0
@@ -5577,27 +5591,27 @@ def hxltm__data_pivot_wide(caput: list, data: list) -> list:
     caput_novo = _caput_novo_meta + columna_novae__list
     # data_novo = []
     # for codicem in data_novae__dict:
-        # _novus = [*data_novae__dict[codicem]['data_meta'], *data_novae__dict[_codicem]['data_novae']]
+    # _novus = [*data_novae__dict[codicem]['data_meta'], *data_novae__dict[_codicem]['data_novae']]
 
-        # _novus = data_novae__dict[codicem]['data_meta']
-        # _novus.extend(data_novae__dict[_codicem]['data_novae'])
-        # data_novo.append(data_novae__dict[codicem]['data_meta'] \
-        #     + data_novae__dict[_codicem]['data_novae'])
+    # _novus = data_novae__dict[codicem]['data_meta']
+    # _novus.extend(data_novae__dict[_codicem]['data_novae'])
+    # data_novo.append(data_novae__dict[codicem]['data_meta'] \
+    #     + data_novae__dict[_codicem]['data_novae'])
 
-        # Weid way to merge 2 lists. Whatever. Eventually review
-        # _novus = []
-        # for item in list(data_novae__dict[codicem]['data_meta']):
-        #     _novus.append(item)
-        # for item in list(data_novae__dict[_codicem]['data_novae']):
-        #     _novus.append(item)
+    # Weid way to merge 2 lists. Whatever. Eventually review
+    # _novus = []
+    # for item in list(data_novae__dict[codicem]['data_meta']):
+    #     _novus.append(item)
+    # for item in list(data_novae__dict[_codicem]['data_novae']):
+    #     _novus.append(item)
 
-        # # raise ValueError(_novus, data_novae__dict[_codicem]['data_novae'])
+    # # raise ValueError(_novus, data_novae__dict[_codicem]['data_novae'])
 
-        # _novus = list(data_novae__dict[_codicem]['data_novae'])
+    # _novus = list(data_novae__dict[_codicem]['data_novae'])
 
-        # data_novo.append(_novus)
-        # raise ValueError(data_novae__dict[_codicem]['data_finalis'])
-        # data_novo.append(data_novae__dict[_codicem]['data_finalis'])
+    # data_novo.append(_novus)
+    # raise ValueError(data_novae__dict[_codicem]['data_finalis'])
+    # data_novo.append(data_novae__dict[_codicem]['data_finalis'])
 
     # raise NotImplementedError(data_novo[0], data_novae__dict['4'])
     # raise NotImplementedError(caput_novo, data_novo[0])
@@ -6689,6 +6703,29 @@ def hxltm_ex_selectis(
         #     print('DEBUG: skip [<{0}> {1} <{2}>]'.format(
         #         _value_1, op, _value_2))
     return caput, _data
+
+
+def hxltm_hashtag_ix_ad_rdf(
+    hashtag: str,
+    proprietates: list = None,
+    rdf_trivio: int = 1603,
+    limes_minimo: int = 1,
+    limes_maximo: int = 1,
+    strictum: bool = False
+) -> str:
+    """hxltm_hashtag_ix_ad_rdf _summary_
+
+    >>> hxltm_hashtag_ix_ad_rdf(' #date+stArT ')
+    '#date+start'
+    """
+    hashtag = hxl_hashtag_normalizatio(hashtag)
+
+    # @SEE hxl_hashtag_normalizatio()
+    # DATA_NO1_DE_HXLTM_GENERIC = {
+    #     # '^(?P<t>#[a-z0-9]{3,99})\+rem\+i_qcc\+is_zxxx\+ix_xywdatap(?P<v2>[0-9]{1,12})'
+    #     '#{t}+rem+i_qcc+is_zxxx+ix_iso8601v{v1}+rdf_p_wdata_p{v2}_s{trivio}+rdf_t_xsd_int': r"^#(?P<t>[a-z0-9]{3,99})\+rem\+i_qcc\+is_zxxx\+ix_iso8601v(?P<v1>[0-9]{4})\+ix_xywdatap(?P<v2>[0-9]{1,12})"
+    # }
+    return hashtag
 
 
 def hxltm_index_praeparationi(
