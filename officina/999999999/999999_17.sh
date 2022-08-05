@@ -82,7 +82,22 @@ set -x
 #   "999999/0/1603_99966_1_0~worldbank~health~TEMP.no1.owl.ttl" \
 #   >"999999/0/1603_99966_1_0~worldbank~health.no1.owl.ttl"
 
-# exit 0
+
+# @TODO https://data.worldbank.org/topic/aid-effectiveness?view=chart
+# - https://github.com/robdmc/pandashells
+#   - pip install pandashells[console]
+#   - pip install pandashells[full]
+#     - p.config --plot_backend TkAgg
+# p.example_data -d tips | head
+# p.example_data -d tips | p.df 'df.head()' -o table
+# p.example_data -d tips | p.df 'df.describe().T' -o table index 
+#
+# cat "999999/0/1603_99966_1_0~worldbank~health~wide.tm.hxl.csv" | p.df 'df.head()' -o table
+
+# cat 999999/0/1603_99966_1_0~worldbank~health~wide.tm.hxl.csv | p.df 'df.describe().T' -o table index 
+# cat 999999/0/1603_99966_1_0~worldbank~health.tm.hxl.csv | p.df 'df.describe().T' -o table index 
+
+exit 0
 
 ./999999999/0/999999999_521850.py \
   --methodus-fonti=worldbank \

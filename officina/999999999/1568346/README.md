@@ -153,10 +153,16 @@ jsonschema --instance 999999999/1568346/data/cod-ab-example2.geojson 999999/0/Ge
 ### Orange3
 ```
 # http://biolab.github.io/install-orange/
-source ~/orange3env/bin/activate
+source ~/orange3venv/bin/activate
 python -m Orange.canvas
 
 # @see /workspace/data/brasil-dataset-covid-pacientes-hospital-albert-einstein
+# https://github.com/search?q=extension%3Aows&type=Code
+# https://github.com/search?q=repo%3Abiolab%2Forange3+extension%3Aows&type=Code&ref=advsearch&l=&l=
+
+
+# Map on Orange3
+# https://orangedatamining.com/widget-catalog/geo/geomap/
 ```
 
 -->
