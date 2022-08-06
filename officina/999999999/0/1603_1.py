@@ -198,6 +198,14 @@ no11.skos.ttl' --data-apothecae-ex-praefixis='1603'
 --data-apothecae-ex-suffixis='no1.bcp47.csv' \
 --data-apothecae-ex-praefixis='1603_45_16' | jq .resources[].name | wc -l
 
+Data apothēcae + machine learning . . . . . . . . . . . . . . . . . . . . . . .
+(Orange Data Mining project file)
+
+     {0} --methodus='data-apothecae' --data-apothecae-ad-stdout \
+--data-apothecae-formato='ows' \
+--data-apothecae-ex-suffixis='no1.bcp47.csv' \
+--data-apothecae-ex='1603_16_1_0' > orange.ows
+
 Data apothēcae ūnicae . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 (Faster alternative to --methodus='status-quo' --status-quo-in-datapackage)
 (Generate output for a single dataset, but all file formats without full path)
@@ -4149,7 +4157,7 @@ class DataApothecae:
         data_apothecae_formato: str = None,
         unicum: bool = False
     ):
-
+        # raise NotImplementedError
         # NOTE: the command line options for strout and to auto detect
         #       numerordinatios from paths is done outsite DataApothecae
 
@@ -4176,6 +4184,8 @@ class DataApothecae:
                 self.data_apothecae_formato = 'datapackage'
             elif data_apothecae_ad.endswith('.xml'):
                 self.data_apothecae_formato = 'catalog'
+            elif data_apothecae_ad.endswith('.ows'):
+                self.data_apothecae_formato = 'ows'
             else:
                 raise ValueError('--data-apothecae-formato ?')
 
@@ -4225,7 +4235,7 @@ class DataApothecae:
         # libraria = LibrariaStatusQuo(
         #     codex,
         #     'locale')
-
+        # raise NotImplementedError(self.data_apothecae_formato)
         if self.data_apothecae_formato == 'csvw':
             # return self.praeparatio_datapackage(libraria)
             return self.praeparatio_csvw()
@@ -4245,6 +4255,10 @@ class DataApothecae:
         if self.data_apothecae_formato == 'r2rml':
             # return self.praeparatio_sqlite(libraria)
             return self.praeparatio_r2rml()
+
+        if self.data_apothecae_formato == 'ows':
+            # return self.praeparatio_sqlite(libraria)
+            return self.praeparatio_ows()
 
         return True
 
@@ -4538,6 +4552,76 @@ class DataApothecae:
         self.resultatum.append(sqlite_path)
 
     # ./999999999/0/1603_1.py --methodus='data-apothecae' --data-apothecae-ad-stdout --data-apothecae-formato='r2rml' --data-apothecae-ex-suffixis='no1.tm.hxl.csv,no11.tm.hxl.csv' --data-apothecae-ex-praefixis='1603_1_1'
+
+    def praeparatio_ows(
+            self,
+            temporarium: str = None):
+        """praeparatio_r2rml
+
+        See:
+            - https://www.w3.org/TR/r2rml/
+
+        Args:
+            libraria (LibrariaStatusQuo):
+        """
+        # raise NotImplementedError
+
+        if len(self.data_apothecae_ex) > 1:
+            raise NotImplementedError('len > 1: [{0}] [{1}]'.format(
+                len(self.data_apothecae_ex), self.data_apothecae_ex
+            ))
+
+        objetivum = '{0}/{1}{2}'.format(
+            numerordinatio_neo_separatum(self.data_apothecae_ex[0], '/'),
+            numerordinatio_neo_separatum(self.data_apothecae_ex[0], '_'),
+            '.no1.bcp47.csv'  # @TODO maybe make it flexible or discoverable
+        )
+
+        archivum_ows = NUMERORDINATIO_BASIM + \
+            '/999999999/0/orange/orange-project-1.🗣️.ows'
+        textum_ows = None
+        with open(archivum_ows, 'r') as f:
+            textum_ows = f.read()
+
+        # raise ValueError(textum_ows.find("[[numerordinatio_archivo]]"))
+
+        textum_ows_finale = textum_ows.replace("[[numerordinatio_archivo]]", objetivum)
+
+        paginae = []
+        # paginae.append(textum_ows)
+        # paginae.append(
+        #     '@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .')
+        # paginae.append(
+        #     '@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .')
+        # paginae.append('@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .')
+        # paginae.append('@prefix rr: <http://www.w3.org/ns/r2rml#> .')
+
+        # paginae.append('')
+        # paginae.append('# @TODO r2rml still working draft. This is a sample')
+
+        # for codex in self.data_apothecae_ex:
+        #     paginae.append('# {0}'.format(codex))
+
+        paginae = [textum_ows_finale]
+
+        if temporarium:
+            with open(temporarium, 'w') as archivum:
+                for lineam in paginae:
+                    archivum.write(lineam)
+        else:
+            if self.data_apothecae_ad is False:
+                for lineam in paginae:
+                    print(lineam)
+            else:
+                _path_archivum = \
+                    NUMERORDINATIO_BASIM + '/' + self.data_apothecae_ad
+                # self.resultatum.append('TODO praeparatio_datapackage')
+                self.resultatum.append(_path_archivum)
+
+                with open(_path_archivum, 'w') as archivum:
+                    # Further file processing goes here
+                    for lineam in paginae:
+                        archivum.write(lineam)
 
     def praeparatio_r2rml(
             self,
@@ -5584,7 +5668,8 @@ class CLI_2600:
             '--data-apothecae-ad pattern.',
             dest='data_apothecae_formato',
             nargs='?',
-            choices=['catalog', 'csvw', 'datapackage', 'sqlite', 'r2rml'],
+            choices=['catalog', 'csvw', 'datapackage',
+                     'sqlite', 'ows', 'r2rml'],
             default=None
         )
 
