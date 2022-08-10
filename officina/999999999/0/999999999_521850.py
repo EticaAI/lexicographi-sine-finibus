@@ -89,75 +89,83 @@ STDIN = sys.stdin.buffer
 
 NOMEN = '999999999_521850'
 
-DESCRIPTION = """
-{0} Generic pre-processor for data scrapping. Mostly access external services
-and prepare their data to HXLTM (which then can be reused by rest of the
-tools)
+DESCRIPTION = f"""
+{__file__} Generic pre-processor for data scrapping. Mostly access external
+services and prepare their data to HXLTM (which then can be reused by rest of
+the tools)
 
 Trivia:
 - Q521850, https://www.wikidata.org/wiki/Q521850
   - data scraping (Q521850)
-""".format(__file__)
+"""
 
-__EPILOGUM__ = """
+__EPILOGUM__ = f"""
 ------------------------------------------------------------------------------
                             EXEMPLŌRUM GRATIĀ
 ------------------------------------------------------------------------------
 (Collective of humans / adm0 statistics) . . . . . . . . . . . . . . . . . . . .
 
-    {0} --methodus-fonti=undata
+    {__file__} --methodus-fonti=undata
 
-    {0} --methodus-fonti=undata --methodus=POP
+    {__file__} --methodus-fonti=undata --methodus=POP
 
-    {0} --methodus-fonti=unhcr
+    {__file__} --methodus-fonti=unhcr
 
-    {0} --methodus-fonti=unochafts
+    {__file__} --methodus-fonti=unochafts
 
-    {0} --methodus-fonti=unwpf
+    {__file__} --methodus-fonti=unwpf
 
 (Total population)  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-    {0} --methodus-fonti=worldbank --methodus=SP.POP.TOTL
+    {__file__} --methodus-fonti=worldbank --methodus=SP.POP.TOTL
 
-    {0} --methodus-fonti=worldbank --methodus=SP.POP.TOTL \
+    {__file__} --methodus-fonti=worldbank --methodus=SP.POP.TOTL \
 --objectivum-formato=link-fonti
 
-    {0} --methodus-fonti=worldbank --methodus=SP.POP.TOTL \
+    {__file__} --methodus-fonti=worldbank --methodus=SP.POP.TOTL \
 --objectivum-formato=csv
 
-    {0} --methodus-fonti=worldbank --methodus=SP.POP.TOTL \
+    {__file__} --methodus-fonti=worldbank --methodus=SP.POP.TOTL \
 --objectivum-formato=hxltm
 
 (Rural population) . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-    {0} --methodus-fonti=worldbank --methodus=SP.RUR.TOTL \
+    {__file__} --methodus-fonti=worldbank --methodus=SP.RUR.TOTL \
 --objectivum-formato=hxltm
 
-(Subpopulation; population by themes, such as by age, gender/sex, ...)
-    {0} --methodus-fonti=worldbank --methodus=health \
+(Subpopulation; population by themes, such as by age, gender/sex, ...) . . . . .
+    {__file__} --methodus-fonti=worldbank --methodus=health \
 --objectivum-formato=hxltm-wide
 
 (Individual humans) . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 See https://interpol.api.bund.dev/
 
-    {0} --methodus-fonti=interpol --methodus=red \
+    {__file__} --methodus-fonti=interpol --methodus=red \
 --archivum-objetivum=999999/0/interpol-red.csv
 
-    {0} --methodus-fonti=interpol --methodus=un \
+    {__file__} --methodus-fonti=interpol --methodus=un \
 --archivum-objetivum=999999/0/interpol-un.csv
 
-    {0} --methodus-fonti=interpol --methodus=red --objectivum-formato=hxltm \
+    {__file__} --methodus-fonti=interpol --methodus=red \
+--objectivum-formato=hxltm \
 --archivum-objetivum=999999/0/interpol-red.tm.hxl.csv
 
-    {0} --methodus-fonti=interpol --methodus=un --objectivum-formato=hxltm \
+    {__file__} --methodus-fonti=interpol --methodus=un \
+--objectivum-formato=hxltm \
 --archivum-objetivum=999999/0/interpol-un.tm.hxl.csv
 
+(Worldbank, simpler format, without RDF-like mapping) . . . . . . . . . . . . .
+    {__file__} --methodus-fonti=worldbank --methodus=aid-effectiveness \
+--objectivum-formato=csv
+    {__file__} --methodus-fonti=worldbank --methodus=health \
+--objectivum-formato=csv
 
 (Etc) . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-    {0} --methodus-fonti=sdmx-tests
+    {__file__} --methodus-fonti=sdmx-tests
 
 ------------------------------------------------------------------------------
                             EXEMPLŌRUM GRATIĀ
 ------------------------------------------------------------------------------
-""".format(__file__)
+"""
+# """.format(__file__)
 
 # Other sources here https://pandasdmx.readthedocs.io/en/v1.0/
 DATA_SCRAPPING_HELP = {
@@ -252,10 +260,69 @@ DATA_HXLTM_CASTTYPE = {
 
 DATA_METHODUS = {
     'worldbank': {
+        # https://data.worldbank.org/topic/agriculture-and-rural-development?view=chart
+        'agriculture-and-rural-development': {
+            'download_url': 'https://api.worldbank.org/v2/en/topic/1?downloadformat=csv'
+        },
+        # https://data.worldbank.org/topic/aid-effectiveness?view=chart
+        'aid-effectiveness': {
+            'download_url': 'https://api.worldbank.org/v2/en/topic/2?downloadformat=csv'
+        },
+        'climate-change': {
+            'download_url': 'https://api.worldbank.org/v2/en/topic/19?downloadformat=csv'
+        },
+        'economy-and-growth': {
+            'download_url': 'https://api.worldbank.org/v2/en/topic/3?downloadformat=csv'
+        },
+        'education': {
+            'download_url': 'https://api.worldbank.org/v2/en/topic/4?downloadformat=csv'
+        },
+        'energy-and-mining': {
+            'download_url': 'https://api.worldbank.org/v2/en/topic/5?downloadformat=csv'
+        },
+        'environment': {
+            'download_url': 'https://api.worldbank.org/v2/en/topic/6?downloadformat=csv'
+        },
+        'external-debt': {
+            'download_url': 'https://api.worldbank.org/v2/en/topic/20?downloadformat=csv'
+        },
+        'financial-sector': {
+            'download_url': 'https://api.worldbank.org/v2/en/topic/7?downloadformat=csv'
+        },
+        'gender': {
+            'download_url': 'https://api.worldbank.org/v2/en/topic/17?downloadformat=csv'
+        },
         # https://data.worldbank.org/topic/health?view=chart
         'health': {
             'download_url': 'https://api.worldbank.org/v2/en/topic/8?downloadformat=csv'
-        }
+        },
+        'infrastructure': {
+            'download_url': 'https://api.worldbank.org/v2/en/topic/9?downloadformat=csv'
+        },
+        'poverty': {
+            'download_url': 'https://api.worldbank.org/v2/en/topic/11?downloadformat=csv'
+        },
+        'private-sector': {
+            'download_url': 'https://api.worldbank.org/v2/en/topic/12?downloadformat=csv'
+        },
+        'public-sector': {
+            'download_url': 'https://api.worldbank.org/v2/en/topic/13?downloadformat=csv'
+        },
+        'science-and-technology': {
+            'download_url': 'https://api.worldbank.org/v2/en/topic/14?downloadformat=csv'
+        },
+        'social-development': {
+            'download_url': 'https://api.worldbank.org/v2/en/topic/15?downloadformat=csv'
+        },
+        'social-protection-and-labor': {
+            'download_url': 'https://api.worldbank.org/v2/en/topic/10?downloadformat=csv'
+        },
+        'trade': {
+            'download_url': 'https://api.worldbank.org/v2/en/topic/21?downloadformat=csv'
+        },
+        'urban-development': {
+            'download_url': 'https://api.worldbank.org/v2/en/topic/16?downloadformat=csv'
+        },
     }
 }
 
