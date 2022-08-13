@@ -165,7 +165,15 @@ See https://interpol.api.bund.dev/
                             EXEMPLŌRUM GRATIĀ
 ------------------------------------------------------------------------------
 """
-# """.format(__file__)
+
+# @TODO create some sort of unocha-fts-simple and get the spreadsheet from
+#       https://fts.unocha.org/global-funding/countries/2022
+#       already with country/territory codes (Rocha, 2022-08-10 22:56 UTC)
+
+# @TODO maybe do some data mining from:
+#       - https://en.wikipedia.org/wiki/List_of_ongoing_armed_conflicts
+#       - https://en.wikipedia.org/wiki/List_of_countries_by_intentional_homicide_rate
+#       - https://dataunodc.un.org/content/homicide-country-data
 
 # Other sources here https://pandasdmx.readthedocs.io/en/v1.0/
 DATA_SCRAPPING_HELP = {
@@ -592,6 +600,15 @@ class Cli:
             default='csv'
         )
 
+        parser.add_argument(
+            '--objectivum-transformationi',
+            help='Apply additional transformation. Varies by source',
+            dest='objectivum_transformationi',
+            nargs='?',
+            default=None
+            # default='help'
+        )
+
         # archīvum, n, s, nominativus, https://en.wiktionary.org/wiki/archivum
         # cōnfigūrātiōnī, f, s, dativus,
         #                      https://en.wiktionary.org/wiki/configuratio#Latin
@@ -713,6 +730,7 @@ class Cli:
             # print(DATA_SCRAPPING_HELP['WORLDBANK'])
             ds_worldbank = DataScrappingWorldbank(
                 pyargs.methodus, pyargs.objectivum_formato,
+                pyargs.objectivum_transformationi,
                 pyargs.numerordinatio_praefixo, pyargs.rdf_trivio)
             ds_worldbank.praeparatio()
             ds_worldbank.imprimere()
@@ -892,6 +910,7 @@ class DataScrapping:
     def __init__(
         self, methodus: str,
         objectivum_formato: str,
+        objectivum_transformationi: str = None,
         numerordinatio_praefixo: str = '999999:0',
         rdf_trivio: str = '1603'
     ):
@@ -905,6 +924,7 @@ class DataScrapping:
         self.rdf_trivio = rdf_trivio
 
         self.objectivum_formato = objectivum_formato
+        self.objectivum_transformationi = objectivum_transformationi
         self._caput = []
         self._temp = {}
 
