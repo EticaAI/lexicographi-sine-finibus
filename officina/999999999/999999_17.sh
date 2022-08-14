@@ -97,6 +97,25 @@ set -x
 # cat 999999/0/1603_99966_1_0~worldbank~health~wide.tm.hxl.csv | p.df 'df.describe().T' -o table index 
 # cat 999999/0/1603_99966_1_0~worldbank~health.tm.hxl.csv | p.df 'df.describe().T' -o table index 
 
+
+./999999999/0/999999999_521850.py --methodus-fonti=worldbank --methodus=health --objectivum-formato=csv > 999999/0/pivot-health.csv
+
+ls -lah 999999/0/pivot-health.csv
+
+./999999999/0/999999999_521850.py --methodus-fonti=worldbank --methodus=environment --objectivum-formato=csv > 999999/0/pivot-environment.csv
+
+ls -lah 999999/0/pivot-environment.csv
+
+tail -n +2 999999/0/pivot-health.csv > 999999/0/pivot--dataonly.csv
+tail -n +2 999999/0/pivot-environment.csv >> 999999/0/pivot--dataonly.csv
+
+sort --output=999999/0/pivot--dataonly.csv 999999/0/pivot--dataonly.csv
+
+head -n 1 999999/0/pivot-health.csv > 999999/0/pivot-merged.csv
+cat 999999/0/pivot--dataonly.csv >> 999999/0/pivot-merged.csv
+
+./999999999/0/999999999_521850.py --methodus-fonti=worldbank --methodus=file://999999/0/pivot-merged.csv --objectivum-transformationi=annus-recenti-exclusivo --objectivum-formato=hxltm-wide
+
 exit 0
 
 ./999999999/0/999999999_521850.py \

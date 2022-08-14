@@ -438,6 +438,9 @@ DATA_HXL_DE_CSV_REGEX = {
         #   - x29 = replace non a-z0-9 with this
         # 'SH.STA.WASH.P5': ['#indicator+value+year{0}', [
         #     'ix_urnx29worldbankx29shx29stax29washx29p5']],
+
+        # used with --methodus=file://(...)
+        'file': ['#indicator+value+year{0}'],
     }
 }
 
@@ -1006,8 +1009,8 @@ class DataScrapping:
             # if clavem in ['__source_zip__', '__source_main_csv__']:
             if clavem in ['__source_zip__']:
                 continue
-            if exists(res):
-                os.remove(res)
+            # if exists(res):
+            #     os.remove(res)
 
     def _init_temp(self, suffixus: str = None):
         if not suffixus:
@@ -1088,6 +1091,15 @@ class DataScrapping:
                         'worldbank'][self.methodus][0].format(res))
                     continue
 
+            # if self.methodus.startswith('file://') and \
+            #     self.methodus_fonti == 'worldbank':
+            if self.methodus.startswith('file://'):
+                # print(res, resultatum)
+                if len(res) == 4:
+                    resultatum.append(DATA_HXL_DE_CSV_REGEX[
+                        'worldbank']['file'][0].format(res))
+                    continue
+
             resultatum.append(
                 '#meta+{0}'.format(
                     res.lower().strip().replace(
@@ -1147,6 +1159,11 @@ class DataScrapping:
                         self._hxltmize_without_year(res, resultatum[-3])
                     )
                     continue
+
+                # if caput.find('#indicator+value') == -1:
+                if '#indicator+value' not in caput:
+                    raise SyntaxError(
+                        f'internal error, previus step not ready <{caput}>')
 
             resultatum.append(
                 '#meta+rem+i_qcc+is_zxxx+{0}'.format(
@@ -1253,6 +1270,8 @@ class DataScrapping:
         return resultatum
 
     def _skip_line(self, line: list) -> bool:
+
+        # return False
 
         for rule in self._skipLineMetaCsv:
             if 'not_in' in rule:
@@ -1901,10 +1920,22 @@ class DataScrappingWorldbank(DataScrapping):
         else:
             source = self.methodus.replace('file://', '')
             # raise ValueError(source, self.temp_fonti_csv)
-            shutil.copyfile(source, self.temp_fonti_csv)
+            # shutil.copyfile(source, self.temp_fonti_csv)
 
-            from genericpath import exists
-            raise ValueError(source, self.temp_fonti_csv, exists(source), exists(self.temp_fonti_csv))
+            # We copy the file here since the default behavior of self.__del__
+            # would delete the file
+            shutil.copyfile(source, self.temp_fonti_csvnorm)
+
+            # We still need to mimic self.de_csv_ad_csvnorm() which
+            # would cache elf._caput
+            with open(self.temp_fonti_csvnorm) as _fons:
+                # first_line = f.readline()
+                _csv_reader = csv.reader(_fons)
+                self._caput = next(_csv_reader)
+
+            # from genericpath import exists
+            # raise ValueError(source, self.temp_fonti_csv, exists(
+            #     source), exists(self.temp_fonti_csv))
 
         if self.objectivum_formato in ['hxl', 'hxltm', 'hxltm-wide', 'no1']:
             # raise ValueError(self._caput)
@@ -1934,7 +1965,8 @@ class DataScrappingWorldbank(DataScrapping):
         if self.objectivum_formato in ['hxltm',  'hxltm-wide', 'no1']:
             hxl_vocab = False
             # if self.methodus == 'health':
-            if self.methodus in DATA_METHODUS['worldbank']:
+            if self.methodus in DATA_METHODUS['worldbank'] or \
+                self.methodus.startswith('file://'):
                 self._hxlPivot = DATA_HXL_DE_CSV_REGEX['worldbank']
                 hxl_vocab = True
 
