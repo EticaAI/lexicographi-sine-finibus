@@ -213,6 +213,8 @@ DATA_HXL_DE_CSV_GENERIC = {
     'country code': '#country+code+v_iso3',  # World Bank
     'indicator name': '#indicator+name',  # World Bank
     'indicator code': '#indicator+code',  # World Bank
+    'indicator value': '#indicator+value',  # World Bank (if recent-year)
+    'indicator date': '#indicator+date',  # World Bank (if recent-year)
     'entity_id': '#item+code+v_interpol',  # INTERPOL
     'un_reference': '#item+code+unref',  # INTERPOL
     'forename': '#item+forename',  # INTERPOL
@@ -227,6 +229,8 @@ DATA_HXLTM_DE_HXL_GENERIC = {
     # Population statistics, with year -----------------------------------------
     # population (P1082)
     '#item+rem+i_qcc+is_zxxx+ix_iso8601v{v1}+ix_xywdatap1082': r"^#population\+t\+year(?P<v1>[0-9]{4})$",
+    '#item+rem+i_qcc+is_zxxx+ix_xywdatap1082': r"^#population\+t$",
+    '#meta+rem+i_qcc+is_zxxx+ix_xywdatap1082': r"^#meta\+population\+t$",
     # female population (P1539)
     '#item+rem+i_qcc+is_zxxx+ix_iso8601v{v1}+ix_xywdatap1539': r"^#population\+f\+year(?P<v1>[0-9]{4})$",
     # male population (P1540)
@@ -602,7 +606,8 @@ class Cli:
 
         parser.add_argument(
             '--objectivum-transformationi',
-            help='Apply additional transformation. Varies by source',
+            help='Apply additional transformation. Varies by source' +
+            'Example: annus-recenti',
             dest='objectivum_transformationi',
             nargs='?',
             default=None
@@ -981,6 +986,18 @@ class DataScrapping:
             ),
         }
 
+    def _linea_annus_recenti(self, caput: list, linea: list) -> list:
+        if len(caput) != len(linea) and (len(caput) - 2) != len(linea):
+            raise SyntaxError(
+                f'len caput != linea [{len(caput)}, {len(linea)}]')
+
+        _index = len(linea) - 1
+        for item in reversed(linea):
+            if item and len(item) > 0:
+                return [item, caput[_index]]
+            _index -= 1
+        return ['', '']
+
     def _codicem(self, res: str, strictum: bool = False, index: int = 0) -> str:
         if self._Adm0CodexLocali is None:
             self._Adm0CodexLocali = Adm0CodexLocali()
@@ -1135,6 +1152,7 @@ class DataScrapping:
                 _csv_reader = csv.reader(_fons)
                 _csv_writer = csv.writer(_objetivum)
                 started = False
+                started_2 = False
                 strip_last = None
                 for linea in _csv_reader:
 
@@ -1142,11 +1160,48 @@ class DataScrapping:
                         if linea and linea[0].strip() in caput_initiali:
                             started = True
                             strip_last = len(linea[-1]) == 0
+                            # if self.objectivum_transformationi == \
+                            #         'annus-recenti':
+                            #     linea.append('indicator value')
+                            #     linea.append('indicator date')
                             self._caput = linea
                         else:
                             continue
                     if strip_last:
                         linea.pop()
+
+                    if self.objectivum_transformationi == 'annus-recenti':
+                        # if self._caput.find('indicator value') == -1:
+                        # if 'indicator value' not in self._caput:
+                        # if started_2 is False and 'indicator value' not in self._caput:
+                        # if started_2 is False and started is True and 'indicator value' not in self._caput:
+
+                        # _l1 = ['a', 'c', 'd']
+                        # # raise ValueError('aa' in _l1)
+
+                        # print('>> notin')
+                        # print('indicator value' not in self._caput)
+                        # print('>> started_2')
+                        # print(started_2)
+                        # print('>> aa')
+
+
+                        # # if self._caput.count('indicator value') == 0:
+                        # if 'indicator value' not in self._caput:
+                        #     started_2 = True
+                        #     print('started now')
+                        #     self._caput.append('indicator value')
+                        #     self._caput.append('indicator date')
+                        #     print(self._caput.index('indicator value'))
+                        #     # raise ValueError('indicator value' in self._caput)
+
+                        # print(self._caput)
+                        annus_recenti = self._linea_annus_recenti(
+                            self._caput,
+                            linea
+                        )
+                        linea.extend(annus_recenti)
+
                     _csv_writer.writerow(linea)
 
         # print("TODO")
