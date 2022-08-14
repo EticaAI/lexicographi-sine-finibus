@@ -5467,7 +5467,8 @@ def hxltm__data_sort(fonti: str, sortkeys: list = None) -> list:
     return resultatum
 
 
-def hxltm__data_pivot_wide(caput: list, data: list) -> Tuple[list, List[list]]:
+def hxltm__data_pivot_wide(caput: list, data: list, is_hotfix_need: bool = False
+) -> Tuple[list, List[list]]:
     """hxltm__data_pivot_wide
 
     For an HXL dataset with strict HXLTM documented attributes, convert data
@@ -5479,6 +5480,7 @@ def hxltm__data_pivot_wide(caput: list, data: list) -> Tuple[list, List[list]]:
     Args:
         caput (list): header
         data (list): all data, long format
+        is_hotfix_need (bool): edge case for de_hxltm_ad_hxltm_wide
 
     Returns:
         Tuple[list, List[list]]: caput, data
@@ -5531,6 +5533,9 @@ def hxltm__data_pivot_wide(caput: list, data: list) -> Tuple[list, List[list]]:
     _codice_indici = caput.index('#item+conceptum+codicem')
     _matrix_size = len(referens_hxlattrs) * len(referens_ad_indici)
     # raise ValueError(_matrix_size, [''] * _matrix_size)
+
+    if is_hotfix_need:
+        _matrix_size = _matrix_size + 1
 
     _do_not_merge = []
     # These already will be on data
@@ -5590,9 +5595,16 @@ def hxltm__data_pivot_wide(caput: list, data: list) -> Tuple[list, List[list]]:
         data_novae__dict[codicem]['data_finalis'].extend(
             data_novae__dict[codicem]['data_meta']
         )
-        data_novae__dict[codicem]['data_finalis'].extend(
-            data_novae__dict[codicem]['data_novae']
-        )
+
+        if is_hotfix_need:
+            # now we remove that last part we added early
+            data_novae__dict[codicem]['data_finalis'].extend(
+                data_novae__dict[codicem]['data_novae'][1:]
+            )
+        else:
+            data_novae__dict[codicem]['data_finalis'].extend(
+                data_novae__dict[codicem]['data_novae']
+            )
 
         _gambiarra.append(list(data_novae__dict[codicem]['data_finalis']))
 
@@ -5648,6 +5660,9 @@ def hxltm__data_pivot_wide(caput: list, data: list) -> Tuple[list, List[list]]:
     if len(_duplicates) > 0:
         raise SyntaxError('duplicates <{0}> at header'.format(_duplicates))
     # return caput_novo, data_novo
+
+    # raise ValueError(caput_novo, _gambiarra[0])
+
     return caput_novo, _gambiarra
 
 

@@ -1091,7 +1091,8 @@ class DataScrapping:
                 continue
 
             # if self.objectivum_transformationi == 'annus-recenti':
-            if self.objectivum_transformationi.startswith('annus-recenti'):
+            if self.objectivum_transformationi and \
+                self.objectivum_transformationi.startswith('annus-recenti'):
                 if res in ['#indicator+value', '#indicator+date']:
                     # -3 is arbritrary, but will range 1960-2020+
                     resultatum.append(
@@ -1242,7 +1243,8 @@ class DataScrapping:
                         linea.pop()
 
                     # if self.objectivum_transformationi == 'annus-recenti':
-                    if self.objectivum_transformationi.startswith(
+                    if self.objectivum_transformationi and \
+                        self.objectivum_transformationi.startswith(
                             'annus-recenti'):
                         if started_2 is False:
                             started_2 = True
@@ -1403,10 +1405,27 @@ class DataScrapping:
         else:
             data_sorted = hxltm__data_sort(fonti)
 
-        caput, data = hxltm__data_pivot_wide(data_sorted[0], data_sorted[1:])
+        is_hotfix_need = False
+        if self.objectivum_transformationi == 'annus-recenti-exclusivo':
+            is_hotfix_need = True
 
-        # print(data_sorted[0:10])
-        # print(caput, data[0:10])
+        caput, data = hxltm__data_pivot_wide(
+            data_sorted[0], data_sorted[1:], is_hotfix_need)
+
+        # # print(data_sorted[0:10])
+        # print('is_hotfix_need', is_hotfix_need)
+        # print('')
+        # print('    > data_sorted sample')
+        # print(len(data_sorted[0:10][0]), data_sorted[0:10][0])
+        # print(len(data_sorted[0:10][1]), data_sorted[0:10][1])
+        # print('')
+        # print('')
+        # print('')
+        # # print(caput, data[0:10])
+        # print('    >>>> (final caput, data) sample')
+        # print(len(caput), caput)
+        # print(len(data[0]), data[0])
+        # print('')
 
         # raise NotImplementedError
 
@@ -1581,6 +1600,8 @@ class DataScrappingInterpol(DataScrapping):
             return True
 
         # print('@TODO', __class__.__name__)
+
+        self._init_temp()
 
         while (self._page == 1 and self._total == None) or self._done is False:
             # print(self._quod_request())
@@ -1815,6 +1836,8 @@ class DataScrappingWorldbank(DataScrapping):
             self.de_hxl_ad_hxltm(
                 self._temp['hxl'], self._temp['hxltm'], hxl_vocab=hxl_vocab
             )
+
+            # raise ValueError(self._temp['hxltm'])
 
         if self.objectivum_formato == 'hxltm-wide':
             hxl_vocab = False
