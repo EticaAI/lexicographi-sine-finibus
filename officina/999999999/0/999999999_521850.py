@@ -27,9 +27,13 @@
 #      REVISION:  ---
 # ==============================================================================
 
+# pytest
+#    python3 -m doctest ./999999999/0/999999999_521850.py
+
 import json
 import os
 import re
+import shutil
 import sys
 import argparse
 import csv
@@ -55,6 +59,7 @@ from L999999999_0 import (
     NUMERORDINATIO_BASIM,
     hxltm__data_pivot_wide,
     hxltm__data_sort,
+    hxltm__ixattr_ex_urn,
     hxltm_hashtag_ix_ad_rdf,
     numerordinatio_neo_separatum,
     # TabulaAdHXLTM
@@ -137,6 +142,11 @@ __EPILOGUM__ = f"""
 
     {__file__} --methodus-fonti=worldbank --methodus=health \
 --objectivum-transformationi=annus-recenti --objectivum-formato=hxltm-wide
+
+(Everything HXLTMlized and Wide format, all indicators from group . . . . . . .
+    {__file__} --methodus-fonti=worldbank --methodus=environment \
+--objectivum-transformationi='annus-recenti-exclusivo,hxlize-urn-worldbank' \
+--objectivum-formato=hxltm-wide
 
 (Individual humans) . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 See https://interpol.api.bund.dev/
@@ -442,23 +452,11 @@ def data_hxl_de_csv_regex_ex_urn(res: str, urn_basi: str = 'worldbank'):
         urn_basi (str, optional): _description_. Defaults to 'worldbank'.
     """
     if res not in DATA_HXL_DE_CSV_REGEX[urn_basi]:
-        res_ix = hxl_ixattr_ex_urn(res, urn_basi)
+        res_ix = hxltm__ixattr_ex_urn(res, urn_basi)
         DATA_HXL_DE_CSV_REGEX[urn_basi][res] = [
             '#indicator+value+year{0}',
             [res_ix]
         ]
-
-
-def hxl_ixattr_ex_urn(res: str, urn_basi: str, gs_encoder: str = 'x29') -> str:
-    # - ASCII: 29 GS (Group separator)
-    #   - x29 = replace non a-z0-9 with this
-    res_normali = res.strip().lower()
-
-    if res_normali.find(gs_encoder) > - 1:
-        raise NotImplementedError(f'[{res}] have gs_encoder [{gs_encoder}]')
-
-    res_encoded = re.sub('([^a-z0-9z])', gs_encoder, res_normali)
-    return f'ix_urn{gs_encoder}{urn_basi}{gs_encoder}{res_encoded}'
 
 
 DATA_HXL_AD_HXLTM = {
@@ -1008,31 +1006,33 @@ class DataScrapping:
             # if clavem in ['__source_zip__', '__source_main_csv__']:
             if clavem in ['__source_zip__']:
                 continue
-            # if exists(res):
-            #     os.remove(res)
+            if exists(res):
+                os.remove(res)
 
-    def _init_temp(self):
+    def _init_temp(self, suffixus: str = None):
+        if not suffixus:
+            suffixus = self.methodus
         self._temp = {
             '__source_zip__': '{0}/999999/0/{1}~{2}.zip'.format(
-                NUMERORDINATIO_BASIM, type(self).__name__, self.methodus
+                NUMERORDINATIO_BASIM, type(self).__name__, suffixus
             ),
             '__source_main_csv__': '{0}/999999/0/{1}~{2}.csv'.format(
-                NUMERORDINATIO_BASIM, type(self).__name__, self.methodus
+                NUMERORDINATIO_BASIM, type(self).__name__, suffixus
             ),
             'csv': '{0}/999999/0/{1}~{2}.norm.csv'.format(
-                NUMERORDINATIO_BASIM, type(self).__name__, self.methodus
+                NUMERORDINATIO_BASIM, type(self).__name__, suffixus
             ),
             'hxl': '{0}/999999/0/{1}~{2}.hxl.csv'.format(
-                NUMERORDINATIO_BASIM, type(self).__name__, self.methodus
+                NUMERORDINATIO_BASIM, type(self).__name__, suffixus
             ),
             'hxltm': '{0}/999999/0/{1}~{2}.tm.hxl.csv'.format(
-                NUMERORDINATIO_BASIM, type(self).__name__, self.methodus
+                NUMERORDINATIO_BASIM, type(self).__name__, suffixus
             ),
             'hxltm_wide': '{0}/999999/0/{1}~{2}~WIDE.tm.hxl.csv'.format(
-                NUMERORDINATIO_BASIM, type(self).__name__, self.methodus
+                NUMERORDINATIO_BASIM, type(self).__name__, suffixus
             ),
             'no1': '{0}/999999/0/{1}~{2}.no1.tm.hxl.csv'.format(
-                NUMERORDINATIO_BASIM, type(self).__name__, self.methodus
+                NUMERORDINATIO_BASIM, type(self).__name__, suffixus
             ),
         }
 
@@ -1820,68 +1820,91 @@ class DataScrappingWorldbank(DataScrapping):
         #     NUMERORDINATIO_BASIM, __class__.__name__, self.methodus
         # )
 
-        self._init_temp()
+        suffixus = self.methodus
+        if self.methodus.startswith('file://'):
+            suffixus = 'fromlocalfile'
+
+        self._init_temp(suffixus=suffixus)
 
         # temp_fonti_zip = '{0}/999999/0/{1}~{2}.zip'.format(
         #     NUMERORDINATIO_BASIM, __class__.__name__, self.methodus
         # )
+        # self.temp_fonti_csv = '{0}/999999/0/{1}~{2}.csv'.format(
+        #     NUMERORDINATIO_BASIM, __class__.__name__, self.methodus
+        # )
+        # self.temp_fonti_csvnorm = '{0}/999999/0/{1}~{2}.norm.csv'.format(
+        #     NUMERORDINATIO_BASIM, __class__.__name__, self.methodus
+        # )
+        # self.temp_fonti_hxl = '{0}/999999/0/{1}~{2}.hxl.csv'.format(
+        #     NUMERORDINATIO_BASIM, __class__.__name__, self.methodus
+        # )
+        # self.temp_fonti_hxltm = '{0}/999999/0/{1}~{2}.tm.hxl.csv'.format(
+        #     NUMERORDINATIO_BASIM, __class__.__name__, self.methodus
+        # )
+        # self.temp_fonti_hxltm_wide = '{0}/999999/0/{1}~{2}~WIDE.tm.hxl.csv'.format(
+        #     NUMERORDINATIO_BASIM, __class__.__name__, self.methodus
+        # )
+        # self.temp_fonti_no1 = '{0}/999999/0/{1}~{2}.no1.tm.hxl.csv'.format(
+        #     NUMERORDINATIO_BASIM, __class__.__name__, self.methodus
+        # )
+
         self.temp_fonti_csv = '{0}/999999/0/{1}~{2}.csv'.format(
-            NUMERORDINATIO_BASIM, __class__.__name__, self.methodus
+            NUMERORDINATIO_BASIM, __class__.__name__, suffixus
         )
-        self.temp_fonti_csvnorm = '{0}/999999/0/{1}~{2}.norm.csv'.format(
-            NUMERORDINATIO_BASIM, __class__.__name__, self.methodus
-        )
-        self.temp_fonti_hxl = '{0}/999999/0/{1}~{2}.hxl.csv'.format(
-            NUMERORDINATIO_BASIM, __class__.__name__, self.methodus
-        )
-        self.temp_fonti_hxltm = '{0}/999999/0/{1}~{2}.tm.hxl.csv'.format(
-            NUMERORDINATIO_BASIM, __class__.__name__, self.methodus
-        )
-        self.temp_fonti_hxltm_wide = '{0}/999999/0/{1}~{2}~WIDE.tm.hxl.csv'.format(
-            NUMERORDINATIO_BASIM, __class__.__name__, self.methodus
-        )
-        self.temp_fonti_no1 = '{0}/999999/0/{1}~{2}.no1.tm.hxl.csv'.format(
-            NUMERORDINATIO_BASIM, __class__.__name__, self.methodus
-        )
+        # self.temp_fonti_csv = self._temp['csv']
+        self.temp_fonti_csvnorm = self._temp['csv']
+        self.temp_fonti_hxl = self._temp['hxl']
+        self.temp_fonti_hxltm = self._temp['hxltm']
+        self.temp_fonti_hxltm_wide = self._temp['hxltm_wide']
+        self.temp_fonti_no1 = self._temp['no1']
 
-        # raise ValueError(self._temp)
+        # raise ValueError(self.methodus)
 
-        temp_fonti_zip = self._temp['__source_zip__']
+        if not self.methodus.startswith('file://'):
 
-        if not exists(temp_fonti_zip):
-            # Download to local cache if alreayd there
-            r = requests.get(self.link_fonti)
-            with open(temp_fonti_zip, 'wb') as f:
-                f.write(r.content)
-        # else:
-        #     print('already cached', temp_fonti_zip)
+            temp_fonti_zip = self._temp['__source_zip__']
 
-        # zip file handler
-        zip = zipfile.ZipFile(temp_fonti_zip)
-        data_file_main = ''
-        for _res in zip.namelist():
-            if _res.lower().find('meta') > -1:
-                continue
-            if _res.lower().startswith('api_'):
-                data_file_main = _res
-        # list available files in the container
-        # print(zip.namelist())
+            if not exists(temp_fonti_zip):
+                # Download to local cache if alreayd there
+                r = requests.get(self.link_fonti)
+                with open(temp_fonti_zip, 'wb') as f:
+                    f.write(r.content)
+            # else:
+            #     print('already cached', temp_fonti_zip)
 
-        # extract a specific file from the zip container
-        f = zip.open(data_file_main)
+            # zip file handler
+            zip = zipfile.ZipFile(temp_fonti_zip)
+            data_file_main = ''
+            for _res in zip.namelist():
+                if _res.lower().find('meta') > -1:
+                    continue
+                if _res.lower().startswith('api_'):
+                    data_file_main = _res
+            # list available files in the container
+            # print(zip.namelist())
 
-        # save the extraced file
-        content = f.read()
-        # f = open(self.temp_fonti_csv, 'wb')
-        f = open(self._temp['__source_main_csv__'], 'wb')
-        f.write(content)
-        f.close()
+            # extract a specific file from the zip container
+            f = zip.open(data_file_main)
 
-        self.de_csv_ad_csvnorm(
-            self._temp['__source_main_csv__'], self._temp['csv'], [
-                'Country Name', 'Country Code'
-            ]
-        )
+            # save the extraced file
+            content = f.read()
+            # f = open(self.temp_fonti_csv, 'wb')
+            f = open(self._temp['__source_main_csv__'], 'wb')
+            f.write(content)
+            f.close()
+
+            self.de_csv_ad_csvnorm(
+                self._temp['__source_main_csv__'], self._temp['csv'], [
+                    'Country Name', 'Country Code'
+                ]
+            )
+        else:
+            source = self.methodus.replace('file://', '')
+            # raise ValueError(source, self.temp_fonti_csv)
+            shutil.copyfile(source, self.temp_fonti_csv)
+
+            from genericpath import exists
+            raise ValueError(source, self.temp_fonti_csv, exists(source), exists(self.temp_fonti_csv))
 
         if self.objectivum_formato in ['hxl', 'hxltm', 'hxltm-wide', 'no1']:
             # raise ValueError(self._caput)

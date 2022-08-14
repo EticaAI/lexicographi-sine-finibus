@@ -3007,7 +3007,8 @@ def bcp47_rdf_extension_poc(
                     # _trivio_hxla = 'owl:unionOf ({0})'.format(' '.join(_parts))
                     for _item in _trivio_hxla_list:
                         _parts.append('ix:{0}'.format(_item))
-                    _trivio_hxla = 'ix:{0}'.format('__'.join(_trivio_hxla_list))
+                    _trivio_hxla = 'ix:{0}'.format(
+                        '__'.join(_trivio_hxla_list))
 
             if _trivio_hxla is not None:
                 triples_novo = []
@@ -5372,6 +5373,41 @@ def hxltm__ex_dict(
     return caput_novo, data_novis
 
 
+def hxltm__ixattr_ex_urn(res: str, urn_basi: str, gs_encoder: str = 'x29') -> str:
+    """hxltm__ixattr_ex_urn Create normalized +ix_urn attribute
+
+    For some special cases which ammount of data to strictly label with RDF
+    is way to much, this function can be used to create an +ix_ attribute
+    which will use only [a-z0-9] range in a way that is reversible.
+    However, this strategy of encoding will generate -x- attributes which
+    will be > 8, as per BCP47 definition of allowed values to -x-.
+
+    Trivia, the gs_encoder default is a hint to ASCII "29 GS (Group separator)"
+
+    Args:
+        res (str): the argument
+        urn_basi (str): the base for URN.
+        gs_encoder (str, optional): character to replace non [a-z0-9].
+                                    Defaults to 'x29'.
+
+    >>> hxltm__ixattr_ex_urn('SH.STA.WASH.P5', 'worldbank')
+    'ix_urnx29worldbankx29shx29stax29washx29p5'
+
+    >>> hxltm__ixattr_ex_urn('001', 'unm49')
+    'ix_urnx29unm49x29001'
+
+    """
+    # - ASCII: 29 GS (Group separator)
+    #   - x29 = replace non a-z0-9 with this
+    res_normali = res.strip().lower()
+
+    if res_normali.find(gs_encoder) > - 1:
+        raise NotImplementedError(f'[{res}] have gs_encoder [{gs_encoder}]')
+
+    res_encoded = re.sub('([^a-z0-9z])', gs_encoder, res_normali)
+    return f'ix_urn{gs_encoder}{urn_basi}{gs_encoder}{res_encoded}'
+
+
 def hxltm__quod_data_referentibus(index_nomini: str):
     _path = '{0}/999999/0/{1}.index.json'.format(
         NUMERORDINATIO_BASIM,
@@ -5468,7 +5504,7 @@ def hxltm__data_sort(fonti: str, sortkeys: list = None) -> list:
 
 
 def hxltm__data_pivot_wide(caput: list, data: list, is_hotfix_need: bool = False
-) -> Tuple[list, List[list]]:
+                           ) -> Tuple[list, List[list]]:
     """hxltm__data_pivot_wide
 
     For an HXL dataset with strict HXLTM documented attributes, convert data
