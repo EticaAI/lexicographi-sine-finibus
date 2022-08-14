@@ -421,6 +421,8 @@ DATA_HXL_DE_CSV_REGEX = {
         # - https://data.worldbank.org/topic/health?view=chart
         # - https://api.worldbank.org/v2/en/topic/8?downloadformat=csv
         'health': ['#indicator+value+year{0}'],
+        'environment': ['#indicator+value+year{0}'],
+        'aid-effectiveness': ['#indicator+value+year{0}'],
     }
 }
 
@@ -610,11 +612,15 @@ class Cli:
         parser.add_argument(
             '--objectivum-transformationi',
             help='Apply additional transformation. Varies by source' +
-            'Example: "annus-recenti", "annus-recenti-exclusivo"',
+            'Example: "annus-recenti", "annus-recenti-exclusivo", '
+            '"annus-recenti-exclusivo,hxlize-urn-worldbank", ',
             dest='objectivum_transformationi',
-            nargs='?',
-            default=None
+            # nargs='?',
+            # default=None
             # default='help'
+            nargs='?',
+            type=lambda x: x.split(','),
+            default=None
         )
 
         # archīvum, n, s, nominativus, https://en.wiktionary.org/wiki/archivum
@@ -918,7 +924,7 @@ class DataScrapping:
     def __init__(
         self, methodus: str,
         objectivum_formato: str,
-        objectivum_transformationi: str = None,
+        objectivum_transformationi: list = None,
         numerordinatio_praefixo: str = '999999:0',
         rdf_trivio: str = '1603'
     ):
@@ -958,14 +964,17 @@ class DataScrapping:
         self._Adm0CodexLocali = None
 
     def __del__(self):
+        """__del__ remove temporary files
+
+        PROTIP: commenting this part allow to inspect partial files
+                generated at 999999/0/*.ext
+        """
         for clavem, res in self._temp.items():
             # if clavem in ['__source_zip__', '__source_main_csv__']:
             if clavem in ['__source_zip__']:
                 continue
-            if exists(res):
-                # print('removing', res)
-                os.remove(res)
-        # print('destructor called')
+            # if exists(res):
+            #     os.remove(res)
 
     def _init_temp(self):
         self._temp = {
@@ -1091,8 +1100,12 @@ class DataScrapping:
                 continue
 
             # if self.objectivum_transformationi == 'annus-recenti':
+            # if self.objectivum_transformationi and \
+            #         self.objectivum_transformationi.startswith('annus-recenti'):
             if self.objectivum_transformationi and \
-                self.objectivum_transformationi.startswith('annus-recenti'):
+                    ('annus-recenti' in self.objectivum_transformationi or
+                        'annus-recenti-exclusivo' in self.objectivum_transformationi):
+                # self.objectivum_transformationi.startswith('annus-recenti'):
                 if res in ['#indicator+value', '#indicator+date']:
                     # -3 is arbritrary, but will range 1960-2020+
                     resultatum.append(
@@ -1108,7 +1121,9 @@ class DataScrapping:
             )
 
         # We keep the value in the memory, but allow conversors exclude
-        if self.objectivum_transformationi == 'annus-recenti-exclusivo':
+        # if self.objectivum_transformationi == 'annus-recenti-exclusivo':
+        if self.objectivum_transformationi and \
+                'annus-recenti-exclusivo' in self.objectivum_transformationi:
             # Use case: --objectivum-transformationi=annus-recenti-exclusivo
 
             # 1 if generic
@@ -1243,9 +1258,12 @@ class DataScrapping:
                         linea.pop()
 
                     # if self.objectivum_transformationi == 'annus-recenti':
+                    # if self.objectivum_transformationi and \
+                    #     self.objectivum_transformationi.startswith(
+                    #         'annus-recenti'):
                     if self.objectivum_transformationi and \
-                        self.objectivum_transformationi.startswith(
-                            'annus-recenti'):
+                            ('annus-recenti' in self.objectivum_transformationi or
+                                'annus-recenti-exclusivo' in self.objectivum_transformationi):
                         if started_2 is False:
                             started_2 = True
                             # print('capit part')
@@ -1264,7 +1282,7 @@ class DataScrapping:
         # print("TODO")
     def de_csvnorm_ad_hxl(
             self, fonti: str, objetivum, callback: Type['function'] = None):
-        # print("TODO de_csv_ad_csvnorm")
+        # print("TODO de_csv_ad_csvnorm", self._skipLineMetaCsv)
         with open(objetivum, 'w') as _objetivum:
             with open(fonti, 'r') as _fons:
                 _csv_reader = csv.reader(_fons)
@@ -1324,8 +1342,11 @@ class DataScrapping:
                                     self._skipHXLTMIndex.append(_val + 1)
 
                         self._caput = caput
-                        if self.objectivum_transformationi == \
-                            'annus-recenti-exclusivo' and \
+                        # if self.objectivum_transformationi == \
+                        #     'annus-recenti-exclusivo' and \
+                        #         len(self._skipHXLTMIndex) > 0:
+                        if self.objectivum_transformationi and \
+                            'annus-recenti-exclusivo' in self.objectivum_transformationi and \
                                 len(self._skipHXLTMIndex) > 0:
                             # raise ValueError('teste', self._skipHXLTMIndex)
                             _caput_new = []
@@ -1373,9 +1394,13 @@ class DataScrapping:
                         # _v = "@todo"
                         linea.insert(index_ix_xyadhxltrivio, _v)
 
-                    if self.objectivum_transformationi == \
-                        'annus-recenti-exclusivo' and \
+                    # if self.objectivum_transformationi == \
+                    #     'annus-recenti-exclusivo' and \
+                    #         len(self._skipHXLTMIndex) > 0:
+                    if self.objectivum_transformationi and \
+                        'annus-recenti-exclusivo' in self.objectivum_transformationi and \
                             len(self._skipHXLTMIndex) > 0:
+
                         _linea_new = []
                         for idx, val in enumerate(linea):
                             if idx not in self._skipHXLTMIndex:
@@ -1406,7 +1431,8 @@ class DataScrapping:
             data_sorted = hxltm__data_sort(fonti)
 
         is_hotfix_need = False
-        if self.objectivum_transformationi == 'annus-recenti-exclusivo':
+        if self.objectivum_transformationi and \
+                'annus-recenti-exclusivo' in self.objectivum_transformationi:
             is_hotfix_need = True
 
         caput, data = hxltm__data_pivot_wide(
@@ -1817,19 +1843,30 @@ class DataScrappingWorldbank(DataScrapping):
         if self.objectivum_formato in ['hxl', 'hxltm', 'hxltm-wide', 'no1']:
             # raise ValueError(self._caput)
             _indicator_code_index = self._caput.index('Indicator Code')
-            self._skipLineMetaCsv.append(
-                {
-                    'index': _indicator_code_index,
-                    'not_in': DATA_HXL_DE_CSV_REGEX['worldbank'].keys()
-                }
-            )
+
+            # If the output format is HXL, we only require indicator column
+            # to not the empty
+            if self.objectivum_formato == 'hxl':
+                self._skipLineMetaCsv.append(
+                    {
+                        'index': _indicator_code_index
+                    }
+                )
+            else:
+                self._skipLineMetaCsv.append(
+                    {
+                        'index': _indicator_code_index,
+                        'not_in': DATA_HXL_DE_CSV_REGEX['worldbank'].keys()
+                    }
+                )
             self.de_csvnorm_ad_hxl(
                 self._temp['csv'], self._temp['hxl']
             )
 
         if self.objectivum_formato in ['hxltm',  'hxltm-wide', 'no1']:
             hxl_vocab = False
-            if self.methodus == 'health':
+            # if self.methodus == 'health':
+            if self.methodus in DATA_METHODUS['worldbank']:
                 self._hxlPivot = DATA_HXL_DE_CSV_REGEX['worldbank']
                 hxl_vocab = True
 
