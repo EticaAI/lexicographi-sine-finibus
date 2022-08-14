@@ -610,7 +610,7 @@ class Cli:
         parser.add_argument(
             '--objectivum-transformationi',
             help='Apply additional transformation. Varies by source' +
-            'Example: annus-recenti',
+            'Example: "annus-recenti", "annus-recenti-exclusivo"',
             dest='objectivum_transformationi',
             nargs='?',
             default=None
@@ -952,6 +952,9 @@ class DataScrapping:
                               '#meta+rem+i_qcc+is_zxxx+indicator_code']
         # #item+rem+i_qcc+is_zxxx+ix_xyadhxltrivio
 
+        # Use case: --objectivum-transformationi=annus-recenti-exclusivo
+        self._skipHXLTMIndex = []
+
         self._Adm0CodexLocali = None
 
     def __del__(self):
@@ -1087,7 +1090,8 @@ class DataScrapping:
             if _done is True:
                 continue
 
-            if self.objectivum_transformationi == 'annus-recenti':
+            # if self.objectivum_transformationi == 'annus-recenti':
+            if self.objectivum_transformationi.startswith('annus-recenti'):
                 if res in ['#indicator+value', '#indicator+date']:
                     # -3 is arbritrary, but will range 1960-2020+
                     resultatum.append(
@@ -1101,6 +1105,25 @@ class DataScrapping:
                         ' ', '').replace('-', '_').replace(
                             '#', '').replace('+', '_'))
             )
+
+        # We keep the value in the memory, but allow conversors exclude
+        if self.objectivum_transformationi == 'annus-recenti-exclusivo':
+            # Use case: --objectivum-transformationi=annus-recenti-exclusivo
+
+            # 1 if generic
+            # 2 if wide enabled
+            _drift = 1
+            if self.objectivum_formato == 'hxltm-wide':
+                _drift = 2
+
+            for item in resultatum:
+                if item.find('+ix_iso8601v') > -1:
+                    index_without_codicem = resultatum.index(item)
+                    # self._skipHXLTMIndex.append(resultatum.index(item))
+                    self._skipHXLTMIndex.append(
+                        index_without_codicem + _drift
+                    )
+            # raise ValueError(len(resultatum), self._skipHXLTMIndex, resultatum)
         return resultatum
 
     def _hxltmize_without_year(self, caput_item: str, referens: str):
@@ -1214,7 +1237,9 @@ class DataScrapping:
                     if strip_last:
                         linea.pop()
 
-                    if self.objectivum_transformationi == 'annus-recenti':
+                    # if self.objectivum_transformationi == 'annus-recenti':
+                    if self.objectivum_transformationi.startswith(
+                            'annus-recenti'):
                         if started_2 is False:
                             started_2 = True
                             # print('capit part')
@@ -1285,6 +1310,16 @@ class DataScrapping:
                                 '#item+rem+i_qcc+is_zxxx+ix_xyadhxltrivio')
 
                         self._caput = caput
+                        if self.objectivum_transformationi == \
+                            'annus-recenti-exclusivo' and \
+                                len(self._skipHXLTMIndex) > 0:
+                            # raise ValueError('teste', self._skipHXLTMIndex)
+                            _caput_new = []
+                            for idx, val in enumerate(caput):
+                                if idx not in self._skipHXLTMIndex:
+                                    _caput_new.append(val)
+                            caput = _caput_new
+                            # _caput_old = caput
                         _csv_writer.writerow(caput)
                         continue
                     if codicem_inconito is True:
@@ -1323,6 +1358,16 @@ class DataScrapping:
                         _v = '+'.join(_v_novo_parts)
                         # _v = "@todo"
                         linea.insert(index_ix_xyadhxltrivio, _v)
+
+                    if self.objectivum_transformationi == \
+                        'annus-recenti-exclusivo' and \
+                            len(self._skipHXLTMIndex) > 0:
+                        _linea_new = []
+                        for idx, val in enumerate(linea):
+                            if idx not in self._skipHXLTMIndex:
+                                _linea_new.append(val)
+                        linea = _linea_new
+
                     _csv_writer.writerow(linea)
 
     def de_hxltm_ad_hxltm_wide(

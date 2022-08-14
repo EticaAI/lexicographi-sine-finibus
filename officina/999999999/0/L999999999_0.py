@@ -5439,6 +5439,7 @@ def hxltm__data_sort(fonti: str, sortkeys: list = None) -> list:
         _csv_reader = csv.reader(_fons)
         # started = False
         for linea in _csv_reader:
+            # print(linea)
             if len(caput) == 0:
                 caput = linea
                 continue
