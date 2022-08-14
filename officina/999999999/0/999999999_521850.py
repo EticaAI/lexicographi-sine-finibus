@@ -1113,8 +1113,12 @@ class DataScrapping:
             # 1 if generic
             # 2 if wide enabled
             _drift = 1
-            if self.objectivum_formato == 'hxltm-wide':
-                _drift = 2
+
+            # if '#item+rem+i_qcc+is_zxxx+ix_xyadhxltrivio' in resultatum:
+            #     _drift += 1
+
+            # if self.objectivum_formato == 'hxltm-wide':
+            #     _drift = 2
 
             for item in resultatum:
                 if item.find('+ix_iso8601v') > -1:
@@ -1308,6 +1312,14 @@ class DataScrapping:
                             caput.insert(
                                 index_ix_xyadhxltrivio,
                                 '#item+rem+i_qcc+is_zxxx+ix_xyadhxltrivio')
+
+                            # Since we injected new artificial table, lets
+                            # increment self._skipHXLTMIndex)
+                            if len(self._skipHXLTMIndex) > 0:
+                                _old = self._skipHXLTMIndex
+                                self._skipHXLTMIndex = []
+                                for _val in _old:
+                                    self._skipHXLTMIndex.append(_val + 1)
 
                         self._caput = caput
                         if self.objectivum_transformationi == \
