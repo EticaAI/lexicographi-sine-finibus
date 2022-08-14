@@ -125,7 +125,7 @@ __EPILOGUM__ = f"""
 --objectivum-formato=csv
 
     {__file__} --methodus-fonti=worldbank --methodus=SP.POP.TOTL \
---objectivum-formato=hxltm
+--objectivum-transformationi=annus-recenti --objectivum-formato=hxltm
 
 (Rural population) . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
     {__file__} --methodus-fonti=worldbank --methodus=SP.RUR.TOTL \
@@ -134,6 +134,9 @@ __EPILOGUM__ = f"""
 (Subpopulation; population by themes, such as by age, gender/sex, ...) . . . . .
     {__file__} --methodus-fonti=worldbank --methodus=health \
 --objectivum-formato=hxltm-wide
+
+    {__file__} --methodus-fonti=worldbank --methodus=health \
+--objectivum-transformationi=annus-recenti --objectivum-formato=hxltm-wide
 
 (Individual humans) . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 See https://interpol.api.bund.dev/
@@ -986,7 +989,8 @@ class DataScrapping:
             ),
         }
 
-    def _linea_annus_recenti(self, caput: list, linea: list) -> list:
+    def _linea_annus_recenti(
+            self, caput: list, linea: list, numerae: bool = True) -> list:
         if len(caput) != len(linea) and (len(caput) - 2) != len(linea):
             raise SyntaxError(
                 f'len caput != linea [{len(caput)}, {len(linea)}]')
@@ -994,6 +998,9 @@ class DataScrapping:
         _index = len(linea) - 1
         for item in reversed(linea):
             if item and len(item) > 0:
+                if numerae is True:
+                    if not caput[_index].isnumeric():
+                        break
                 return [item, caput[_index]]
             _index -= 1
         return ['', '']
@@ -1041,6 +1048,16 @@ class DataScrapping:
             )
         return resultatum
 
+    # def _hxlize_without_year(self, caput_item: str, referens: str):
+    #     # Example '#population+t+year2016'
+    #     referens_basi = referens.split('+year')[0]
+    #     if caput_item == '#indicator+value':
+    #         return referens_basi
+    #     if caput_item == '#indicator+date':
+    #         return referens_basi.replace('#', '#date+')
+    #     else:
+    #         raise SyntaxError(f'caput_item [{caput_item}]?')
+
     def _hxltmize(self, caput: list):
         resultatum = []
         for res in caput:
@@ -1070,6 +1087,14 @@ class DataScrapping:
             if _done is True:
                 continue
 
+            if self.objectivum_transformationi == 'annus-recenti':
+                if res in ['#indicator+value', '#indicator+date']:
+                    # -3 is arbritrary, but will range 1960-2020+
+                    resultatum.append(
+                        self._hxltmize_without_year(res, resultatum[-3])
+                    )
+                    continue
+
             resultatum.append(
                 '#meta+rem+i_qcc+is_zxxx+{0}'.format(
                     res.lower().strip().replace(
@@ -1077,6 +1102,25 @@ class DataScrapping:
                             '#', '').replace('+', '_'))
             )
         return resultatum
+
+    def _hxltmize_without_year(self, caput_item: str, referens: str):
+        # Example '#population+t+year2016' (if was HXL)
+        # Example '#item+rem+i_qcc+is_zxxx+ix_iso8601v2021+ix_xywdatap1082'
+        referens_basi = referens.split('+year')[0]
+        if caput_item == '#indicator+value':
+            # return referens_basi
+            # basi = referens_basi.replace('#item+', '#date+')
+            val2 = re.sub('\+ix_iso8601v(.*)?\+', '+', referens)
+            # return referens_basi.replace('#item+', '#date+')
+            return val2
+
+        if caput_item == '#indicator+date':
+            basi = referens_basi.replace('#item+', '#date+')
+            val2 = re.sub('\+ix_iso8601v(.*)?\+', '+', basi)
+            # return referens_basi.replace('#item+', '#date+')
+            return val2
+        else:
+            raise SyntaxError(f'caput_item [{caput_item}]?')
 
     def _no1lize(self, caput: list):
         resultatum = []
@@ -1171,36 +1215,18 @@ class DataScrapping:
                         linea.pop()
 
                     if self.objectivum_transformationi == 'annus-recenti':
-                        # if self._caput.find('indicator value') == -1:
-                        # if 'indicator value' not in self._caput:
-                        # if started_2 is False and 'indicator value' not in self._caput:
-                        # if started_2 is False and started is True and 'indicator value' not in self._caput:
-
-                        # _l1 = ['a', 'c', 'd']
-                        # # raise ValueError('aa' in _l1)
-
-                        # print('>> notin')
-                        # print('indicator value' not in self._caput)
-                        # print('>> started_2')
-                        # print(started_2)
-                        # print('>> aa')
-
-
-                        # # if self._caput.count('indicator value') == 0:
-                        # if 'indicator value' not in self._caput:
-                        #     started_2 = True
-                        #     print('started now')
-                        #     self._caput.append('indicator value')
-                        #     self._caput.append('indicator date')
-                        #     print(self._caput.index('indicator value'))
-                        #     # raise ValueError('indicator value' in self._caput)
-
-                        # print(self._caput)
-                        annus_recenti = self._linea_annus_recenti(
-                            self._caput,
-                            linea
-                        )
-                        linea.extend(annus_recenti)
+                        if started_2 is False:
+                            started_2 = True
+                            # print('capit part')
+                            linea.append('indicator value')
+                            linea.append('indicator date')
+                            self._caput = linea
+                        else:
+                            annus_recenti = self._linea_annus_recenti(
+                                self._caput,
+                                linea
+                            )
+                            linea.extend(annus_recenti)
 
                     _csv_writer.writerow(linea)
 
