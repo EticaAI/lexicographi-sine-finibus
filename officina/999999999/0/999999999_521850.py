@@ -423,8 +423,43 @@ DATA_HXL_DE_CSV_REGEX = {
         'health': ['#indicator+value+year{0}'],
         'environment': ['#indicator+value+year{0}'],
         'aid-effectiveness': ['#indicator+value+year{0}'],
+
+        # - ASCII: 29 GS (Group separator)
+        #   - x29 = replace non a-z0-9 with this
+        # 'SH.STA.WASH.P5': ['#indicator+value+year{0}', [
+        #     'ix_urnx29worldbankx29shx29stax29washx29p5']],
     }
 }
+
+
+def data_hxl_de_csv_regex_ex_urn(res: str, urn_basi: str = 'worldbank'):
+    """data_hxl_de_csv_regex_ex_urn
+
+    Populate DATA_HXL_DE_CSV_REGEX with URN-like ix_ tags
+
+    Args:
+        res (str): _description_
+        urn_basi (str, optional): _description_. Defaults to 'worldbank'.
+    """
+    if res not in DATA_HXL_DE_CSV_REGEX[urn_basi]:
+        res_ix = hxl_ixattr_ex_urn(res, urn_basi)
+        DATA_HXL_DE_CSV_REGEX[urn_basi][res] = [
+            '#indicator+value+year{0}',
+            [res_ix]
+        ]
+
+
+def hxl_ixattr_ex_urn(res: str, urn_basi: str, gs_encoder: str = 'x29') -> str:
+    # - ASCII: 29 GS (Group separator)
+    #   - x29 = replace non a-z0-9 with this
+    res_normali = res.strip().lower()
+
+    if res_normali.find(gs_encoder) > - 1:
+        raise NotImplementedError(f'[{res}] have gs_encoder [{gs_encoder}]')
+
+    res_encoded = re.sub('([^a-z0-9z])', gs_encoder, res_normali)
+    return f'ix_urn{gs_encoder}{urn_basi}{gs_encoder}{res_encoded}'
+
 
 DATA_HXL_AD_HXLTM = {
     'ix_iso5218v1': [
@@ -1388,6 +1423,14 @@ class DataScrapping:
                         linea.insert(0, _v)
                     if index_ix_xyadhxltrivio > -1:
                         _v_refs = linea[index_ix_xyadhxltrivio - 1]
+
+                        # Special case: if asked hxlize-urn-worldbank, here
+                        # we pre-populate DATA_HXL_DE_CSV_REGEX
+                        if self.objectivum_transformationi and \
+                            'hxlize-urn-worldbank' in self.objectivum_transformationi and \
+                                len(self._skipHXLTMIndex) > 0:
+                            data_hxl_de_csv_regex_ex_urn(_v_refs)
+
                         _v_novo_parts = self._hxlPivot[_v_refs][1]
                         _v_novo_parts = sorted(_v_novo_parts)
                         _v = '+'.join(_v_novo_parts)
@@ -1846,7 +1889,9 @@ class DataScrappingWorldbank(DataScrapping):
 
             # If the output format is HXL, we only require indicator column
             # to not the empty
-            if self.objectivum_formato == 'hxl':
+            if self.objectivum_formato == 'hxl' or \
+                (self.objectivum_transformationi and 'hxlize-urn-worldbank'
+                    in self.objectivum_transformationi):
                 self._skipLineMetaCsv.append(
                     {
                         'index': _indicator_code_index
