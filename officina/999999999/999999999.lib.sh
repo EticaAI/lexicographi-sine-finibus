@@ -3888,6 +3888,7 @@ zzz_baseline_ab0_info() {
     --methodus-fonti=worldbank \
     --methodus=file://999999/0/pivot-merged.csv \
     --objectivum-transformationi=annus-recenti-exclusivo \
+    --ignoratio-incognitis \
     --hxltm-wide-indicators="$indicators" \
     --objectivum-formato=hxltm-wide >999999/0/pivot-merged-final.tm.csv.hxl.csv
 
