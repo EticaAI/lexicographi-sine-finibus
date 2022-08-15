@@ -66,7 +66,7 @@ ROOTDIR="$(pwd)"
 # wikiq=$(file_extract_ix_wikiq "999999/1603/3/45/16/1/1/1603_3_45_16_1_1.tm.hxl.csv")
 
 # wikidata_q_ex_totalibus "$wikiq" "999999/1603/3/45/16/1/1/1603_3_45_16_1_1.wikiq.tm.hxl.csv"
-set -x
+
 
 # ./999999999/0/999999999_7200235.py  --methodus=index_praeparationi 1603_16_1_0 --index-nomini=i1603_16_1_0 --index-ad-columnam='ix_unm49'
 
@@ -97,7 +97,11 @@ set -x
 # cat 999999/0/1603_99966_1_0~worldbank~health~wide.tm.hxl.csv | p.df 'df.describe().T' -o table index 
 # cat 999999/0/1603_99966_1_0~worldbank~health.tm.hxl.csv | p.df 'df.describe().T' -o table index 
 
+zzz_baseline_ab0_info
 
+exit 0
+
+set -x
 ./999999999/0/999999999_521850.py --methodus-fonti=worldbank --methodus=health --objectivum-formato=csv > 999999/0/pivot-health.csv
 
 ls -lah 999999/0/pivot-health.csv
@@ -114,7 +118,9 @@ sort --output=999999/0/pivot--dataonly.csv 999999/0/pivot--dataonly.csv
 head -n 1 999999/0/pivot-health.csv > 999999/0/pivot-merged.csv
 cat 999999/0/pivot--dataonly.csv >> 999999/0/pivot-merged.csv
 
-./999999999/0/999999999_521850.py --methodus-fonti=worldbank --methodus=file://999999/0/pivot-merged.csv --objectivum-transformationi=annus-recenti-exclusivo --objectivum-formato=hxltm-wide
+./999999999/0/999999999_521850.py --methodus-fonti=worldbank --methodus=file://999999/0/pivot-merged.csv --objectivum-transformationi=annus-recenti-exclusivo --objectivum-formato=hxltm-wide > 999999/0/pivot-merged-final.tm.csv.hxl.csv
+
+frictionless validate 999999/0/pivot-merged-final.tm.csv.hxl.csv
 
 exit 0
 

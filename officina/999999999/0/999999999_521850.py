@@ -143,10 +143,27 @@ __EPILOGUM__ = f"""
     {__file__} --methodus-fonti=worldbank --methodus=health \
 --objectivum-transformationi=annus-recenti --objectivum-formato=hxltm-wide
 
-(Everything HXLTMlized and Wide format, all indicators from group . . . . . . .
+(Everything HXLTMlized and Wide format, all indicators from group) . . . . . .
     {__file__} --methodus-fonti=worldbank --methodus=environment \
 --objectivum-transformationi='annus-recenti-exclusivo,hxlize-urn-worldbank' \
 --objectivum-formato=hxltm-wide
+
+(Merge several thematic groups from Worldbank, then extract explicity know ) . .
+
+    {__file__} --methodus-fonti=worldbank --methodus=health \
+--objectivum-formato=csv > 999999/0/pivot-health.csv
+    {__file__} --methodus-fonti=worldbank --methodus=environment \
+--objectivum-formato=csv > 999999/0/pivot-environment.csv
+    tail -n +2 999999/0/pivot-health.csv > 999999/0/pivot--dataonly.csv
+    tail -n +2 999999/0/pivot-environment.csv >> 999999/0/pivot--dataonly.csv
+    sort --output=999999/0/pivot--dataonly.csv 999999/0/pivot--dataonly.csv
+    head -n 1 999999/0/pivot-health.csv > 999999/0/pivot-merged.csv
+    cat 999999/0/pivot--dataonly.csv >> 999999/0/pivot-merged.csv
+    {__file__} --methodus-fonti=worldbank \
+--methodus=file://999999/0/pivot-merged.csv \
+--objectivum-transformationi=annus-recenti-exclusivo \
+--objectivum-formato=hxltm-wide > 999999/0/pivot-merged-final.tm.csv.hxl.csv
+    frictionless validate 999999/0/pivot-merged-final.tm.csv.hxl.csv
 
 (Individual humans) . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 See https://interpol.api.bund.dev/
@@ -415,6 +432,26 @@ DATA_HXL_DE_CSV_REGEX = {
         #       deal with this
 
         # ---------------------------------------------------------------------
+        # nominal GDP (P2131)
+        'NY.GDP.MKTP.CD': ['#indicator+value+year{0}', [
+            'ix_xywdatap2131']],
+        # area (P2046)
+        'AG.SRF.TOTL.K2': ['#indicator+value+year{0}', [
+            'ix_xywdatap2046']],
+        # literacy rate (P6897)
+        'SE.ADT.LITR.ZS': ['#indicator+value+year{0}', [
+            'ix_xywdatap6897']],
+        # life expectancy (P2250)
+        'SP.DYN.LE00.IN': ['#indicator+value+year{0}', [
+            'ix_xywdatap2250']],
+        # Gini coefficient (P1125)
+        'SI.POV.GINI': ['#indicator+value+year{0}', [
+            'ix_xywdatap1125']],
+        # unemployment rate (P1198)
+        # - https://data.worldbank.org/indicator/SL.UEM.TOTL.ZS
+        #   - See also https://data.worldbank.org/indicator/SL.EMP.TOTL.SP.ZS
+        'SL.UEM.TOTL.ZS': ['#indicator+value+year{0}', [
+            'ix_xywdatap1198']],
 
         # Money related, thematic
         # https://data.worldbank.org/indicator/BX.GRT.EXTA.CD.WD?view=chart
@@ -1320,7 +1357,7 @@ class DataScrapping:
                                 'annus-recenti-exclusivo' in self.objectivum_transformationi):
                         if started_2 is False:
                             started_2 = True
-                            # print('capit part')
+                            # print('   >> caput part')
                             linea.append('indicator value')
                             linea.append('indicator date')
                             self._caput = linea
@@ -1922,16 +1959,22 @@ class DataScrappingWorldbank(DataScrapping):
             # raise ValueError(source, self.temp_fonti_csv)
             # shutil.copyfile(source, self.temp_fonti_csv)
 
-            # We copy the file here since the default behavior of self.__del__
-            # would delete the file
-            shutil.copyfile(source, self.temp_fonti_csvnorm)
+            self.de_csv_ad_csvnorm(
+                source, self._temp['csv'], [
+                    'Country Name', 'Country Code'
+                ]
+            )
 
-            # We still need to mimic self.de_csv_ad_csvnorm() which
-            # would cache elf._caput
-            with open(self.temp_fonti_csvnorm) as _fons:
-                # first_line = f.readline()
-                _csv_reader = csv.reader(_fons)
-                self._caput = next(_csv_reader)
+            # # We copy the file here since the default behavior of self.__del__
+            # # would delete the file
+            # shutil.copyfile(source, self.temp_fonti_csvnorm)
+
+            # # We still need to mimic self.de_csv_ad_csvnorm() which
+            # # would cache elf._caput
+            # with open(self.temp_fonti_csvnorm) as _fons:
+            #     # first_line = f.readline()
+            #     _csv_reader = csv.reader(_fons)
+            #     self._caput = next(_csv_reader)
 
             # from genericpath import exists
             # raise ValueError(source, self.temp_fonti_csv, exists(
@@ -1966,7 +2009,7 @@ class DataScrappingWorldbank(DataScrapping):
             hxl_vocab = False
             # if self.methodus == 'health':
             if self.methodus in DATA_METHODUS['worldbank'] or \
-                self.methodus.startswith('file://'):
+                    self.methodus.startswith('file://'):
                 self._hxlPivot = DATA_HXL_DE_CSV_REGEX['worldbank']
                 hxl_vocab = True
 
