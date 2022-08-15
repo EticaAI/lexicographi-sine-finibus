@@ -3845,6 +3845,17 @@ zzz_baseline_ab0_info() {
   #numerordinatio="$1"
   # echo ""
 
+  # AG.SRF.TOTL.K2   : country/territory area
+  # SP.POP.TOTL      : populaton total P1082
+  # NY.GDP.MKTP.CD   : GDP (US$)
+  # EN.ATM.CO2E.KT   : carbon emission (Q67201057)
+  # AG.LND.PRCP.MM   : annual precipitation (Q10726724)
+  # SI.POV.GINI      : Gini coefficient (P1125)
+  # SE.ADT.LITR.ZS   : literacy rate (P6897)
+  # SP.DYN.LE00.IN   : life expectancy (P2250)
+  # SL.UEM.TOTL.ZS   : unemployment rate (P1198)
+  indicators="AG.SRF.TOTL.K2,SP.POP.TOTL,NY.GDP.MKTP.CD,EN.ATM.CO2E.KT,G.LND.PRCP.MM,SI.POV.GINI,SE.ADT.LITR.ZS,SP.DYN.LE00.IN,SL.UEM.TOTL.ZS"
+
   printf "\n\t%40s\n" "${tty_blue}${FUNCNAME[0]} STARTED ${tty_normal}"
 
   set -x
@@ -3877,6 +3888,7 @@ zzz_baseline_ab0_info() {
     --methodus-fonti=worldbank \
     --methodus=file://999999/0/pivot-merged.csv \
     --objectivum-transformationi=annus-recenti-exclusivo \
+    --hxltm-wide-indicators="$indicators" \
     --objectivum-formato=hxltm-wide >999999/0/pivot-merged-final.tm.csv.hxl.csv
 
   frictionless validate 999999/0/pivot-merged-final.tm.csv.hxl.csv

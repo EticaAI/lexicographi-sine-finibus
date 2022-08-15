@@ -453,6 +453,17 @@ DATA_HXL_DE_CSV_REGEX = {
         'SL.UEM.TOTL.ZS': ['#indicator+value+year{0}', [
             'ix_xywdatap1198']],
 
+        # https://data.worldbank.org/indicator/EN.ATM.CO2E.KT
+        # https://www.wikidata.org/wiki/Q67201057
+        # carbon emission (Q67201057)
+        'EN.ATM.CO2E.KT': ['#indicator+value+year{0}', [
+            'ix_xywdataq67201057']],
+
+        # https://data.worldbank.org/indicator/AG.LND.PRCP.MM
+        # annual precipitation (Q10726724)
+        'AG.LND.PRCP.MM': ['#indicator+value+year{0}', [
+            'ix_xywdataq10726724']],
+
         # Money related, thematic
         # https://data.worldbank.org/indicator/BX.GRT.EXTA.CD.WD?view=chart
         'BX.GRT.EXTA.CD.WD': ['#value+funding+usd+year{0}'],
@@ -696,6 +707,21 @@ class Cli:
             default=None
         )
 
+        parser.add_argument(
+            '--hxltm-wide-indicators',
+            help='For (mostly only) Worldbank operations in group of '
+            'this option can be used to restrict to only these indicators. '
+            'Useful when already cached everything on disk. '
+            'Example: "SP.POP.TOTL,AG.SRF.TOTL.K2,NY.GDP.MKTP.CD"',
+            dest='hxltm_wide_indicators',
+            # nargs='?',
+            # default=None
+            # default='help'
+            nargs='?',
+            type=lambda x: x.split(','),
+            default=None
+        )
+
         # archīvum, n, s, nominativus, https://en.wiktionary.org/wiki/archivum
         # cōnfigūrātiōnī, f, s, dativus,
         #                      https://en.wiktionary.org/wiki/configuratio#Latin
@@ -818,7 +844,10 @@ class Cli:
             ds_worldbank = DataScrappingWorldbank(
                 pyargs.methodus, pyargs.objectivum_formato,
                 pyargs.objectivum_transformationi,
-                pyargs.numerordinatio_praefixo, pyargs.rdf_trivio)
+                pyargs.numerordinatio_praefixo,
+                pyargs.rdf_trivio,
+                hxltm_wide_indicators=pyargs.hxltm_wide_indicators
+            )
             ds_worldbank.praeparatio()
             ds_worldbank.imprimere()
             return self.EXIT_OK
@@ -999,7 +1028,8 @@ class DataScrapping:
         objectivum_formato: str,
         objectivum_transformationi: list = None,
         numerordinatio_praefixo: str = '999999:0',
-        rdf_trivio: str = '1603'
+        rdf_trivio: str = '1603',
+        hxltm_wide_indicators: list = None
     ):
 
         self.methodus = methodus
@@ -1012,6 +1042,12 @@ class DataScrapping:
 
         self.objectivum_formato = objectivum_formato
         self.objectivum_transformationi = objectivum_transformationi
+        if hxltm_wide_indicators:
+            hxltm_wide_indicators = \
+                [x.strip() for x in hxltm_wide_indicators if x]
+            if len(hxltm_wide_indicators) == 0:
+                hxltm_wide_indicators = None
+        self.hxltm_wide_indicators = hxltm_wide_indicators
         self._caput = []
         self._temp = {}
 
@@ -1526,6 +1562,21 @@ class DataScrapping:
         if '#item+rem+i_qcc+is_zxxx+ix_xyadhxltrivio' in self._caput:
             data_sorted = hxltm__data_sort(
                 fonti, ['#item+rem+i_qcc+is_zxxx+ix_xyadhxltrivio'])
+
+            if self.hxltm_wide_indicators:
+                indicator_index = data_sorted[0].index(
+                    '#meta+rem+i_qcc+is_zxxx+indicator_code')
+
+                data_novo = []
+                for linea in data_sorted[1:]:
+                    if linea[indicator_index] in self.hxltm_wide_indicators:
+                        data_novo.append(linea)
+
+                # print(len(data_novo))
+                # print(len(data_sorted[1:]))
+                # raise ValueError(indicator_index, data_sorted[0], self.hxltm_wide_indicators, data_novo[0])
+                data_sorted = [data_sorted[0]]
+                data_sorted.extend(data_novo)
         else:
             data_sorted = hxltm__data_sort(fonti)
 
