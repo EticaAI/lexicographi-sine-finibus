@@ -39,7 +39,8 @@
 # TODO https://jena.apache.org/documentation/rdf-star/
 # TODO https://w3c.github.io/rdf-star/reports/#subj_Apache_Jena_
 
-from dataclasses import replace
+# from dataclasses import replace
+from io import StringIO
 import os
 import sys
 import argparse
@@ -54,7 +55,7 @@ import urllib.parse
 import requests
 
 # from itertools import permutations
-from itertools import product
+# from itertools import product
 # valueee = list(itertools.permutations([1, 2, 3]))
 import csv
 
@@ -76,7 +77,7 @@ __EPILOGUM__ = """
 
     printf "Q1065\\nQ82151\\n" | {0} --actionem-sparql --query \
 --lingua-divisioni=5 --lingua-paginae=1 \
-{0} --actionem-sparql --wikidata-link
+| {0} --actionem-sparql --wikidata-link
 
     printf "Q1065\\nQ82151\\n" | {0} --actionem-sparql --query \
 --lingua-divisioni=5 --lingua-paginae=1 \
@@ -114,7 +115,7 @@ __EPILOGUM__ = """
 # P1282 OpenStreetMap tag or key
     printf "P1282\\n" | {0} --actionem-sparql --de=P --query \
 --ex-interlinguis --identitas-ex-wikiq --cum-interlinguis=P1282 \
-| {0} --actionem-sparql --csv --hxltm \
+| {0} --actionem-sparql --csv --hxltm --optimum \
 > 999999/0/P1282.tm.hxl.csv
 
 # @TODO https://www.wikidata.org/wiki/\
@@ -224,6 +225,7 @@ class CS1603z3z12:
         self.qid = []
         self.pid = []
         self.identitas_ex_wikiq = False
+        self.identitas_ex_wikiq_et_wikip = False
         self.ex_interlinguis = False
         self.cum_interlinguis = []
 
@@ -334,6 +336,9 @@ class CS1603z3z12:
 
     def est_wikidata_p_identitas_ex_wikiq(self, statum: bool = True):
         self.identitas_ex_wikiq = statum
+
+    def est_wikidata_p_identitas_ex_wikiq_et_wikip(self, statum: bool = True):
+        self.identitas_ex_wikiq_et_wikip = statum
 
     def est_wikidata_p_interlinguis(self, statum: bool = True):
         self.ex_interlinguis = statum
@@ -513,6 +518,35 @@ SELECT {select} WHERE {{
             filter_otional.append(
                 "bind(xsd:integer(strafter(str(?item), 'Q')) as ?id_numeric) ."
             )
+
+        elif self.identitas_ex_wikiq_et_wikip:
+            # @TODO this part still need review
+            select = [
+                # '(?wikidata_p_value AS ?item__conceptum__codicem)',
+                # '(?id_numeric AS ?item__conceptum__codicem)',
+                # '(?item AS '
+                # '?item__conceptum__codicem)',
+                # p1
+                '(STRAFTER(STR(?item), "entity/") AS '
+                '?item__conceptum__codicem)',
+                # p2
+                '(STRAFTER(STR(?item), "entity/") AS '
+                '?item__rem__i_qcc__is_zxxx__ix_xywikiq)',
+                # p3
+                '(STRAFTER(STR(?item), "entity/") AS '
+                '?item__rem__i_qcc__is_zxxx__ix_xywikip)'
+            ]
+            group_by = [
+                # '?wikidata_p_value',
+                # '?id_numeric',
+                '?item'
+            ]
+            order_by = [
+                '?item__conceptum__codicem'
+            ]
+            # filter_otional.append(
+            #     "bind(xsd:integer(strafter(str(?item), 'Q')) as ?id_numeric) ."
+            # )
 
         else:
             select = [
@@ -835,9 +869,11 @@ class CLI_2600:
         #          https://en.wiktionary.org/wiki/optimus#Latin
         neo_codex.add_argument(
             '--optimum',
-            help='Undocumented optimizations. '
-            'Avoid heavy queries and try to off-load responsability '
-            '(like sorting) to client-side operations)',
+            help='Client-side post process optimizations for executed '
+            'queries. Mostly will take care of sorting and removing some '
+            'data which author have no idea how to do with plain SPARQL '
+            'without over complicate the queries. '
+            'Used when exporting to formats. See full examples.',
             metavar='optimum',
             const=True,
             nargs='?'
@@ -907,6 +943,10 @@ class CLI_2600:
 
                         if self.pyargs.identitas_ex_wikiq == True:
                             cs1603_3_12.est_wikidata_p_identitas_ex_wikiq(True)
+
+                        if self.pyargs.identitas_ex_wikiq_et_wikip == True:
+                            cs1603_3_12.est_wikidata_p_identitas_ex_wikiq_et_wikip(
+                                True)
 
                         cs1603_3_12.est_wikidata_p(codicem)
 
@@ -994,7 +1034,9 @@ class CLI_2600:
 
                 # def sortq:
 
-                if self.pyargs.hxltm:
+                # @TODO remove this entire section
+                if self.pyargs.hxltm and False:
+                    # if self.pyargs.hxltm:
                     result_string = r.text.strip()
 
                     # @TODO: this likely to break with fields with newlines.
@@ -1009,7 +1051,7 @@ class CLI_2600:
                         if caput[0] == '#item+conceptum+codicem':
 
                             neo_lines = sorted(
-                                lines, key=lambda x: sort_hxltm_q(x))
+                                lines, key=lambda x: sort_hxltm_q_et_p(x))
                             print(separator.join(caput))
                             print("\n".join(neo_lines))
                         else:
@@ -1026,6 +1068,54 @@ class CLI_2600:
                     # print(separator.join(caput))
                     # for row in reader:
                     #     print(separator.join(row))
+                if self.pyargs.hxltm:
+                    result_string = r.text.strip()
+
+                    f = StringIO(result_string)
+                    reader = csv.reader(f)
+                    caput = hxltm_hastag_de_csvhxlated(next(reader))
+
+                    if self.pyargs.optimum:
+                        lines = []
+                        for row in reader:
+                            # If any field have an |, we try sort it here
+                            for index, value in enumerate(row):
+                                if value and value.find('|') > 0:
+                                    parts = value.split('|')
+                                    row[index] = '|'.join(sorted(parts))
+
+                            lines.append(row)
+
+                        # neo_lines = lines
+
+                        neo_lines = sorted(
+                            lines, key=lambda x: sort_hxltm_q_et_p(x))
+
+                        reader = neo_lines
+
+                        # if caput[0] == '#item+conceptum+codicem':
+
+                        #     neo_lines = sorted(
+                        #         lines, key=lambda x: sort_hxltm_q_et_p(x))
+                        #     print(separator.join(caput))
+                        #     print("\n".join(neo_lines))
+                        # else:
+                        #     # Likely error message?
+                        #     print(separator.join(caput))
+                        #     print("\n".join(lines))
+                        #     # raise NotImplementedError('@TODO --optimum')
+
+                    if pyargs.identitas_ex_wikiq_et_wikip:
+                        raise NotImplementedError(
+                            'identitas_ex_wikiq_et_wikip')
+
+                    # csv.writer
+                    csvwritter = csv.writer(stdout)
+                    csvwritter.writerow(caput)
+                    for row in reader:
+                        # print('\t'.join(row))
+                        csvwritter.writerow(row)
+
                 else:
                     print(r.text.strip())
 
@@ -1065,8 +1155,9 @@ class CLI_2600:
         return self.EXIT_OK
 
 
-def sort_hxltm_q(lineam: str, index: int = 0, separatum: str = ','):
-    """sort_hxltm_q
+def sort_hxltm_q_et_p(
+        lineam: Union[str, list], index: int = -1, separatum: str = ','):
+    """sort_hxltm_q_et_p
 
     Helper to order
 
@@ -1077,13 +1168,36 @@ def sort_hxltm_q(lineam: str, index: int = 0, separatum: str = ','):
         _type_: _description_
     """
     # Note: not a good idea do this way; it may work for first items
-    lineam_list = lineam.split(separatum)
+    if isinstance(lineam, str):
+        lineam_list = lineam.split(separatum)
+    else:
+        lineam_list = lineam
     # if isinstance(clavem, int):
     #     return clavem
+
+    # Very edge case when '#item+conceptum+codicem' may be empty, so we use
+    # the next column
+    if index < 0:
+        if len(lineam_list[0]) > 1:
+            index = 0
+        elif len(lineam_list[1]) > 1:
+            index = 1
+        elif len(lineam_list[2]) > 1:
+            index = 2
+
+    if lineam_list[index].find('_') > -1 or lineam_list[index].find(':') > -1:
+        # We assume already is an prepared code such as 12:34 or 12_34
+        # so no need to coerse to int
+        return lineam_list[index]
+
     if lineam_list[index].startswith('Q'):
         # return int(clavem.replace('Q', ''))
         # raise ValueError(lineam_list[index])
         return int(lineam_list[index].replace('Q', ''))
+    if lineam_list[index].startswith('P'):
+        # return int(clavem.replace('Q', ''))
+        # raise ValueError(lineam_list[index])
+        return int(lineam_list[index].replace('P', ''))
     return int(lineam_list[index])
 
 
