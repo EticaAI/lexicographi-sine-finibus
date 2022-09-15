@@ -111,6 +111,12 @@ __EPILOGUM__ = """
 | {0} --actionem-sparql --csv --hxltm --optimum \
 > 999999/0/P1585~P402+P1566+P1937+P6555+P8119.wikiq~1~20.tm.hxl.csv
 
+# P1282 OpenStreetMap tag or key
+    printf "P1282\\n" | {0} --actionem-sparql --de=P --query \
+--ex-interlinguis --identitas-ex-wikiq --cum-interlinguis=P1282 \
+| {0} --actionem-sparql --csv --hxltm \
+> 999999/0/P1282.tm.hxl.csv
+
 # @TODO https://www.wikidata.org/wiki/\
 Wikidata:SPARQL_query_service/queries/examples#Countries_sorted_by_population
 
@@ -127,7 +133,7 @@ STDIN = sys.stdin.buffer
 
 # @see https://meta.wikimedia.org/wiki/User-Agent_policy
 # @see https://www.mediawiki.org/wiki/API:Etiquette
-USER_AGENT = "EticaAI-multilingual-lexicography/2022.3.9 (https://meta.wikimedia.org/wiki/User:EmericusPetro; rocha@ieee.org) 1603_3_12.py/0.1"
+USER_AGENT = "EticaAI-multilingual-lexicography/2022.9.15 (https://meta.wikimedia.org/wiki/User:EmericusPetro; rocha@ieee.org) 1603_3_12.py/0.2"
 
 # print('getcwd:      ', os.getcwd())
 # print('oi', NUMERORDINATIO_BASIM)
@@ -702,6 +708,20 @@ class CLI_2600:
             'numeric (like brazilian URN Lex and CNPJ)',
             metavar='',
             dest='identitas_ex_wikiq',
+            const=True,
+            nargs='?'
+        )
+
+        # identitās, f, s, nom., https://en.wiktionary.org/wiki/identitas#Latin
+        # ex (+ ablative), https://en.wiktionary.org/wiki/ex#Latin
+        # wikiq
+        neo_codex.add_argument(
+            '--identitas-ex-wikiq-et-wikip',
+            help='For query generation totally out of Wikidata P, '
+            'which may return either wikiq or wikip, use this as key. '
+            'Used for OpenStreetMap query.',
+            metavar='',
+            dest='identitas_ex_wikiq_et_wikip',
             const=True,
             nargs='?'
         )
