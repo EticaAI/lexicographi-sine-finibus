@@ -33,6 +33,9 @@
 # Comment next line if not want to stop on first error
 set -e
 
+# @TODO all parts using "+ix_xzwdata(...)" must be renamed "+ix_xzwdata(...)"
+# @TODO all parts using "+ix_wikiq(...)" must be renamed "+ix_xzwikiq(...)"
+
 ROOTDIR="$(pwd)"
 
 

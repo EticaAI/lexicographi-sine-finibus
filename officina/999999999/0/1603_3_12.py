@@ -112,10 +112,10 @@ __EPILOGUM__ = """
 | {0} --actionem-sparql --csv --hxltm --optimum \
 > 999999/0/P1585~P402+P1566+P1937+P6555+P8119.wikiq~1~20.tm.hxl.csv
 
-# P1282 OpenStreetMap tag or key
+# P1282 OpenStreetMap tag or key (recommended --identitas-ex-wikiq-et-wikip x2)
     printf "P1282\\n" | {0} --actionem-sparql --de=P --query \
 --ex-interlinguis --identitas-ex-wikiq --cum-interlinguis=P1282 \
-| {0} --actionem-sparql --csv --hxltm --optimum \
+| {0} --actionem-sparql --identitas-ex-wikiq-et-wikip --csv --hxltm --optimum \
 > 999999/0/P1282.tm.hxl.csv
 
 # @TODO https://www.wikidata.org/wiki/\
@@ -531,10 +531,11 @@ SELECT {select} WHERE {{
                 '?item__conceptum__codicem)',
                 # p2
                 '(STRAFTER(STR(?item), "entity/") AS '
-                '?item__rem__i_qcc__is_zxxx__ix_xywikiq)',
+                '?item__rem__i_qcc__is_zxxx__ix_wikip)',
                 # p3
                 '(STRAFTER(STR(?item), "entity/") AS '
-                '?item__rem__i_qcc__is_zxxx__ix_xywikip)'
+                '?item__rem__i_qcc__is_zxxx__ix_wikiq)'
+
             ]
             group_by = [
                 # '?wikidata_p_value',
@@ -1105,9 +1106,40 @@ class CLI_2600:
                         #     print("\n".join(lines))
                         #     # raise NotImplementedError('@TODO --optimum')
 
-                    if pyargs.identitas_ex_wikiq_et_wikip:
-                        raise NotImplementedError(
-                            'identitas_ex_wikiq_et_wikip')
+                        if pyargs.identitas_ex_wikiq_et_wikip:
+                            codicem_index = caput.index(
+                                '#item+conceptum+codicem')
+                            wikiq_index = -1
+                            wikip_index = -1
+                            if '#item+rem+i_qcc+is_zxxx+ix_wikiq' in caput:
+                                wikiq_index = caput.index(
+                                    '#item+rem+i_qcc+is_zxxx+ix_wikiq')
+                            if '#item+rem+i_qcc+is_zxxx+ix_wikip' in caput:
+                                wikip_index = caput.index(
+                                    '#item+rem+i_qcc+is_zxxx+ix_wikip')
+                            lines = []
+                            for row in reader:
+                                if row[codicem_index].startswith(('Q', 'P')):
+                                    row[codicem_index] = \
+                                        row[codicem_index].replace(
+                                        'P', '16_').replace('Q', '17_')
+
+                                if wikiq_index > -1 and row[wikiq_index] and \
+                                        row[wikiq_index].startswith('P'):
+                                    row[wikiq_index] = ''
+
+                                if wikip_index > -1 and row[wikip_index] and \
+                                        row[wikip_index].startswith('Q'):
+                                    row[wikip_index] = ''
+                                lines.append(row)
+
+                            neo_lines = sorted(
+                                lines, key=lambda x: sort_hxltm_q_et_p(x))
+
+                            reader = neo_lines
+
+                    #     raise NotImplementedError(
+                    #         'identitas_ex_wikiq_et_wikip')
 
                     # csv.writer
                     csvwritter = csv.writer(stdout)
@@ -1185,10 +1217,16 @@ def sort_hxltm_q_et_p(
         elif len(lineam_list[2]) > 1:
             index = 2
 
-    if lineam_list[index].find('_') > -1 or lineam_list[index].find(':') > -1:
+    # if lineam_list[index].find('_') > -1 or lineam_list[index].find(':') > -1:
+    if lineam_list[index].find('_') > -1:
         # We assume already is an prepared code such as 12:34 or 12_34
         # so no need to coerse to int
-        return lineam_list[index]
+
+        parts = lineam_list[index].split('_')
+        for index, value in enumerate(parts):
+            parts[index] = int(value)
+        return tuple(parts)
+        # return lineam_list[index]
 
     if lineam_list[index].startswith('Q'):
         # return int(clavem.replace('Q', ''))

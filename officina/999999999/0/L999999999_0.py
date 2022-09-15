@@ -1391,7 +1391,7 @@ def bcp47_langtag(
 'Language-Tag_normalized': 'en-a-aaa-b-ccc-bbb-x-xyz', \
 'language': 'en', 'script': None, 'region': None, 'variant': [], \
 'extension': {'a': 'aaa', 'b': 'ccc-bbb'}, 'privateuse': ['xyz'], \
-'grandfathered': None, '_callbacks': {'hxl_attrs': '+i_en+ix_xyz', \
+'grandfathered': None, '_callbacks': {'hxl_attrs': '+i_en+ix_xzz', \
 'hxl_minimal': None}, '_unknown': [], '_error': []}
     """
     # For sake of copy-and-paste portability, we ignore a few pylints:
@@ -5509,9 +5509,9 @@ def hxltm__data_pivot_wide(caput: list, data: list, is_hotfix_need: bool = False
 
     For an HXL dataset with strict HXLTM documented attributes, convert data
     from narrow (or long) to wide.
-    It works by getting attributes from an column +ix_xyadhxltrivio ("ad")
+    It works by getting attributes from an column +ix_xzadhxltrivio ("ad")
     and using to pivo from its value all other columns with
-    +ix_xyexhxltrivio ("ex").
+    +ix_xzexhxltrivio ("ex").
 
     Args:
         caput (list): header
@@ -5522,10 +5522,10 @@ def hxltm__data_pivot_wide(caput: list, data: list, is_hotfix_need: bool = False
         Tuple[list, List[list]]: caput, data
     """
 
-    referens_columnae = '#item+rem+i_qcc+is_zxxx+ix_xyadhxltrivio'
+    referens_columnae = '#item+rem+i_qcc+is_zxxx+ix_xzadhxltrivio'
 
     # No + as prefix here
-    hxlatt_ex = 'ix_xyexhxltrivio'
+    hxlatt_ex = 'ix_xzexhxltrivio'
     if referens_columnae not in caput:
         raise SyntaxError('[{}] must exist on header <{}>'.format(
             referens_columnae, caput))
@@ -6802,20 +6802,20 @@ def hxltm_hashtag_ix_ad_rdf(
 
 
     >>> _basi = '#item+rem+i_qcc+is_zxxx'
-    >>> _ix_III = '+ix_iso8601v2020+ix_xywdatap1540+ix_xywdatap2899v65'
+    >>> _ix_III = '+ix_iso8601v2020+ix_xzwdatap1540+ix_xzwdatap2899v65'
 
     ### Simpler case: if only one option is possible, assume it what user want
-    >>> hxltm_hashtag_ix_ad_rdf(_basi + '+ix_xywdatap1540')
+    >>> hxltm_hashtag_ix_ad_rdf(_basi + '+ix_xzwdatap1540')
     '#item+rem+i_qcc+is_zxxx+rdf_p_wdata_p1540_s1603'
 
     >>> hxltm_hashtag_ix_ad_rdf(_basi + _ix_III, proprietates=[
-    ...    'ix_xywdatap1540'])
-    '#item+rem+i_qcc+is_zxxx+ix_iso8601v2020+ix_xywdatap2899v65\
+    ...    'ix_xzwdatap1540'])
+    '#item+rem+i_qcc+is_zxxx+ix_iso8601v2020+ix_xzwdatap2899v65\
 +rdf_p_wdata_p1540_s1603'
 
     >>> hxltm_hashtag_ix_ad_rdf(_basi + _ix_III, proprietates=[
-    ...    r"ix_xywdatap1540"])
-    '#item+rem+i_qcc+is_zxxx+ix_iso8601v2020+ix_xywdatap2899v65\
+    ...    r"ix_xzwdatap1540"])
+    '#item+rem+i_qcc+is_zxxx+ix_iso8601v2020+ix_xzwdatap2899v65\
 +rdf_p_wdata_p1540_s1603'
 
 
@@ -6832,8 +6832,8 @@ def hxltm_hashtag_ix_ad_rdf(
         proprietates_ignorato = [
             # Example: ix_iso8601v2020
             r"^ix_iso.*$",
-            # Example: ix_xywdatap2899v65 (but not ix_xywdatap2899)
-            r"^ix_xywdata(p|q)[0-9]{1,12}v.*$"
+            # Example: ix_xzwdatap2899v65 (but not ix_xzwdatap2899)
+            r"^ix_xzwdata(p|q)[0-9]{1,12}v.*$"
         ]
 
     ix_attrs = []
@@ -6861,11 +6861,11 @@ def hxltm_hashtag_ix_ad_rdf(
             break
 
     def _helper(rem: str, strictum: bool = True):
-        if rem.startswith('ix_xywdata'):
-            # ix_xywdatap
-            # ix_xywdataq
+        if rem.startswith('ix_xzwdata'):
+            # ix_xzwdatap
+            # ix_xzwdataq
             return 'rdf_p_wdata_{0}_s{1}'.format(
-                rem.replace('ix_xywdata', ''), str(rdf_trivio)
+                rem.replace('ix_xzwdata', ''), str(rdf_trivio)
             )
         if strictum:
             raise NotImplementedError('[{0}] [{1}]'.format(

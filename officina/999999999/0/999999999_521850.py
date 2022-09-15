@@ -258,46 +258,46 @@ DATA_HXLTM_DE_HXL_GENERIC = {
 
     # Population statistics, with year -----------------------------------------
     # population (P1082)
-    '#item+rem+i_qcc+is_zxxx+ix_iso8601v{v1}+ix_xywdatap1082': r"^#population\+t\+year(?P<v1>[0-9]{4})$",
-    '#item+rem+i_qcc+is_zxxx+ix_xywdatap1082': r"^#population\+t$",
-    '#meta+rem+i_qcc+is_zxxx+ix_xywdatap1082': r"^#meta\+population\+t$",
+    '#item+rem+i_qcc+is_zxxx+ix_iso8601v{v1}+ix_xzwdatap1082': r"^#population\+t\+year(?P<v1>[0-9]{4})$",
+    '#item+rem+i_qcc+is_zxxx+ix_xzwdatap1082': r"^#population\+t$",
+    '#meta+rem+i_qcc+is_zxxx+ix_xzwdatap1082': r"^#meta\+population\+t$",
     # female population (P1539)
-    '#item+rem+i_qcc+is_zxxx+ix_iso8601v{v1}+ix_xywdatap1539': r"^#population\+f\+year(?P<v1>[0-9]{4})$",
+    '#item+rem+i_qcc+is_zxxx+ix_iso8601v{v1}+ix_xzwdatap1539': r"^#population\+f\+year(?P<v1>[0-9]{4})$",
     # male population (P1540)
-    '#item+rem+i_qcc+is_zxxx+ix_iso8601v{v1}+ix_xywdatap1540': r"^#population\+m\+year(?P<v1>[0-9]{4})$",
+    '#item+rem+i_qcc+is_zxxx+ix_iso8601v{v1}+ix_xzwdatap1540': r"^#population\+m\+year(?P<v1>[0-9]{4})$",
     # rural population (P6344)
-    '#item+rem+i_qcc+is_zxxx+ix_iso8601v{v1}+ix_xywdatap6344': r"^#population\+rural\+year(?P<v1>[0-9]{4})$",
+    '#item+rem+i_qcc+is_zxxx+ix_iso8601v{v1}+ix_xzwdatap6344': r"^#population\+rural\+year(?P<v1>[0-9]{4})$",
     # urban population (P6343)
-    '#item+rem+i_qcc+is_zxxx+ix_iso8601v{v1}+ix_xywdatap6343': r"^#population\+urban\+year(?P<v1>[0-9]{4})$",
+    '#item+rem+i_qcc+is_zxxx+ix_iso8601v{v1}+ix_xzwdatap6343': r"^#population\+urban\+year(?P<v1>[0-9]{4})$",
 
     # Houseolds? No data with this yet
     # https://www.wikidata.org/wiki/Property:P1538
 
     # Population statistics, without year -------------------------------------
     # population (P1082)
-    # '#item+rem+i_qcc+is_zxxx+ix_xywdatap1082': r"^#population\+t$",
+    # '#item+rem+i_qcc+is_zxxx+ix_xzwdatap1082': r"^#population\+t$",
     # # female population (P1539)
-    # '#item+rem+i_qcc+is_zxxx+ix_xywdatap1539': r"^#population\+f$",
+    # '#item+rem+i_qcc+is_zxxx+ix_xzwdatap1539': r"^#population\+f$",
     # # male population (P1540)
-    # '#item+rem+i_qcc+is_zxxx+ix_xywdatap1540': r"^#population\+m$",
+    # '#item+rem+i_qcc+is_zxxx+ix_xzwdatap1540': r"^#population\+m$",
 
-    '#item+rem+i_qcc+is_zxxx+ix_iso8601v{v1}+ix_xyexhxltrivio': r"^#indicator\+value\+year(?P<v1>[0-9]{4})$",
+    '#item+rem+i_qcc+is_zxxx+ix_iso8601v{v1}+ix_xzexhxltrivio': r"^#indicator\+value\+year(?P<v1>[0-9]{4})$",
 
-    # HXL hashtags to replace ix_xyexhxltrivio when exploding the coluns
-    # '#item+rem+i_qcc+is_zxxx+ix_xyadhxltrivio': None,
+    # HXL hashtags to replace ix_xzexhxltrivio when exploding the coluns
+    # '#item+rem+i_qcc+is_zxxx+ix_xzadhxltrivio': None,
 }
 
 DATA_NO1_DE_HXLTM_GENERIC = {
-    # '^(?P<t>#[a-z0-9]{3,99})\+rem\+i_qcc\+is_zxxx\+ix_xywdatap(?P<v2>[0-9]{1,12})'
-    '#{t}+rem+i_qcc+is_zxxx+ix_iso8601v{v1}+rdf_p_wdata_p{v2}_s{trivio}+rdf_t_xsd_int': r"^#(?P<t>[a-z0-9]{3,99})\+rem\+i_qcc\+is_zxxx\+ix_iso8601v(?P<v1>[0-9]{4})\+ix_xywdatap(?P<v2>[0-9]{1,12})"
+    # '^(?P<t>#[a-z0-9]{3,99})\+rem\+i_qcc\+is_zxxx\+ix_xzwdatap(?P<v2>[0-9]{1,12})'
+    '#{t}+rem+i_qcc+is_zxxx+ix_iso8601v{v1}+rdf_p_wdata_p{v2}_s{trivio}+rdf_t_xsd_int': r"^#(?P<t>[a-z0-9]{3,99})\+rem\+i_qcc\+is_zxxx\+ix_iso8601v(?P<v1>[0-9]{4})\+ix_xzwdatap(?P<v2>[0-9]{1,12})"
 }
 
 DATA_HXLTM_CASTTYPE = {
-    'ix_xywdatap1082': 'rdf_t_xsd_int',
-    'ix_xywdatap1539': 'rdf_t_xsd_int',
-    'ix_xywdatap1540': 'rdf_t_xsd_int',
-    'ix_xywdatap6344': 'rdf_t_xsd_int',
-    'ix_xywdatap6343': 'rdf_t_xsd_int',
+    'ix_xzwdatap1082': 'rdf_t_xsd_int',
+    'ix_xzwdatap1539': 'rdf_t_xsd_int',
+    'ix_xzwdatap1540': 'rdf_t_xsd_int',
+    'ix_xzwdatap6344': 'rdf_t_xsd_int',
+    'ix_xzwdatap6343': 'rdf_t_xsd_int',
 }
 
 DATA_METHODUS = {
@@ -376,20 +376,20 @@ DATA_HXL_DE_CSV_REGEX = {
         # Population statistics, thematic
         # Only for numeric
         # https://www.wikidata.org/wiki/Property:P1082
-        'SP.POP.TOTL': ['#population+t+year{0}', ['ix_xywdatap1082']],
+        'SP.POP.TOTL': ['#population+t+year{0}', ['ix_xzwdatap1082']],
 
         # https://data.worldbank.org/indicator/SP.RUR.TOTL
         # https://www.wikidata.org/wiki/Property:P6344
-        # 'SP.RUR.TOTL': '#population+ix_xywdatap6344+year{0}',
-        'SP.RUR.TOTL': ['#population+rural+year{0}', ['ix_xywdatap6344']],
+        # 'SP.RUR.TOTL': '#population+ix_xzwdatap6344+year{0}',
+        'SP.RUR.TOTL': ['#population+rural+year{0}', ['ix_xzwdatap6344']],
 
         # https://data.worldbank.org/indicator/SP.POP.TOTL.FE.IN
         # https://www.wikidata.org/wiki/Property:P1539
-        'SP.POP.TOTL.FE.IN': ['#population+f+year{0}', ['ix_xywdatap1539']],
+        'SP.POP.TOTL.FE.IN': ['#population+f+year{0}', ['ix_xzwdatap1539']],
 
         # https://data.worldbank.org/indicator/SP.POP.TOTL.MA.IN
         # https://www.wikidata.org/wiki/Property:P1540
-        'SP.POP.TOTL.MA.IN': ['#population+m+year{0}', ['ix_xywdatap1540']],
+        'SP.POP.TOTL.MA.IN': ['#population+m+year{0}', ['ix_xzwdatap1540']],
 
         # - minimum age (P2899)
         #   - https://www.wikidata.org/wiki/Property:P2899
@@ -399,34 +399,34 @@ DATA_HXL_DE_CSV_REGEX = {
 
         # Population ages 0-14, total
         'SP.POP.0014.TO': ['#population+t_0_14+year{0}', [
-            'ix_xywdatap1082', 'ix_xywdatap2899v0', 'ix_xywdatap4135v14']],
+            'ix_xzwdatap1082', 'ix_xzwdatap2899v0', 'ix_xzwdatap4135v14']],
         # Population ages 0-14, female
         'SP.POP.0014.FE.IN': ['#population+f_0_14+year{0}', [
-            'ix_xywdatap1539', 'ix_xywdatap2899v0', 'ix_xywdatap4135v14']],
+            'ix_xzwdatap1539', 'ix_xzwdatap2899v0', 'ix_xzwdatap4135v14']],
         # Population ages 0-14, male
         'SP.POP.0014.MA.IN': ['#population+m_0_14+year{0}', [
-            'ix_xywdatap1540', 'ix_xywdatap2899v0', 'ix_xywdatap4135v14']],
+            'ix_xzwdatap1540', 'ix_xzwdatap2899v0', 'ix_xzwdatap4135v14']],
 
         # Population ages 15-64, total
         'SP.POP.1564.TO': ['#population+t_15_64+year{0}', [
-            'ix_xywdatap1082', 'ix_xywdatap2899v15', 'ix_xywdatap4135v64']],
+            'ix_xzwdatap1082', 'ix_xzwdatap2899v15', 'ix_xzwdatap4135v64']],
         # Population ages 15-64, female
         'SP.POP.1564.FE.IN': ['#population+f_15_64+year{0}', [
-            'ix_xywdatap1539', 'ix_xywdatap2899v15', 'ix_xywdatap4135v64']],
+            'ix_xzwdatap1539', 'ix_xzwdatap2899v15', 'ix_xzwdatap4135v64']],
         # Population ages 15-64, male
         'SP.POP.1564.MA.IN': ['#population+m_15_64+year{0}', [
-            'ix_xywdatap1540', 'ix_xywdatap2899v15', 'ix_xywdatap4135v64']],
+            'ix_xzwdatap1540', 'ix_xzwdatap2899v15', 'ix_xzwdatap4135v64']],
 
 
         # Population ages 65 and above, total
         'SP.POP.65UP.TO': ['#population+t_65_999+year{0}', [
-            'ix_xywdatap1082', 'ix_xywdatap2899v65']],
+            'ix_xzwdatap1082', 'ix_xzwdatap2899v65']],
         # Population ages 65 and above, female
         'SP.POP.65UP.FE.IN': ['#population+f_65_999+year{0}', [
-            'ix_xywdatap1539', 'ix_xywdatap2899v65']],
+            'ix_xzwdatap1539', 'ix_xzwdatap2899v65']],
         # Population ages 65 and above, male
         'SP.POP.65UP.MA.IN': ['#population+m_65_999+year{0}', [
-            'ix_xywdatap1540', 'ix_xywdatap2899v65']],
+            'ix_xzwdatap1540', 'ix_xzwdatap2899v65']],
 
         # @TODO if we take the %, there are other age ranges. Eventualy
         #       deal with this
@@ -434,35 +434,35 @@ DATA_HXL_DE_CSV_REGEX = {
         # ---------------------------------------------------------------------
         # nominal GDP (P2131)
         'NY.GDP.MKTP.CD': ['#indicator+value+year{0}', [
-            'ix_xywdatap2131']],
+            'ix_xzwdatap2131']],
         # area (P2046)
         'AG.SRF.TOTL.K2': ['#indicator+value+year{0}', [
-            'ix_xywdatap2046']],
+            'ix_xzwdatap2046']],
         # literacy rate (P6897)
         'SE.ADT.LITR.ZS': ['#indicator+value+year{0}', [
-            'ix_xywdatap6897']],
+            'ix_xzwdatap6897']],
         # life expectancy (P2250)
         'SP.DYN.LE00.IN': ['#indicator+value+year{0}', [
-            'ix_xywdatap2250']],
+            'ix_xzwdatap2250']],
         # Gini coefficient (P1125)
         'SI.POV.GINI': ['#indicator+value+year{0}', [
-            'ix_xywdatap1125']],
+            'ix_xzwdatap1125']],
         # unemployment rate (P1198)
         # - https://data.worldbank.org/indicator/SL.UEM.TOTL.ZS
         #   - See also https://data.worldbank.org/indicator/SL.EMP.TOTL.SP.ZS
         'SL.UEM.TOTL.ZS': ['#indicator+value+year{0}', [
-            'ix_xywdatap1198']],
+            'ix_xzwdatap1198']],
 
         # https://data.worldbank.org/indicator/EN.ATM.CO2E.KT
         # https://www.wikidata.org/wiki/Q67201057
         # carbon emission (Q67201057)
         'EN.ATM.CO2E.KT': ['#indicator+value+year{0}', [
-            'ix_xywdataq67201057']],
+            'ix_xzwdataq67201057']],
 
         # https://data.worldbank.org/indicator/AG.LND.PRCP.MM
         # annual precipitation (Q10726724)
         'AG.LND.PRCP.MM': ['#indicator+value+year{0}', [
-            'ix_xywdataq10726724']],
+            'ix_xzwdataq10726724']],
 
         # Money related, thematic
         # https://data.worldbank.org/indicator/BX.GRT.EXTA.CD.WD?view=chart
@@ -1078,7 +1078,7 @@ class DataScrapping:
         # self._hxlPivot = DATA_HXL_DE_CSV_REGEX['worldbank']
         self._hxlPivotCode = ['#indicator+code',
                               '#meta+rem+i_qcc+is_zxxx+indicator_code']
-        # #item+rem+i_qcc+is_zxxx+ix_xyadhxltrivio
+        # #item+rem+i_qcc+is_zxxx+ix_xzadhxltrivio
 
         # Use case: --objectivum-transformationi=annus-recenti-exclusivo
         self._skipHXLTMIndex = []
@@ -1268,7 +1268,7 @@ class DataScrapping:
             # 2 if wide enabled
             _drift = 1
 
-            # if '#item+rem+i_qcc+is_zxxx+ix_xyadhxltrivio' in resultatum:
+            # if '#item+rem+i_qcc+is_zxxx+ix_xzadhxltrivio' in resultatum:
             #     _drift += 1
 
             # if self.objectivum_formato == 'hxltm-wide':
@@ -1286,7 +1286,7 @@ class DataScrapping:
 
     def _hxltmize_without_year(self, caput_item: str, referens: str):
         # Example '#population+t+year2016' (if was HXL)
-        # Example '#item+rem+i_qcc+is_zxxx+ix_iso8601v2021+ix_xywdatap1082'
+        # Example '#item+rem+i_qcc+is_zxxx+ix_iso8601v2021+ix_xzwdatap1082'
         referens_basi = referens.split('+year')[0]
         if caput_item == '#indicator+value':
             # return referens_basi
@@ -1446,7 +1446,7 @@ class DataScrapping:
         hxl_vocab: bool = False
     ):
         index_linea = 0
-        index_ix_xyadhxltrivio = -1
+        index_ix_xzadhxltrivio = -1
         codicem_inconito = False
         with open(objetivum, 'w') as _objetivum:
             with open(fonti, 'r') as _fons:
@@ -1461,17 +1461,17 @@ class DataScrapping:
                             codicem_inconito = True
                             caput.insert(0, '#item+conceptum+codicem')
                         if hxl_vocab is True and \
-                                '#item+rem+i_qcc+is_zxxx+ix_xyadhxltrivio' \
+                                '#item+rem+i_qcc+is_zxxx+ix_xzadhxltrivio' \
                                 not in caput:
                             for _p in self._hxlPivotCode:
                                 if _p in caput:
                                     # _index_ref = caput.index(self._hxlPivotCode)
                                     _index_ref = caput.index(_p)
                                     break
-                            index_ix_xyadhxltrivio = _index_ref + 1
+                            index_ix_xzadhxltrivio = _index_ref + 1
                             caput.insert(
-                                index_ix_xyadhxltrivio,
-                                '#item+rem+i_qcc+is_zxxx+ix_xyadhxltrivio')
+                                index_ix_xzadhxltrivio,
+                                '#item+rem+i_qcc+is_zxxx+ix_xzadhxltrivio')
 
                             # Since we injected new artificial table, lets
                             # increment self._skipHXLTMIndex)
@@ -1526,8 +1526,8 @@ class DataScrapping:
                                     False, index=index_linea, strictum=False)
 
                         linea.insert(0, _v)
-                    if index_ix_xyadhxltrivio > -1:
-                        _v_refs = linea[index_ix_xyadhxltrivio - 1]
+                    if index_ix_xzadhxltrivio > -1:
+                        _v_refs = linea[index_ix_xzadhxltrivio - 1]
 
                         # Special case: if asked hxlize-urn-worldbank, here
                         # we pre-populate DATA_HXL_DE_CSV_REGEX
@@ -1540,7 +1540,7 @@ class DataScrapping:
                         _v_novo_parts = sorted(_v_novo_parts)
                         _v = '+'.join(_v_novo_parts)
                         # _v = "@todo"
-                        linea.insert(index_ix_xyadhxltrivio, _v)
+                        linea.insert(index_ix_xzadhxltrivio, _v)
 
                     # if self.objectivum_transformationi == \
                     #     'annus-recenti-exclusivo' and \
@@ -1572,9 +1572,9 @@ class DataScrapping:
 
         # data_sorted = self._data_sort(fonti)
 
-        if '#item+rem+i_qcc+is_zxxx+ix_xyadhxltrivio' in self._caput:
+        if '#item+rem+i_qcc+is_zxxx+ix_xzadhxltrivio' in self._caput:
             data_sorted = hxltm__data_sort(
-                fonti, ['#item+rem+i_qcc+is_zxxx+ix_xyadhxltrivio'])
+                fonti, ['#item+rem+i_qcc+is_zxxx+ix_xzadhxltrivio'])
 
             if self.hxltm_wide_indicators:
                 indicator_index = data_sorted[0].index(
@@ -2111,7 +2111,7 @@ class DataScrappingWorldbank(DataScrapping):
 
         # We also generate wide data implicitly if result needs it
         if self.objectivum_formato == 'no1' and \
-                ('#item+rem+i_qcc+is_zxxx+ix_xyadhxltrivio' in self._caput):
+                ('#item+rem+i_qcc+is_zxxx+ix_xzadhxltrivio' in self._caput):
             hxl_vocab = False
             # if self.methodus == 'health':
             #     self._hxlPivot = DATA_HXL_DE_CSV_REGEX['worldbank']
