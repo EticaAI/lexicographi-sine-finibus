@@ -76,6 +76,9 @@ ROOTDIR="$(pwd)"
 
 # cat 999999/0/xmlCNES.tm.hxl.csv | ./999999999/0/999999999_54872.py --methodus='ad_rdf_ex_configurationi'  --objectivum-formato=application/x-turtle --archivum-configurationi-ex-fonti=999999999/0/999999999_10263485.meta.yml --praefixum-configurationi-ex-fonti=methodus,datasus_xmlcnae > 999999/0/xmlCNES.no1.skos.ttl
 
+# ftp://ftp.datasus.gov.br/cnes/BASE_DE_DADOS_CNES_202302.ZIP
+# ftp://ftp.datasus.gov.br/cnes/CNESBRASIL.ZIP
+# archivum_unzip "999999/0/0/ftp.datasus.gov.br/cnes/CNESBRASIL.ZIP" "xmlCNES.xml" "999999/0/xmlCNES.xml"
 # archivum_unzip "999999/0/0/ftp.datasus.gov.br/cnes/CNESBRASIL.ZIP" "xmlCNES.xml" "999999/0/xmlCNES.xml"
 
 # ./999999999/0/999999999_10263485.py \
